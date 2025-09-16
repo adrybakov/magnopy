@@ -950,22 +950,38 @@ class Energy:
                 break
 
             y_k = gradient_next - gradient_k
-            # print(f"y_k = {y_k}")
-
-            rho_k = 1 / (y_k @ s_k)
-            # print(f"rho = {rho_k}")
-
-            EYE = np.eye(3 * self.M)
-            OUTER = np.outer(y_k, s_k)
-
-            if first_iteration:
-                first_iteration = False
-                hessinv_k = (y_k @ s_k) / (y_k @ y_k) * hessinv_k
-
-            hessinv_k = (EYE - rho_k * OUTER.T) @ hessinv_k @ (
-                EYE - rho_k * OUTER
-            ) + rho_k * s_k @ s_k
-
+            # Curvature safeguard: avoid divide-by-zero / non-finite ys
+            ys = float(y_k @ s_k)
+            EYE = np.eye(hessinv_k.shape[0])  # safer than 3*self.M
+            
+            if (not np.isfinite(ys)) or (abs(ys) < 1e-12):
+                # Degenerate case: skip the inverse-BFGS update (or reset H if preferred)
+                curv_fail_run += 1
+                if curv_fail_run > max_curv_fails:
+                    raise RuntimeError(
+                        f"BFGS curvature failure repeated {curv_fail_run} times: "
+                        f"s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. "
+                        "Try a different seed or lift degeneracy (e.g., tiny anisotropy/field)."
+                    )
+                # Optionally reset H instead of skipping:
+                # hessinv_k = EYE
+                pass
+            else:
+                curv_fail_run = 0
+                rho_k = 1.0 / ys
+                OUTER = np.outer(y_k, s_k)
+            
+                # Safe initial scaling of H^{-1}
+                if first_iteration:
+                    first_iteration = False
+                    denom = float(y_k @ y_k)
+                    if np.isfinite(denom) and denom > 0.0:
+                        hessinv_k = (ys / denom) * hessinv_k
+            
+                # Stable inverse-BFGS update
+                hessinv_k = (EYE - rho_k * OUTER.T) @ hessinv_k @ (EYE - rho_k * OUTER) \
+                            + rho_k * np.outer(s_k, s_k)
+            
             sd_k = sd_next
             energy_k = energy_next
             gradient_k = gradient_next
@@ -1029,6 +1045,12 @@ class Energy:
         step_counter = 1
 
         yield (energy_k, gradient_k, sd_k)
+
+        first_iteration = True
+        step_counter = 1
+        # Curvature failure guard to avoid silent looping in degenerate manifolds
+        curv_fail_run = 0
+        max_curv_fails = 10
 
         while (delta >= tolerance).any():
             search_direction = -hessinv_k @ gradient_k
