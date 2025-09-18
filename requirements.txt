@@ -1,4 +1,4 @@
 # Package dependencies
 numpy
 matplotlib
-wulfric>=0.5.4
+wulfric==0.5.4
