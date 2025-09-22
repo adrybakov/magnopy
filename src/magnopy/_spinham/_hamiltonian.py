@@ -141,9 +141,9 @@ class SpinHamiltonian:
 
         self._convention = convention
 
-        if units.lower not in _SUPPORTED_UNITS:
+        if units.lower() not in _SUPPORTED_UNITS:
             raise ValueError(
-                f'Given units ("{units}") are not supported. Please use one of\n  *  '
+                f'Given units ("{units}") are not supported. Please use one of\n  * '
                 + "\n  * ".join(list(_SUPPORTED_UNITS))
             )
 
@@ -873,7 +873,7 @@ class SpinHamiltonian:
         r"""
         Units of the Hamiltonian's parameters.
 
-        The parameters of the Hamiltonian are stored in some units of energy.
+        The parameters of the Hamiltonian are stored in some units of energy (or energy-like).
 
         When user adds a parameters to the Hamiltonian (i. e. :py:meth:`.SpinHamiltonian.add_21`, ...)
         the ``parameter`` argument is understood to be given in the units of
