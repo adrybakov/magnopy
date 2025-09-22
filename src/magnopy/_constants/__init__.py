@@ -20,4 +20,4 @@
 # ================================ END LICENSE =================================
 
 
-from . import si
+from . import _internal_units as internal

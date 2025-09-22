@@ -24,7 +24,8 @@ __version__ = "0.2.2"
 __doclink__ = "magnopy.org"
 __release_date__ = "22 September 2025"
 
-from . import _constants, examples, io, scenarios, experimental
+from . import examples, io, scenarios, experimental
+from ._constants import si
 from ._diagonalization import *
 from ._energy import *
 from ._exceptions import *
