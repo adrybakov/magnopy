@@ -1,8 +1,8 @@
 .. _api_io:
 
-*****************
-Input-output (io)
-*****************
+**********
+magnopy.io
+**********
 
 .. currentmodule:: magnopy.io
 
