@@ -301,7 +301,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
     r"""
 
     Parameters
-    ==========
+    ----------
     spinham : :py:class:`.SpinHamiltonian`
     new_cell : (3, 3) |array-like|_
     new_atoms_specs : list of tuple
@@ -314,7 +314,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
         is the unit cell to which an atom belongs.
 
     Returns
-    =======
+    -------
     new_spinham
     """
 
