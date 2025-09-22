@@ -21,6 +21,7 @@
 
 
 from math import log10
+import warnings
 
 import numpy as np
 
@@ -964,7 +965,10 @@ class Energy:
                     )
                 # Reset hessian:
                 hessinv_k = EYE
-                pass
+                warnings.warn(
+                    f"BFGS curvature failure repeated {curv_fail_run} times: s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. Hessian was reset.",
+                    RuntimeWarning,
+                )
             else:
                 curv_fail_run = 0
                 rho_k = 1.0 / ys
