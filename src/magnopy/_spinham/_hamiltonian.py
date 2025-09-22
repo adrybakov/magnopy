@@ -121,6 +121,8 @@ class SpinHamiltonian:
         Units of the parameters of the Hamiltonian. See :py:attr:`.SpinHamiltonian.units`
         for more details. Case-insensitive.
 
+        .. versionadded:: 0.2.2
+
     Examples
     --------
 
@@ -873,6 +875,8 @@ class SpinHamiltonian:
         r"""
         Units of the Hamiltonian's parameters.
 
+        .. versionadded:: 0.2.2
+
         The parameters of the Hamiltonian are stored in some units of energy (or energy-like).
 
         When user adds a parameters to the Hamiltonian (i. e. :py:meth:`.SpinHamiltonian.add_21`, ...)
@@ -1022,7 +1026,7 @@ class SpinHamiltonian:
         for index in range(len(self._44)):
             self._44[index][7] = self._44[index][7] * conversion_factor
 
-        self._units = new_units
+        self._units = new_units.lower()
 
     ############################################################################
     #                          External magnetic field                         #

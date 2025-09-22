@@ -1196,6 +1196,9 @@ def _add_44(
         units see :py:attr:`.SpinHamiltonian.units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
+
+        .. versionadded:: 0.2.2
+
     replace : bool, default False
         Whether to replace the value of the parameter if the triplet of atoms
         ``alpha, beta, gamma, nu, lambda`` or one of its duplicates already have a

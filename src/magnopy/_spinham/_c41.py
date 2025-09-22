@@ -89,6 +89,9 @@ def _add_41(spinham, alpha: int, parameter, units=None, replace=False) -> None:
         units see :py:attr:`.SpinHamiltonian.units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
+
+        .. versionadded:: 0.2.2
+
     replace : bool, default False
         Whether to replace the value of the parameter if an atom already has a
         parameter associated with it.

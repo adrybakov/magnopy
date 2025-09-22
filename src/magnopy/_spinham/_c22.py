@@ -197,6 +197,9 @@ def _add_22(
         units see :py:attr:`.SpinHamiltonian.units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
+
+        .. versionadded:: 0.2.2
+
     replace : bool, default False
         Whether to replace the value of the parameter if the pair of atoms
         ``alpha, beta, nu`` or its double already have a parameter associated
