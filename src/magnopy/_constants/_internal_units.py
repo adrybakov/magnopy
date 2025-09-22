@@ -29,7 +29,7 @@ If you are using the constants inside magnopy, then import them from here and no
 magnopy.units.si
 """
 
-from magnopy._constants import si
+from magnopy._constants import _si
 
 # Save local scope at this moment
 old_dir = set(dir())
@@ -39,11 +39,11 @@ old_dir.add("old_dir")
 ################################################################################
 #                                Unit's values                                 #
 ################################################################################
-LENGTH = si.ANGSTROM
-ENERGY = 1e-3 * si.ELECTRON_VOLT
-TIME = si.SECOND
-MAGNETIC_FIELD = si.TESLA
-TEMPERATURE = si.KELVIN
+LENGTH = _si.ANGSTROM
+ENERGY = 1e-3 * _si.ELECTRON_VOLT
+TIME = _si.SECOND
+MAGNETIC_FIELD = _si.TESLA
+TEMPERATURE = _si.KELVIN
 
 
 ################################################################################
