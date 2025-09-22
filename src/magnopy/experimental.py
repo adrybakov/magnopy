@@ -42,8 +42,8 @@ def plot_spinham(
 
     .. versionadded:: 0.2.0
 
-    Parameter
-    =========
+    Parameters
+    ----------
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian
     distance_digits : int, default 5
@@ -54,7 +54,7 @@ def plot_spinham(
         Scale for the maximum dmi vector length.
 
     Returns
-    =======
+    -------
     pe1 : :py:class:`.PlotlyEngine`
         Instance of the magnopy's plot engine, with plotted spin Hamiltonian. Ready to be
         saved or showed. Only on-site parameters are plotted
