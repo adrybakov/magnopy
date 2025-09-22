@@ -27,6 +27,7 @@ from magnopy._spinham._validators import (
     _validate_atom_index,
     _validate_unit_cell_index,
 )
+from magnopy._spinham._units import _convert_units
 
 
 def _get_primary_p43(
@@ -340,6 +341,7 @@ def _add_43(
     nu: tuple,
     _lambda: tuple,
     parameter,
+    units="meV",
     replace=False,
 ) -> None:
     r"""
@@ -388,7 +390,13 @@ def _add_43(
             (x_{\boldsymbol{a}_1}, x_{\boldsymbol{a}_2}, x_{\boldsymbol{a}_3})
 
     parameter : (3, 3, 3, 3) |array-like|_
-        Value of the parameter (:math:`3\times3\times3\times3` matrix).
+        Value of the parameter (:math:`3\times3\times3\times3` matrix). Given in the units of ``units``.
+    units : str, default "meV"
+        Units of the parameters. Parameters have the the units of energy. By default
+        magnopy stores the parameters in meV (milli electron-Volt). You can provide the
+        values in one of the supported input units and magnopy will convert the values to
+        :py:attr:`.SpinHamiltonian.units`. For the list of the supported units see
+        :py:attr:`.SpinHamiltonian.units`.
     replace : bool, default False
         Whether to replace the value of the parameter if the triplet of atoms
         ``alpha, beta, gamma, nu, lambda`` or one of its duplicates already have a
@@ -420,6 +428,11 @@ def _add_43(
     spinham._reset_internals()
 
     parameter = np.array(parameter)
+
+    # Convert units
+    parameter = _convert_units(
+        parameter=parameter, given_units=units, return_units="meV"
+    )
 
     alpha, beta, gamma, nu, _lambda, parameter = _get_primary_p43(
         alpha=alpha,
