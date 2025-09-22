@@ -20,6 +20,9 @@ dist
 # Python cache
 __pycache__
 
+# Ruff cach
+.ruff_cache
+
 # On-the-fly-tests
 tmp*
 
