@@ -11,6 +11,7 @@ Here's a list of the contributors who shape its evolution:
 
 * `Gabriel Martinez <https://github.com/gabrielmart9>`_
 * `Marco Marino <https://github.com/marcomarino123>`_
+* `Jhon González <https://github.com/jwgonzal>`_
 * You can be the next one!
 
 Any contribution is welcomed!
