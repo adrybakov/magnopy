@@ -21,7 +21,8 @@
 
 
 R"""
-Units of the International system of units and physical constants expressed in SI.
+Units of the International system of units, physical constants expressed in SI, non-SI
+units expressed in SI.
 """
 
 # Save local scope at this moment
@@ -136,10 +137,11 @@ RYDBERG_CONSTANT = 10973731.568157 / METRE
 VACUUM_MAGNETIC_PERMEABILITY = 1.25663706127e-6 * NEWTON / AMPERE**2  # Newton/ Ampere^2
 
 ################################################################################
-##                               Other constants                              ##
+##                                Non-SI units                                ##
 ################################################################################
 ANGSTROM = 1e-10 * METRE
 RYDBERG_ENERGY = PLANCK_CONSTANT * SPEED_OF_LIGHT_IN_VACUUM * RYDBERG_CONSTANT * JOULE
+ERG = 1e-7 * JOULE
 
 
 # Populate __all__ with objects defined in this file
