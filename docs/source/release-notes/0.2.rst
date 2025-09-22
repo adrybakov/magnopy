@@ -15,6 +15,12 @@ Bugfix
 * Fix :issue:`55` (see also :PR:`65`).
 * Fix :issue:`66`.
 
+New features
+------------
+
+* Refactor and expose to public ``magnopy.si`` submodule that collects units of International
+  system of units (SI) and physical constants that are expressed in SI.
+
 0.2.1
 =====
 .. warning::
