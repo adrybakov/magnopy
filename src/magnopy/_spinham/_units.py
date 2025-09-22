@@ -19,76 +19,55 @@
 #
 # ================================ END LICENSE =================================
 # Save local scope at this moment
-from magnopy._constants._si import (
-    BOLTZMANN_CONSTANT,
-    ELECTRON_VOLT,
-    JOULE,
-    KELVIN,
-    MILLI,
-    RYDBERG_ENERGY,
-    ERG,
-)
+
+from magnopy._constants._spinham_constants import _SUPPORTED_UNITS
 
 
 old_dir = set(dir())
 old_dir.add("old_dir")
 
 
-def _convert_units(parameter, given_units="meV", return_units="meV"):
+def _get_conversion_factor(old_units="meV", new_units="meV"):
     r"""
     Convert the units of the parameter.
 
     Parameters
     ----------
-    parameter : float or :numpy:`ndarray`
-        Value of the parameter in the ``given_units``.
-    given_units : str, default "meV"
+    old_units : str, default "meV"
         Units in which the parameter is given. Case-insensitive.
-    return_units : str, default "meV"
+    new_units : str, default "meV"
         Units in  which the parameter shall be returned. Case-insensitive.
 
 
     Returns
     -------
-    parameter : float or :numpy:`ndarray`
-        Value of the parameter in the ``return_units``.
+    conversion : float
+        ``parameter_new_units = conversion_factor * parameter_old_units``.
 
     Raises
     ------
     ValueError
-        If ``given_units`` or ``return_units`` are not supported.
+        If ``old_units`` or ``new_units`` are not supported.
     """
 
-    given_units = given_units.lower()
-    return_units = return_units.lower()
+    old_units = old_units.lower()
+    new_units = new_units.lower()
 
-    if given_units == return_units:
-        return parameter
+    if old_units == new_units:
+        return 1.0
 
-    # Name : value when expressed in SI
-    SUPPORTED_UNITS = {
-        "mev": MILLI * ELECTRON_VOLT,
-        "joule": JOULE,
-        "j": JOULE,
-        "ry": RYDBERG_ENERGY,
-        "rydberg": RYDBERG_ENERGY,
-        "k": BOLTZMANN_CONSTANT * KELVIN,
-        "kelvin": BOLTZMANN_CONSTANT * KELVIN,
-        "erg": ERG,
-    }
-
-    if given_units not in SUPPORTED_UNITS:
+    if old_units not in _SUPPORTED_UNITS:
         raise ValueError(
-            f'Given units ("{given_units}") are not supported, please use one of\n  * '
-            + "\n  * ".join(list(SUPPORTED_UNITS))
+            f'"{old_units}" Units are not supported, please use one of\n  * '
+            + "\n  * ".join(list(_SUPPORTED_UNITS))
         )
-    if return_units not in SUPPORTED_UNITS:
+    if new_units not in _SUPPORTED_UNITS:
         raise ValueError(
-            f'Return units ("{return_units}") are not supported, please use one of\n  * '
-            + "\n  * ".join(list(SUPPORTED_UNITS))
+            f'"{new_units}" Units are not supported, please use one of\n  * '
+            + "\n  * ".join(list(_SUPPORTED_UNITS))
         )
 
-    return parameter * SUPPORTED_UNITS[given_units] / SUPPORTED_UNITS[return_units]
+    return _SUPPORTED_UNITS[old_units] / _SUPPORTED_UNITS[new_units]
 
 
 # Populate __all__ with objects defined in this file

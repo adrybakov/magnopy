@@ -27,7 +27,7 @@ from magnopy._spinham._validators import (
     _validate_atom_index,
     _validate_unit_cell_index,
 )
-from magnopy._spinham._units import _convert_units
+from magnopy._spinham._units import _get_conversion_factor
 
 
 def _get_primary_p44(alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter=None):
@@ -1127,7 +1127,7 @@ def _add_44(
     _lambda: tuple,
     rho: tuple,
     parameter,
-    units="meV",
+    units=None,
     replace=False,
 ) -> None:
     r"""
@@ -1190,12 +1190,12 @@ def _add_44(
 
     parameter : (3, 3, 3, 3) |array-like|_
         Value of the parameter (:math:`3\times3\times3\times3` matrix). Given in the units of ``units``.
-    units : str, default "meV"
-        Units of the parameters. Parameters have the the units of energy. By default
-        magnopy stores the parameters in meV (milli electron-Volt). You can provide the
-        values in one of the supported input units and magnopy will convert the values to
-        :py:attr:`.SpinHamiltonian.units`. For the list of the supported units see
-        :py:attr:`.SpinHamiltonian.units`.
+    units : str, optional
+        Units in which the ``parameter`` is given. Parameters have the the units of energy.
+        By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
+        units see :py:attr:`.SpinHamiltonian.units`. If given ``units`` are different from
+        :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
+        automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
     replace : bool, default False
         Whether to replace the value of the parameter if the triplet of atoms
         ``alpha, beta, gamma, nu, lambda`` or one of its duplicates already have a
@@ -1230,10 +1230,10 @@ def _add_44(
 
     parameter = np.array(parameter)
 
-    # Convert units
-    parameter = _convert_units(
-        parameter=parameter, given_units=units, return_units="meV"
-    )
+    if units is not None:
+        parameter = parameter * _get_conversion_factor(
+            old_units=units, new_units=spinham.units
+        )
 
     alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter = _get_primary_p44(
         alpha=alpha,

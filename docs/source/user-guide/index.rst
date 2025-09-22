@@ -53,6 +53,7 @@ please do not hesitate to ask it via our :ref:`support` channels.
     usage/cell
     usage/atoms
     usage/convention
+    usage/units
     usage/spin-hamiltonian
     usage/energy
     usage/lswt

@@ -23,11 +23,11 @@
 import numpy as np
 
 from magnopy._spinham._validators import _validate_atom_index
-from magnopy._spinham._units import _convert_units
+from magnopy._spinham._units import _get_conversion_factor
 
 
 @property
-def _p41(self) -> list:
+def _p41(spinham) -> list:
     r"""
     Parameters of (four spins & one site) term of the Hamiltonian.
 
@@ -68,10 +68,10 @@ def _p41(self) -> list:
     remove_41
     """
 
-    return self._41
+    return spinham._41
 
 
-def _add_41(self, alpha: int, parameter, units="meV", replace=False) -> None:
+def _add_41(spinham, alpha: int, parameter, units=None, replace=False) -> None:
     r"""
     Adds a (four spins & one site) parameter to the Hamiltonian.
 
@@ -83,12 +83,12 @@ def _add_41(self, alpha: int, parameter, units="meV", replace=False) -> None:
         ``0 <= alpha < len(spinham.atoms.names)``.
     parameter : (3, 3, 3, 3) |array-like|_
         Value of the parameter (:math:`3\times3\times3\times3` tensor). Given in the units of ``units``.
-    units : str, default "meV"
-        Units of the parameters. Parameters have the the units of energy. By default
-        magnopy stores the parameters in meV (milli electron-Volt). You can provide the
-        values in one of the supported input units and magnopy will convert the values to
-        :py:attr:`.SpinHamiltonian.units`. For the list of the supported units see
-        :py:attr:`.SpinHamiltonian.units`.
+    units : str, optional
+        Units in which the ``parameter`` is given. Parameters have the the units of energy.
+        By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
+        units see :py:attr:`.SpinHamiltonian.units`. If given ``units`` are different from
+        :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
+        automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
     replace : bool, default False
         Whether to replace the value of the parameter if an atom already has a
         parameter associated with it.
@@ -104,44 +104,44 @@ def _add_41(self, alpha: int, parameter, units="meV", replace=False) -> None:
     remove_41
     """
 
-    _validate_atom_index(index=alpha, atoms=self.atoms)
-    self._reset_internals()
+    _validate_atom_index(index=alpha, atoms=spinham.atoms)
+    spinham._reset_internals()
 
     parameter = np.array(parameter)
 
-    # Convert units
-    parameter = _convert_units(
-        parameter=parameter, given_units=units, return_units="meV"
-    )
+    if units is not None:
+        parameter = parameter * _get_conversion_factor(
+            old_units=units, new_units=spinham.units
+        )
 
     # TD-BINARY_SEARCH
     # Try to find the place for the new one inside the list
     index = 0
-    while index < len(self._41):
+    while index < len(spinham._41):
         # If already present in the model
-        if self._41[index][0] == alpha:
+        if spinham._41[index][0] == alpha:
             # Either replace
             if replace:
-                self._41[index] = [alpha, parameter]
+                spinham._41[index] = [alpha, parameter]
                 return
             # Or raise an error
             raise ValueError(
                 f"On-site quartic anisotropy already set "
-                f"for atom {alpha} ('{self.atoms.names[alpha]}')"
+                f"for atom {alpha} ('{spinham.atoms.names[alpha]}')"
             )
 
         # If it should be inserted before current element
-        if self._41[index][0] > alpha:
-            self._41.insert(index, [alpha, parameter])
+        if spinham._41[index][0] > alpha:
+            spinham._41.insert(index, [alpha, parameter])
             return
 
         index += 1
 
     # If it should be inserted at the end or at the beginning of the list
-    self._41.append([alpha, parameter])
+    spinham._41.append([alpha, parameter])
 
 
-def _remove_41(self, alpha: int) -> None:
+def _remove_41(spinham, alpha: int) -> None:
     r"""
     Removes a (four spins & one site) parameter from the Hamiltonian.
 
@@ -158,15 +158,15 @@ def _remove_41(self, alpha: int) -> None:
     add_41
     """
 
-    _validate_atom_index(index=alpha, atoms=self.atoms)
+    _validate_atom_index(index=alpha, atoms=spinham.atoms)
 
-    for i in range(len(self._41)):
+    for i in range(len(spinham._41)):
         # As the list is sorted, there is no point in resuming the search
         # when a larger element is found
-        if self._41[i][0] > alpha:
+        if spinham._41[i][0] > alpha:
             return
 
-        if self._41[i][0] == alpha:
-            del self._41[i]
-            self._reset_internals()
+        if spinham._41[i][0] == alpha:
+            del spinham._41[i]
+            spinham._reset_internals()
             return

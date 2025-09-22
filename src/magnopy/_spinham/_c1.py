@@ -23,7 +23,7 @@
 import numpy as np
 
 from magnopy._spinham._validators import _validate_atom_index
-from magnopy._spinham._units import _convert_units
+from magnopy._spinham._units import _get_conversion_factor
 
 
 @property
@@ -68,7 +68,7 @@ def _p1(spinham) -> list:
     return spinham._1
 
 
-def _add_1(spinham, alpha: int, parameter, units="meV", replace=False) -> None:
+def _add_1(spinham, alpha: int, parameter, units=None, replace=False) -> None:
     r"""
     Adds a (one spin & one site) parameter to the Hamiltonian.
 
@@ -80,12 +80,12 @@ def _add_1(spinham, alpha: int, parameter, units="meV", replace=False) -> None:
         ``0 <= alpha < len(spinham.atoms.names)``.
     parameter : (3, ) |array-like|_
         Value of the parameter (:math:`3\times1` vector). Given in the units of ``units``.
-    units : str, default "meV"
-        Units of the parameters. Parameters have the the units of energy. By default
-        magnopy stores the parameters in meV (milli electron-Volt). You can provide the
-        values in one of the supported input units and magnopy will convert the values to
-        :py:attr:`.SpinHamiltonian.units`. For the list of the supported units see
-        :py:attr:`.SpinHamiltonian.units`.
+    units : str, optional
+        Units in which the ``parameter`` is given. Parameters have the the units of energy.
+        By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
+        units see :py:attr:`.SpinHamiltonian.units`. If given ``units`` are different from
+        :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
+        automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
     replace : bool, default False
         Whether to replace the value of the parameter if an atom already has a
         parameter associated with it.
@@ -106,10 +106,10 @@ def _add_1(spinham, alpha: int, parameter, units="meV", replace=False) -> None:
 
     parameter = np.array(parameter)
 
-    # Convert units
-    parameter = _convert_units(
-        parameter=parameter, given_units=units, return_units="meV"
-    )
+    if units is not None:
+        parameter = parameter * _get_conversion_factor(
+            old_units=units, new_units=spinham.units
+        )
 
     # TD-BINARY_SEARCH
     # Try to find the place for the new one inside the list

@@ -22,9 +22,43 @@
 
 R"""Pre-defined conventions of spin Hamiltonian"""
 
+from magnopy._constants._si import (
+    BOLTZMANN_CONSTANT,
+    ELECTRON_VOLT,
+    JOULE,
+    KELVIN,
+    MILLI,
+    RYDBERG_ENERGY,
+    ERG,
+)
+
 _CONVENTIONS = {
     "tb2j": dict(multiple_counting=True, spin_normalized=True, c21=-1, c22=-1),
     "grogu": dict(multiple_counting=True, spin_normalized=True, c21=1, c22=0.5),
     "vampire": dict(multiple_counting=True, spin_normalized=True, c21=-1, c22=-0.5),
     "spinw": dict(multiple_counting=True, spin_normalized=False, c21=1, c22=1),
+}
+
+# Name : value when expressed in SI
+_SUPPORTED_UNITS = {
+    "mev": MILLI * ELECTRON_VOLT,
+    "joule": JOULE,
+    "j": JOULE,
+    "ry": RYDBERG_ENERGY,
+    "rydberg": RYDBERG_ENERGY,
+    "k": BOLTZMANN_CONSTANT * KELVIN,
+    "kelvin": BOLTZMANN_CONSTANT * KELVIN,
+    "erg": ERG,
+}
+
+# Name : Pretty name
+_SUPPORTED_UNITS_MAKEUP = {
+    "mev": "meV",
+    "joule": "Joule",
+    "j": "Joule",
+    "ry": "Rydberg",
+    "rydberg": "Rydberg",
+    "k": "Kelvin",
+    "kelvin": "Kelvin",
+    "erg": "Erg",
 }

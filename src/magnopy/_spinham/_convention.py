@@ -24,7 +24,7 @@ R"""
 Convention of spin Hamiltonian
 """
 
-from magnopy._constants._spinham_conventions import _CONVENTIONS
+from magnopy._constants._spinham_constants import _CONVENTIONS
 from magnopy._exceptions import ConventionError
 
 # Save local scope at this moment
