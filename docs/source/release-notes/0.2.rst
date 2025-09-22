@@ -12,7 +12,7 @@ Version 0.2
 Bugfix
 ------
 
-* Fix :issue:`55` (see also :issue:`65`).
+* Fix :issue:`55` (see also :PR:`65`).
 * Fix :issue:`66`.
 
 0.2.1
