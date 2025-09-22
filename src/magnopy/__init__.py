@@ -22,7 +22,7 @@
 
 __version__ = "0.2.2"
 __doclink__ = "magnopy.org"
-__release_date__ = "22 September 2025"
+__release_date__ = "Undefined"
 
 from . import examples, io, scenarios, experimental
 from ._constants import _si as si
