@@ -15,7 +15,8 @@
 **Useful links**:
 |issue-tracker|_ |
 :ref:`Cite <cite>` |
-:ref:`support`
+:ref:`support` |
+|magnopy-tutorials|_
 
 .. hint::
 

@@ -171,6 +171,7 @@ extlinks = {
 # Usage: |Python|_
 custom_links = {
     "Python": ("Python", "https://python.org"),
+    "numpy": ("numpy", "https://numpy.org/"),
     "Python-installation": (
         "Python installation",
         "https://wiki.python.org/moin/BeginnersGuide/Download",
@@ -258,6 +259,7 @@ custom_links = {
     ),
     "jupyter": ("jupyter lab or notebook", "https://jupyter.org/"),
     "matplotlib": ("matplotlib", "https://matplotlib.org/"),
+    "magnopy-tutorials": ("Tutorials", "https://tutorials.magnopy.org/en/latest/"),
 }
 rst_epilog += "\n".join(
     map(

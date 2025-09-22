@@ -11,10 +11,8 @@ Magnopy user guide
 
     installation
 
-Magnopy is a python library and to get the most of it it one need to use it as one.
-Nevertheless, we do not want to limit it accessability only to the ones who is familiar
-with python. For that purpose we introduce a number of the scripts that perform
-calculation with magnopy and can be executed as any other command line tool.
+Magnopy is a python library and can be installed as any python library. See the page above
+for more details.
 
 
 .. toctree::
@@ -25,7 +23,12 @@ calculation with magnopy and can be executed as any other command line tool.
     cli/magnopy-optimize-sd/index
     cli/magnopy-lswt/index
 
-The rest of the user guide describe how to use magnopy within python.
+Magnopy is a python library and to get the most of it one need to use it as one.
+Nevertheless, we do not want to limit it accessability only to users who is familiar
+with python. For that purpose we introduced a number of the scripts that perform
+calculation with magnopy and can be executed as any other command line tool. Please visit
+the one of the guides from above to read more about each script.
+
 
 .. toctree::
     :caption: How-to guides
@@ -33,8 +36,14 @@ The rest of the user guide describe how to use magnopy within python.
 
     how-to/index
 
-For the more in-deep understanding on how to use magnopy you can read the material below
-where we explain how different elements of magnopy python library can be used
+Full tutorials about magnopy are hosted on a separate web-site. Please visit
+|magnopy-tutorials|_ to go through the tutorials that were given about the code.
+
+In the pages above we provide simple guides on how to achieve a small well-define task
+within magnopy. Those "How to ..." guides are written based on the questions that users
+are asking about the code. If you do not see the how-to guide that answers your question,
+please do not hesitate to ask it via our :ref:`support` channels.
+
 
 .. toctree::
     :caption: Fundamentals and usage
@@ -48,12 +57,10 @@ where we explain how different elements of magnopy python library can be used
     usage/energy
     usage/lswt
 
+For the more in-deep understanding you can read the materials above where we explain
+a number of concepts, that helps to understand how magnopy can be used as a Python
+library.
 
-With any tool it is important to understand what it does exactly. Here we prepared some
-explanatory material about theory behind magnopy.
-
-First of all, at the heart of magnopy there is a spin Hamiltonian. In the pages below we
-explain how the Hamiltonian is defined and stored within magnopy.
 
 .. toctree::
     :caption: Theory behind
@@ -63,3 +70,6 @@ explain how the Hamiltonian is defined and stored within magnopy.
     theory-behind/convention-problem
     theory-behind/multiple-counting
     theory-behind/energy-minimization
+
+With any tool it is important to understand how it operates and what it does exactly. Here
+we prepared some explanatory material about theory behind magnopy.
