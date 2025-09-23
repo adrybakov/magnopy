@@ -24,7 +24,7 @@ import numpy as np
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
-from wulfric.cell import sc_get_example_cell
+from wulfric.cell import sc_get_example
 
 from magnopy import Convention, SpinHamiltonian
 
@@ -89,7 +89,7 @@ def test_raises():
 )
 @settings(deadline=1000)
 def test_R_cut(lattice_variation, R_cut):
-    cell = sc_get_example_cell(lattice_variation=lattice_variation)
+    cell = sc_get_example(lattice_variation=lattice_variation)
     atoms = dict(
         names=["Cr1", "Cr2"],
         spins=[3 / 2, 3 / 2],
@@ -120,7 +120,7 @@ def test_R_cut(lattice_variation, R_cut):
 )
 @settings(deadline=1000)
 def test_E_cut(lattice_variation, E_cut):
-    cell = sc_get_example_cell(lattice_variation=lattice_variation)
+    cell = sc_get_example(lattice_variation=lattice_variation)
     atoms = dict(
         names=["Cr1", "Cr2"],
         spins=[3 / 2, 3 / 2],

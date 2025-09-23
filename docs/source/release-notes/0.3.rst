@@ -1,0 +1,45 @@
+.. _release-notes_0.3:
+
+***********
+Version 0.3
+***********
+
+0.3.0
+=====
+
+**Date**: 23 September 2025
+
+Bugfix
+------
+
+* Fix :issue:`55` (see also :PR:`65`).
+* Fix :issue:`66`.
+* Implement logic for input and output units (:issue:`67`)
+
+  * ``magnopy.SpinHamiltonian.units``.
+  * ``units`` keyword in ``magnopy.SpinHamiltonian.add_1``,
+    ``magnopy.SpinHamiltonian.add_21``, ``magnopy.SpinHamiltonian.add_22``,
+    ``magnopy.SpinHamiltonian.add_31``, ``magnopy.SpinHamiltonian.add_32``,
+    ``magnopy.SpinHamiltonian.add_33``, ``magnopy.SpinHamiltonian.add_41``,
+    ``magnopy.SpinHamiltonian.add_421``, ``magnopy.SpinHamiltonian.add_422``,
+    ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.add_44``.
+  * ``units`` keyword in ``magnopy.Energy.E_0``, ``magnopy.Energy.gradient``,
+    ``magnopy.Energy.torque``.
+  * ``units`` keyword in ``magnopy.LSWT.E_2``, ``magnopy.LSWT.O``, ``magnopy.LSWT.A``,
+    ``magnopy.LSWT.B``, ``magnopy.LSWT.GDM``, ``magnopy.LSWT.diagonalize``,
+    ``magnopy.LSWT.omega``, ``magnopy.LSWT.delta``.
+  * ``units`` keyword in ``magnopy.multiprocess_over_k``.
+
+New features
+------------
+
+* Refactor and expose to public ``magnopy.si`` submodule that collects units of
+  International system of units (SI) and physical constants that are expressed in SI.
+* ``magnopy.experimental.plot_dispersion``
+* Second scale with eigenfrequiencies in THz for "OMEGAS.png" and "DELTAS.png" plots of
+  ``magnopy-lswt``.
+
+Deprecated
+----------
+
+* ``magnopy.io.plot_k_resolved``

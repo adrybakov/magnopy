@@ -22,11 +22,13 @@
 
 import numpy as np
 
-from magnopy._spinham._validators import (
+from magnopy._data_validation import (
     _spins_ordered,
     _validate_atom_index,
     _validate_unit_cell_index,
+    _validated_units,
 )
+from magnopy._constants._units import _PARAMETER_UNITS
 
 
 def _get_primary_p33(alpha, beta, gamma, nu, _lambda, parameter=None):
@@ -314,6 +316,7 @@ def _add_33(
     nu: tuple,
     _lambda: tuple,
     parameter,
+    units=None,
     replace=False,
 ) -> None:
     r"""
@@ -362,7 +365,16 @@ def _add_33(
             (x_{\boldsymbol{a}_1}, x_{\boldsymbol{a}_2}, x_{\boldsymbol{a}_3})
 
     parameter : (3, 3, 3) |array-like|_
-        Value of the parameter (:math:`3\times3\times3` matrix).
+        Value of the parameter (:math:`3\times3\times3` matrix). Given in the units of ``units``.
+    units : str, optional
+        Units in which the ``parameter`` is given. Parameters have the the units of energy.
+        By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
+        units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
+        :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
+        automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
+
+        .. versionadded:: 0.3.0
+
     replace : bool, default False
         Whether to replace the value of the parameter if the triplet of atoms
         ``alpha, beta, gamma, nu, lambda`` or one of its duplicates already have a
@@ -394,6 +406,12 @@ def _add_33(
     spinham._reset_internals()
 
     parameter = np.array(parameter)
+
+    if units is not None:
+        units = _validated_units(units=units, supported_units=_PARAMETER_UNITS)
+        parameter = (
+            parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
+        )
 
     alpha, beta, gamma, nu, _lambda, parameter = _get_primary_p33(
         alpha=alpha, beta=beta, gamma=gamma, nu=nu, _lambda=_lambda, parameter=parameter

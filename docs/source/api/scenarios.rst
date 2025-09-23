@@ -1,8 +1,8 @@
 .. _api_scenarios:
 
-*********
-scenarios
-*********
+*****************
+magnopy.scenarios
+*****************
 
 This module defines a set of complex calculations with the verbose input.
 It is used for the command line interface, mostly. However, it can be called from the

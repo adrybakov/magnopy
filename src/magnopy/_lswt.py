@@ -26,6 +26,10 @@ from magnopy._diagonalization import solve_via_colpa
 from magnopy._exceptions import ColpaFailed
 from magnopy._local_rf import span_local_rfs
 
+from magnopy._data_validation import _validated_units
+from magnopy._constants._units import _ENERGY_UNITS, _FREQ_UNITS
+
+
 # Save local scope at this moment
 old_dir = set(dir())
 old_dir.add("old_dir")
@@ -90,8 +94,10 @@ class LSWT:
 
         self.spins = np.array(spinham.magnetic_atoms.spins, dtype=float)
 
+        initial_units = spinham.units
         initial_convention = spinham.convention
 
+        spinham.units = "mev"
         spinham.convention = initial_convention.get_modified(
             spin_normalized=False, multiple_counting=True
         )
@@ -401,6 +407,7 @@ class LSWT:
                 * self.spins[epsilon]
             )
 
+        spinham.units = initial_units
         spinham.convention = initial_convention
 
         self.A1 = 0.5 * np.sum(self._J1 * self.z, axis=1)
@@ -426,10 +433,17 @@ class LSWT:
                 np.conjugate(self.p),
             )
 
-    @property
-    def E_2(self) -> float:
+    def E_2(self, units="meV") -> float:
         r"""
         Correction to the ground state energy that arises from the LSWT.
+
+        Parameters
+        ----------
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -443,16 +457,31 @@ class LSWT:
             >>> import magnopy
             >>> spinham = magnopy.examples.cubic_ferro_nn()
             >>> lswt = magnopy.LSWT(spinham=spinham, spin_directions=[[0, 0, 1]])
-            >>> lswt.E_2
+            >>> # Default units are meV
+            >>> lswt.E_2()
             -1.5
         """
 
-        return float(0.5 * np.sum(self._J1 * self.z))
+        result = float(0.5 * np.sum(self._J1 * self.z))
 
-    @property
-    def O(self):  # noqa E743
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
+            result = result * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
+
+        return result
+
+    def O(self, units="meV"):  # noqa E743
         r"""
         Coefficient before the one-operator terms.
+
+        Parameters
+        ----------
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -492,20 +521,27 @@ class LSWT:
             >>> import magnopy
             >>> spinham = magnopy.examples.cubic_ferro_nn()
             >>> lswt = magnopy.LSWT(spinham=spinham, spin_directions=[[0, 0, 1]])
-            >>> lswt.O
+            >>> lswt.O()
             array([0.+0.j])
         """
 
-        return np.einsum(
+        result = np.einsum(
             "a,ai,ai->a",
             np.sqrt(self.spins) / np.sqrt(2),
             np.conjugate(self.p),
             self._J1,
         )
 
-    def A(self, k, relative=False):
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
+            result = result * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
+
+        return result
+
+    def A(self, k, relative=False, units="meV"):
         r"""
-        Part of the Grand dynamical matrix.
+        Part of the grand dynamical matrix.
 
         Parameters
         ----------
@@ -515,6 +551,11 @@ class LSWT:
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -585,11 +626,16 @@ class LSWT:
 
         result = result - np.diag(self.A1)
 
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
+            result = result * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
+
         return result
 
-    def B(self, k, relative=False):
+    def B(self, k, relative=False, units="meV"):
         r"""
-        Part of the Grand dynamical matrix.
+        Part of the grand dynamical matrix.
 
         Parameters
         ----------
@@ -599,6 +645,11 @@ class LSWT:
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -667,11 +718,14 @@ class LSWT:
                 phase = k @ (nu @ self.cell)
             result = result + self.B2[nu] * np.exp(1j * phase)
 
-        result = result
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
+            result = result * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
 
         return result
 
-    def GDM(self, k, relative=False):
+    def GDM(self, k, relative=False, units="meV"):
         r"""
         Grand dynamical matrix.
 
@@ -683,6 +737,11 @@ class LSWT:
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -753,10 +812,10 @@ class LSWT:
 
         k = np.array(k, dtype=float)
 
-        A = self.A(k=k, relative=relative)
-        A_m = self.A(k=-k, relative=relative)
+        A = self.A(k=k, relative=relative, units=units)
+        A_m = self.A(k=-k, relative=relative, units=units)
 
-        B = self.B(k=k, relative=relative)
+        B = self.B(k=k, relative=relative, units=units)
 
         left = np.concatenate((A, np.conjugate(B).T), axis=0)
         right = np.concatenate((B, np.conjugate(A_m)), axis=0)
@@ -764,7 +823,7 @@ class LSWT:
 
         return gdm
 
-    def diagonalize(self, k, relative=False):
+    def diagonalize(self, k, relative=False, units="meV"):
         r"""
         Diagonalize the Hamiltonian for the given ``k`` point and return all possible
         quantities at once.
@@ -777,15 +836,21 @@ class LSWT:
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
+            full list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
         omegas : (M, ) :numpy:`ndarray`
-            Array of omegas. Note, that data type is complex. If the ground state is correct,
-            then the complex part should be zero.
+            Array of omegas. Note, that data type is complex. If the ground state is
+            correct, then the complex part should be zero.
         delta : float
-            Constant energy term that results from diagonalization. Note, that data type is complex. If the ground state is correct,
-            then the complex part should be zero.
+            Constant energy term that results from diagonalization. Note, that data type
+            is complex. If the ground state is correct, then the complex part should be
+            zero.
         G : (M, 2M) :numpy:`ndarray`
             Transformation matrix from the original boson operators.
 
@@ -854,11 +919,16 @@ class LSWT:
                         [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
                     )
 
-        # Sort by energy values
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_FREQ_UNITS)
+            E_plus = E_plus * _FREQ_UNITS["mev"] / _FREQ_UNITS[units]
+            E_minus = E_minus * _FREQ_UNITS["mev"] / _FREQ_UNITS[units]
 
         energies = E_plus[: self.M] + E_minus[self.M :]
         transformation_matrices = G_plus[: self.M]
 
+        # Sort by energy values
         sorting_indices = np.argsort(energies)
 
         return (
@@ -867,7 +937,7 @@ class LSWT:
             transformation_matrices[sorting_indices],
         )
 
-    def omega(self, k, relative=False):
+    def omega(self, k, relative=False, units="meV"):
         r"""
         Parameters
         ----------
@@ -877,6 +947,11 @@ class LSWT:
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
+            full list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -901,9 +976,9 @@ class LSWT:
             array([2.+0.j])
         """
 
-        return self.diagonalize(k=k, relative=relative)[0]
+        return self.diagonalize(k=k, relative=relative, units=units)[0]
 
-    def delta(self, k, relative=False):
+    def delta(self, k, relative=False, units="meV"):
         r"""
         Constant energy term of the diagonalized Hamiltonian.
 
@@ -919,6 +994,11 @@ class LSWT:
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
+            full list of supported units.
+
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -942,7 +1022,7 @@ class LSWT:
             >>> lswt.delta(k=[0, 0, 0.5], relative=True)
             0j
         """
-        return self.diagonalize(k=k, relative=relative)[1]
+        return self.diagonalize(k=k, relative=relative, units=units)[1]
 
     def G(self, k, relative=False):
         r"""

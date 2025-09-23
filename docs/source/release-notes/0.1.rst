@@ -7,6 +7,9 @@ Version 0.1
 .. warning::
     We recommend to update from this version of magnopy.
 
+    We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
+    this version of magnopy.
+
 
 0.1.9
 =====

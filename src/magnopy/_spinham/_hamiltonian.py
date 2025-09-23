@@ -39,6 +39,11 @@ from magnopy._spinham._c421 import _add_421, _p421, _remove_421
 from magnopy._spinham._c422 import _add_422, _p422, _remove_422
 from magnopy._spinham._convention import Convention
 
+from magnopy._data_validation import _validated_units
+
+from magnopy._constants._units import _PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP
+from magnopy._constants._si import BOHR_MAGNETON, ANGSTROM, VACUUM_MAGNETIC_PERMEABILITY
+
 # Save local scope at this moment
 old_dir = set(dir())
 old_dir.add("old_dir")
@@ -111,6 +116,11 @@ class SpinHamiltonian:
         Matrix of a cell, rows are interpreted as vectors.
     atoms : dict
         Dictionary with atoms.
+    units : str, default "meV"
+        Units of the parameters of the Hamiltonian. See :py:attr:`.SpinHamiltonian.units`
+        for more details. Case-insensitive.
+
+        .. versionadded:: 0.3.0
 
     Examples
     --------
@@ -120,7 +130,7 @@ class SpinHamiltonian:
 
     """
 
-    def __init__(self, cell, atoms, convention) -> None:
+    def __init__(self, cell, atoms, convention, units="meV") -> None:
         self._cell = np.array(cell)
 
         self._atoms = add_sugar(atoms)
@@ -131,6 +141,14 @@ class SpinHamiltonian:
         self._map_to_all = None
 
         self._convention = convention
+
+        if units.lower() not in _PARAMETER_UNITS:
+            raise ValueError(
+                f'Given units ("{units}") are not supported. Please use one of\n  * '
+                + "\n  * ".join(list(_PARAMETER_UNITS))
+            )
+
+        self._units = units.lower()
 
         # [[alpha, parameter], ...]
         self._1 = []
@@ -444,7 +462,7 @@ class SpinHamiltonian:
         return len(self.magnetic_atoms.names)
 
     ############################################################################
-    #                          Convention properties                           #
+    #                                Convention                                #
     ############################################################################
     @property
     def convention(self) -> Convention:
@@ -489,7 +507,7 @@ class SpinHamiltonian:
 
         if self.convention.multiple_counting == multiple_counting:
             return
-            
+
         # It was absent before
         if multiple_counting:
             factor = 0.5
@@ -519,7 +537,7 @@ class SpinHamiltonian:
         # It was present before
         else:
             factor = 6
-            
+
         # For (three spins & three sites)
         for index in range(len(self._33)):
             self._33[index][5] = self._33[index][5] * factor
@@ -849,6 +867,85 @@ class SpinHamiltonian:
             self._44[index][7] = self._44[index][7] * self.convention.c44 / new_c44
 
     ############################################################################
+    #                                   Units                                  #
+    ############################################################################
+    @property
+    def units(self) -> str:
+        r"""
+        Units of the Hamiltonian's parameters.
+
+        .. versionadded:: 0.3.0
+
+        The parameters of the Hamiltonian are stored in some units of energy (or
+        energy-like).
+
+        When user adds a parameters to the Hamiltonian (i. e.
+        :py:meth:`.SpinHamiltonian.add_21`, ...) the ``parameter`` argument is understood
+        to be given in the units of :py:attr:`.SpinHamiltonian.units`.
+
+        By default the Hamiltonian stores and expects parameters in "meV", but the user
+        can choose out of the list of the supported units. See
+        :ref:`user-guide_usage_units_parameter-units` for the full list of supported units.
+
+        When Hamiltonian already has some parameters in it, then the change of
+        :py:attr:`.SpinHamiltonian.units` will convert all parameter to the new units.
+        The parameters that the user tries to add afterwards are expected to be in the new
+        units already.
+
+
+        See Also
+        --------
+        :ref:`user-guide_usage_units`
+        """
+
+        return _PARAMETER_UNITS_MAKEUP[self._units]
+
+    @units.setter
+    def units(self, new_units: str):
+        new_units = _validated_units(units=new_units, supported_units=_PARAMETER_UNITS)
+
+        conversion_factor = _PARAMETER_UNITS[self._units] / _PARAMETER_UNITS[new_units]
+
+        # One-site parameters
+        for index in range(len(self._1)):
+            self._1[index][1] = self._1[index][1] * conversion_factor
+
+        for index in range(len(self._21)):
+            self._21[index][1] = self._21[index][1] * conversion_factor
+
+        for index in range(len(self._31)):
+            self._31[index][1] = self._31[index][1] * conversion_factor
+
+        for index in range(len(self._41)):
+            self._41[index][1] = self._41[index][1] * conversion_factor
+
+        # Two-sites parameters
+        for index in range(len(self._22)):
+            self._22[index][3] = self._22[index][3] * conversion_factor
+
+        for index in range(len(self._32)):
+            self._32[index][3] = self._32[index][3] * conversion_factor
+
+        for index in range(len(self._421)):
+            self._421[index][3] = self._421[index][3] * conversion_factor
+
+        for index in range(len(self._422)):
+            self._422[index][3] = self._422[index][3] * conversion_factor
+
+        # Three-sites parameters
+        for index in range(len(self._33)):
+            self._33[index][5] = self._33[index][5] * conversion_factor
+
+        for index in range(len(self._43)):
+            self._43[index][5] = self._43[index][5] * conversion_factor
+
+        # Four-sites parameters
+        for index in range(len(self._44)):
+            self._44[index][7] = self._44[index][7] * conversion_factor
+
+        self._units = new_units.lower()
+
+    ############################################################################
     #                          External magnetic field                         #
     ############################################################################
     def add_magnetic_field(self, h, alphas=None) -> None:
@@ -899,13 +996,13 @@ class SpinHamiltonian:
 
         h = np.array(h, dtype=float)
 
-        BOHR_MAGNETON = 0.057883818060  # meV / Tesla
+        mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
 
         if alphas is None:
             alphas = self.map_to_all
 
         zeeman_parameters = [
-            BOHR_MAGNETON * self.atoms.g_factors[alpha] * h / self.convention.c1
+            mu_B * self.atoms.g_factors[alpha] * h / self.convention.c1
             for alpha in alphas
         ]
 
@@ -1050,8 +1147,11 @@ class SpinHamiltonian:
         """
         # Constants
         MU_0_MU_B = (
-            1.256637061 * 9.2740100657**2 * 6.241509074 / 1000
-        )  # meV * Angstrom^3
+            VACUUM_MAGNETIC_PERMEABILITY
+            * BOHR_MAGNETON**2
+            / ANGSTROM**3
+            / _PARAMETER_UNITS[self._units]
+        )  # spinham.units * Angstrom^3
 
         if E_cut is None and R_cut is None:
             raise ValueError("Expected either E_cut or R_cut, got neither.")
@@ -1160,7 +1260,7 @@ class SpinHamiltonian:
 
     def get_empty(self):
         r"""
-        Returns the Hamiltonian with the same cell, atoms and convention, but with no
+        Returns the Hamiltonian with the same cell, atoms, units and convention, but with no
         parameters present.
 
         Returns
@@ -1175,7 +1275,10 @@ class SpinHamiltonian:
         """
 
         return SpinHamiltonian(
-            cell=self.cell, atoms=self.atoms, convention=self.convention
+            cell=self.cell,
+            atoms=self.atoms,
+            convention=self.convention,
+            units=self.units,
         )
 
     ############################################################################
@@ -1264,6 +1367,10 @@ class SpinHamiltonian:
                 "summation is not supported."
             )
 
+        # Make sure that units are the same
+        other_units = other.units
+        other.units = self.units
+
         # Make sure that conventions are the same
         other_convention = other.convention
         other.convention = self.convention
@@ -1288,6 +1395,9 @@ class SpinHamiltonian:
         result._422 = _merge(list1=self._422, list2=other._422)
         result._43 = _merge(list1=self._43, list2=other._43)
         result._44 = _merge(list1=self._44, list2=other._44)
+
+        # Restore units of other Hamiltonian
+        other.units = other_units
 
         # Restore convention of other Hamiltonian
         other.convention = other_convention

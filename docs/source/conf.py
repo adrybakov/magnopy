@@ -159,6 +159,7 @@ del frozen_locals
 extlinks = {
     "DOI": ("https://doi.org/%s", "DOI: %s"),
     "issue": ("https://github.com/magnopy/magnopy/issues/%s", "issue #%s"),
+    "PR": ("https://github.com/magnopy/magnopy/pull/%s", "PR #%s"),
     "numpy": (
         "https://numpy.org/doc/stable/reference/generated/numpy.%s.html",
         "numpy.%s",

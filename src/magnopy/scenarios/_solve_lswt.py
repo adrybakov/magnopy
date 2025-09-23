@@ -29,7 +29,7 @@ from magnopy._energy import Energy
 from magnopy._lswt import LSWT
 from magnopy._package_info import logo
 from magnopy._parallelization import multiprocess_over_k
-from magnopy.io._k_resolved import plot_k_resolved
+from magnopy.experimental import plot_dispersion
 from magnopy._plotly_engine import PlotlyEngine
 
 try:
@@ -387,15 +387,15 @@ def solve_lswt(
 
     # Output correction energy
     print(
-        f"{'Correction to the classic ground state energy (E_2)':<50} is {lswt.E_2:>15.6f} meV\n"
+        f"{'Correction to the classic ground state energy (E_2)':<50} is {lswt.E_2():>15.6f} meV\n"
     )
 
     # Output one-operator coefficients
     print(
         "Coefficients before one-operator terms (shall be zero if the ground state is correct)"
     )
-    print("  " + "\n  ".join([f"{o:12.8f}" for o in lswt.O]))
-    if not np.allclose(lswt.O, np.zeros(lswt.O.shape)):
+    print("  " + "\n  ".join([f"{o:12.8f}" for o in lswt.O()]))
+    if not np.allclose(lswt.O(), np.zeros(lswt.O().shape)):
         all_good = False
         print(f"\n{'  WARNING  ':!^90}")
         print(
@@ -434,11 +434,11 @@ def solve_lswt(
     # Plot omegas as a .png
     filename = filename[:-4] + ".png"
     # TODO: REFACTOR
-    plot_k_resolved(
+    plot_dispersion(
         data=omegas.real,
         kp=kp,
         output_filename=filename,
-        ylabel=R"$\omega_{\alpha}(\boldsymbol{k})$, meV",
+        ylabel=R"$\omega_{\alpha}(\boldsymbol{k})$",
     )
     print(f"Plot is saved in file\n  {envelope_path(filename)}")
 
@@ -463,11 +463,11 @@ def solve_lswt(
 
         filename = filename[:-4] + ".png"
         # TODO: REFACTOR
-        plot_k_resolved(
+        plot_dispersion(
             data=omegas.imag,
             kp=kp,
             output_filename=filename,
-            ylabel=R"$\mathcal{Im}(\omega_{\alpha}(\boldsymbol{k}))$, meV",
+            ylabel=R"$\mathcal{Im}(\omega_{\alpha}(\boldsymbol{k}))$",
         )
         print(f"Plot of imaginary part is saved in file\n  {envelope_path(filename)}")
         print(f"{'  END OF WARNING  ':!^90}\n")
@@ -480,11 +480,11 @@ def solve_lswt(
     # Plot deltas as a .png
     filename = filename[:-4] + ".png"
     # TODO: REFACTOR
-    plot_k_resolved(
+    plot_dispersion(
         data=deltas.real,
         kp=kp,
         output_filename=filename,
-        ylabel=R"$\Delta(\boldsymbol{k})$, meV",
+        ylabel=R"$\Delta(\boldsymbol{k})$",
     )
     print(f"Plot is saved in file\n  {envelope_path(filename)}")
 

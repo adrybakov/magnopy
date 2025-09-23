@@ -24,7 +24,7 @@ R"""
 Convention of spin Hamiltonian
 """
 
-from magnopy._constants._spinham_conventions import _CONVENTIONS
+from magnopy._constants._conventions import _SPINHAM_CONVENTIONS
 from magnopy._exceptions import ConventionError
 
 # Save local scope at this moment
@@ -681,13 +681,13 @@ class Convention:
 
         name = name.lower()
 
-        if name not in _CONVENTIONS:
+        if name not in _SPINHAM_CONVENTIONS:
             raise ValueError(
                 f'"{name}" convention is undefined. Supported are\n - '
-                + "\n - ".join([f'"{key}"' for key in _CONVENTIONS])
+                + "\n - ".join([f'"{key}"' for key in _SPINHAM_CONVENTIONS])
             )
 
-        return Convention(name=name, **_CONVENTIONS[name])
+        return Convention(name=name, **_SPINHAM_CONVENTIONS[name])
 
     def get_modified(
         self,

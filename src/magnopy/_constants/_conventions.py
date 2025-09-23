@@ -18,3 +18,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # ================================ END LICENSE =================================
+
+_SPINHAM_CONVENTIONS = {
+    "tb2j": dict(multiple_counting=True, spin_normalized=True, c21=-1, c22=-1),
+    "grogu": dict(multiple_counting=True, spin_normalized=True, c21=1, c22=0.5),
+    "vampire": dict(multiple_counting=True, spin_normalized=True, c21=-1, c22=-0.5),
+    "spinw": dict(multiple_counting=True, spin_normalized=False, c21=1, c22=1),
+}

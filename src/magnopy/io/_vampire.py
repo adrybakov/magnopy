@@ -26,7 +26,7 @@ import numpy as np
 from wulfric.cell import get_params
 from wulfric.crystal import get_atom_species
 
-from magnopy._constants._internal_units import ENERGY
+from magnopy._constants._si import JOULE, ELECTRON_VOLT, MILLI
 from magnopy._package_info import logo
 from magnopy._parameters._p22 import to_dmi, to_symm_anisotropy
 from magnopy._spinham._convention import Convention
@@ -296,7 +296,7 @@ def dump_vampire_ucf(
                 J -= to_dmi(J, matrix_form=True)
             if not anisotropic:
                 J -= to_symm_anisotropy(J)
-        J = J * ENERGY
+        J = J * (MILLI * ELECTRON_VOLT) / JOULE
         text.append(
             f"{IID:<5} {alpha:>3} {alpha:>3}  {0:>2} {0:>2} {0:>2}  "
             f"{J[0][0]:{fmt}} {J[0][1]:{fmt}} {J[0][2]:{fmt}} "
@@ -319,7 +319,7 @@ def dump_vampire_ucf(
                 J -= to_symm_anisotropy(J)
         # print(alpha, beta, nu)
         # print(J, end="\n\n")
-        J = J * ENERGY
+        J = J * (MILLI * ELECTRON_VOLT) / JOULE
         r_alpha = np.array(spinham.magnetic_atoms.positions[alpha])
         r_beta = np.array(spinham.magnetic_atoms.positions[beta])
 

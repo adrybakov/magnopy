@@ -25,6 +25,10 @@ import warnings
 
 import numpy as np
 
+from magnopy._data_validation import _validated_units
+from magnopy._constants._units import _ENERGY_UNITS
+
+
 # Save local scope at this moment
 old_dir = set(dir())
 old_dir.add("old_dir")
@@ -180,17 +184,23 @@ class Energy:
         >>> sd1 = [[1, 0, 0]]
         >>> sd2 = [[0, 1, 0]]
         >>> sd3 = [[0, 0, 1]]
+        >>> # Default units are meV
         >>> energy(sd1), energy(sd2), energy(sd3)
         (-4.5, -4.5, -6.75)
+        >>> # You can request other units
+        >>> print(f"{energy(sd1, units='Joule'):.4e}")
+        -7.2098e-22
     """
 
     def __init__(self, spinham):
+        initial_units = spinham.units
         initial_convention = spinham.convention
 
         magnopy_convention = initial_convention.get_modified(
             spin_normalized=False, multiple_counting=True
         )
 
+        spinham.units = "meV"
         spinham.convention = magnopy_convention
 
         self.spins = np.array(spinham.magnetic_atoms.spins, dtype=float)
@@ -325,12 +335,15 @@ class Energy:
                 spinham.convention.c44 * parameter
             )
 
+        spinham.units = initial_units
         spinham.convention = initial_convention
 
-    def __call__(self, spin_directions, _normalize=True) -> float:
-        return self.E_0(spin_directions=spin_directions, _normalize=_normalize)
+    def __call__(self, spin_directions, units="meV", _normalize=True) -> float:
+        return self.E_0(
+            spin_directions=spin_directions, units=units, _normalize=_normalize
+        )
 
-    def E_0(self, spin_directions, _normalize=True) -> float:
+    def E_0(self, spin_directions, units="meV", _normalize=True) -> float:
         r"""
         Computes classical energy of the spin Hamiltonian.
 
@@ -341,6 +354,12 @@ class Energy:
             modulus is ignored. ``M`` is the amount of magnetic atoms in the
             Hamiltonian. The order of spin directions is the same as the order
             of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
+
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
             This parameter is technical and we do not recommend to use it at all.
@@ -348,7 +367,8 @@ class Energy:
         Returns
         -------
         E_0 : float
-            Classic energy of state with ``spin_directions``.
+            Classic energy of state with ``spin_directions``. Return in the units of
+            ``units``.
 
 
         Examples
@@ -397,6 +417,7 @@ class Energy:
             >>> sd1 = [[1, 0, 0]]
             >>> sd2 = [[0, 1, 0]]
             >>> sd3 = [[0, 0, 1]]
+            >>> # Default units are meV
             >>> energy.E_0(sd1), energy.E_0(sd2), energy.E_0(sd3)
             (-4.5, -4.5, -6.75)
             >>> # The command above is equivalent to
@@ -485,9 +506,14 @@ class Energy:
                 spins[epsilon],
             )
 
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
+            energy = energy * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
+
         return float(energy)
 
-    def gradient(self, spin_directions, _normalize=True):
+    def gradient(self, spin_directions, units="meV", _normalize=True):
         r"""
         Computes first derivatives of energy (:math:`E^{(0)}`) with respect to the
         components of the spin directional vectors.
@@ -499,6 +525,12 @@ class Energy:
             modulus is ignored. ``M`` is the amount of magnetic atoms in the
             Hamiltonian. The order of spin directions is the same as the order
             of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
+
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
             This parameter is technical and we do not recommend to use it at all.
@@ -637,9 +669,14 @@ class Energy:
                 * self.spins[epsilon]
             )
 
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
+            gradient = gradient * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
+
         return gradient
 
-    def torque(self, spin_directions, _normalize=True):
+    def torque(self, spin_directions, units="meV", _normalize=True):
         r"""
         Computes torque on each spin.
 
@@ -650,6 +687,12 @@ class Energy:
             modulus is ignored. ``M`` is the amount of magnetic atoms in the
             Hamiltonian. The order of spin directions is the same as the order
             of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+        units : str, default "meV"
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+
+            .. versionadded:: 0.3.0
+
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
             This parameter is technical and we do not recommend to use it at all.
@@ -664,7 +707,9 @@ class Energy:
         """
         return np.cross(
             spin_directions,
-            self.gradient(spin_directions=spin_directions, _normalize=_normalize),
+            self.gradient(
+                spin_directions=spin_directions, units=units, _normalize=_normalize
+            ),
         )
 
     def _zoom(
@@ -847,9 +892,9 @@ class Energy:
         initial_guess : (M, 3) or (3,) |array-like|_, optional
             Initial guess for the direction of the spin vectors.
         energy_tolerance : float, default 1e-5
-            Energy tolerance for the two consecutive steps of the optimization.
+            Energy tolerance for the two consecutive steps of the optimization. In the units of meV.
         torque_tolerance : float, default 1e-5
-            Torque tolerance for the two consecutive steps of the optimization.
+            Torque tolerance for the two consecutive steps of the optimization. In the units of meV.
         quiet : bool, default False
             Whether to suppress the output of the progress.
 

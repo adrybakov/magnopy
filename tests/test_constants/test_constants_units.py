@@ -18,13 +18,32 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # ================================ END LICENSE =================================
+import pytest
+
+from magnopy._constants._units import (
+    _PARAMETER_UNITS,
+    _PARAMETER_UNITS_MAKEUP,
+    _FREQ_UNITS,
+    _FREQ_UNITS_MAKEUP,
+    _ENERGY_UNITS,
+    _ENERGY_UNITS_MAKEUP,
+)
 
 
-R"""Pre-defined conventions of spin Hamiltonian"""
+@pytest.mark.parametrize(
+    "units, units_makeup",
+    [
+        (_PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP),
+        (_FREQ_UNITS, _FREQ_UNITS_MAKEUP),
+        (_ENERGY_UNITS, _ENERGY_UNITS_MAKEUP),
+    ],
+)
+def test_keys_and_values(units, units_makeup):
+    for key in units:
+        assert key in units_makeup
 
-_CONVENTIONS = {
-    "tb2j": dict(multiple_counting=True, spin_normalized=True, c21=-1, c22=-1),
-    "grogu": dict(multiple_counting=True, spin_normalized=True, c21=1, c22=0.5),
-    "vampire": dict(multiple_counting=True, spin_normalized=True, c21=-1, c22=-0.5),
-    "spinw": dict(multiple_counting=True, spin_normalized=False, c21=1, c22=1),
-}
+    for key in units_makeup:
+        assert key in units
+
+    for key in units_makeup:
+        assert units_makeup[key].lower() in units_makeup

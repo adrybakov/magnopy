@@ -22,7 +22,8 @@
 
 import numpy as np
 
-from magnopy._spinham._validators import _validate_atom_index
+from magnopy._data_validation import _validate_atom_index, _validated_units
+from magnopy._constants._units import _PARAMETER_UNITS
 
 
 @property
@@ -67,7 +68,7 @@ def _p1(spinham) -> list:
     return spinham._1
 
 
-def _add_1(spinham, alpha: int, parameter, replace=False) -> None:
+def _add_1(spinham, alpha: int, parameter, units=None, replace=False) -> None:
     r"""
     Adds a (one spin & one site) parameter to the Hamiltonian.
 
@@ -78,7 +79,16 @@ def _add_1(spinham, alpha: int, parameter, replace=False) -> None:
 
         ``0 <= alpha < len(spinham.atoms.names)``.
     parameter : (3, ) |array-like|_
-        Value of the parameter (:math:`3\times1` vector).
+        Value of the parameter (:math:`3\times1` vector). Given in the units of ``units``.
+    units : str, optional
+        Units in which the ``parameter`` is given. Parameters have the the units of energy.
+        By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
+        units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
+        :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
+        automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
+
+        .. versionadded:: 0.3.0
+
     replace : bool, default False
         Whether to replace the value of the parameter if an atom already has a
         parameter associated with it.
@@ -98,6 +108,12 @@ def _add_1(spinham, alpha: int, parameter, replace=False) -> None:
     spinham._reset_internals()
 
     parameter = np.array(parameter)
+
+    if units is not None:
+        units = _validated_units(units=units, supported_units=_PARAMETER_UNITS)
+        parameter = (
+            parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
+        )
 
     # TD-BINARY_SEARCH
     # Try to find the place for the new one inside the list

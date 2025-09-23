@@ -1,8 +1,8 @@
 .. _api_examples:
 
-*********
-examples
-*********
+****************
+magnopy.examples
+****************
 
 This module contains a collection of example Hamiltonian.
 

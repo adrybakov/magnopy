@@ -6,6 +6,10 @@ Version 0.2
 
 0.2.1
 =====
+.. warning::
+
+    We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
+    this version of magnopy.
 
 **Date** : 10 September 2025
 
@@ -20,8 +24,11 @@ Bugfix
 
 .. warning::
 
-  We do not recommend to use ``magnopy.experimental.plot_spinham`` of this version with
-  old (<2.*) of |numpy|_.
+    We do not recommend to use ``magnopy.experimental.plot_spinham`` of this version with
+    old (<2.*) of |numpy|_.
+
+    We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
+    this version of magnopy.
 
 **Date**: 10 September 2025
 
