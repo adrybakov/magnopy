@@ -131,7 +131,7 @@ def _spins_ordered(mu1, alpha1, mu2, alpha2) -> bool:
     return False
 
 
-def _validated_units(units, supported_units) -> None:
+def _validated_units(units, supported_units) -> str:
     r"""
     Validate that the units are supported.
 
@@ -142,14 +142,23 @@ def _validated_units(units, supported_units) -> None:
     supported_units : list
         ``list(supported_units)`` should be a list of str.
 
+    Returns
+    ----------
+    units : str
+        Name of the unit. Lowercase.
+
     Raises
     ------
     ValueError
         If ``units`` are not supported.
     """
 
+    units = units.lower()
+
     if units not in supported_units:
         raise ValueError(
             f'"{units}" units are not supported, please use one of\n  * '
             + "\n  * ".join(list(supported_units))
         )
+
+    return units

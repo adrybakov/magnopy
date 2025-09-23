@@ -27,7 +27,9 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
-def multiprocess_over_k(kpoints, function, relative=False, number_processors=None):
+def multiprocess_over_k(
+    kpoints, function, relative=False, units="meV", number_processors=None
+):
     r"""
     Parallelize calculation over the kpoints using |multiprocessing|_ module.
 
@@ -40,12 +42,18 @@ def multiprocess_over_k(kpoints, function, relative=False, number_processors=Non
 
         .. code-block:: python
 
-            result = function(kpoints[i], relative)
+            result = function(kpoints[i], relative, units)
 
     relative : bool, default False
         If ``relative=True``, then ``k`` is interpreted as given relative to the
         reciprocal unit cell. Otherwise it is interpreted as given in absolute
         coordinates.
+    units : str, default "meV"
+        Units of energy. See :py:attr:`.SpinHamiltonian.units` for the list of
+        supported units.
+
+        .. versionadded:: 0.2.2
+
     number_processors : int, optional
         By default magnopy uses all available processes. Pass ``number_processors=1`` to
         run in serial.
@@ -78,12 +86,13 @@ def multiprocess_over_k(kpoints, function, relative=False, number_processors=Non
     """
 
     relative = [relative for _ in kpoints]
+    units = [units for _ in kpoints]
 
     if number_processors == 1:
-        results = list(map(function, kpoints, relative))
+        results = list(map(function, kpoints, relative, units))
     else:
         with Pool(number_processors) as p:
-            results = p.starmap(function, zip(kpoints, relative))
+            results = p.starmap(function, zip(kpoints, relative, units))
 
     return results
 

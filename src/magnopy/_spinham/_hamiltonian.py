@@ -876,98 +876,16 @@ class SpinHamiltonian:
 
         .. versionadded:: 0.2.2
 
-        The parameters of the Hamiltonian are stored in some units of energy (or energy-like).
+        The parameters of the Hamiltonian are stored in some units of energy (or
+        energy-like).
 
-        When user adds a parameters to the Hamiltonian (i. e. :py:meth:`.SpinHamiltonian.add_21`, ...)
-        the ``parameter`` argument is understood to be given in the units of
-        :py:attr:`.SpinHamiltonian.units`.
+        When user adds a parameters to the Hamiltonian (i. e.
+        :py:meth:`.SpinHamiltonian.add_21`, ...) the ``parameter`` argument is understood
+        to be given in the units of :py:attr:`.SpinHamiltonian.units`.
 
-        By default the Hamiltonian is created with "meV" as the units for storage of the
-        parameters, but the user can choose out of the list of the supported units:
-
-        .. doctest::
-
-            >>> import magnopy
-            >>> meV = magnopy.si.MILLI * magnopy.si.ELECTRON_VOLT
-            >>> Joule = magnopy.si.JOULE
-            >>> Rydberg = magnopy.si.RYDBERG_ENERGY
-            >>> Kelvin = magnopy.si.BOLTZMANN_CONSTANT
-            >>> Erg = magnopy.si.ERG
-
-        *   meV
-
-            Keywords: "meV".
-
-            .. doctest::
-
-                >>> print(f"{meV / Joule:.8e} Joule in 1 meV")
-                1.60217663e-22 Joule in 1 meV
-                >>> print(f"{meV / Rydberg:.8e} Rydberg in 1 meV")
-                7.34986444e-05 Rydberg in 1 meV
-                >>> print(f"{meV / Kelvin:.7f} Kelvin in meV")
-                11.6045181 Kelvin in meV
-                >>> print(f"{meV / Erg:.8e} Erg in meV")
-                1.60217663e-15 Erg in meV
-
-        *   Joule
-
-            Keywords: "Joule" or "J".
-
-            .. doctest::
-
-                >>> print(f"{Joule / meV:.8e} meV in 1 Joule")
-                6.24150907e+21 meV in 1 Joule
-                >>> print(f"{Joule / Rydberg:.8e} Rydberg in 1 Joule")
-                4.58742456e+17 Rydberg in 1 Joule
-                >>> print(f"{Joule / Kelvin:.8e} Kelvin in Joule")
-                7.24297052e+22 Kelvin in Joule
-                >>> print(f"{Joule / Erg:.8e} Erg in Joule")
-                1.00000000e+07 Erg in Joule
-
-        *   Rydberg energy units
-
-            Keywords: "Ry" or "Rydberg".
-
-            .. doctest::
-
-                >>> print(f"{Rydberg / meV:.4f} meV in 1 Rydberg")
-                13605.6931 meV in 1 Rydberg
-                >>> print(f"{Rydberg / Joule:.8e} Joule in 1 Rydberg")
-                2.17987236e-18 Joule in 1 Rydberg
-                >>> print(f"{Rydberg / Kelvin:.3f} Kelvin in Rydberg")
-                157887.512 Kelvin in Rydberg
-                >>> print(f"{Rydberg / Erg:.8e} Erg in Rydberg")
-                2.17987236e-11 Erg in Rydberg
-
-        *   Kelvin
-
-            Keywords: "K" or "Kelvin". Conversion is made through the Boltzmann constant.
-
-            .. doctest::
-
-                >>> print(f"{Kelvin / meV:.8f} meV in 1 Kelvin")
-                0.08617333 meV in 1 Kelvin
-                >>> print(f"{Kelvin / Joule:.8e} Joule in 1 Kelvin")
-                1.38064900e-23 Joule in 1 Kelvin
-                >>> print(f"{Kelvin / Rydberg:.8e} Rydberg in 1 Kelvin")
-                6.33362313e-06 Rydberg in 1 Kelvin
-                >>> print(f"{Kelvin / Erg:.8e} Erg in 1 Kelvin")
-                1.38064900e-16 Erg in 1 Kelvin
-
-        *   Erg
-
-            Keywords: "erg".
-
-            .. doctest::
-
-                >>> print(f"{Erg / meV:.8e} meV in 1 Erg")
-                6.24150907e+14 meV in 1 Erg
-                >>> print(f"{Erg / Joule:.8e} Joule in 1 Erg")
-                1.00000000e-07 Joule in 1 Erg
-                >>> print(f"{Erg / Rydberg:.8e} Rydberg in 1 Erg")
-                4.58742456e+10 Rydberg in 1 Erg
-                >>> print(f"{Erg / Kelvin:.8e} Kelvin in 1 Erg")
-                7.24297052e+15 Kelvin in 1 Erg
+        By default the Hamiltonian stores and expects parameters in "meV", but the user
+        can choose out of the list of the supported units. See
+        :ref:`user-guide_usage_units_parameter-units` for the full list of supported units.
 
         When Hamiltonian already has some parameters in it, then the change of
         :py:attr:`.SpinHamiltonian.units` will convert all parameter to the new units.

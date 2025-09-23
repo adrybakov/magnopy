@@ -32,69 +32,6 @@ from magnopy._constants._si import (
 )
 from math import pi as PI
 
-################################################################################
-#                         Parameter of spinHamiltonian                         #
-################################################################################
-
-# Name : value when expressed in SI
-_PARAMETER_UNITS = {
-    "mev": MILLI * ELECTRON_VOLT,
-    "joule": JOULE,
-    "j": JOULE,
-    "ry": RYDBERG_ENERGY,
-    "rydberg": RYDBERG_ENERGY,
-    "k": BOLTZMANN_CONSTANT * KELVIN,
-    "kelvin": BOLTZMANN_CONSTANT * KELVIN,
-    "erg": ERG,
-}
-
-# Name : Pretty name
-_PARAMETER_UNITS_MAKEUP = {
-    "mev": "meV",
-    "joule": "Joule",
-    "j": "Joule",
-    "ry": "Rydberg",
-    "rydberg": "Rydberg",
-    "k": "Kelvin",
-    "kelvin": "Kelvin",
-    "erg": "Erg",
-}
-
-################################################################################
-#                              Magnon frequencies                              #
-################################################################################
-
-# Name : value when expressed in SI
-_FREQ_UNITS = {
-    "mev": MILLI * ELECTRON_VOLT,
-    "joule": JOULE,
-    "j": JOULE,
-    "ry": RYDBERG_ENERGY,
-    "rydberg": RYDBERG_ENERGY,
-    "erg": ERG,
-    "hertz": 2 * PI * PLANCK_CONSTANT,
-    "hz": 2 * PI * PLANCK_CONSTANT,
-    "giga-hertz": 2 * PI * PLANCK_CONSTANT * GIGA,
-    "ghz": 2 * PI * PLANCK_CONSTANT * GIGA,
-    "tera-hertz": 2 * PI * PLANCK_CONSTANT * TERA,
-    "thz": 2 * PI * PLANCK_CONSTANT * TERA,
-}
-
-# Name : Pretty name
-_FREQ_UNITS_MAKEUP = {
-    "mev": "meV",
-    "joule": "Joule",
-    "j": "Joule",
-    "ry": "Rydberg",
-    "rydberg": "Rydberg",
-    "erg": "Erg",
-    "hertz": "Hz",
-    "hz": "Hz",
-    "giga-hertz": "GHz",
-    "ghz": "GHz",
-    "tera-hertz": "THz",
-    "thz": "THz",
-}
 
 ################################################################################
 #                                    Energy                                    #
@@ -121,3 +58,43 @@ _ENERGY_UNITS_MAKEUP = {
     "rydberg": "Rydberg",
     "erg": "Erg",
 }
+
+################################################################################
+#                         Parameter of spin Hamiltonian                        #
+################################################################################
+
+# Name : value when expressed in SI
+_PARAMETER_UNITS = {key: _ENERGY_UNITS[key] for key in _ENERGY_UNITS}
+_PARAMETER_UNITS["k"] = BOLTZMANN_CONSTANT * KELVIN
+_PARAMETER_UNITS["kelvin"] = BOLTZMANN_CONSTANT * KELVIN
+
+
+# Name : Pretty name
+_PARAMETER_UNITS_MAKEUP = {
+    key: _ENERGY_UNITS_MAKEUP[key] for key in _ENERGY_UNITS_MAKEUP
+}
+_PARAMETER_UNITS_MAKEUP["k"] = "Kelvin"
+_PARAMETER_UNITS_MAKEUP["kelvin"] = "Kelvin"
+
+################################################################################
+#                              Magnon frequencies                              #
+################################################################################
+
+# Name : value when expressed in SI
+_FREQ_UNITS = {key: _ENERGY_UNITS[key] for key in _ENERGY_UNITS}
+_FREQ_UNITS["hertz"] = 2 * PI * PLANCK_CONSTANT
+_FREQ_UNITS["hz"] = 2 * PI * PLANCK_CONSTANT
+_FREQ_UNITS["giga-hertz"] = 2 * PI * PLANCK_CONSTANT * GIGA
+_FREQ_UNITS["ghz"] = 2 * PI * PLANCK_CONSTANT * GIGA
+_FREQ_UNITS["tera-hertz"] = 2 * PI * PLANCK_CONSTANT * TERA
+_FREQ_UNITS["thz"] = 2 * PI * PLANCK_CONSTANT * TERA
+
+
+# Name : Pretty name
+_FREQ_UNITS_MAKEUP = {key: _ENERGY_UNITS_MAKEUP[key] for key in _ENERGY_UNITS_MAKEUP}
+_FREQ_UNITS_MAKEUP["hertz"] = "Hz"
+_FREQ_UNITS_MAKEUP["hz"] = "Hz"
+_FREQ_UNITS_MAKEUP["giga-hertz"] = "GHz"
+_FREQ_UNITS_MAKEUP["ghz"] = "GHz"
+_FREQ_UNITS_MAKEUP["tera-hertz"] = "THz"
+_FREQ_UNITS_MAKEUP["thz"] = "THz"

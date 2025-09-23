@@ -52,18 +52,18 @@ Once created, it can be used to access the properties of the LSWT Hamiltonian
 K-independent properties
 ========================
 
-Correction to the energy (:py:attr:`.LSWT.E_2`)
+Correction to the energy (:py:meth:`.LSWT.E_2`)
 
 .. doctest::
 
-    >>> lswt.E_2
+    >>> lswt.E_2()
     -12.5
 
-Coefficients before the one-operator terms (:py:attr:`.LSWT.O`)
+Coefficients before the one-operator terms (:py:meth:`.LSWT.O`)
 
 .. doctest::
 
-    >>> lswt.O
+    >>> lswt.O()
     array([0.+0.j])
 
 K-dependant properties

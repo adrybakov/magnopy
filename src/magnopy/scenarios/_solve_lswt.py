@@ -387,15 +387,15 @@ def solve_lswt(
 
     # Output correction energy
     print(
-        f"{'Correction to the classic ground state energy (E_2)':<50} is {lswt.E_2:>15.6f} meV\n"
+        f"{'Correction to the classic ground state energy (E_2)':<50} is {lswt.E_2():>15.6f} meV\n"
     )
 
     # Output one-operator coefficients
     print(
         "Coefficients before one-operator terms (shall be zero if the ground state is correct)"
     )
-    print("  " + "\n  ".join([f"{o:12.8f}" for o in lswt.O]))
-    if not np.allclose(lswt.O, np.zeros(lswt.O.shape)):
+    print("  " + "\n  ".join([f"{o:12.8f}" for o in lswt.O()]))
+    if not np.allclose(lswt.O(), np.zeros(lswt.O().shape)):
         all_good = False
         print(f"\n{'  WARNING  ':!^90}")
         print(

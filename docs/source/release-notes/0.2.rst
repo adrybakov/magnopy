@@ -23,7 +23,8 @@ Bugfix
     ``magnopy.SpinHamiltonian.add_33``, ``magnopy.SpinHamiltonian.add_41``,
     ``magnopy.SpinHamiltonian.add_421``, ``magnopy.SpinHamiltonian.add_422``,
     ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.add_44``.
-  * ``units`` keyword in ``magnopy.Energy.E_0``, ``magnopy.Energy.gradient``.
+  * ``units`` keyword in ``magnopy.Energy.E_0``, ``magnopy.Energy.gradient``,
+    ``magnopy.Energy.torque``.
   * ``units`` keyword in ``magnopy.LSWT.E_2``, ``magnopy.LSWT.O``, ``magnopy.LSWT.A``,
     ``magnopy.LSWT.B``, ``magnopy.LSWT.GDM``, ``magnopy.LSWT.diagonalize``,
     ``magnopy.LSWT.omega``, ``magnopy.LSWT.delta``.

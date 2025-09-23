@@ -83,7 +83,7 @@ def _add_1(spinham, alpha: int, parameter, units=None, replace=False) -> None:
     units : str, optional
         Units in which the ``parameter`` is given. Parameters have the the units of energy.
         By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
-        units see :py:attr:`.SpinHamiltonian.units`. If given ``units`` are different from
+        units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
 
