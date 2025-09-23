@@ -135,11 +135,8 @@ and support a number of energy-like units.
 
 .. note::
 
-    Boltzmann constant is used for conversion, i.e.
-
-    .. math::
-
-        E = k_B\cdot T
+    Temperature scale and energy scale are connected via Boltzmann constant
+    :math:`E = k_B\cdot T`.
 
 .. hint::
     To check what units are hardcoded in magnopy's source code one can use the trick:
@@ -211,11 +208,8 @@ list of supported units is extended by the frequency units.
 
 .. note::
 
-    Planck constant is used for conversion, i.e.
-
-    .. math::
-
-        E = h\cdot f
+    Frequencies scale and energy scale are connected via Planck constant
+    :math:`E = h\cdot f`.
 
 .. hint::
     To check what units are hardcoded in magnopy's source code one can use the trick:
