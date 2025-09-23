@@ -22,8 +22,8 @@
 
 import numpy as np
 
-from magnopy._spinham._validators import _validate_atom_index
-from magnopy._spinham._units import _get_conversion_factor
+from magnopy._data_validation import _validate_atom_index, _validated_units
+from magnopy._constants._units import _PARAMETER_UNITS
 
 
 @property
@@ -113,8 +113,9 @@ def _add_41(spinham, alpha: int, parameter, units=None, replace=False) -> None:
     parameter = np.array(parameter)
 
     if units is not None:
-        parameter = parameter * _get_conversion_factor(
-            old_units=units, new_units=spinham.units
+        units = _validated_units(units=units, supported_units=_PARAMETER_UNITS)
+        parameter = (
+            parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
         )
 
     # TD-BINARY_SEARCH

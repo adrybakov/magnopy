@@ -22,12 +22,13 @@
 
 import numpy as np
 
-from magnopy._spinham._validators import (
+from magnopy._data_validation import (
     _spins_ordered,
     _validate_atom_index,
     _validate_unit_cell_index,
+    _validated_units,
 )
-from magnopy._spinham._units import _get_conversion_factor
+from magnopy._constants._units import _PARAMETER_UNITS
 
 
 def _get_primary_p421(alpha, beta, nu, parameter=None, S_alpha=None, S_beta=None):
@@ -243,8 +244,9 @@ def _add_421(
     parameter = np.array(parameter)
 
     if units is not None:
-        parameter = parameter * _get_conversion_factor(
-            old_units=units, new_units=spinham.units
+        units = _validated_units(units=units, supported_units=_PARAMETER_UNITS)
+        parameter = (
+            parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
         )
 
     alpha, beta, nu, parameter = _get_primary_p421(

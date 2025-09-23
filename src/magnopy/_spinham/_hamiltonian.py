@@ -38,11 +38,10 @@ from magnopy._spinham._c44 import _add_44, _p44, _remove_44
 from magnopy._spinham._c421 import _add_421, _p421, _remove_421
 from magnopy._spinham._c422 import _add_422, _p422, _remove_422
 from magnopy._spinham._convention import Convention
-from magnopy._spinham._units import _get_conversion_factor
-from magnopy._constants._spinham_constants import (
-    _SUPPORTED_UNITS,
-    _SUPPORTED_UNITS_MAKEUP,
-)
+
+from magnopy._data_validation import _validated_units
+
+from magnopy._constants._units import _PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP
 from magnopy._constants._si import BOHR_MAGNETON, ANGSTROM, VACUUM_MAGNETIC_PERMEABILITY
 
 # Save local scope at this moment
@@ -143,10 +142,10 @@ class SpinHamiltonian:
 
         self._convention = convention
 
-        if units.lower() not in _SUPPORTED_UNITS:
+        if units.lower() not in _PARAMETER_UNITS:
             raise ValueError(
                 f'Given units ("{units}") are not supported. Please use one of\n  * '
-                + "\n  * ".join(list(_SUPPORTED_UNITS))
+                + "\n  * ".join(list(_PARAMETER_UNITS))
             )
 
         self._units = units.lower()
@@ -981,13 +980,13 @@ class SpinHamiltonian:
         :ref:`user-guide_usage_units`
         """
 
-        return _SUPPORTED_UNITS_MAKEUP[self._units]
+        return _PARAMETER_UNITS_MAKEUP[self._units]
 
     @units.setter
     def units(self, new_units: str):
-        conversion_factor = _get_conversion_factor(
-            old_units=self._units, new_units=new_units
-        )
+        new_units = _validated_units(units=new_units, supported_units=_PARAMETER_UNITS)
+
+        conversion_factor = _PARAMETER_UNITS[self._units] / _PARAMETER_UNITS[new_units]
 
         # One-site parameters
         for index in range(len(self._1)):
@@ -1079,7 +1078,7 @@ class SpinHamiltonian:
 
         h = np.array(h, dtype=float)
 
-        mu_B = BOHR_MAGNETON / _SUPPORTED_UNITS[self._units]  # spinham.units / Tesla
+        mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
 
         if alphas is None:
             alphas = self.map_to_all
@@ -1233,7 +1232,7 @@ class SpinHamiltonian:
             VACUUM_MAGNETIC_PERMEABILITY
             * BOHR_MAGNETON**2
             / ANGSTROM**3
-            / _SUPPORTED_UNITS[self._units]
+            / _PARAMETER_UNITS[self._units]
         )  # spinham.units * Angstrom^3
 
         if E_cut is None and R_cut is None:
