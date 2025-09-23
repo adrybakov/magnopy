@@ -17,3 +17,4 @@ authors if you use any of those features (see :ref:`support`).
 
     plot_spinham
     change_cell
+    plot_dispersion

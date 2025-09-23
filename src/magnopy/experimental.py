@@ -25,6 +25,25 @@ from wulfric.crystal import get_vector
 from magnopy._parameters._p22 import to_dmi, to_iso
 from magnopy._spinham._hamiltonian import SpinHamiltonian
 
+try:
+    import matplotlib.pyplot as plt
+
+    MATPLOTLIB_AVAILABLE = True
+    MATPLOTLIB_ERROR_MESSAGE = "If you see this message, please contact developers of the code (see magnopy.org)."
+except ImportError:
+    MATPLOTLIB_AVAILABLE = False
+    MATPLOTLIB_ERROR_MESSAGE = "\n".join(
+        [
+            "Installation of matplotlib is not found, can not produce .png files",
+            "Please install matplotlib with",
+            "",
+            "    pip install matplotlib",
+            "",
+        ]
+    )
+
+from magnopy._constants._units import _FREQ_UNITS
+
 
 def plot_spinham(
     spinham,
@@ -512,3 +531,97 @@ def change_cell(spinham, new_cell, new_atoms_specs):
             )
 
     return new_spinham
+
+
+def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
+    r"""
+    Plot some k-resolved data.
+
+    If only the ``data`` are given, then an index of the omegas is used for abscissa (x
+    axis).
+
+    Parameters
+    ----------
+    data : (N, M) |array-like|_
+        Some k-resolved data. N (:math:`\ge 1`) is the amount of kpoints. M is the
+        number of data modes/entries.  Expected to be given in meV.
+    kp : :py:class:`wulfric.Kpoints`, optional.
+        Instance of the :py:class:`wulfric.Kpoints` class. It should be the same
+        instance that were used in the preparation of the ``data``.
+    output_filename : str, optional
+        Name of the file for saving the image. If ``None``, then the graph would be
+        opened in the interactive matplotlib window.
+    ylabel : str, optional
+        Label for the ordinate (y axis). Do not include units, units are included automatically.
+    """
+
+    if not MATPLOTLIB_AVAILABLE:
+        import warnings
+
+        warnings.warn(MATPLOTLIB_ERROR_MESSAGE, RuntimeWarning)
+
+        return
+
+    data = np.array(data).T
+
+    fig, ax = plt.subplots()
+
+    if len(data.shape) == 2:
+        for entry in data:
+            if kp is not None:
+                ax.plot(kp.flat_points(), entry, lw=1, color="#A47864")
+            else:
+                ax.plot(entry, lw=1, color="#A47864")
+                ax.set_xlim(0, len(entry))
+    else:
+        if kp is not None:
+            ax.plot(kp.flat_points(), data, lw=1, color="#A47864")
+        else:
+            ax.plot(data, lw=1, color="#A47864")
+            ax.set_xlim(0, len(data))
+
+    if kp is not None:
+        ax.set_xticks(kp.ticks(), kp.labels, fontsize=13)
+        ax.set_xlim(kp.ticks()[0], kp.ticks()[-1])
+        ax.vlines(
+            kp.ticks(),
+            0,
+            1,
+            lw=0.5,
+            color="grey",
+            ls="dashed",
+            zorder=0,
+            transform=ax.get_xaxis_transform(),
+        )
+
+    if ylabel is not None:
+        ax.set_ylabel(f"{ylabel}, meV", fontsize=15)
+
+    ax.hlines(
+        0,
+        0,
+        1,
+        lw=0.5,
+        color="grey",
+        linestyle="dashed",
+        transform=ax.get_yaxis_transform(),
+    )
+
+    # Add twin axis
+
+    ylims = ax.get_ylim()
+
+    meV_to_THz = _FREQ_UNITS["mev"] / _FREQ_UNITS["thz"]
+
+    twinax = ax.twinx()
+
+    twinax.set_ylim(meV_to_THz * ylims[0], meV_to_THz * ylims[1])
+
+    twinax.set_ylabel(f"{ylabel}, THz", fontsize=15)
+
+    if output_filename is not None:
+        plt.savefig(output_filename, dpi=400, bbox_inches="tight")
+    else:
+        plt.show()
+
+    plt.close()
