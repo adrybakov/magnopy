@@ -120,7 +120,7 @@ class SpinHamiltonian:
         Units of the parameters of the Hamiltonian. See :py:attr:`.SpinHamiltonian.units`
         for more details. Case-insensitive.
 
-        .. versionadded:: 0.2.2
+        .. versionadded:: 0.3.0
 
     Examples
     --------
@@ -874,7 +874,7 @@ class SpinHamiltonian:
         r"""
         Units of the Hamiltonian's parameters.
 
-        .. versionadded:: 0.2.2
+        .. versionadded:: 0.3.0
 
         The parameters of the Hamiltonian are stored in some units of energy (or
         energy-like).

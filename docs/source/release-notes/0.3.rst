@@ -7,7 +7,7 @@ Version 0.3
 0.3.0
 =====
 
-**Date** : Undefined
+**Date**: 23 September 2025
 
 Bugfix
 ------

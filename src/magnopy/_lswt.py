@@ -443,7 +443,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -481,7 +481,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -555,7 +555,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -649,7 +649,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -741,7 +741,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -840,7 +840,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
             full list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -951,7 +951,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
             full list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -998,7 +998,7 @@ class LSWT:
             Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
             full list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         Returns
         -------

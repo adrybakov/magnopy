@@ -52,7 +52,7 @@ def multiprocess_over_k(
         Units of energy. See :py:attr:`.SpinHamiltonian.units` for the list of
         supported units.
 
-        .. versionadded:: 0.2.2
+        .. versionadded:: 0.3.0
 
     number_processors : int, optional
         By default magnopy uses all available processes. Pass ``number_processors=1`` to

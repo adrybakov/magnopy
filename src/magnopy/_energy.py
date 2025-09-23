@@ -358,7 +358,7 @@ class Energy:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -529,7 +529,7 @@ class Energy:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -691,7 +691,7 @@ class Energy:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.2.2
+            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.

@@ -183,7 +183,7 @@ def output_k_resolved(
         return lines
 
 
-# Deprecated in 0.2.2. To be removed in April 2026
+# Deprecated in 0.3.0. To be removed in April 2026
 def plot_k_resolved(data, kp=None, output_filename=None, ylabel=None):
     r"""
     Plot some k-resolved data.
@@ -213,7 +213,7 @@ def plot_k_resolved(data, kp=None, output_filename=None, ylabel=None):
     import warnings
 
     warnings.warn(
-        "Function magnopy.io.plot_k_resolved() was deprecated in 0.2.2 and will be removed in April 2026. Use magnopy.experimental.plot_disperion() instead",
+        "Function magnopy.io.plot_k_resolved() was deprecated in 0.3.0 and will be removed in April 2026. Use magnopy.experimental.plot_disperion() instead",
         DeprecationWarning,
     )
 
