@@ -135,6 +135,9 @@ BOHR_RADIUS = 5.29177210544e-11 * METRE
 BOHR_MAGNETON = 9.2740100657e-24 * JOULE / TESLA
 RYDBERG_CONSTANT = 10973731.568157 / METRE
 VACUUM_MAGNETIC_PERMEABILITY = 1.25663706127e-6 * NEWTON / AMPERE**2  # Newton/ Ampere^2
+REDUCED_PLANCK_CONSTANT = (
+    6.62607015e-34 / 2 / 3.14159265358979323846 * JOULE * SECOND / RADIAN
+)
 
 ################################################################################
 ##                                Non-SI units                                ##

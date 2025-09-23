@@ -30,7 +30,6 @@ from magnopy._constants._si import (
     TERA,
     PLANCK_CONSTANT,
 )
-from math import pi as PI
 
 
 ################################################################################
@@ -82,19 +81,19 @@ _PARAMETER_UNITS_MAKEUP["kelvin"] = "Kelvin"
 
 # Name : value when expressed in SI
 _FREQ_UNITS = {key: _ENERGY_UNITS[key] for key in _ENERGY_UNITS}
-_FREQ_UNITS["hertz"] = 2 * PI * PLANCK_CONSTANT
-_FREQ_UNITS["hz"] = 2 * PI * PLANCK_CONSTANT
-_FREQ_UNITS["giga-hertz"] = 2 * PI * PLANCK_CONSTANT * GIGA
-_FREQ_UNITS["ghz"] = 2 * PI * PLANCK_CONSTANT * GIGA
-_FREQ_UNITS["tera-hertz"] = 2 * PI * PLANCK_CONSTANT * TERA
-_FREQ_UNITS["thz"] = 2 * PI * PLANCK_CONSTANT * TERA
+_FREQ_UNITS["hertz"] = PLANCK_CONSTANT
+_FREQ_UNITS["hz"] = PLANCK_CONSTANT
+_FREQ_UNITS["gigahertz"] = PLANCK_CONSTANT * GIGA
+_FREQ_UNITS["ghz"] = PLANCK_CONSTANT * GIGA
+_FREQ_UNITS["terahertz"] = PLANCK_CONSTANT * TERA
+_FREQ_UNITS["thz"] = PLANCK_CONSTANT * TERA
 
 
 # Name : Pretty name
 _FREQ_UNITS_MAKEUP = {key: _ENERGY_UNITS_MAKEUP[key] for key in _ENERGY_UNITS_MAKEUP}
 _FREQ_UNITS_MAKEUP["hertz"] = "Hz"
 _FREQ_UNITS_MAKEUP["hz"] = "Hz"
-_FREQ_UNITS_MAKEUP["giga-hertz"] = "GHz"
+_FREQ_UNITS_MAKEUP["gigahertz"] = "GHz"
 _FREQ_UNITS_MAKEUP["ghz"] = "GHz"
-_FREQ_UNITS_MAKEUP["tera-hertz"] = "THz"
+_FREQ_UNITS_MAKEUP["terahertz"] = "THz"
 _FREQ_UNITS_MAKEUP["thz"] = "THz"
