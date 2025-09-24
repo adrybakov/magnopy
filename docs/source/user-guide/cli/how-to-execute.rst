@@ -1,108 +1,158 @@
 .. _user-guide_cli_common-notes:
 
-**************************
-How to execute the script?
-**************************
+***********************
+How to execute scripts?
+***********************
 
 On this page we explain how the command-line interface of magnopy works.
 
-There is a number of calculation scenarios defined within magnopy. Each scenario
-correspond to one individual script. For example :ref:`user-guide_cli_magnopy-lswt`
-performs calculation at the level of linear spin-wave theory and outputs all possible
-results from it.
+There is a number of scripts defined in magnopy, name of every single one of them starts
+with ``magnopy-``. Examples on this page use ``magnopy-scenario`` as a placeholder for
+the script's name.
 
-The examples on this page use ``magnopy-scenario`` as a placeholder for the script
-name.
+Getting help
+============
 
 To display the help message and check what parameters are available for each script use
-one of the commands
 
-.. code-block:: bash
-
-    magnopy-scenario
 
 .. code-block:: bash
 
     magnopy-scenario -h
 
+or
+
 .. code-block:: bash
 
     magnopy-scenario --help
 
-Options
-=======
+Arguments
+=========
 
-Every script accepts one or more "arguments" (or "parameters" or "options") as an input.
+Every script expects several "arguments" (or "parameters" or "options") as an input. There
+are three types of arguments.
 
-There are three types of arguments
+Positional arguments
+--------------------
 
-*   Positional arguments
+Only the *value* of an argument is expected and script recognizes its meaning from the
+position of that value.
 
-    For positional arguments only the value of an argument is provided and the script
-    recognizes its meaning based on the position of that value. For example assume that
-    the script expects two positional arguments: first one for the input filename and
-    second one for the output filename. Then if user runs the command
+For example, assume that a script expects two positional arguments: first for the input
+filename and second for the output filename. If you execute
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        magnopy-scenario input_file.txt output_file.txt
+    magnopy-scenario input_file.txt output_file.txt
 
-    the script will use the file "input_file.txt" as an input source and "output_file.txt"
-    as an output. However, if user runs the command
+a script will use the file "input_file.txt" as an input filename and "output_file.txt"
+as an output filename. However, if you execute
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        magnopy-scenario output_file.txt input_file.txt
+    magnopy-scenario output_file.txt input_file.txt
 
-    then the situation will be the opposite: "input_file.txt" will be used as an output
-    and "output_file.txt" will be used as input source.
+then "input_file.txt" will be used as an output filename and "output_file.txt" will be
+used as an input filename.
 
-*   Keyword arguments with value
+.. important::
 
-    For this type of argument user should provide a keyword and the a value of an
-    argument. The keyword is used by the script to understand how to interpret the
-    value. The order of the keyword arguments does not matter, but they should be given
-    after the positional arguments. For example, if user runs the command
+    Order of positional arguments matters.
 
-    .. code-block:: bash
+Keyword arguments with value
+----------------------------
 
-        magnopy-scenario --input_file input_file.txt
+Both *keyword* and the *value* of an argument are expected. The keyword is fixed and
+used to indicate the meaning of the argument. The value is some data that are passed to
+the script, one or more values are expected. Keyword arguments are given *after*
+positional ones. Order of keyword arguments does not matter.
 
-    then "--input_file" is a keyword and "input_filename.txt" is the value.
+For example, assume that a script has an argument with the keyword "--input-file", that
+expects a single value. If you execute
 
-    The keywords are always preceded either by "-" or "--". In magnopy every (or almost
-    every) keyword argument has two available keywords: a short one (preceded with "-")
-    and a long one (preceded with "--"). You can use either of them, the commands
+.. code-block:: bash
+
+    magnopy-scenario --input-file input.txt
+
+then "--input-file" is a keyword and "input.txt" is the value.
+
+Next, assume that a script has an argument with the keyword "--magnetic-field" that
+expects three values. If you execute
+
+.. code-block:: bash
+
+    magnopy-scenario --magnetic-field 0 0 1
+
+then "--magnetic-field" is a keyword and "0", "0" and "1" are the values. In this example
+the values describe components of the magnetic field vector :math:`h = (0, 0, 1)`.
+
+.. important::
+
+    The keywords always start with "-" or "--".
 
 
-    .. code-block:: bash
+Keyword arguments without value
+-------------------------------
 
-        magnopy-scenario --input_file input_file.txt
+Only the *keyword* is expected. The keyword is fixed and used both to indicate the meaning
+of the argument and its value. That type of arguments is typically used for the arguments
+that have two possible values:  ``True`` or ``False``. When such an argument is given to
+the script it switches the default value to its opposite.
 
-    and
+For example, assume that a script has an argument with the keyword "--relative" and
+default value "False". If you execute
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        magnopy-scenario -if input_file.txt
+    magnopy-scenario
 
-    would be identical with "--input_file" being the long name and "-if" - the short one.
+a script will use ``False`` as a value for the argument with the keyword ``--relative``.
+However, if you execute
 
-*   Keyword arguments without value
+.. code-block:: bash
 
-    This type of argument is very similar to the keyword argument with value. It is
-    typically used for the True/False values. If the argument is not given, then the
-    default value is assumed, if it is given, then the opposite is understood. For
-    example, if the script has an argument defined with the keyword "--relative" and
-    default value "False", then when user runs
+    magnopy-scenario --relative
 
-    .. code-block:: bash
+a script will use ``True`` as a value for the argument with the keyword ``--relative``.
 
-        magnopy-scenario
+.. important::
 
-    the script will use ``relative = False``. However, if user runs the command
+    The keywords always start with "-" or "--".
 
-    .. code-block:: bash
+Long vs short keywords
+======================
 
-        magnopy-scenario --relative
+Majority of arguments in magnopy's scripts have two equivalent keywords: a long one and a
+short one. You are free to use either of them. The long version of the keyword starts with
+``--`` and the short version of the keyword starts with a single ``-``.
 
-    the script will use ``relative = True``.
+The purpose of having both long and short keywords is to provide descriptive keywords
+(i. e. "long" ones), but to allow experienced users an option of using the short ones.
+
+For example, assume that a script has a set of the arguments defined
+
+==================== ============= ==============
+Long keyword         Short keyword Value
+==================== ============= ==============
+``--input-file``     ``-if``       One string
+``--output-file``    ``-of``       One string
+``--magnetic-field`` ``-mf``       Three numbers
+``--relative``       ``-r``        Nothing
+==================== ============= ==============
+
+Then, two commands below are equivalent
+
+.. code-block:: bash
+
+    magnopy-scenario --input-file input.txt --output-file output.txt --magnetic-field 0 0 1 --relative
+
+.. code-block:: bash
+
+    magnopy-scenario -if input.txt -of output.txt -mf 0 0 1 -r
+
+The first one is descriptive, but the second one is more compact.
+
+.. hint::
+
+    You can use long keywords for some of the arguments and short ones for the other. The
+    arguments are independent.
