@@ -52,8 +52,10 @@ pictures-for-docs:
 files-for-docs:
 	-@rm docs/source/user-guide/cli/magnopy-lswt/help.inc
 	-@rm docs/source/user-guide/cli/magnopy-optimize-sd/help.inc
+	-@rm docs/source/user-guide/memo.inc
 	@magnopy-lswt --help > docs/source/user-guide/cli/magnopy-lswt/help.inc
 	@magnopy-optimize-sd --help > docs/source/user-guide/cli/magnopy-optimize-sd/help.inc
+	@magnopy > docs/source/user-guide/memo.inc
 
 html:
 	@$(SPHINXBUILD) -M html "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS)

@@ -11,8 +11,8 @@ Magnopy user guide
 
     installation
 
-Magnopy is a python library and can be installed as any python library. See the page above
-for more details.
+Magnopy is a python library and can be installed as any other python library. See the page
+above for more details.
 
 
 .. toctree::
