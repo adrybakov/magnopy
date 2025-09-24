@@ -20,19 +20,27 @@
 
 .. hint::
 
-  Install magnopy with optional dependencies (|plotly|_ and |matplotlib|_) to get magnopy
-  to produce graphics
+    We recommend to install magnopy with optional dependencies (|plotly|_ and |matplotlib|_)
+    whether possible.
 
-  .. code-block:: bash
+    .. code-block:: bash
 
-    pip install "magnopy[visual]"
+        pip install "magnopy[visual]"
+
+    Then, magnopy will produce graphical output (.html and .png) files in addition to the
+    .txt output with the actual data.
+
+    Note that if you can not install either |plotly|_ or |matplotlib|_, then all functions
+    of magnopy are still available to you. The only missing part would be the
+    visualization.
 
 What is magnopy?
 ================
 
-Magnopy is a python code that, given :ref:`user-guide_theory-behind_spin-hamiltonian` in **any**
-:ref:`convention <user-guide_theory-behind_convention-problem>`, computes bosonic Hamiltonian
-of the form
+Magnopy is a python code that, given
+:ref:`spin Hamiltonian<user-guide_theory-behind_spin-hamiltonian>` in **any**
+:ref:`convention <user-guide_theory-behind_convention-problem>`, computes bosonic (magnon)
+Hamiltonian of the form
 
 .. include:: core-formulas/bosonic-hamiltonian.inc
 
@@ -40,20 +48,22 @@ where
 
 * :math:`E^{(0)}` is a classical energy of the ground state;
 
-and the next three terms are derived with the Linear Spin Wave Theory (LSWT):
+Next three terms are derived within the Linear Spin Wave Theory (LSWT):
 
 * :math:`E^{(2)}` is a quantum correction to the ground state energy;
 * :math:`\omega_{\alpha}(\boldsymbol{k})` is magnon dispersion at the level of LSWT;
 * :math:`\sum_{\boldsymbol{k}}\Delta(\boldsymbol{k})` is an energy measure of
   :math:`\pm \boldsymbol{k}` asymmetry.
 
+What can it do?
+===============
 
-Planned to be implemented
-=========================
-
-(Please indicate to the developers if you would like to use those features or if you
-would like to participate in their implementation)
-
-* Renormalized Spin Wave theory (RSWT)
-* Magnon decay rate
-* ...
+* Computes :ref:`all terms of the magnon Hamiltonian <user-guide_cli_magnopy-lswt>` from
+  above.
+* Supports :ref:`spin Hamiltonian <user-guide_theory-behind_spin-hamiltonian>` in any
+  :ref:`convention <user-guide_theory-behind_convention-problem>`.
+* Supports a number of :ref:`physical units <user-guide_usage_units>` both for
+  Hamiltonian's parameters and for the output quantities.
+* :ref:`Minimizes classical energy <user-guide_cli_optimize-sd>` as a function of the spin
+  directions.
+* Visualizes spin Hamiltonian (experimental)
