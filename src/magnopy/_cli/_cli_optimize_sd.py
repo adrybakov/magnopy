@@ -118,7 +118,7 @@ def get_parser():
         "--spin-values",
         nargs="*",
         type=str,
-        metavar=("S1", "S2"),
+        metavar=("S1",),
         help="In the case when the parameters of spin Hamiltonian comes from TB2J, one "
         "might want to change the values of spins to be closer to half-integers. This "
         "option allows that. Order of the M numbers should match the order of magnetic "

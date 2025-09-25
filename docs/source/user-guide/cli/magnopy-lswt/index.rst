@@ -8,34 +8,39 @@ This scenario runs a calculation for the given spin Hamiltonian at the level of 
 linear spin wave theory and outputs majority of the results that magnopy can compute.
 
 
+Please visit |tutorial-lswt|_ for examples of input and output files of this
+script. This page explains how to get a full reference of script's arguments and
+describe some of them in details.
 
-Help message
+
+.. _user-guide_cli_lswt_help:
+
+
+Getting help
 ============
-This page of documentation is written by hand and might become outdated due to the
-human error. Moreover, we do not intend to cover all possible parameters of the script
-in this page of the documentation. To get the automatically generated description of **all**
-input parameters, that is produced by the actual version of magnopy that is installed
-in you environment use
+
+The most accurate and full list of parameters for every script, that correspond to the
+actually installed version of magnopy, you can execute
+
+.. code-block::
+
+    magnopy-lswt -h
+
+or
 
 .. code-block::
 
     magnopy-lswt --help
 
-That should output something similar to
-
-.. literalinclude:: help.inc
-    :language: text
-
-At the very beginning there is a syntax for the usage of the script, where required
-arguments are given without brackets and optional arguments are written within brackets.
-Then there is a logo of magnopy, followed by the list of supported arguments with their
-short and long names and explanation of what they represent.
+This command outputs to the standard output channel (terminal) magnopy's metadata and
+*full* list of script's arguments. Here is an example of this output
 
 .. hint::
 
-    The short (i.e. ``-sf``) and long (i.e. ``--spinham-filename``) are absolutely equivalent.
-    Feel free to use either of them. The long name usually is self-explanatory and
-    the short one is added purely for the convenience of the user.
+    Go :ref:`here <user-guide_cli_common-notes_read-help>` to learn how to read this help message.
+
+.. literalinclude:: help.inc
+    :language: text
 
 
 .. _user-guide_cli_lswt_spinham:
@@ -158,7 +163,7 @@ to know a set of k-points to perform the calculations. User is left with two opt
 External magnetic field
 =======================
 
-The file with the :ref:`spin Hamiltonian <user-guide_cli_optimize-sd_spinham>`
+The file with the :ref:`spin Hamiltonian <user-guide_cli_lswt_spinham>`
 specifies the interaction parameters that are intrinsic to the material.
 
 In order to add additional effects, for instance an external magnetic field one
