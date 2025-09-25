@@ -262,11 +262,11 @@ custom_links = {
     "matplotlib": ("matplotlib", "https://matplotlib.org/"),
     "magnopy-tutorials": ("Tutorials", "https://tutorials.magnopy.org/en/latest/"),
     "tutorial-optimize-sd": (
-        "tutorial for ``magnopy-optimize-sd``",
+        "tutorial for magnopy-optimize-sd",
         "https://tutorials.magnopy.org/en/latest/FIXME",
     ),
     "tutorial-lswt": (
-        "tutorial for ``magnopy-lswt``",
+        "tutorial for magnopy-lswt",
         "https://tutorials.magnopy.org/en/latest/FIXME",
     ),
 }

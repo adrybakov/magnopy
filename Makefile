@@ -19,8 +19,8 @@ help:
 	@echo "    clean - clean all files from docs and pip routines"
 	@echo "    install - install the package"
 	@echo "    test - execute unit tests"
-	@echo "    pictures-for-docs - plot all pictures for the documentation"
-	@echo "    files-for-docs - prepare some generated files for the documentation"
+	@echo "    docs-png - plot all pictures for the documentation"
+	@echo "    docs-txt - prepare some generated files for the documentation"
 	@echo "    requirements - install all requirements"
 
 # Development environment
@@ -44,12 +44,12 @@ clean:
 	-@rm -r .venv/lib/python*/site-packages/magnopy*
 	-@rm -r .venv/bin/magnopy*
 
-# Documentation and doctests
-pictures-for-docs:
+# Documentation
+docs-png:
 	@python3 dev-tools/images/origin-upstream-local.py -rd .
 	@python3 dev-tools/images/positions.py -rd .
 
-files-for-docs:
+docs-txt:
 	-@rm docs/source/user-guide/cli/magnopy-lswt/help.inc
 	-@rm docs/source/user-guide/cli/magnopy-optimize-sd/help.inc
 	-@rm docs/source/user-guide/memo.inc
@@ -63,7 +63,7 @@ html:
 clean-html: clean install html
 	@echo "Done"
 
-html-from-zero: clean install pictures-for-docs files-for-docs html
+html-from-zero: clean install docs-png docs-txt html
 	@echo "Done"
 
 # Tests
