@@ -57,7 +57,7 @@ At the moment magnopy supports |TB2J|_ and |GROGU|_.
     * Prepare the file that mimics the format of |TB2J|_.
     * Prepare the file that mimics the |GROGU-FF|_.
     * Prepare the spin Hamiltonian programmatically and use the scenario of this
-      command-line script from within your python scripts: :py:func:`.scenarios.optimize_sd`.
+      command-line script from within your python scripts: :py:func:`.scenarios.lswt`.
 
 To tell the script what spin Hamiltonian to use provide
 
@@ -66,13 +66,7 @@ To tell the script what spin Hamiltonian to use provide
 
 For example, if the file with the spin Hamiltonian is located in the
 "data/hamiltonians/trial1/TB2J/exchange.out" and the source of the file is |TB2J|_,
-then pass to the script two parameters either in the short form
-
-.. code-block:: bash
-
-    magnopy-lswt  -ss TB2J -sf data/hamiltonians/trial1/TB2J/exchange.out ...
-
-or in the long form
+then pass to the script two parameters
 
 .. code-block:: bash
 
@@ -94,13 +88,7 @@ magnopy to know the spin directions
 
 *   Input from the user
 
-    User can provide a file with spin directions using either the short form of the argument
-
-    .. code-block:: bash
-
-        magnopy-lswt ... -sd SPIN-DIRECTIONS.txt
-
-    or long form
+    User can provide a file with spin directions
 
     .. code-block:: bash
 
@@ -126,13 +114,7 @@ K-path and k-points
 Magnopy solves magnon problem for a set of points in reciprocal space. Therefore, it needs
 to know a set of k-points to perform the calculations. User is left with two options
 
-*   Provide explicit list of k-points, using short form of the arguments
-
-    .. code-block:: bash
-
-        magnopy-lswt ... -kps  K-POINTS.txt
-
-    or long form
+*   Provide explicit list of k-points
 
     .. code-block:: bash
 
@@ -142,12 +124,6 @@ to know a set of k-points to perform the calculations. User is left with two opt
     crystal and use recommended k-path (see documentation of |wulfric|_ for more details,
     magnopy uses ``convention="HPKOT"``). In that second case the user can still control
     the k-path, but limited to the list of the predefined high-symmetry points.
-
-    .. code-block:: bash
-
-        magnopy-lswt ... -kp  GAMMA-X-S|GAMMA-Y
-
-    or in the long form
 
     .. code-block:: bash
 
@@ -174,13 +150,7 @@ external magnetic field. The value of the provided vector is interpreted in Tesl
 
 For example to add magnetic field of 2.42 Tesla along the direction :math:`(1, 1, 0)`
 (i.e. in the :math:`xy` plane, right in between the :math:`x` and :math:`y` axis) pass
-to the script the parameter, in the short form
-
-.. code-block:: bash
-
-    magnopy-lswt ... -mf 1.7112 1.7112 0 ...
-
-or in the long form
+to the script the parameter
 
 .. code-block:: bash
 
@@ -215,13 +185,7 @@ The script have two types of the output:
 
     A number of the files will be saved in the folder that is named "magnopy-results"
     by default. If you would like to change its name, for instance to "magnopy-LSWT-trial-1",
-    then you can use the parameter ``-of`` or ``--output-folder``. In the short form
-
-    .. code-block:: bash
-
-        magnopy-lswt ... -of magnopy-LSWT-trial-1 ...
-
-    or in the long form
+    then you can use the parameter ``-of`` or ``--output-folder``
 
     .. code-block:: bash
 

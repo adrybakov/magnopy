@@ -62,13 +62,7 @@ To tell the script what spin Hamiltonian to use provide
 
 For example, if the file with the spin Hamiltonian is located in the
 "data/hamiltonians/trial1/TB2J/exchange.out" and the source of the file is |TB2J|_,
-then pass to the script two parameters either in the short form
-
-.. code-block:: bash
-
-    magnopy-optimize-sd  -ss TB2J -sf data/hamiltonians/trial1/TB2J/exchange.out ...
-
-or in the long form
+then pass to the script two parameters
 
 .. code-block:: bash
 
@@ -90,14 +84,8 @@ In that way it can miss the true ground state if it spans over several unit cell
 can not be transformed into one another by a simple translation. To address this issue,
 we offer an option of minimization on the supercell. The supercell is produced by a number of
 translations of the original unit cell (``-s`` or ``--superell``). For example, to ask
-for a minimization of the :math:`3\times7\times2` supercell one can use the command, in
-the short form
+for a minimization of the :math:`3\times7\times2` supercell one can use the command
 
-.. code-block:: bash
-
-    magnopy-optimize-sd ... -s 3 7 2 ...
-
-or in the long form
 
 .. code-block:: bash
 
@@ -135,13 +123,7 @@ are reached. The default values, that magnopy uses should lead to the reasonable
 in most of the cases.
 
 However, if you want to increase accuracy of one of the parameters or both, then try to
-pass the corresponding parameters to the script. In the short form
-
-.. code-block:: bash
-
-    magnopy-optimize-sd ... -et 0.000001 -tt 0.001 ...
-
-or in the long form
+pass the corresponding parameters to the script
 
 .. code-block:: bash
 
@@ -169,13 +151,7 @@ external magnetic field. The value of the provided vector is interpreted in Tesl
 
 For example to add magnetic field of 2.42 Tesla along the direction :math:`(1, 1, 0)`
 (i.e. in the :math:`xy` plane, right in between the :math:`x` and :math:`y` axis) pass
-to the script the parameter, in the short form
-
-.. code-block:: bash
-
-    magnopy-optimize-sd ... -mf 1.7112 1.7112 0 ...
-
-or in the long form
+to the script the parameter
 
 .. code-block:: bash
 
@@ -210,13 +186,7 @@ The script have two types of the output:
 
     A number of the files will be saved in the folder that is named "magnopy-results"
     by default. If you would like to change its name, for instance to "magnopy-SO-trial-1",
-    then you can use the parameter ``-of`` or ``--output-folder``. In the short form
-
-    .. code-block:: bash
-
-        magnopy-optimize-sd ... -of magnopy-SO-trial-1 ...
-
-    or in the long form
+    then you can use the parameter ``-of`` or ``--output-folder``
 
     .. code-block:: bash
 
