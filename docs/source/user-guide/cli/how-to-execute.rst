@@ -219,6 +219,8 @@ outputs the following
                             Whether to consider a thing to be a relative thing.
       -sv, --spin-values [S1 ...]
                             Spin values for the input thing.
+      -om, --optimization-mode {memory,speed}
+                            What kind of optimization shall be used.
 
 Lines 1-2
 ---------
@@ -269,11 +271,18 @@ lines 29-30 *   "-r" is a short keyword of the argument.
                 :ref:`user-guide_cli_common-notes_arguments_keyword_without_value`
             *   "Whether to consider a thing to be a relative thing." is a description of
                 what this argument means and used for.
-lines 29-30 *   "-sv" is a short keyword of the argument.
+lines 31-32 *   "-sv" is a short keyword of the argument.
             *   "--spin-values" is a long keyword of the argument.
             *   "[S1 ...]" is a placeholder for the values. Brackets and "..." indicate
                 that this argument expects several values. For example, substitute
                 "[S1 ...]" by "1 0.5 1.5" to pass three values to this argument.
             *   "Spin values for the input thing." is a description of what this argument
                 means and used for.
+lines 33-34 *   "-om" is a short keyword of the argument.
+            *   "--optimization-mode" is a long keyword of the argument.
+            *   "{memory,speed}" is a placeholder for the values. Figure parenthesis
+                indicate that one of the pre-defined values is expected. Use either
+                "--optimization-mode memory" or "--optimization-mode speed".
+            *   "What kind of optimization shall be used." is a description of what this
+                argument means and used for.
 =========== ==============================================================================
