@@ -93,7 +93,7 @@ html_static_path = ["_static"]
 html_css_files = ["magnopy.css"]
 
 html_title = "magnopy"
-# html_favicon = "img/favicon.png"
+html_favicon = "_static/favicon.ico"
 
 # Theme-specific options
 html_theme_options = {
