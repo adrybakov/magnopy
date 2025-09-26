@@ -72,3 +72,8 @@ doctest:
 
 test:
 	@pytest -s tests #-o log_cli=true -o log_cli_level=DEBUG
+
+logo:
+	-@ rm docs/source/_static/magnopy-logo-black.png
+	-@ rm docs/source/_static/magnopy-logo-white.png
+	@python dev-tools/generate-logo.py

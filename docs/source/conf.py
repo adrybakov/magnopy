@@ -107,10 +107,10 @@ html_theme_options = {
     },
     "navbar_align": "left",
     # Add logo later
-    # "logo": {
-    #     "image_light": "_static/logo_black.png",
-    #     "image_dark": "_static/logo_white.png",
-    # },
+    "logo": {
+        "image_light": "_static/magnopy-logo-black.png",
+        "image_dark": "_static/magnopy-logo-white.png",
+    },
     "header_links_before_dropdown": 4,
     "icon_links": [
         {
