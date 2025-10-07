@@ -6,9 +6,9 @@ How to execute scripts?
 
 On this page we explain how the command-line interface of magnopy works.
 
-There is a number of scripts defined in magnopy, name of every single one of them starts
-with ``magnopy-``. Examples on this page use ``magnopy-scenario`` as a placeholder for
-the script's name.
+A number of command-line scripts is defined in magnopy. Name of every single one of them
+starts with ``magnopy-``. Examples on this page use ``magnopy-scenario`` as a placeholder
+for the script's name.
 
 .. _user-guide_cli_common-notes_help:
 
@@ -17,23 +17,18 @@ Getting help
 
 To display the help message and check what parameters are available for each script use
 
-
-.. code-block:: bash
-
-    magnopy-scenario -h
-
-or
-
 .. code-block:: bash
 
     magnopy-scenario --help
+
+See :ref:`user-guide_cli_common-notes_read-help` to read more about help messages.
 
 .. _user-guide_cli_common-notes_arguments:
 
 Arguments
 =========
 
-Every script expects several "arguments" (or "parameters" or "options") as an input. There
+Every script expects some "arguments" (or "parameters" or "options") as an input. There
 are three types of arguments.
 
 
@@ -42,25 +37,29 @@ are three types of arguments.
 Positional arguments
 --------------------
 
-Only the *value* of an argument is expected and script recognizes its meaning from the
-position of that value.
+Only the *value* of an argument is expected. Script recognizes its meaning based on the
+position of that value within the command.
 
-For example, assume that a script expects two positional arguments: first for the input
-filename and second for the output filename. If you execute
+For example, assume that a script expects two positional arguments:
 
-.. code-block:: bash
+- first argument with the name of the input file;
+- second argument with the name of the output file.
 
-    magnopy-scenario input_file.txt output_file.txt
-
-a script will use the file "input_file.txt" as an input filename and "output_file.txt"
-as an output filename. However, if you execute
+If you execute
 
 .. code-block:: bash
 
-    magnopy-scenario output_file.txt input_file.txt
+    magnopy-scenario input.txt output.txt
 
-then "input_file.txt" will be used as an output filename and "output_file.txt" will be
-used as an input filename.
+a script will use the file "input.txt" as an input file and write output to the
+"output.txt" file. However, if you execute
+
+.. code-block:: bash
+
+    magnopy-scenario output.txt input.txt
+
+then "output.txt" will be used as an input file and output will be written to the
+"input.txt" file.
 
 .. important::
 
@@ -71,13 +70,13 @@ used as an input filename.
 Keyword arguments with value
 ----------------------------
 
-Both *keyword* and the *value* of an argument are expected. The keyword is fixed and
-used to indicate the meaning of the argument. The value is some data that are passed to
-the script, one or more values are expected. Keyword arguments are given *after*
-positional ones. Order of keyword arguments does not matter.
+Both the *keyword* and the *value* (one or several) of an argument are expected. The
+keyword is fixed and indicates the meaning of the argument. The value is the data that are
+passed to the script. Keyword arguments are given *after* positional ones. Order of
+keyword arguments does not matter.
 
-For example, assume that a script has an argument with the keyword "--input-file", that
-expects a single value. If you execute
+For example, assume that a script expects an argument with the keyword ``--input-file``,
+that requires a single value. If you execute
 
 .. code-block:: bash
 
@@ -85,15 +84,15 @@ expects a single value. If you execute
 
 then "--input-file" is a keyword and "input.txt" is the value.
 
-Next, assume that a script has an argument with the keyword "--magnetic-field" that
-expects three values. If you execute
+Next, assume that a script expects an argument with the keyword ``--magnetic-fiel``, that
+requires three values. If you execute
 
 .. code-block:: bash
 
     magnopy-scenario --magnetic-field 0 0 1
 
 then "--magnetic-field" is a keyword and "0", "0" and "1" are the values. In this example
-the values describe components of the magnetic field vector :math:`h = (0, 0, 1)`.
+the values describe components of the magnetic flux density :math:`B = (0, 0, 1)`.
 
 .. important::
 
@@ -104,13 +103,13 @@ the values describe components of the magnetic field vector :math:`h = (0, 0, 1)
 Keyword arguments without value
 -------------------------------
 
-Only the *keyword* is expected. The keyword is fixed and used both to indicate the meaning
-of the argument and its value. That type of arguments is typically used for the arguments
-that have two possible values:  ``True`` or ``False``. When such an argument is given to
+Only the *keyword* is expected. The keyword is fixed and indicates both the meaning of the
+argument and its value. This type of arguments is typically used when the argument has
+only two possible values: ``True`` or ``False``. When such an argument is given to
 the script it switches the default value to its opposite.
 
-For example, assume that a script has an argument with the keyword "--relative" and
-default value "False". If you execute
+For example, assume that a script expects an argument with the keyword ``--relative`` and
+default value ``False``. If you execute
 
 .. code-block:: bash
 
@@ -123,7 +122,8 @@ However, if you execute
 
     magnopy-scenario --relative
 
-a script will use ``True`` as a value for the argument with the keyword ``--relative``.
+then a script will use ``True`` as a value for the argument with the keyword
+``--relative``.
 
 .. important::
 
@@ -140,9 +140,9 @@ short one. You are free to use either of them. The long version of the keyword s
 ``--`` and the short version of the keyword starts with a single ``-``.
 
 The purpose of having both long and short keywords is to provide descriptive keywords
-(i. e. "long" ones), but to allow experienced users an option of using the short ones.
+(i. e. "long" ones) and to allow experienced users an option of using the short ones.
 
-For example, assume that a script has a set of the arguments defined
+For example, assume that a set of arguments is defined for a script
 
 ==================== ============= ==============
 Long keyword         Short keyword Value
@@ -150,10 +150,10 @@ Long keyword         Short keyword Value
 ``--input-file``     ``-if``       One string
 ``--output-file``    ``-of``       One string
 ``--magnetic-field`` ``-mf``       Three numbers
-``--relative``       ``-r``        Nothing
+``--relative``       ``-r``        No value
 ==================== ============= ==============
 
-Then, two commands below are equivalent
+Then, two following commands are equivalent
 
 .. code-block:: bash
 
@@ -163,12 +163,12 @@ Then, two commands below are equivalent
 
     magnopy-scenario -if input.txt -of output.txt -mf 0 0 1 -r
 
-The first one is descriptive, but the second one is more compact.
+The first one is descriptive and the second one is compact.
 
 .. hint::
 
     You can use long keywords for some of the arguments and short ones for the other. The
-    arguments are independent.
+    arguments are independent in this context.
 
 
 .. _user-guide_cli_common-notes_read-help:
@@ -176,13 +176,13 @@ The first one is descriptive, but the second one is more compact.
 How to read help message
 ========================
 
-Assume that there is a script that upon executing
+Assume that you executed a command
 
 .. code-block:: bash
 
-    magnopy-scenario -h
+    magnopy-scenario --help
 
-outputs the following
+and the script printed in the terminal the following
 
 .. code-block:: text
     :linenos:
@@ -222,31 +222,33 @@ outputs the following
       -om, --optimization-mode {memory,speed}
                             What kind of optimization shall be used.
 
+A number of things can be deduced from this message.
+
 Lines 1-2
 ---------
 
 A draft of the command for using the script. Arguments that are enclosed in "[]" are
-optional, other arguments are required. In this example "--input-file" and "--output-file"
-are required and all other arguments are optional.
+optional, other arguments are mandatory. In this example ``--input-file`` and
+``--output-file`` are mandatory and all other arguments are optional.
 
-Lines 4-15
+Lines 4-16
 ----------
 
 Magnopy's logo and metadata.
 
-*   Version. Three numbers that pin installed version of magnopy. For example "0.3.0",
-    which would mean "0" major version, "3" minor version and "0" micro version.
-*   Link to the web-site with documentation
-*   Release date
-*   License
-*   Copyright message
+*   Version of magnopy that is installed. For example "0.3.0", which would mean "0" major
+    version, "3" minor version and "0" micro version;
+*   Link to the web-site with documentation;
+*   Release date;
+*   License;
+*   Copyright message;
 
 Line 18
 -------
 
 Short description of what this script can do.
 
-Lines 21-32
+Lines 21-34
 -----------
 
 Full list of all supported arguments and their description.
@@ -257,32 +259,31 @@ lines 22-23 *   "-if" is a short keyword of the argument.
             *   "--input-file" is a long keyword of the argument.
             *   "FILENAME" is a placeholder for its value. Substitute "FILENAME" by an
                 actual value.
-            *   "Input file for the script." is a description of what this argument means
-                and used for.
+            *   "Input file for the script." is a description of what this argument means.
 lines 26-28 *   "-mf" is a short keyword of the argument.
             *   "--magnetic-field" is a long keyword of the argument.
-            *   "H_X H_Y H_Z" are the placeholders for its value. Three placeholders
+            *   "H_X H_Y H_Z" are the placeholders for its values. Three placeholders
                 indicate that this argument expects three values.
             *   "Vector of external magnetic field, given in the units of Tesla." is a
-                description of what this argument means and used for.
+                description of what this argument means.
 lines 29-30 *   "-r" is a short keyword of the argument.
             *   "--relative" is a long keyword of the argument.
             *   There are no placeholder for the value, which means that this is a
-                :ref:`user-guide_cli_common-notes_arguments_keyword_without_value`
+                :ref:`user-guide_cli_common-notes_arguments_keyword_without_value`.
             *   "Whether to consider a thing to be a relative thing." is a description of
-                what this argument means and used for.
+                what this argument means.
 lines 31-32 *   "-sv" is a short keyword of the argument.
             *   "--spin-values" is a long keyword of the argument.
             *   "[S1 ...]" is a placeholder for the values. Brackets and "..." indicate
                 that this argument expects several values. For example, substitute
                 "[S1 ...]" by "1 0.5 1.5" to pass three values to this argument.
             *   "Spin values for the input thing." is a description of what this argument
-                means and used for.
+                means.
 lines 33-34 *   "-om" is a short keyword of the argument.
             *   "--optimization-mode" is a long keyword of the argument.
             *   "{memory,speed}" is a placeholder for the values. Figure parenthesis
                 indicate that one of the pre-defined values is expected. Use either
-                "--optimization-mode memory" or "--optimization-mode speed".
+                ``--optimization-mode memory`` or ``--optimization-mode speed``.
             *   "What kind of optimization shall be used." is a description of what this
-                argument means and used for.
+                argument means.
 =========== ==============================================================================

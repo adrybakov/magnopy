@@ -7,34 +7,27 @@ magnopy-lswt
 This scenario runs a calculation for the given spin Hamiltonian at the level of the
 linear spin wave theory and outputs majority of the results that magnopy can compute.
 
-Please visit |tutorial-lswt|_ for examples of input and output files of this
-script. This page explains how to get a full reference of script's arguments and
-describe some of them in details.
+Visit |tutorial-lswt|_ for examples of input and output files.
 
 .. _user-guide_cli_lswt_help:
 
 Getting help
 ============
 
-The most accurate and full list of parameters for every script, that correspond to the
-actually installed version of magnopy, you can execute
-
-.. code-block::
-
-    magnopy-lswt -h
-
-or
+We recommend to get the accurate and full list of script's parameters, that reflects
+installed version of magnopy with the command
 
 .. code-block::
 
     magnopy-lswt --help
 
-This command outputs to the standard output channel (terminal) magnopy's metadata and
+which outputs to the standard output channel (console or terminal) magnopy's metadata and
 *full* list of script's arguments. Here is an example of this output
 
 .. hint::
 
-    Go :ref:`here <user-guide_cli_common-notes_read-help>` to learn how to read this help message.
+    Go :ref:`here <user-guide_cli_common-notes_read-help>` to learn how to read this help
+    message.
 
 .. literalinclude:: help.inc
     :language: text
@@ -43,45 +36,48 @@ This command outputs to the standard output channel (terminal) magnopy's metadat
 Output files
 ============
 
-The script outputs human-readable text to the console with the progress of calculations
-and compact output data. This output is meant to explain itself, thus we do not document
+Human-readable text with the progress of calculations and compact output data is printed
+directly to the console. This output is meant to explain itself, thus we do not document
 it here.
 
-In addition, it prepares a number of .txt and/or .html files described below.
+In addition, a number of .txt and/or .html files is produced.
 
-For examples of the output text and files you can visit |tutorial-lswt|_.
+Visit |tutorial-lswt|_ for examples of the output text and files.
 
-SPIN_VECTORS.txt
-----------------
+DELTAS.png
+----------
 
-A file with the spin vectors that were used as the ground state.
+**Requires** : Installation of |matplotlib|_ or ``magnopy[visual]``.
 
-There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
-Each line has four numbers on it, separated by at least one space symbol. First number is
-an x component, second - y, third - z of the spin direction vector. Fourth number is the
-spin value.
+Static image with the delta term of the magnon Hamiltonian.
 
-SPIN_DIRECTIONS.html
---------------------
+Data can be found in "DELTAS.txt" and "K-POINTS.txt".
 
-**Requires** : Installation of |plotly|_ or ``magnopy[visual]``).
+DELTAS.txt
+----------
 
-**Options** : Use ``--no-html`` to disable an output of this file.
+A file with the values of the delta term of the magnon Hamiltonian.
 
-An interactive .html file with the 3D image of the spin directions that were used as the
-ground sate.
+There are :math:`L + 1` lines in the file. First line is a header, that indicates the
+meaning of each column. Then, there are :math:`L` lines with values of magnon energies for
+each of :math:`L` k-points.
+
+Each line has one number on it. The number is a delta term of the magnon Hamiltonian.
 
 
 HIGH-SYMMETRY_POINTS.txt
 ------------------------
 
+.. versionadded:: 0.2.0
+
 **Options** : Not produced if ``--kpoints`` is used.
 
-There are :math:`N + 1` lines in the file. First line is the header for the data, that
-indicate the meaning of each column. Then, there are :math:`N` lines for :math:`N`
-high-symmetry points.
+There are :math:`N + 1` lines in the file. First line is a header, that indicates the
+meaning of each column. Then, there are :math:`N` lines for :math:`N` high-symmetry
+points.
 
-Each line has one string followed by six numbers, separated by at least one space symbol.
+Each line has one string followed by six numbers on it, separated by at least one space
+symbol.
 
 The string is a label of the high-symmetry point that can be used in the specification of
 the k-path.
@@ -95,24 +91,30 @@ the reciprocal cell of the given  unit cell (i. e. same unit cell as in the inpu
 K-POINTS.html
 -------------
 
+.. versionadded:: 0.2.0
+
 **Requires** : Installation of |plotly|_ and |scipy|_ or ``magnopy[visual]``.
 
-**Options** : Not produced if ``--kpoints`` is used.
+**Options** : Not produced if ``--kpoints`` is used. Use ``--no-html`` to disable an
+output of this file.
 
-An interactive .html file with the 3D image of the chose k-path, high-symmetry points and
+An interactive .html file with 3D image of the chose k-path, high-symmetry points and
 first Brillouin zones of the given unit cell (i. e. same unit cell as in the input file)
 and of the primitive cell.
+
+Part of the data can be found in "HIGH-SYMMETRY_POINTS.txt".
 
 K-POINTS.txt
 ------------
 
+.. versionadded:: 0.2.0
+
 A file with the full list of the k-points that were used in the calculations.
 
-There are :math:`L + 1` line in the file. First line is the header of the data, that
-indicate the meaning of each column. Then, there are :math:`L` lines with :math:`L`
-k-points.
+There are :math:`L + 1` lines in the file. First line is a header, that indicates the
+meaning of each column. Then, there are :math:`L` lines with :math:`L` k-points.
 
-Each line has seven numbers.
+Each line has seven numbers on it, separated by at least one space symbol.
 
 First three numbers are the *absolute* coordinates of the high-symmetry point in the
 reciprocal space.
@@ -123,18 +125,6 @@ the reciprocal cell of the given  unit cell (i. e. same unit cell as in the inpu
 Last number is a single index for the k-point, that can be used for the plots (for example
 band plots).
 
-OMEGAS.txt
-----------
-
-A file with the values of magnon energies.
-
-There are :math:`L + 1` line in the file. First line is the header of the data, that
-indicate the meaning of each column. Then, there are :math:`L` lines with values of
-magnon energies for each of :math:`L` k-points.
-
-Each line has :math:`M` numbers. Each number is a magnon energy of :math:`i`-th magnon
-mode.
-
 OMEGAS.png
 ----------
 
@@ -142,85 +132,73 @@ OMEGAS.png
 
 Static image with the magnon dispersion.
 
-Data can be found in "OMEGA.txt" and "K-POINTS.txt"
+Data can be found in "OMEGAS.txt" and "K-POINTS.txt".
 
-OMEGAS-IMAG.txt
----------------
+OMEGAS.txt
+----------
 
-**Warning** If this file appeared, than something might be wrong with the set-up of the
-calculations (wrong ground state, ...)
+A file with the values of magnon energies.
 
-A file with the imaginary part of the values of magnon energies.
+There are :math:`L + 1` lines in the file. First line is a header, that indicates the
+meaning of each column. Then, there are :math:`L` lines with values of magnon energies for
+each of :math:`L` k-points.
 
-There are :math:`L + 1` line in the file. First line is the header of the data, that
-indicate the meaning of each column. Then, there are :math:`L` lines with imaginary part
-of the values of magnon energies for each of :math:`L` k-points.
+Each line has :math:`M` numbers on it, separated by at least one space symbol.
 
-Each line has :math:`M` numbers. Each number is an imaginary part of the magnon energy of
-:math:`i`-th magnon mode.
+Each number is a magnon energy of :math:`i`-th magnon mode.
 
 OMEGAS-IMAG.png
 ---------------
 
-**Warning** If this file appeared, than something might be wrong with the set-up of the
+**Warning** If this file appeared, then something might be wrong with the set-up of the
 calculations (wrong ground state, ...)
 
 **Requires** : Installation of |matplotlib|_ or ``magnopy[visual]``.
 
 Static image with the imaginary part of the magnon dispersion.
 
-Data can be found in "OMEGA-IMAG.txt" and "K-POINTS.txt"
+Data can be found in "OMEGAS-IMAG.txt" and "K-POINTS.txt".
 
-DELTAS.txt
-----------
+OMEGAS-IMAG.txt
+---------------
 
-A file with the values of the delta term of the magnon Hamiltonian.
+**Warning** If this file appeared, then something might be wrong with the set-up of the
+calculations (wrong ground state, ...)
 
-There are :math:`L + 1` line in the file. First line is the header of the data, that
-indicate the meaning of each column. Then, there are :math:`L` lines with values of
-magnon energies for each of :math:`L` k-points.
+A file with the imaginary part of the values of magnon energies.
 
-Each line has number number. The number is a delta term of the magnon Hamiltonian.
+There are :math:`L + 1` lines in the file. First line is a header, that indicates the
+meaning of each column. Then, there are :math:`L` lines with imaginary part of the values
+of magnon energies for each of :math:`L` k-points.
 
-DELTAS.png
-----------
+Each line has :math:`M` numbers on it, separated by at least one space symbol.
 
-**Requires** : Installation of |matplotlib|_ or ``magnopy[visual]``.
+Each number is an imaginary part of the magnon energy of :math:`i`-th magnon mode.
 
-Static image with the delta term of the magnon Hamiltonian.
+SPIN_DIRECTIONS.html
+--------------------
 
-Data can be found in "DELTAS.txt" and "K-POINTS.txt"
+.. versionadded:: 0.2.0
 
+**Requires** : Installation of |plotly|_ or ``magnopy[visual]``).
 
+**Options** : Use ``--no-html`` to disable an output of this file.
 
+An interactive .html file with 3D image of the spin directions that were used as the
+ground sate.
 
+Part of the data can be found in "SPIN_VECTORS.txt".
 
+SPIN_VECTORS.txt
+----------------
 
-INITIAL_GUESS.TXT
------------------
+.. versionadded:: 0.2.0
 
-A file with the spin directions of the initial guess. Magnopy makes a new random guess
-for the spin directions prior to each optimization (in other words, for each execution of
-the script).
-
-There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
-Each line has three numbers on it, separated by at least one space symbol. First number is
-an x component, second - y, third - z of the spin direction vector.
-
-SPIN_DIRECTIONS.txt
--------------------
-
-A file with the optimized spin directions.
+A file with the spin vectors that were used as the ground state.
 
 There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
-Each line has three numbers on it, separated by at least one space symbol. First number is
-an x component, second - y, third - z of the spin direction vector.
 
-SPIN_POSITIONS.txt
-------------------
+Each line has four numbers on it, separated by at least one space symbol.
 
-A file with the *absolute* positions of the magnetic sites.
-
-There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
-Each line has three numbers on it, separated by at least one space symbol. First number is
-an x coordinate, second - y, third - z.
+First number is an x component, second - y, third - z of the spin direction vector. Fourth
+number is the spin value.

@@ -4,38 +4,31 @@
 magnopy-optimize-sd
 *******************
 
-This scenario optimizes classical energy of the spin Hamiltonian and finds the spin
-directions that describe a local minima of the energy landscape. It implements an
+This scenario optimizes classical energy of the spin Hamiltonian and finds a set of spin
+directions that describes a local minima of the energy landscape. It implements an
 algorithm described in [1]_.
 
-Please visit |tutorial-optimize-sd|_ for examples of input and output files of this
-script. This page explains how to get a full reference of script's arguments and
-describe some of them in details.
+Visit |tutorial-optimize-sd|_ for examples of input and output files.
 
 .. _user-guide_cli_optimize-sd_help:
 
 Getting help
 ============
 
-The most accurate and full list of parameters for every script, that correspond to the
-actually installed version of magnopy, you can execute
-
-.. code-block::
-
-    magnopy-optimize-sd -h
-
-or
+We recommend to get the accurate and full list of script's parameters, that reflects
+installed version of magnopy with the command
 
 .. code-block::
 
     magnopy-optimize-sd --help
 
-This command outputs to the standard output channel (terminal) magnopy's metadata and
+which outputs to the standard output channel (console or terminal) magnopy's metadata and
 *full* list of script's arguments. Here is an example of this output
 
 .. hint::
 
-    Go :ref:`here <user-guide_cli_common-notes_read-help>` to learn how to read this help message.
+    Go :ref:`here <user-guide_cli_common-notes_read-help>` to learn how to read this help
+    message.
 
 .. literalinclude:: help.inc
     :language: text
@@ -46,24 +39,28 @@ This command outputs to the standard output channel (terminal) magnopy's metadat
 Output files
 ============
 
-The script outputs human-readable text to the console with the progress of calculations
-and compact output data. This output is meant to explain itself, thus we do not document
+Human-readable text with the progress of calculations and compact output data is printed
+directly to the console. This output is meant to explain itself, thus we do not document
 it here.
 
-In addition, it prepares a number of .txt and/or .html files described below.
+In addition, a number of .txt and/or .html files is produced.
 
-For examples of the output text and files you can visit |tutorial-optimize-sd|_.
+Visit |tutorial-optimize-sd|_ for examples of the output text and files.
 
-INITIAL_GUESS.TXT
+INITIAL_GUESS.txt
 -----------------
 
-A file with the spin directions of the initial guess. Magnopy makes a new random guess
-for the spin directions prior to each optimization (in other words, for each execution of
-the script).
+.. versionadded:: 0.2.0
+
+A file with the spin directions of the initial guess.
+
+Magnopy makes a new random guess for the spin directions prior to each optimization (in
+other words, for each execution of the script).
 
 There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
-Each line has three numbers on it, separated by at least one space symbol. First number is
-an x component, second - y, third - z of the spin direction vector.
+Each line has three numbers on it, separated by at least one space symbol.
+
+First number is an x component, second - y, third - z of the spin direction vector.
 
 SPIN_DIRECTIONS.txt
 -------------------
@@ -71,27 +68,34 @@ SPIN_DIRECTIONS.txt
 A file with the optimized spin directions.
 
 There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
-Each line has three numbers on it, separated by at least one space symbol. First number is
-an x component, second - y, third - z of the spin direction vector.
+Each line has three numbers on it, separated by at least one space symbol.
 
-SPIN_POSITIONS.txt
-------------------
-
-A file with the *absolute* positions of the magnetic sites.
-
-There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
-Each line has three numbers on it, separated by at least one space symbol. First number is
-an x coordinate, second - y, third - z.
+First number is an x component, second - y, third - z of the spin direction vector.
 
 SPIN_DIRECTIONS.html
 --------------------
 
+.. versionadded:: 0.2.0
+
 **Requires** : Installation of |plotly|_ or ``magnopy[visual]``.
 
-**Options to disable** : ``-no-html`` or ``--no-html``.
+**Options** : Use ``--no-html`` to disable an output of this file.
 
-An interactive .html file with the 3D image of both minimized spin directions and of the
-initial guess in the form of vectors.
+An interactive .html file with 3D image of minimized spin directions and initial guess.
+
+Data can be found in "SPIN_DIRECTIONS.txt", "INITIAL_GUESS.txt" and "SPIN_POSITIONS.txt".
+
+SPIN_POSITIONS.txt
+------------------
+
+.. versionadded:: 0.2.0
+
+A file with the *absolute* positions of the magnetic sites.
+
+There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
+Each line has three numbers on it, separated by at least one space symbol.
+
+First number is an x coordinate, second - y, third - z.
 
 References
 ==========

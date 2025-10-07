@@ -137,7 +137,7 @@ def optimize_sd(
     initial_guess = np.random.uniform(low=-1, high=1, size=(spinham.M, 3))
     initial_guess = initial_guess / np.linalg.norm(initial_guess, axis=1)[:, np.newaxis]
     # Save an initial guess to the .txt file
-    filename = os.path.join(output_folder, "INITIAL_GUESS.TXT")
+    filename = os.path.join(output_folder, "INITIAL_GUESS.txt")
     np.savetxt(
         filename,
         initial_guess,

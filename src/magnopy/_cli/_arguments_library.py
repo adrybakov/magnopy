@@ -140,7 +140,7 @@ def _add_torque_tolerance(parser):
         "--torque-tolerance",
         default=1e-5,
         type=float,
-        help="Tolerance parameter. Maximum torque value among all spins at current "
+        help="Tolerance parameter. Maximum value of torque among all spins at current "
         "optimization step.",
     )
 
@@ -183,7 +183,7 @@ def _add_k_path(parser):
         "wulfric based on the reciprocal lattice of the primitive cell, but their "
         "relative coordinates are given in the basis of reciprocal cell of the input "
         "cell (i. e. the same unit cell as in the TB2J or GROGU file). Primitive cell "
-        "might be different from the input cell . If you want to control what atoms are "
+        "might be different from the input cell. If you want to control what atoms are "
         "considered to be equivalent in the space group search - manually change "
         "their names in the input file. To learn how a name is translated into the "
         "spglib_type see documentation of the wulfric package (wulfric.org).",
@@ -222,9 +222,8 @@ def _add_number_processors(parser):
         "--number-processors",
         type=int,
         default=None,
-        help="By default magnopy is parallelized over the processes and it uses all "
-        "available processors by default. Pass 1 to run in serial. Parallelization over "
-        "k-points is implemented.",
+        help="Magnopy is parallelized over the k-points. By default it uses all "
+        "available processors. Pass 1 to run in serial.",
     )
 
 
