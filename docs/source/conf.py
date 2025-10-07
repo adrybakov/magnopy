@@ -269,6 +269,7 @@ custom_links = {
         "tutorial for magnopy-lswt",
         "https://tutorials.magnopy.org/en/latest/FIXME",
     ),
+    "scipy": ("scipy", "https://scipy.org/"),
 }
 rst_epilog += "\n".join(
     map(

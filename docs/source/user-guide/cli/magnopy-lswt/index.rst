@@ -7,14 +7,11 @@ magnopy-lswt
 This scenario runs a calculation for the given spin Hamiltonian at the level of the
 linear spin wave theory and outputs majority of the results that magnopy can compute.
 
-
 Please visit |tutorial-lswt|_ for examples of input and output files of this
 script. This page explains how to get a full reference of script's arguments and
 describe some of them in details.
 
-
 .. _user-guide_cli_lswt_help:
-
 
 Getting help
 ============
@@ -43,173 +40,187 @@ This command outputs to the standard output channel (terminal) magnopy's metadat
     :language: text
 
 
-.. _user-guide_cli_lswt_spinham:
-
-Spin Hamiltonian and its source
-===============================
-
-This script works with the spin Hamiltonian that is coming from some third-party software.
-At the moment magnopy supports |TB2J|_ and |GROGU|_.
-
-.. hint::
-    There is number of ways to use this script with the hand-made Hamiltonian:
-
-    * Prepare the file that mimics the format of |TB2J|_.
-    * Prepare the file that mimics the |GROGU-FF|_.
-    * Prepare the spin Hamiltonian programmatically and use the scenario of this
-      command-line script from within your python scripts: :py:func:`.scenarios.lswt`.
-
-To tell the script what spin Hamiltonian to use provide
-
-* Source of the spin Hamiltonian (``-ss`` or ``--spinham-source``);
-* Path to the file with the spin Hamiltonian (``-sf`` or ``--spinham-filename``)
-
-For example, if the file with the spin Hamiltonian is located in the
-"data/hamiltonians/trial1/TB2J/exchange.out" and the source of the file is |TB2J|_,
-then pass to the script two parameters
-
-.. code-block:: bash
-
-    magnopy-lswt  -spinham-source TB2J -spinham-filename data/hamiltonians/trial1/TB2J/exchange.out ...
-
-.. note::
-    The dots ``...`` are not a part of the syntax. They are used only to highlight the
-    parameters that are described in the particular chapter of the documentation and
-    hide all other parameters that might or might not be passed to the script.
-
-.. _user-guide_cli_lswt_ground-state:
-
-Ground state
+Output files
 ============
 
-For the calculation of exited states (what magnons are) one need to knows the
-ground state - spin directions for every spin in the Hamiltonian. There are two ways for
-magnopy to know the spin directions
+The script outputs human-readable text to the console with the progress of calculations
+and compact output data. This output is meant to explain itself, thus we do not document
+it here.
 
-*   Input from the user
+In addition, it prepares a number of .txt and/or .html files described below.
 
-    User can provide a file with spin directions
+For examples of the output text and files you can visit |tutorial-lswt|_.
 
-    .. code-block:: bash
+SPIN_VECTORS.txt
+----------------
 
-        magnopy-lswt ... --spin-directions SPIN-DIRECTIONS.txt
+A file with the spin vectors that were used as the ground state.
 
-*   Internal optimization
+There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
+Each line has four numbers on it, separated by at least one space symbol. First number is
+an x component, second - y, third - z of the spin direction vector. Fourth number is the
+spin value.
 
-    If user do not provide any input, then magnopy tries to optimize spin directions within
-    unit cell.
+SPIN_DIRECTIONS.html
+--------------------
 
-.. note::
-    The dots ``...`` are not a part of the syntax. They are used only to highlight the
-    parameters that are described in the particular chapter of the documentation and
-    hide all other parameters that might or might not be passed to the script.
+**Requires** : Installation of |plotly|_ or ``magnopy[visual]``).
 
+**Options** : Use ``--no-html`` to disable an output of this file.
 
-
-.. _user-guide_cli_lswt_reciprocal-space:
-
-K-path and k-points
-===================
-
-Magnopy solves magnon problem for a set of points in reciprocal space. Therefore, it needs
-to know a set of k-points to perform the calculations. User is left with two options
-
-*   Provide explicit list of k-points
-
-    .. code-block:: bash
-
-        magnopy-lswt ... --kpoints  K-POINTS.txt
-
-*   Let magnopy deduce the set of high-symmetry points based on the space group of the
-    crystal and use recommended k-path (see documentation of |wulfric|_ for more details,
-    magnopy uses ``convention="HPKOT"``). In that second case the user can still control
-    the k-path, but limited to the list of the predefined high-symmetry points.
-
-    .. code-block:: bash
-
-        magnopy-lswt ... --k-path  GAMMA-X-S|GAMMA-Y
-
-.. note::
-    The dots ``...`` are not a part of the syntax. They are used only to highlight the
-    parameters that are described in the particular chapter of the documentation and
-    hide all other parameters that might or might not be passed to the script.
-
-.. _user-guide_cli_lswt_magnetic-field:
-
-External magnetic field
-=======================
-
-The file with the :ref:`spin Hamiltonian <user-guide_cli_lswt_spinham>`
-specifies the interaction parameters that are intrinsic to the material.
-
-In order to add additional effects, for instance an external magnetic field one
-can use the ``-mf`` or ``--magnetic-field`` parameter.
-
-This parameter expects three numbers, that specify three Cartesian components of the
-external magnetic field. The value of the provided vector is interpreted in Tesla.
-
-For example to add magnetic field of 2.42 Tesla along the direction :math:`(1, 1, 0)`
-(i.e. in the :math:`xy` plane, right in between the :math:`x` and :math:`y` axis) pass
-to the script the parameter
-
-.. code-block:: bash
-
-    magnopy-lswt ... --magnetic-field 1.7112 1.7112 0 ...
+An interactive .html file with the 3D image of the spin directions that were used as the
+ground sate.
 
 
-.. note::
-    The dots ``...`` are not a part of the syntax. They are used only to highlight the
-    parameters that are described in the particular chapter of the documentation and
-    hide all other parameters that might or might not be passed to the script.
+HIGH-SYMMETRY_POINTS.txt
+------------------------
 
-.. _user-guide_cli_lswt_output:
+**Options** : Not produced if ``--kpoints`` is used.
 
-Output of the script
-====================
-The script have two types of the output:
+There are :math:`N + 1` lines in the file. First line is the header for the data, that
+indicate the meaning of each column. Then, there are :math:`N` lines for :math:`N`
+high-symmetry points.
 
-*   Text output to the console
+Each line has one string followed by six numbers, separated by at least one space symbol.
 
-    Magnopy outputs the progress of the calculation in the standard output stream, that is
-    typically printed directly to the terminal. If you would like to save this text in a
-    file, we recommend to use stream redirect ``>`` operator as
+The string is a label of the high-symmetry point that can be used in the specification of
+the k-path.
 
-    .. code-block:: bash
+First three numbers are the *absolute* coordinates of the high-symmetry point in the
+reciprocal space.
 
-        magnopy-lswt ... > output.txt
+Last three numbers are the relative coordinates of the high-symmetry point in the basis of
+the reciprocal cell of the given  unit cell (i. e. same unit cell as in the input file).
 
-    In that way there will be no output to the console, but all the information will be
-    saved in the file "output.txt".
+K-POINTS.html
+-------------
 
-*   Output that is saved in the separated files.
+**Requires** : Installation of |plotly|_ and |scipy|_ or ``magnopy[visual]``.
 
-    A number of the files will be saved in the folder that is named "magnopy-results"
-    by default. If you would like to change its name, for instance to "magnopy-LSWT-trial-1",
-    then you can use the parameter ``-of`` or ``--output-folder``
+**Options** : Not produced if ``--kpoints`` is used.
 
-    .. code-block:: bash
+An interactive .html file with the 3D image of the chose k-path, high-symmetry points and
+first Brillouin zones of the given unit cell (i. e. same unit cell as in the input file)
+and of the primitive cell.
 
-        magnopy-lswt ... --output-folder magnopy-LSWT-trial-1 ...
+K-POINTS.txt
+------------
 
-    .. note::
+A file with the full list of the k-points that were used in the calculations.
 
-        The visual capabilities of magnopy require a third-party plotting library
-        |plotly|_. It is not included as a default dependency of magnopy and therefore,
-        have to be installed manually. It can be installed with ``pip``, in the same
-        way as magnopy:
+There are :math:`L + 1` line in the file. First line is the header of the data, that
+indicate the meaning of each column. Then, there are :math:`L` lines with :math:`L`
+k-points.
 
-        .. code-block:: bash
+Each line has seven numbers.
 
-            pip install plotly
+First three numbers are the *absolute* coordinates of the high-symmetry point in the
+reciprocal space.
 
-        or
+Next three numbers are the relative coordinates of the high-symmetry point in the basis of
+the reciprocal cell of the given  unit cell (i. e. same unit cell as in the input file).
 
-        .. code-block:: bash
+Last number is a single index for the k-point, that can be used for the plots (for example
+band plots).
 
-            pip3 install plotly
+OMEGAS.txt
+----------
+
+A file with the values of magnon energies.
+
+There are :math:`L + 1` line in the file. First line is the header of the data, that
+indicate the meaning of each column. Then, there are :math:`L` lines with values of
+magnon energies for each of :math:`L` k-points.
+
+Each line has :math:`M` numbers. Each number is a magnon energy of :math:`i`-th magnon
+mode.
+
+OMEGAS.png
+----------
+
+**Requires** : Installation of |matplotlib|_ or ``magnopy[visual]``.
+
+Static image with the magnon dispersion.
+
+Data can be found in "OMEGA.txt" and "K-POINTS.txt"
+
+OMEGAS-IMAG.txt
+---------------
+
+**Warning** If this file appeared, than something might be wrong with the set-up of the
+calculations (wrong ground state, ...)
+
+A file with the imaginary part of the values of magnon energies.
+
+There are :math:`L + 1` line in the file. First line is the header of the data, that
+indicate the meaning of each column. Then, there are :math:`L` lines with imaginary part
+of the values of magnon energies for each of :math:`L` k-points.
+
+Each line has :math:`M` numbers. Each number is an imaginary part of the magnon energy of
+:math:`i`-th magnon mode.
+
+OMEGAS-IMAG.png
+---------------
+
+**Warning** If this file appeared, than something might be wrong with the set-up of the
+calculations (wrong ground state, ...)
+
+**Requires** : Installation of |matplotlib|_ or ``magnopy[visual]``.
+
+Static image with the imaginary part of the magnon dispersion.
+
+Data can be found in "OMEGA-IMAG.txt" and "K-POINTS.txt"
+
+DELTAS.txt
+----------
+
+A file with the values of the delta term of the magnon Hamiltonian.
+
+There are :math:`L + 1` line in the file. First line is the header of the data, that
+indicate the meaning of each column. Then, there are :math:`L` lines with values of
+magnon energies for each of :math:`L` k-points.
+
+Each line has number number. The number is a delta term of the magnon Hamiltonian.
+
+DELTAS.png
+----------
+
+**Requires** : Installation of |matplotlib|_ or ``magnopy[visual]``.
+
+Static image with the delta term of the magnon Hamiltonian.
+
+Data can be found in "DELTAS.txt" and "K-POINTS.txt"
 
 
-.. note::
-    The dots ``...`` are not a part of the syntax. They are used only to highlight the
-    parameters that are described in the particular chapter of the documentation and
-    hide all other parameters that might or might not be passed to the script.
+
+
+
+
+INITIAL_GUESS.TXT
+-----------------
+
+A file with the spin directions of the initial guess. Magnopy makes a new random guess
+for the spin directions prior to each optimization (in other words, for each execution of
+the script).
+
+There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
+Each line has three numbers on it, separated by at least one space symbol. First number is
+an x component, second - y, third - z of the spin direction vector.
+
+SPIN_DIRECTIONS.txt
+-------------------
+
+A file with the optimized spin directions.
+
+There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
+Each line has three numbers on it, separated by at least one space symbol. First number is
+an x component, second - y, third - z of the spin direction vector.
+
+SPIN_POSITIONS.txt
+------------------
+
+A file with the *absolute* positions of the magnetic sites.
+
+There are M lines in the file. M is a number of magnetic atoms in the spin Hamiltonian.
+Each line has three numbers on it, separated by at least one space symbol. First number is
+an x coordinate, second - y, third - z.
