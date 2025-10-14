@@ -116,11 +116,14 @@ def optimize_sd(
 
     # Output optimization parameters
     print(f"\n{' Start optimization ':=^90}\n")
-    print(f"Energy tolerance : {energy_tolerance:.5e}")
+    print(f"Energy tolerance : {energy_tolerance:.5e} meV")
     print(f"Torque tolerance : {torque_tolerance:.5e}")
 
     # Add magnetic field if any
     if magnetic_field is not None:
+        print(
+            f"Magnetic flux density : ({magnetic_field[0]:.5f} {magnetic_field[1]:.5f} {magnetic_field[2]:.5f}) Tesla"
+        )
         spinham.add_magnetic_field(h=magnetic_field)
 
     # Make a supercell if needed

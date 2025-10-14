@@ -4,6 +4,16 @@
 Version 0.3
 ***********
 
+0.3.1
+=====
+
+**Date**: Undefined
+
+New features
+------------
+
+* Add output of magnetic field to ``magnopy-optimize-sd``.
+
 0.3.0
 =====
 
