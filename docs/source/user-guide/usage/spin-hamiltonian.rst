@@ -272,6 +272,8 @@ parameters at any moment using :py:attr:`.SpinHamiltonian.units`
     :py:meth:`.SpinHamiltonian.add_21`, etc) interpret the input parameters in the units
     of :py:attr:`.SpinHamiltonian.units` at the moment of the call.
 
+.. _user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic:
+
 Magnetic vs non-magnetic atoms
 ==============================
 
