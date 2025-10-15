@@ -26,11 +26,11 @@ with the three lattice vectors being
 .. doctest::
 
     >>> cell[0] # a_1
-    [3.5534, 0.0000, 0.0000]
+    [3.5534, 0.0, 0.0]
     >>> cell[1] # a_2
-    [0.0000, 4.7449, 0.0000]
+    [0.0, 4.7449, 0.0]
     >>> cell[2] # a_3
-    [0.0000, 0.0000, 8.7605]
+    [0.0, 0.0, 8.7605]
 
 ``cell`` is one of the three objects that are required for creation of the
 :py:class:`.SpinHamiltonian` class. It is stored as an immutable attribute
