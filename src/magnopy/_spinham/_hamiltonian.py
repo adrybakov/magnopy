@@ -249,9 +249,7 @@ class SpinHamiltonian:
     @cell.setter
     def cell(self, new_value):
         raise AttributeError(
-            "Change of the cell attribute is not supported after "
-            "the creation of SpinHamiltonian instance. If you need to modify cell, "
-            "then use pre-defined methods of SpinHamiltonian or create a new one."
+            "Change of the cell attribute is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.cell is immutable."
         )
 
     @property
@@ -311,9 +309,7 @@ class SpinHamiltonian:
     @atoms.setter
     def atoms(self, new_value):
         raise AttributeError(
-            "Change of the atoms dictionary is not supported after "
-            "the creation of SpinHamiltonian instance. If you need to modify atoms, "
-            "then use pre-defined methods of SpinHamiltonian or create a new one."
+            "Change of the atoms dictionary is not supported after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable."
         )
 
     def _reset_internals(self):
