@@ -75,10 +75,25 @@ class Convention:
 
     .. doctest::
 
-        >>> from magnopy import Convention
-        >>> n1 = Convention(True, True, c21=1, c22=-0.5)
-        >>> n2 = Convention(False, True, c21=1, c22=-0.5)
-        >>> n3 = Convention(False, True, c22=-0.5)
+        >>> import magnopy
+        >>> n1 = magnopy.Convention(True, True, c21=1, c22=-0.5, name="conv #1")
+        >>> n2 = magnopy.Convention(False, True, c21=1, c22=-0.5, name="conv #2")
+        >>> n3 = magnopy.Convention(False, True, c22=-0.5, name="conv #3")
+        >>> print(n1)
+        "conv #1" convention where
+          * Bonds are counted multiple times in the sum;
+          * Spin vectors are normalized to 1;
+          * Undefined c1 factor;
+          * c21 = 1.0;
+          * c22 = -0.5;
+          * Undefined c31 factor;
+          * Undefined c32 factor;
+          * Undefined c33 factor;
+          * Undefined c41 factor;
+          * Undefined c421 factor;
+          * Undefined c422 factor;
+          * Undefined c43 factor;
+          * Undefined c44 factor.
         >>> n1.multiple_counting
         True
         >>> n1 == n2
@@ -87,7 +102,7 @@ class Convention:
         Traceback (most recent call last):
         ...
         magnopy._exceptions.ConventionError: Convention of spin Hamiltonian has an undefined property 'c21':
-        custom convention where
+        "conv #3" convention where
           * Bonds are counted once in the sum;
           * Spin vectors are normalized to 1;
           * Undefined c1 factor;
@@ -102,7 +117,7 @@ class Convention:
           * Undefined c43 factor;
           * Undefined c44 factor.
         >>> n3.name
-        'custom'
+        'conv #3'
 
     """
 
@@ -121,6 +136,22 @@ class Convention:
         "_c43",
         "_c44",
         "_name",
+    )
+
+    __comparison_attributes__ = (
+        "_multiple_counting",
+        "_spin_normalized",
+        "_c1",
+        "_c21",
+        "_c22",
+        "_c31",
+        "_c32",
+        "_c33",
+        "_c41",
+        "_c421",
+        "_c422",
+        "_c43",
+        "_c44",
     )
 
     def __init__(
@@ -207,9 +238,122 @@ class Convention:
 
         self._name = str(name).lower()
 
+    ################################################################################
+    #                                   Summary                                    #
+    ################################################################################
+
+    def __repr__(self):
+        return (
+            "\n    ".join(
+                [
+                    "magnopy.Convention(",
+                    f"multiple_counting = {self._multiple_counting},",
+                    f"spin_normalized = {self._spin_normalized},",
+                    f"c1 = {self._c1},",
+                    f"c21 = {self._c21},",
+                    f"c22 = {self._c22},",
+                    f"c31 = {self._c31},",
+                    f"c32 = {self._c32},",
+                    f"c33 = {self._c33},",
+                    f"c41 = {self._c41},",
+                    f"c421 = {self._c421},",
+                    f"c422 = {self._c422},",
+                    f"c43 = {self._c43},",
+                    f"c44 = {self._c44},",
+                    f'name = "{self.name}"',
+                ]
+            )
+            + "\n)"
+        )
+
+    def __str__(self):
+        summary = [f'"{self.name}" convention where']
+
+        if self._multiple_counting is None:
+            summary.append("  * Undefined multiple counting;")
+        elif self._multiple_counting:
+            summary.append("  * Bonds are counted multiple times in the sum;")
+        else:
+            summary.append("  * Bonds are counted once in the sum;")
+
+        if self._spin_normalized is None:
+            summary.append("  * Undefined spin normalization;")
+        elif self._spin_normalized:
+            summary.append("  * Spin vectors are normalized to 1;")
+        else:
+            summary.append("  * Spin vectors are not normalized;")
+
+        # One spin
+        if self._c1 is None:
+            summary.append("  * Undefined c1 factor;")
+        else:
+            summary.append(f"  * c1 = {self._c1};")
+
+        # Two spins
+        if self._c21 is None:
+            summary.append("  * Undefined c21 factor;")
+        else:
+            summary.append(f"  * c21 = {self._c21};")
+
+        if self._c22 is None:
+            summary.append("  * Undefined c22 factor;")
+        else:
+            summary.append(f"  * c22 = {self._c22};")
+
+        # Three spins
+        if self._c31 is None:
+            summary.append("  * Undefined c31 factor;")
+        else:
+            summary.append(f"  * c31 = {self._c31};")
+
+        if self._c32 is None:
+            summary.append("  * Undefined c32 factor;")
+        else:
+            summary.append(f"  * c32 = {self._c32};")
+
+        if self._c33 is None:
+            summary.append("  * Undefined c33 factor;")
+        else:
+            summary.append(f"  * c33 = {self._c33};")
+
+        # Four spins
+        if self._c41 is None:
+            summary.append("  * Undefined c41 factor;")
+        else:
+            summary.append(f"  * c41 = {self._c41};")
+
+        if self._c421 is None:
+            summary.append("  * Undefined c421 factor;")
+        else:
+            summary.append(f"  * c421 = {self._c421};")
+
+        if self._c422 is None:
+            summary.append("  * Undefined c422 factor;")
+        else:
+            summary.append(f"  * c422 = {self._c422};")
+
+        if self._c43 is None:
+            summary.append("  * Undefined c43 factor;")
+        else:
+            summary.append(f"  * c43 = {self._c43};")
+
+        if self._c44 is None:
+            summary.append("  * Undefined c44 factor.")
+        else:
+            summary.append(f"  * c44 = {self._c44}.")
+
+        summary = ("\n").join(summary)
+
+        return summary
+
+    # DEPRECATED in v0.4.0
+    # Remove in May 2026
     def summary(self, return_as_string=False):
         r"""
         Gives human-readable summary of the convention.
+
+        .. deprecated:: 0.4.0
+            Will be removed in May of 2026. Use ``print(convention)`` or ``str(convention)`` instead.
 
         Parameters
         ----------
@@ -240,6 +384,13 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor.
         """
+
+        import warnings
+
+        warnings.warn(
+            "The 'summary' method is deprecated since Magnopy 0.4.0. Use print(convention) or str(convention) instead. magnopy.Convention.summary will be removed in May of 2026.",
+            DeprecationWarning,
+        )
 
         summary = [f"{self.name} convention where"]
 
@@ -352,8 +503,7 @@ class Convention:
     @multiple_counting.setter
     def multiple_counting(self, new_value: bool):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     ################################################################################
@@ -373,8 +523,7 @@ class Convention:
     @spin_normalized.setter
     def spin_normalized(self, new_value: bool):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     ################################################################################
@@ -392,8 +541,7 @@ class Convention:
     @c1.setter
     def c1(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     ################################################################################
@@ -411,8 +559,7 @@ class Convention:
     @c21.setter
     def c21(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     @property
@@ -427,8 +574,7 @@ class Convention:
     @c22.setter
     def c22(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     ################################################################################
@@ -446,8 +592,7 @@ class Convention:
     @c31.setter
     def c31(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     @property
@@ -462,8 +607,7 @@ class Convention:
     @c32.setter
     def c32(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     @property
@@ -478,8 +622,7 @@ class Convention:
     @c33.setter
     def c33(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     ################################################################################
@@ -497,8 +640,7 @@ class Convention:
     @c41.setter
     def c41(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     @property
@@ -513,8 +655,7 @@ class Convention:
     @c421.setter
     def c421(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     @property
@@ -529,8 +670,7 @@ class Convention:
     @c422.setter
     def c422(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     @property
@@ -545,8 +685,7 @@ class Convention:
     @c43.setter
     def c43(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
 
     @property
@@ -561,30 +700,39 @@ class Convention:
     @c44.setter
     def c44(self, new_value: float):
         raise AttributeError(
-            "It is intentionally forbidden to set properties of convention. "
-            "Use correct methods of SpinHamiltonian class to change convention."
+            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
         )
+
+    ################################################################################
+    #                              Comparison and has                              #
+    ################################################################################
 
     def __eq__(self, other):
         # Note semi-private attributes are compared intentionally, as
         # public ones will raise an error if not defined
         # If attributes are not defined in both conventions,
         # then that attribute is considered equal.
-        return (
-            self._multiple_counting == other._multiple_counting
-            and self._spin_normalized == other._spin_normalized
-            and self._c1 == other._c1
-            and self._c21 == other._c21
-            and self._c22 == other._c22
-            and self._c31 == other._c31
-            and self._c32 == other._c32
-            and self._c33 == other._c33
-            and self._c41 == other._c41
-            and self._c421 == other._c421
-            and self._c422 == other._c422
-            and self._c43 == other._c43
-            and self._c44 == other._c44
+        if not isinstance(other, Convention):
+            return NotImplemented
+
+        return all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__comparison_attributes__
         )
+
+    def __hash__(self):
+        # Note semi-private attributes are used intentionally, as
+        # public ones will raise an error if not defined
+        # If attributes are not defined in both conventions,
+        # then that attribute is considered equal.
+
+        return hash(
+            tuple(getattr(self, attr) for attr in self.__comparison_attributes__)
+        )
+
+    ################################################################################
+    #                                Simple getters                                #
+    ################################################################################
 
     @staticmethod
     def get_predefined(name: str):
@@ -614,8 +762,8 @@ class Convention:
 
             >>> import magnopy
             >>> tb2j = magnopy.Convention.get_predefined("TB2J")
-            >>> tb2j.summary()
-            tb2j convention where
+            >>> print(tb2j)
+            "tb2j" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are normalized to 1;
               * Undefined c1 factor;
@@ -630,8 +778,8 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor.
             >>> grogu = magnopy.Convention.get_predefined("GROGU")
-            >>> grogu.summary()
-            grogu convention where
+            >>> print(grogu)
+            "grogu" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are normalized to 1;
               * Undefined c1 factor;
@@ -646,8 +794,8 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor.
             >>> vampire = magnopy.Convention.get_predefined("Vampire")
-            >>> vampire.summary()
-            vampire convention where
+            >>> print(vampire)
+            "vampire" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are normalized to 1;
               * Undefined c1 factor;
@@ -662,8 +810,8 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor.
             >>> spinW = magnopy.Convention.get_predefined("spinW")
-            >>> spinW.summary()
-            spinw convention where
+            >>> print(spinW)
+            "spinw" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are not normalized;
               * Undefined c1 factor;
@@ -770,8 +918,8 @@ class Convention:
             ...     c21=1,
             ...     c22=-1,
             ... )
-            >>> conv.summary()
-            original convention where
+            >>> print(conv)
+            "original" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are not normalized;
               * c1 = 1.0;
@@ -786,8 +934,8 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor.
             >>> mod_conv = conv.get_modified(name="modified", c22=1, c33=-3)
-            >>> mod_conv.summary()
-            modified convention where
+            >>> print(mod_conv)
+            "modified" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are not normalized;
               * c1 = 1.0;

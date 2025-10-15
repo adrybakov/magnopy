@@ -20,8 +20,8 @@ spin Hamiltonian. It stores all parameters that define convention in one data st
     True
     >>> convention.c21
     1.0
-    >>> convention.summary()
-    custom convention where
+    >>> print(convention)
+    "custom" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are not normalized;
       * c1 = 1.0;
@@ -66,8 +66,8 @@ allows you to change several properties of convention while keeping the other on
 .. doctest::
 
     >>> new_convention = convention.get_modified(c1=-1.0, c33 = 1.0)
-    >>> new_convention.summary()
-    custom convention where
+    >>> print(new_convention)
+    "custom" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are not normalized;
       * c1 = -1.0;
@@ -93,8 +93,8 @@ popular codes
 
     >>> tb2j_convention = Convention.get_predefined("tb2j")
     >>> vampire_convention = Convention.get_predefined("vampire")
-    >>> tb2j_convention.summary()
-    tb2j convention where
+    >>> print(tb2j_convention)
+    "tb2j" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are normalized to 1;
       * Undefined c1 factor;
@@ -108,8 +108,8 @@ popular codes
       * Undefined c422 factor;
       * Undefined c43 factor;
       * Undefined c44 factor.
-    >>> vampire_convention.summary()
-    vampire convention where
+    >>> print(vampire_convention)
+    "vampire" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are normalized to 1;
       * Undefined c1 factor;

@@ -43,10 +43,7 @@ class ConventionError(Exception):
     """
 
     def __init__(self, convention, property):
-        message = (
-            f"Convention of spin Hamiltonian has an undefined property '{property}':\n"
-            + convention.summary(return_as_string=True)
-        )
+        message = f"Convention of spin Hamiltonian has an undefined property '{property}':\n{convention}"
         super().__init__(message)
 
 

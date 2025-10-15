@@ -155,8 +155,8 @@ Convention of the Hamiltonian is stored as its attribute (:py:attr:`.SpinHamilto
 
 .. doctest::
 
-    >>> spinham.convention.summary()
-    custom convention where
+    >>> print(spinham.convention)
+    "custom" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are not normalized;
       * c1 = 1.0;

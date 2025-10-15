@@ -1,0 +1,29 @@
+.. _release-notes_0.4:
+
+***********
+Version 0.4
+***********
+
+0.4.0
+=====
+
+**Date**: Undefined
+
+Bugfix
+------
+
+* Fix a bug in ``magnopy-lswt``, when it is used with ``--k-points`` argument. Fix
+  :issue:`74`.
+
+New features
+------------
+
+* Add output of magnetic field to ``magnopy-optimize-sd``.
+* Implement :issue:`72`: implement ``magnopy.Convention.__str__()`` and
+  ``magnopy.Convention.__repr__()``.
+* Implement ``magnopy.Convention.__hash__()``.
+
+Deprecated
+----------
+
+* ``magnopy.Convention.summary`` use ``print(convention)`` or ``str(convention)`` instead.

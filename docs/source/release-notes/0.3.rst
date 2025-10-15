@@ -19,8 +19,12 @@ New features
 ------------
 
 * Add output of magnetic field to ``magnopy-optimize-sd``.
+* Implement :issue:`72`
 
+Deprecated
+----------
 
+* ``magnopy.Convention.summary`` use ``print(convention)`` or ``str(convention)`` instead.
 
 0.3.0
 =====
