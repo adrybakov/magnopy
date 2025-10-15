@@ -264,6 +264,7 @@ def solve_lswt(
                 np.linalg.norm(kpoints_absolute[1:] - kpoints_absolute[:-1], axis=1),
             )
         )
+        kp = None
 
         print("K-points are provided by the user.")
 

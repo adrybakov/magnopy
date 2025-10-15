@@ -9,10 +9,18 @@ Version 0.3
 
 **Date**: Undefined
 
+Bugfix
+------
+
+* Fix a bug in ``magnopy-lswt``, when it is used with ``--k-points`` argument. Fix
+  :issue:`74`.
+
 New features
 ------------
 
 * Add output of magnetic field to ``magnopy-optimize-sd``.
+
+
 
 0.3.0
 =====
