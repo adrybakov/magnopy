@@ -119,7 +119,7 @@ install |plotly|_ and |matplotlib|_ manually or install them as magnopy's depend
 
         %pip install "magnopy[visual]"
 
-    within it.
+    within it. You may need to have to restart you kernel as well.
 
 .. _user-guide_installation_source:
 
