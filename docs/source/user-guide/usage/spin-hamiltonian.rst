@@ -11,15 +11,16 @@ For the theoretical background on the spin Hamiltonian see
 with the definition of some spin Hamiltonian. This class stores the crystal structure,
 convention and all parameters in it.
 
-Note, that it stores the values of spins, but not the spin direction. The motivation
-behind is that for any spin Hamiltonian the direction of spin vectors would be defined
-by its parameters (it can be done by finding the ground state of the Hamiltonian).
-Nevertheless, a calculation is possible for an arbitrary set of spin directions, that
-are not necessary describe the ground state of the Hamiltonian, therefore, we decided
-not to include them in this class to avoid confusion and unnecessary bookkeeping.
+.. note::
+    It stores values of spins, but not the spin direction. The motivation behind is that
+    for any spin Hamiltonian the direction of spin vectors would be defined by its
+    parameters (it can be done by finding the ground state of the Hamiltonian).
+    Nevertheless, a calculation is possible for an arbitrary set of spin directions, that
+    are not necessary describe the ground state of the Hamiltonian, therefore, we decided
+    not to include them in this class to avoid confusion and unnecessary bookkeeping.
 
 
-To create spin Hamiltonian one need three objects :ref:`user-guide_usage_cell`,
+Three objects are required to create spin Hamiltonian :ref:`user-guide_usage_cell`,
 :ref:`user-guide_usage_atoms` and :ref:`user-guide_usage_convention`.
 
 .. doctest::
@@ -30,6 +31,7 @@ To create spin Hamiltonian one need three objects :ref:`user-guide_usage_cell`,
     >>> atoms = {
     ...     "names" : ["Fe1", "Fe2"],
     ...     "species" : ["Fe", "Fe"],
+    ...     "spglib_types" : [1, 1],
     ...     "positions" : [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]],
     ...     "spins" : [5/2, 5/2],
     ...     "g_factors" : [2, 2]
@@ -44,13 +46,11 @@ Adding and removing parameters
 ==============================
 
 Spin Hamiltonian stores parameters of the
-:ref:`user-guide_theory-behind_spin-hamiltonian_expanded-form`. There are eleven types
-of parameters. For each type there is a property that starts with ``p`` (i.e.
-:py:attr:`.SpinHamiltonian.p1`), that provides access to the parameters of the
-Hamiltonian and two functions that start with ``add_`` (i.e.
-:py:meth:`.SpinHamiltonian.add_1`) or ``remove_`` (i.e.
-:py:meth:`.SpinHamiltonian.remove_1`), that add or remove a parameter from the
-Hamiltonian.
+:ref:`user-guide_theory-behind_spin-hamiltonian_expanded-form`. There are eleven groups
+of parameters. A property that starts with ``p`` (i.e. :py:attr:`.SpinHamiltonian.p1`)
+provides access to the parameters of each group. Two functions that start with ``add_``
+(i.e. :py:meth:`.SpinHamiltonian.add_1`) or ``remove_`` (i.e.
+:py:meth:`.SpinHamiltonian.remove_1`) add or remove a parameter from the Hamiltonian.
 
 .. doctest::
 
@@ -63,7 +63,7 @@ Hamiltonian.
     >>> spinham.add_22(alpha = 0, beta = 0, nu = (0, 1, 0), parameter = np.eye(3))
     >>> spinham.add_22(alpha = 0, beta = 0, nu = (0, 0, 1), parameter = np.eye(3))
 
-Each parameter property behaves as a list with parameters (technically it is either a
+Properties that give access to the parameters behave as lists (technically it is either a
 list or an iterator)
 
 .. doctest::
@@ -109,6 +109,35 @@ Note that there are 6 parameters in the ``p22``, as ``multiple_counting`` is ``T
      [0. 1. 0.]
      [0. 0. 1.]]
 
+
+================================ ================================================================================
+Property                         Loop variables
+================================ ================================================================================
+:py:attr:`.SpinHamiltonian.p1`   ``for alpha, parameter in spinham.p1:``
+:py:attr:`.SpinHamiltonian.p21`  ``for alpha, parameter in spinham.p21:``
+:py:attr:`.SpinHamiltonian.p22`  ``for alpha, beta, nu, parameter in spinham.p22:``
+:py:attr:`.SpinHamiltonian.p31`  ``for alpha, parameter in spinham.p31:``
+:py:attr:`.SpinHamiltonian.p32`  ``for alpha, beta, nu, parameter in spinham.p32:``
+:py:attr:`.SpinHamiltonian.p33`  ``for alpha, beta, gamma, nu, _lambda, parameter in spinham.p33:``
+:py:attr:`.SpinHamiltonian.p41`  ``for alpha, parameter in spinham.p41:``
+:py:attr:`.SpinHamiltonian.p421` ``for alpha, beta, nu, parameter in spinham.p421:``
+:py:attr:`.SpinHamiltonian.p422` ``for alpha, beta, nu, parameter in spinham.p422:``
+:py:attr:`.SpinHamiltonian.p43`  ``for alpha, beta, gamma, nu, _lambda, parameter in spinham.p43:``
+:py:attr:`.SpinHamiltonian.p44`  ``for alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter in spinham.p44:``
+================================ ================================================================================
+
+.. hint::
+    Unit cell indices ``nu``, ``_lambda`` and ``rho`` are tuples of three integers, i.e.
+    ``(nu_1, nu_2, nu_3)``. They describe translation of the unit cell by ``nu_1*a1 + nu_2*a2
+    + nu_3*a3``, where ``a1``, ``a2`` and ``a3`` are the lattice vectors of the cell.
+
+    Indices of the atoms within the unit cell (``alpha``, ``beta``, ``gamma``,
+    ``epsilon``) are integers starting from ``0``. They correspond to the order of atoms
+    in the :py:attr:`.SpinHamiltonian.atoms` dictionary.
+
+    All indices directly correspond to the indices in the mathematical form of the spin
+    Hamiltonian in the :ref:`user-guide_theory-behind_spin-hamiltonian_expanded-form`.
+
 Cell and atoms
 ==============
 
@@ -122,7 +151,7 @@ Spin Hamiltonian class stores cell :py:attr:`.SpinHamiltonian.cell` and atoms
            [0., 1., 0.],
            [0., 0., 1.]])
     >>> spinham.atoms
-    {'names': ['Fe1', 'Fe2'], 'species': ['Fe', 'Fe'], 'positions': [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]], 'spins': [2.5, 2.5], 'g_factors': [2, 2]}
+    {'names': ['Fe1', 'Fe2'], 'species': ['Fe', 'Fe'], 'spglib_types': [1, 1], 'positions': [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]], 'spins': [2.5, 2.5], 'g_factors': [2, 2]}
     >>> # Magnopy adds syntactic sugar to the atoms dictionary inside the SpinHamiltonian class:
     >>> # a command
     >>> spinham.atoms.names
@@ -203,8 +232,45 @@ factor before the two spins & one site term or remove multiple counting
      [0. 2. 0.]
      [0. 0. 2.]]
 
-The main principle of changing convention can be formulated as "Energy of the Hamiltonian
-should not change with its convention".
+.. hint::
+
+    The main principle of changing convention can be formulated as "Physical properties of
+    the Hamiltonian do not depend on its convention".
+
+
+Units
+=====
+
+Spin Hamiltonian supports a number of units for its parameters. See
+:ref:`user-guide_usage_units_parameter-units` for the full list of supported units.
+
+By default the units are set to ``meV``. You can consult or change the units of the
+parameters at any moment using :py:attr:`.SpinHamiltonian.units`
+
+.. doctest::
+
+    >>> spinham.units
+    'meV'
+    >>> spinham.units = 'K'
+    >>> spinham.units
+    'Kelvin'
+    >>> for alpha, parameter in spinham.p21:
+    ...     print(spinham.atoms.names[alpha], parameter, sep="\n")
+    ...
+    Fe1
+    [[ 23.20903624   0.           0.        ]
+     [  0.         -11.60451812   0.        ]
+     [  0.           0.         -11.60451812]]
+
+.. note::
+
+    Change of units automatically rescales all parameters of the Hamiltonian. The
+    principle is the same as for change of convention: "Physical properties of the
+    Hamiltonian do not depend on its units".
+
+    Methods that add parameters to the Hamiltonian (i.e. :py:meth:`.SpinHamiltonian.add_1`,
+    :py:meth:`.SpinHamiltonian.add_21`, etc) interpret the input parameters in the units
+    of :py:attr:`.SpinHamiltonian.units` at the moment of the call.
 
 Magnetic vs non-magnetic atoms
 ==============================
@@ -237,24 +303,27 @@ To convert from an index of :py:attr:`.SpinHamiltonian.magnetic_atoms` to the in
     >>> index_in_atoms = spinham.map_to_all[index_in_magnetic_atoms]
 
 
-Now look at the example
+Here is an example that illustrates the difference between all atoms and magnetic atoms
 
 .. doctest::
 
     >>> # Create a Hamiltonian with three atoms
     >>> atoms = dict(
-    ... names=["Cr1", "Cr2", "Cr3"],
-    ... spins = [3/2, 3/2, 3/2],
-    ... g_factors=[2, 2, 2],
-    ... positions=[[0, 0, 0],[0.5, 0, 0],[0, 0.5, 0]])
+    ...     names=["Cr1", "Cr2", "Cr3"],
+    ...     spins = [3/2, 3/2, 3/2],
+    ...     g_factors=[2, 2, 2],
+    ...     positions=[[0, 0, 0],[0.5, 0, 0],[0, 0.5, 0]]
+    ... )
     >>> conv = magnopy.Convention(
-    ... multiple_counting=True,
-    ... spin_normalized=False,
-    ... c21=1)
+    ...     multiple_counting=True,
+    ...     spin_normalized=False,
+    ...     c21=1
+    ... )
     >>> spinham = magnopy.SpinHamiltonian(
-    ... cell=np.eye(3),
-    ... atoms=atoms,
-    ... convention=conv)
+    ...     cell=np.eye(3),
+    ...     atoms=atoms,
+    ...     convention=conv
+    ... )
 
 At this moment there is no magnetic atoms in the Hamiltonian (in the magnopy's context),
 even though all atoms of the crystal have non-zero spin value.
@@ -275,6 +344,12 @@ Lets add an on-site quadratic anisotropy to the second atom
 .. doctest::
 
     >>> spinham.add_21(alpha=1, parameter = np.diag([1, 2, 3]))
+
+Now second atom has a parameter associated with it, hence it is considered magnetic.
+
+.. doctest::
+
+
     >>> spinham.M
     1
     >>> spinham.magnetic_atoms
@@ -288,21 +363,24 @@ Lets add an on-site quadratic anisotropy to the second atom
     >>> print(spinham.p21[0][0])
     1
 
-Now second atom has a parameter associated with it, hence it is considered magnetic.
 Two mapping lists can be used to safely convert from one to another
 
 .. doctest::
 
     >>> # From index of magnetic atom to the index of non-magnetic atom
     >>> for i in range(spinham.M):
-    ...     print(spinham.magnetic_atoms.names[i],
-    ...     spinham.atoms.names[spinham.map_to_all[i]])
+    ...     print(
+    ...         spinham.magnetic_atoms.names[i],
+    ...         spinham.atoms.names[spinham.map_to_all[i]]
+    ...     )
     ...
     Cr2 Cr2
     >>> # From index of non-magnetic atom to the index of magnetic atom
     >>> for i in range(len(spinham.atoms.names)):
     ...     if spinham.map_to_magnetic[i] is not None:
-    ...         print(spinham.magnetic_atoms.names[spinham.map_to_magnetic[i]],
-    ...               spinham.atoms.names[i])
+    ...         print(
+    ...             spinham.magnetic_atoms.names[spinham.map_to_magnetic[i]],
+    ...             spinham.atoms.names[i]
+    ...         )
     ...
     Cr2 Cr2
