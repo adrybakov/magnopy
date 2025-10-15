@@ -746,7 +746,7 @@ class Convention:
 
             * "tb2j"
             * "grogu"
-            * vampire"
+            * "vampire"
             * "spinw"
 
             Case-insensitive.

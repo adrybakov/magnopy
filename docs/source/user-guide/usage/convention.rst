@@ -7,8 +7,9 @@ Convention
 For the theoretical background of the convention problem and why it is important see
 :ref:`user-guide_theory-behind_convention-problem`.
 
-Magnopy implements a compact :py:class:`.Convention` class to store the convention of the
-spin Hamiltonian. It stores all parameters that define convention in one data structure.
+Magnopy implements a compact, hashable :py:class:`.Convention` class to store the
+convention of the spin Hamiltonian. It stores all parameters that define convention in one
+data structure.
 
 .. doctest::
 
@@ -40,14 +41,14 @@ There are two boolean properties (:py:attr:`.Convention.multiple_counting` and
 :py:attr:`.Convention.spin_normalized`) and eleven constants that fully define the
 convention of the spin Hamiltonian.
 
-Convention is one of three objects that are required for the creation of the
-:py:class:`.SpinHamiltonian` class. It is stored as an its attribute
-:py:attr:`.SpinHamiltonian.convention`.
+:py:class:`.Convention` is one of the three objects that are required for creation of the
+:py:class:`.SpinHamiltonian` class. It is stored as an immutable attribute
+:py:attr:`.SpinHamiltonian.cell`.
 
 Modified convention
 ===================
 
-Every instance of the convention class is meant to be static, therefore the properties of
+Every instance of the convention class is meant to be static, therefore, the properties of
 the convention can not be changed
 
 .. doctest::
@@ -87,7 +88,7 @@ Pre-defined conventions
 =======================
 
 Magnopy gives access to the predefined conventions of the spin Hamiltonian from other
-popular codes
+codes
 
 .. doctest::
 
