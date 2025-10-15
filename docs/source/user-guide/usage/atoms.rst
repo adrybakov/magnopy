@@ -50,7 +50,8 @@ Magnopy recognizes the following keys
 *   "spglib_types" :
     ``list`` of ``int``. Inherited from |wulfric|_. Atomic types as defined in |spglib|_.
     Used in the symmetry analysis (via |wulfric|_ and |spglib|_). See
-    :py:func:`wulfric.get_spglib_data` and :py:func:`wulfric.get_spglib_types` for details.
+    :py:func:`wulfric.get_spglib_data` and :py:func:`wulfric.get_spglib_types` for
+    details.
 *   "positions" :
     ``list`` of ``list`` of ``float``. **Relative** coordinates of atoms. Inherited from
     |wulfric|_. Each element is an |array-like|_ of length :math:`3`.
