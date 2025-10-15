@@ -29,6 +29,8 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
+# DEPRECATED in v0.2.0
+# Remove in March 2026
 def output_k_resolved(
     data,
     data_headers=None,
@@ -183,7 +185,8 @@ def output_k_resolved(
         return lines
 
 
-# Deprecated in 0.3.0. To be removed in April 2026
+# DEPRECATED in v0.3.0
+# Remove in April 2026
 def plot_k_resolved(data, kp=None, output_filename=None, ylabel=None):
     r"""
     Plot some k-resolved data.
@@ -213,7 +216,7 @@ def plot_k_resolved(data, kp=None, output_filename=None, ylabel=None):
     import warnings
 
     warnings.warn(
-        "Function magnopy.io.plot_k_resolved() was deprecated in 0.3.0 and will be removed in April 2026. Use magnopy.experimental.plot_disperion() instead",
+        "Function magnopy.io.plot_k_resolved() was deprecated in 0.3.0 and will be removed in April 2026. Use magnopy.experimental.plot_dispersion() instead",
         DeprecationWarning,
     )
 
