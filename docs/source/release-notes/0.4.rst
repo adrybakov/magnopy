@@ -19,7 +19,7 @@ New features
 ------------
 
 * Add output of magnetic field to ``magnopy-optimize-sd``.
-* Implement :issue:`72`: implement ``magnopy.Convention.__str__()`` and
+* Implement :issue:`72`: ``magnopy.Convention.__str__()`` and
   ``magnopy.Convention.__repr__()``.
 * Implement ``magnopy.Convention.__hash__()``.
 
