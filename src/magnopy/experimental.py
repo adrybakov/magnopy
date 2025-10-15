@@ -42,7 +42,7 @@ except ImportError:
         ]
     )
 
-from magnopy._constants._units import _FREQ_UNITS
+from magnopy._constants._units import _MAGNON_ENERGY_UNITS
 
 
 def plot_spinham(
@@ -611,7 +611,7 @@ def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
 
     ylims = ax.get_ylim()
 
-    meV_to_THz = _FREQ_UNITS["mev"] / _FREQ_UNITS["thz"]
+    meV_to_THz = _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS["thz"]
 
     twinax = ax.twinx()
 

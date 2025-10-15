@@ -80,20 +80,22 @@ _PARAMETER_UNITS_MAKEUP["kelvin"] = "Kelvin"
 ################################################################################
 
 # Name : value when expressed in SI
-_FREQ_UNITS = {key: _ENERGY_UNITS[key] for key in _ENERGY_UNITS}
-_FREQ_UNITS["hertz"] = PLANCK_CONSTANT
-_FREQ_UNITS["hz"] = PLANCK_CONSTANT
-_FREQ_UNITS["gigahertz"] = PLANCK_CONSTANT * GIGA
-_FREQ_UNITS["ghz"] = PLANCK_CONSTANT * GIGA
-_FREQ_UNITS["terahertz"] = PLANCK_CONSTANT * TERA
-_FREQ_UNITS["thz"] = PLANCK_CONSTANT * TERA
+_MAGNON_ENERGY_UNITS = {key: _ENERGY_UNITS[key] for key in _ENERGY_UNITS}
+_MAGNON_ENERGY_UNITS["hertz"] = PLANCK_CONSTANT
+_MAGNON_ENERGY_UNITS["hz"] = PLANCK_CONSTANT
+_MAGNON_ENERGY_UNITS["gigahertz"] = PLANCK_CONSTANT * GIGA
+_MAGNON_ENERGY_UNITS["ghz"] = PLANCK_CONSTANT * GIGA
+_MAGNON_ENERGY_UNITS["terahertz"] = PLANCK_CONSTANT * TERA
+_MAGNON_ENERGY_UNITS["thz"] = PLANCK_CONSTANT * TERA
 
 
 # Name : Pretty name
-_FREQ_UNITS_MAKEUP = {key: _ENERGY_UNITS_MAKEUP[key] for key in _ENERGY_UNITS_MAKEUP}
-_FREQ_UNITS_MAKEUP["hertz"] = "Hz"
-_FREQ_UNITS_MAKEUP["hz"] = "Hz"
-_FREQ_UNITS_MAKEUP["gigahertz"] = "GHz"
-_FREQ_UNITS_MAKEUP["ghz"] = "GHz"
-_FREQ_UNITS_MAKEUP["terahertz"] = "THz"
-_FREQ_UNITS_MAKEUP["thz"] = "THz"
+_MAGNON_ENERGY_UNITS_MAKEUP = {
+    key: _ENERGY_UNITS_MAKEUP[key] for key in _ENERGY_UNITS_MAKEUP
+}
+_MAGNON_ENERGY_UNITS_MAKEUP["hertz"] = "Hz"
+_MAGNON_ENERGY_UNITS_MAKEUP["hz"] = "Hz"
+_MAGNON_ENERGY_UNITS_MAKEUP["gigahertz"] = "GHz"
+_MAGNON_ENERGY_UNITS_MAKEUP["ghz"] = "GHz"
+_MAGNON_ENERGY_UNITS_MAKEUP["terahertz"] = "THz"
+_MAGNON_ENERGY_UNITS_MAKEUP["thz"] = "THz"

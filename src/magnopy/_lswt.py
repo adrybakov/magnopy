@@ -27,7 +27,7 @@ from magnopy._exceptions import ColpaFailed
 from magnopy._local_rf import span_local_rfs
 
 from magnopy._data_validation import _validated_units
-from magnopy._constants._units import _ENERGY_UNITS, _FREQ_UNITS
+from magnopy._constants._units import _ENERGY_UNITS, _MAGNON_ENERGY_UNITS
 
 
 # Save local scope at this moment
@@ -921,9 +921,11 @@ class LSWT:
 
         # Convert units if necessary
         if units != "meV":
-            units = _validated_units(units=units, supported_units=_FREQ_UNITS)
-            E_plus = E_plus * _FREQ_UNITS["mev"] / _FREQ_UNITS[units]
-            E_minus = E_minus * _FREQ_UNITS["mev"] / _FREQ_UNITS[units]
+            units = _validated_units(units=units, supported_units=_MAGNON_ENERGY_UNITS)
+            E_plus = E_plus * _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS[units]
+            E_minus = (
+                E_minus * _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS[units]
+            )
 
         energies = E_plus[: self.M] + E_minus[self.M :]
         transformation_matrices = G_plus[: self.M]
