@@ -32,6 +32,6 @@ with the three lattice vectors being
     >>> cell[2] # a_3
     [0.0000, 0.0000, 8.7605]
 
-Cell is one of the three objects that are required for creation of the
+``cell`` is one of the three objects that are required for creation of the
 :py:class:`.SpinHamiltonian` class. It is stored as an immutable attribute
 :py:attr:`.SpinHamiltonian.cell`.
