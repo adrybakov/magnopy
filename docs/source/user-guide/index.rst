@@ -55,6 +55,7 @@ please do not hesitate to ask it via our :ref:`support` channels.
     usage/convention
     usage/units
     usage/spin-hamiltonian
+    usage/spin-directions
     usage/energy
     usage/lswt
 

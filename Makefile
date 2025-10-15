@@ -46,6 +46,7 @@ clean:
 
 # Documentation
 docs-png:
+	@python3 dev-tools/images/data-structure.py -rd .
 	@python3 dev-tools/images/origin-upstream-local.py -rd .
 	@python3 dev-tools/images/positions.py -rd .
 
