@@ -334,6 +334,8 @@ def _p43(spinham):
     return _P43_iterator(spinham)
 
 
+# ARGUMENT "replace" DEPRECATED since 0.4.0
+# Remove in May of 2026
 def _add_43(
     spinham,
     alpha: int,
@@ -343,19 +345,14 @@ def _add_43(
     _lambda: tuple,
     parameter,
     units=None,
-    replace=False,
+    when_present="raise error",
+    replace=None,
 ) -> None:
     r"""
     Adds a (four spins & three sites) parameter to the Hamiltonian.
 
     Doubles of the bonds are managed automatically (independently of the convention of the
     Hamiltonian).
-
-
-    Raises
-    ------
-    ValueError
-        If an atom already has a parameter associated with it.
 
     Parameters
     ----------
@@ -401,10 +398,35 @@ def _add_43(
 
         .. versionadded:: 0.3.0
 
+    when_present : str, default "raise error"
+        Action to take if triple of atoms already has a parameter associated with it.
+        Case-insensitive. Supported values are:
+
+        - ``"raise error"`` (default): raises an error if triple of atoms already has a
+          parameter associated with it.
+        - ``"replace"``: replace existing value of the parameter with the new one.
+        - ``"add"``: add the value of the parameter to the existing one.
+        - ``"mean"``: replace the value of the parameter with the arithmetic mean of
+          existing and new parameters.
+
+        .. versionadded:: 0.4.0
+
     replace : bool, default False
-        Whether to replace the value of the parameter if the triplet of atoms
-        ``alpha, beta, gamma, nu, lambda`` or one of its duplicates already have a
+        Whether to replace the value of the parameter if triple of atoms already has a
         parameter associated with it.
+
+        .. deprecated:: 0.4.0
+            The ``replace`` argument will be removed in May of 2026. Use
+            ``modify="replace"`` instead.
+
+
+    Raises
+    ------
+    ValueError
+        If triple of atoms already has a parameter associated with it and
+        ``when_present="raise error"``.
+    ValueError
+        If ``when_present`` has an unsupported value.
 
     See Also
     --------
@@ -423,6 +445,19 @@ def _add_43(
     For the definition of the primary version see
     :ref:`user-guide_theory-behind_multiple-counting`.
     """
+
+    if replace is not None:
+        import warnings
+
+        warnings.warn(
+            'The "replace" argument is deprecated since version 0.4.0 and will be removed in May of 2026. Use when_present="replace" instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if replace:
+            when_present = "replace"
+        else:
+            when_present = "raise error"
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     _validate_atom_index(index=beta, atoms=spinham.atoms)
@@ -451,22 +486,32 @@ def _add_43(
         S_gamma=spinham.atoms.spins[gamma],
     )
 
-    # TD-BINARY_SEARCH
-
+    # TODO BINARY SEARCH
     # Try to find the place for the new one inside the list
     index = 0
     while index < len(spinham._43):
         # If already present in the model
         if spinham._43[index][:5] == [alpha, beta, gamma, nu, _lambda]:
             # Either replace
-            if replace:
-                spinham._43[index] = [alpha, beta, gamma, nu, _lambda, parameter]
-                return
+            if when_present.lower() == "replace":
+                spinham._43[index][5] = parameter
+            # Or add
+            elif when_present.lower() == "add":
+                spinham._43[index][5] += parameter
+            # Or replace with mean value
+            elif when_present.lower() == "mean":
+                spinham._43[index][5] = (spinham._43[index][5] + parameter) / 2.0
             # Or raise an error
-            raise ValueError(
-                f"Parameter is already set for the triple of atoms "
-                f"{alpha}, {beta} {nu}, {gamma} {_lambda}. Or for their duplicate."
-            )
+            elif when_present.lower() == "raise error":
+                raise ValueError(
+                    f"(Four spins & three sites) parameter is already set for the triple of atoms {alpha}, {beta} {nu}, {gamma} {_lambda}. Or for their duplicate."
+                )
+            else:
+                raise ValueError(
+                    f'Unsupported value of when_present: "{when_present}". Supported values are: "raise error", "replace", "add", "mean".'
+                )
+
+            return
 
         # If it should be inserted before current element
         if spinham._43[index][:5] > [alpha, beta, gamma, nu, _lambda]:

@@ -203,7 +203,7 @@ def load_tb2j(
             # and symmetric, potentially loosing part of the matrix.
             # Due to the TB2J problem: aniso not always traceless.
             parameter=parameter,
-            replace=True,
+            when_present="replace",
         )
 
         computed_distance = get_distance(spinham.cell, spinham.atoms, atom1, atom2, ijk)

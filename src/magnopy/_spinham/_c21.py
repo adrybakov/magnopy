@@ -69,7 +69,16 @@ def _p21(spinham) -> list:
     return spinham._21
 
 
-def _add_21(spinham, alpha: int, parameter, units=None, replace=False) -> None:
+# ARGUMENT "replace" DEPRECATED since 0.4.0
+# Remove in May of 2026
+def _add_21(
+    spinham,
+    alpha: int,
+    parameter,
+    units=None,
+    when_present="raise error",
+    replace=None,
+) -> None:
     r"""
     Adds a (two spins & one site) parameter to the Hamiltonian.
 
@@ -90,20 +99,52 @@ def _add_21(spinham, alpha: int, parameter, units=None, replace=False) -> None:
 
         .. versionadded:: 0.3.0
 
+    when_present : str, default "raise error"
+        Action to take if an atom already has a parameter associated with it.
+        Case-insensitive. Supported values are:
+
+        - ``"raise error"`` (default): raises an error if an atom already has a parameter
+          associated with it.
+        - ``"replace"``: replace existing value of the parameter with the new one.
+        - ``"add"``: add the value of the parameter to the existing one.
+        - ``"mean"``: replace the value of the parameter with the arithmetic mean of
+          existing and new parameters.
+
+        .. versionadded:: 0.4.0
+
     replace : bool, default False
         Whether to replace the value of the parameter if an atom already has a
         parameter associated with it.
 
+        .. deprecated:: 0.4.0
+            The ``replace`` argument will be removed in May of 2026. Use
+            ``when_present="replace"`` instead.
+
     Raises
     ------
     ValueError
-        If an atom already has a parameter associated with it.
+        If an atom already has a parameter associated with it and ``when_present="raise error"``.
+    ValueError
+        If ``when_present`` has an unsupported value.
 
     See Also
     --------
     p21
     remove_21
     """
+
+    if replace is not None:
+        import warnings
+
+        warnings.warn(
+            'The "replace" argument is deprecated since version 0.4.0 and will be removed in May of 2026. Use when_present="replace" instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if replace:
+            when_present = "replace"
+        else:
+            when_present = "raise error"
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     spinham._reset_internals()
@@ -116,21 +157,32 @@ def _add_21(spinham, alpha: int, parameter, units=None, replace=False) -> None:
             parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
         )
 
-    # TD-BINARY_SEARCH
+    # TODO BINARY SEARCH
     # Try to find the place for the new one inside the list
     index = 0
     while index < len(spinham._21):
         # If already present in the model
         if spinham._21[index][0] == alpha:
             # Either replace
-            if replace:
-                spinham._21[index] = [alpha, parameter]
-                return
+            if when_present.lower() == "replace":
+                spinham._21[index][1] = parameter
+            # Or add
+            elif when_present.lower() == "add":
+                spinham._21[index][1] = spinham._21[index][1] + parameter
+            # Or replace with mean value
+            elif when_present.lower() == "mean":
+                spinham._21[index][1] = (spinham._21[index][1] + parameter) / 2.0
             # Or raise an error
-            raise ValueError(
-                f"On-site quadratic anisotropy already set "
-                f"for atom {alpha} ('{spinham.atoms.names[alpha]}')"
-            )
+            elif when_present.lower() == "raise error":
+                raise ValueError(
+                    f"(Two spins & one site) parameter is already set for atom {alpha} ('{spinham.atoms.names[alpha]}'."
+                )
+            else:
+                raise ValueError(
+                    f'Unsupported value of when_present: "{when_present}". Supported values are: "raise error", "replace", "add", "mean".'
+                )
+
+            return
 
         # If it should be inserted before current element
         if spinham._21[index][0] > alpha:

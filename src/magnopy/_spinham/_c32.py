@@ -167,8 +167,17 @@ def _p32(spinham):
     return _P32_iterator(spinham)
 
 
+# ARGUMENT "replace" DEPRECATED since 0.4.0
+# Remove in May of 2026
 def _add_32(
-    spinham, alpha: int, beta: int, nu: tuple, parameter, units=None, replace=False
+    spinham,
+    alpha: int,
+    beta: int,
+    nu: tuple,
+    parameter,
+    units=None,
+    when_present="raise error",
+    replace=None,
 ) -> None:
     r"""
     Adds a (three spins & two sites) parameter to the Hamiltonian.
@@ -176,11 +185,6 @@ def _add_32(
     Doubles of the bonds are managed automatically (independently of the convention of the
     Hamiltonian).
 
-
-    Raises
-    ------
-    ValueError
-        If an atom already has a parameter associated with it.
 
     Parameters
     ----------
@@ -213,10 +217,34 @@ def _add_32(
 
         .. versionadded:: 0.3.0
 
+    when_present : str, default "raise error"
+        Action to take if a pair of atoms already has a parameter associated with it.
+        Case-insensitive. Supported values are:
+
+        - ``"raise error"`` (default): raises an error if a pair of atoms already has a
+          parameter associated with it.
+        - ``"replace"``: replace existing value of the parameter with the new one.
+        - ``"add"``: add the value of the parameter to the existing one.
+        - ``"mean"``: replace the value of the parameter with the arithmetic mean of
+          existing and new parameters.
+
+        .. versionadded:: 0.4.0
+
     replace : bool, default False
-        Whether to replace the value of the parameter if the pair of atoms
-        ``alpha, beta, nu`` or its double already have a parameter associated
-        with it.
+        Whether to replace the value of the parameter if a pair of atoms already has a
+        parameter associated with it.
+
+        .. deprecated:: 0.4.0
+            The ``replace`` argument will be removed in May of 2026. Use
+            ``modify="replace"`` instead.
+
+
+    Raises
+    ------
+    ValueError
+        If a pair of atoms already has a parameter associated with it and ``when_present="raise error"``.
+    ValueError
+        If ``when_present`` has an unsupported value.
 
     See Also
     --------
@@ -235,6 +263,19 @@ def _add_32(
     For the definition of the primary version see
     :ref:`user-guide_theory-behind_multiple-counting`.
     """
+
+    if replace is not None:
+        import warnings
+
+        warnings.warn(
+            'The "replace" argument is deprecated since version 0.4.0 and will be removed in May of 2026. Use when_present="replace" instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if replace:
+            when_present = "replace"
+        else:
+            when_present = "raise error"
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     _validate_atom_index(index=beta, atoms=spinham.atoms)
@@ -258,22 +299,32 @@ def _add_32(
         S_beta=spinham.atoms.spins[beta],
     )
 
-    # TD-BINARY_SEARCH
-
+    # TODO BINARY SEARCH
     # Try to find the place for the new one inside the list
     index = 0
     while index < len(spinham._32):
         # If already present in the model
         if spinham._32[index][:3] == [alpha, beta, nu]:
             # Either replace
-            if replace:
-                spinham._32[index] = [alpha, beta, nu, parameter]
-                return
+            if when_present.lower() == "replace":
+                spinham._32[index][3] = parameter
+            # Or add
+            elif when_present.lower() == "add":
+                spinham._32[index][3] = spinham._32[index][3] + parameter
+            # Or replace with mean value
+            elif when_present.lower() == "mean":
+                spinham._32[index][3] = (spinham._32[index][3] + parameter) / 2.0
             # Or raise an error
-            raise ValueError(
-                f"Exchange like parameter is already set for the pair of atoms "
-                f"{alpha} and {beta} ({nu}). Or for their double bond."
-            )
+            elif when_present.lower() == "raise error":
+                raise ValueError(
+                    f"(Three spins & two sites) parameter is already set for the pair of atoms {alpha} and {beta} ({nu}). Or for their double bond."
+                )
+            else:
+                raise ValueError(
+                    f'Unsupported value of when_present: "{when_present}". Supported values are: "raise error", "replace", "add", "mean".'
+                )
+
+            return
 
         # If it should be inserted before current element
         if spinham._32[index][:3] > [alpha, beta, nu]:

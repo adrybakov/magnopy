@@ -146,7 +146,9 @@ def load_grogu(filename) -> SpinHamiltonian:
 
         i += 2
 
-        spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=parameter, replace=True)
+        spinham.add_22(
+            alpha=alpha, beta=beta, nu=nu, parameter=parameter, when_present="replace"
+        )
 
     return spinham
 

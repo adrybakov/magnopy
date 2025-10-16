@@ -406,7 +406,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         # Three spins
@@ -425,7 +425,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         for alpha, beta, gamma, nu, _lambda, parameter in spinham._33:
@@ -444,7 +444,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     nu=new_nu,
                     _lambda=new_lambda,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         # Four spins
@@ -463,7 +463,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         for alpha, beta, nu, parameter in spinham._422:
@@ -477,7 +477,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         for alpha, beta, gamma, nu, _lambda, parameter in spinham._43:
@@ -495,7 +495,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                 nu=new_nu,
                 _lambda=new_lambda,
                 parameter=parameter,
-                replace=True,
+                when_present="replace",
             )
 
         for (
@@ -527,7 +527,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                 _lambda=new_lambda,
                 rho=new_rho,
                 parameter=parameter,
-                replace=True,
+                when_present="replace",
             )
 
     return new_spinham

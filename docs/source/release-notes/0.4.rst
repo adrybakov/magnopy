@@ -22,8 +22,17 @@ New features
 * Implement :issue:`72`: ``magnopy.Convention.__str__()`` and
   ``magnopy.Convention.__repr__()``.
 * Implement ``magnopy.Convention.__hash__()``.
+* Implement ``when_present`` argument in ``SpinHamiltonian.add_1``, ``SpinHamiltonian.add_21``,
+  ``SpinHamiltonian.add_22``, ``SpinHamiltonian.add_31``, ``SpinHamiltonian.add_32``,
+  ``SpinHamiltonian.add_33``, ``SpinHamiltonian.add_41``, ``SpinHamiltonian.add_421``,
+  ``SpinHamiltonian.add_422``, ``SpinHamiltonian.add_43``, ``SpinHamiltonian.add_44``.
 
 Deprecated
 ----------
 
 * ``magnopy.Convention.summary`` use ``print(convention)`` or ``str(convention)`` instead.
+* ``replace`` argument in ``SpinHamiltonian.add_1``, ``SpinHamiltonian.add_21``,
+  ``SpinHamiltonian.add_22``, ``SpinHamiltonian.add_31``, ``SpinHamiltonian.add_32``,
+  ``SpinHamiltonian.add_33``, ``SpinHamiltonian.add_41``, ``SpinHamiltonian.add_421``,
+  ``SpinHamiltonian.add_422``, ``SpinHamiltonian.add_43``, ``SpinHamiltonian.add_44``.
+  Use ``when_present="replace"`` instead.
