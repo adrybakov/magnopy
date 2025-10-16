@@ -26,6 +26,7 @@ New features
   ``SpinHamiltonian.add_22``, ``SpinHamiltonian.add_31``, ``SpinHamiltonian.add_32``,
   ``SpinHamiltonian.add_33``, ``SpinHamiltonian.add_41``, ``SpinHamiltonian.add_421``,
   ``SpinHamiltonian.add_422``, ``SpinHamiltonian.add_43``, ``SpinHamiltonian.add_44``.
+* Extend hover information in ``magnopy.experimental.plot_spinham()``.
 
 Deprecated
 ----------
