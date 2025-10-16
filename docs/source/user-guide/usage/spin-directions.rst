@@ -64,7 +64,7 @@ exchange interaction between the first and second atoms
 
 .. doctest::
 
-    >>> spinham.add_22(alpha=0, beta=1, nu=(0, 0, 0) parameter=np.eye(3))
+    >>> spinham.add_22(alpha=0, beta=1, nu=(0, 0, 0), parameter=np.eye(3))
 
 Then the list of spin directions must contain three unit vectors
 
