@@ -109,6 +109,8 @@ def _add_21(
         - ``"add"``: add the value of the parameter to the existing one.
         - ``"mean"``: replace the value of the parameter with the arithmetic mean of
           existing and new parameters.
+        - ``"skip"``: Leave existing parameter unchanged and continue without raising an
+          error.
 
         .. versionadded:: 0.4.0
 
@@ -172,6 +174,9 @@ def _add_21(
             # Or replace with mean value
             elif when_present.lower() == "mean":
                 spinham._21[index][1] = (spinham._21[index][1] + parameter) / 2.0
+            # Or do nothing
+            elif when_present.lower() == "skip":
+                pass
             # Or raise an error
             elif when_present.lower() == "raise error":
                 raise ValueError(
@@ -179,7 +184,7 @@ def _add_21(
                 )
             else:
                 raise ValueError(
-                    f'Unsupported value of when_present: "{when_present}". Supported values are: "raise error", "replace", "add", "mean".'
+                    f'Unsupported value of when_present: "{when_present}". Supported values are: "raise error", "replace", "add", "mean", "skip".'
                 )
 
             return

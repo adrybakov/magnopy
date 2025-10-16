@@ -86,7 +86,7 @@ def test_add_1(alpha, parameter):
 
 @pytest.mark.parametrize(
     "when_present, parameter",
-    [("replace", 2.0), ("add", 3.0), ("mean", 1.5)],
+    [("skip", 1.0), ("replace", 2.0), ("add", 3.0), ("mean", 1.5)],
 )
 def test_add_1_when_present(when_present, parameter):
     spinham = get_spinham()
