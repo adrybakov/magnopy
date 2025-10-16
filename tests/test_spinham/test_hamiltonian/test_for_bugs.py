@@ -40,7 +40,7 @@ def test_energy_p1():
 
     BOHR_MAGNETON = 0.057883818060  # meV / Tesla
 
-    spinham.add_magnetic_field(h=[0, 0, 1], alphas=[0])
+    spinham.add_magnetic_field(B=[0, 0, 1], alphas=[0])
 
     spinham.add_22(alpha=0, beta=1, nu=(0, 0, 0), parameter=np.zeros((3, 3)))
 

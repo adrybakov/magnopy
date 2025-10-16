@@ -145,7 +145,7 @@ def ivuzjo(N=10, J=10):
             parameter = from_iso(iso=J) + from_dmi(dmi=[0, D, 0])
             spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=parameter)
 
-    spinham.add_magnetic_field(h=[0, 0, J / 5 / BOHR_MAGNETON / 2])
+    spinham.add_magnetic_field(B=[0, 0, J / 5 / BOHR_MAGNETON / 2])
 
     return spinham
 

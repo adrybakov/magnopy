@@ -163,7 +163,7 @@ def solve_lswt(
 
     # Add magnetic field if any
     if magnetic_field is not None:
-        spinham.add_magnetic_field(h=magnetic_field)
+        spinham.add_magnetic_field(B=magnetic_field)
 
     # Get energy class
     energy = Energy(spinham=spinham)

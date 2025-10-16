@@ -944,14 +944,16 @@ class SpinHamiltonian:
     ############################################################################
     #                          External magnetic field                         #
     ############################################################################
-    def add_magnetic_field(self, h, alphas=None) -> None:
+    # ARGUMENT "h" DEPRECATED since 0.4.0
+    # Remove in May of 2026
+    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
         r"""
         Adds external magnetic field to the Hamiltonian in the form of one spin
         parameters.
 
         .. math::
 
-            \mu_B  g_{\alpha} \boldsymbol{h}\cdot\boldsymbol{S}_{\mu,\alpha}
+            \mu_B  g_{\alpha} \boldsymbol{B}\cdot\boldsymbol{S}_{\mu,\alpha}
             =
             C_1
             \boldsymbol{S}_{\mu,\alpha}
@@ -964,14 +966,21 @@ class SpinHamiltonian:
 
             \boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})
             =
-            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{h}
+            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{B}
 
         Parameters
         ----------
-        h : (3, ) |array-like|_
-            Vector of magnetic field given in the units of Tesla.
+        B : (3, ) |array-like|_
+            Vector of magnetic field (magnetic flux density, B) given in the units of
+            Tesla.
         alphas : list of int, optional
             Indices of atoms, to which the magnetic field effect should be added.
+
+        h : (3, ) |array-like|_
+            Vector of magnetic field given in the units of Tesla.
+
+            .. deprecated:: 0.4.0
+                The argument will be removed in May of 2026. Use ``B`` instead.
 
         Notes
         -----
@@ -987,10 +996,25 @@ class SpinHamiltonian:
           :py:attr:`.SpinHamiltonian.atoms`)
         """
 
+        if h is not None:
+            import warnings
+
+            warnings.warn(
+                'Argument "h" is deprecated as of 0.4.0, use "B" instead. "h" will be removed in May of 2026.',
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            B = h
+
+        if B is None:
+            raise TypeError(
+                "SpinHamiltonian.add_magnetic_field() missing 1 required argument: 'B'"
+            )
+
         if self.convention._c1 is None:
             self.convention._c1 = 1.0
 
-        h = np.array(h, dtype=float)
+        B = np.array(B, dtype=float)
 
         mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
 
@@ -998,7 +1022,7 @@ class SpinHamiltonian:
             alphas = self.map_to_all
 
         zeeman_parameters = [
-            mu_B * self.atoms.g_factors[alpha] * h / self.convention.c1
+            mu_B * self.atoms.g_factors[alpha] * B / self.convention.c1
             for alpha in alphas
         ]
 

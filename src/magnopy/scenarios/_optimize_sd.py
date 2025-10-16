@@ -124,7 +124,7 @@ def optimize_sd(
         print(
             f"Magnetic flux density : ({magnetic_field[0]:.5f} {magnetic_field[1]:.5f} {magnetic_field[2]:.5f}) Tesla"
         )
-        spinham.add_magnetic_field(h=magnetic_field)
+        spinham.add_magnetic_field(B=magnetic_field)
 
     # Make a supercell if needed
     original_spinham = spinham
