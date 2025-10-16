@@ -268,7 +268,7 @@ def plot_spinham(
                 f"  {param[1][0]:10.5f} {param[1][1]:10.5f} {param[1][2]:10.5f}",
                 f"  {param[2][0]:10.5f} {param[2][1]:10.5f} {param[2][2]:10.5f}",
                 "",
-                f"Isotropic: {to_iso(param)}",
+                f"Isotropic: {to_iso(param):10.5f}",
                 "",
                 f"DMI: {to_dmi(param)[0]:10.5f} {to_dmi(param)[1]:10.5f} {to_dmi(param)[2]:10.5f}",
             ]
