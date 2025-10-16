@@ -558,7 +558,7 @@ def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
     if not MATPLOTLIB_AVAILABLE:
         import warnings
 
-        warnings.warn(MATPLOTLIB_ERROR_MESSAGE, RuntimeWarning)
+        warnings.warn(MATPLOTLIB_ERROR_MESSAGE, RuntimeWarning, stacklevel=2)
 
         return
 

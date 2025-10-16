@@ -84,7 +84,9 @@ def output_k_resolved(
     """
 
     warnings.warn(
-        "This function was deprecated in the release v0.2.0. This function will be removed from magnopy in March of 2026"
+        "This function was deprecated in the release v0.2.0. This function will be removed from magnopy in March of 2026",
+        DeprecationWarning,
+        stacklevel=2,
     )
 
     # Prepare format for the data elements
@@ -218,6 +220,7 @@ def plot_k_resolved(data, kp=None, output_filename=None, ylabel=None):
     warnings.warn(
         "Function magnopy.io.plot_k_resolved() was deprecated in 0.3.0 and will be removed in April 2026. Use magnopy.experimental.plot_dispersion() instead",
         DeprecationWarning,
+        stacklevel=2,
     )
 
     from magnopy.experimental import plot_dispersion

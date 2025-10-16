@@ -390,6 +390,7 @@ class Convention:
         warnings.warn(
             "The 'summary' method is deprecated since Magnopy 0.4.0. Use print(convention) or str(convention) instead. magnopy.Convention.summary will be removed in May of 2026.",
             DeprecationWarning,
+            stacklevel=2,
         )
 
         summary = [f"{self.name} convention where"]

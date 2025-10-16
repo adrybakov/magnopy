@@ -1013,6 +1013,7 @@ class Energy:
                 warnings.warn(
                     f"BFGS curvature failure repeated {curv_fail_run} times: s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. Hessian was reset.",
                     RuntimeWarning,
+                    stacklevel=2,
                 )
             else:
                 curv_fail_run = 0

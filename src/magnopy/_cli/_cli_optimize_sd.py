@@ -78,7 +78,9 @@ def manager():
     # Remove in March 2026
     if args.make_sd_image is not None:
         warnings.warn(
-            "This argument was deprecated in the release v0.2.0. The spin direction image is now plotted by default, please use --no-html if you want to disable it. This argument will be removed from magnopy in March of 2026."
+            "This argument was deprecated in the release v0.2.0. The spin direction image is now plotted by default, please use --no-html if you want to disable it. This argument will be removed from magnopy in March of 2026.",
+            DeprecationWarning,
+            stacklevel=2,
         )
 
     # Process spin values
