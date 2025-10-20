@@ -76,15 +76,3 @@ of the relevant functions and classes.
 ``atoms`` is one of the three objects that are required for creation of the
 :py:class:`.SpinHamiltonian` class. It is stored as an immutable attribute
 :py:attr:`.SpinHamiltonian.cell`.
-
-Magnetic vs non-magnetic atoms
-==============================
-
-Magnopy defines magnetic atom as an atom that has at least one parameter of the spin
-Hamiltonian associated with it. Each spin Hamiltonian contains :math:`M` magnetic atoms
-(:py:attr:`.SpinHamiltonian.M`). However, the crystal (cell & atoms) that are used for
-the definition of the spin Hamiltonian can contain :math:`M^{\prime} \ne M` atoms.
-
-Attribute :py:attr:`.SpinHamiltonian.atoms` returns a dictionary with all atoms of the
-crystal, while :py:attr:`.SpinHamiltonian.magnetic_atoms` returns a dictionary with only
-magnetic atoms. The order of atoms is the same in both.
