@@ -80,8 +80,9 @@ def _inverse_by_colpa(matrix):
 
 def solve_via_colpa(D, sort_by_first_N=True):
     r"""
-    Diagonalize grand-dynamical matrix following the method of Colpa (section 3, remark
-    1 of [1]_).
+    Diagonalizes grand-dynamical matrix following the method of Colpa.
+
+    An algorithm is described in section 3, remark 1 of [1]_.
 
     Solves the Bogoliubov Hamiltonian of the form
 

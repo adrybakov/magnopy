@@ -125,7 +125,7 @@ def _rotate_sd(reference_sd, rotation):
 
 class Energy:
     r"""
-    Ground state energy of the given spin Hamiltonian.
+    Classical energy of the spin Hamiltonian.
 
     This class is optimized for the computation of the energy for any spin
     directions for the given Hamiltonian.

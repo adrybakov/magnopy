@@ -31,7 +31,7 @@ def multiprocess_over_k(
     kpoints, function, relative=False, units="meV", number_processors=None
 ):
     r"""
-    Parallelize calculation over the kpoints using |multiprocessing|_ module.
+    Parallelizes calculation over the kpoints using |multiprocessing|_ module.
 
     Parameters
     ----------

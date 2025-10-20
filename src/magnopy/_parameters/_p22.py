@@ -19,6 +19,9 @@
 #
 # ================================ END LICENSE =================================
 
+r"""
+Routines for conversion of the full 3x3 tensor of 22 parameter into its parts and back.
+"""
 
 import numpy as np
 

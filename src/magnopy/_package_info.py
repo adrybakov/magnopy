@@ -49,7 +49,7 @@ BINARY_LOGO  =  [
 
 def logo(info=None, line_length=None, flat=False, date_time=False, comment=None):
     """
-    Logo generator for Magnopy package.
+    Generates a logo of Magnopy.
 
     Returns the logo and information about the package.
 

@@ -29,7 +29,7 @@ old_dir.add("old_dir")
 
 def span_local_rf(direction_vector, hybridize=False):
     r"""
-    Span local right-handed reference frame based on the direction vector.
+    Spans local right-handed reference frame from the direction vector.
 
     Parameters
     ----------
@@ -154,8 +154,8 @@ def span_local_rf(direction_vector, hybridize=False):
 
 def span_local_rfs(directional_vectors, hybridize=False):
     r"""
-    Span a series of local right-handed reference frames based on a series of the
-    direction vectors.
+    Spans a set of local right-handed reference frames from a set of the direction
+    vectors.
 
     Parameters
     ----------
