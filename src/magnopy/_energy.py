@@ -1054,6 +1054,10 @@ class Energy:
 
         .. versionadded:: 0.2.0
 
+        .. warning::
+            This method is experimental, use at your own risk. Use
+            :py:meth:`.Energy.optimize` as a stable alternative.
+
         Parameters
         ----------
         initial_guess : (M, 3) or (3,) |array-like|_, optional
