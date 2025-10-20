@@ -4,13 +4,10 @@
 User support
 ************
 
-We offer two main channels for communication.
+We offer two main channels for user support and feedback.
 
 Github
 ======
-
-There are two main places for the communication on github
-
 
 *   |GitHub-discussions|_
 
@@ -29,6 +26,10 @@ There are two main places for the communication on github
         features
         bugs
 
+.. note::
+
+    You may need to create an account at github to post.
+
 Forum at google groups
 ======================
 
@@ -36,10 +37,4 @@ You may send email directly to magnopy@googlegroups.com or post you question on 
 |Forum-google-groups|_.
 
 If you became a member of the magnopy's google group, then you shall receive e-mails
-that announce new releases of magnopy.
-
-
-
-.. note::
-
-    You may need to create an account at github to post.
+with announcements of the new releases of magnopy.
