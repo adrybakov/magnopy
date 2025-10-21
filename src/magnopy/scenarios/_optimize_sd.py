@@ -173,15 +173,16 @@ def optimize_sd(
         print("Magnetic flux density : None")
 
     # Supercell
+    print(
+        f"Supercell             : {supercell[0]} x {supercell[1]} x {supercell[2]}",
+        end="",
+    )
     original_spinham = spinham
     if supercell != (1, 1, 1):
         spinham = make_supercell(spinham=spinham, supercell=supercell)
-        print(
-            f"Minimizing on the supercell of "
-            f"{supercell[0]} x {supercell[1]} x {supercell[2]} unit cells."
-        )
+        print(" (constructed supercell of the Hamiltonian)")
     else:
-        print("Minimizing on the original unit cell of the Hamiltonian.")
+        print(" (original unit cell of the Hamiltonian)")
 
     # Initial guess
     initial_guess = np.random.uniform(low=-1, high=1, size=(spinham.M, 3))
