@@ -43,11 +43,11 @@ def output_k_resolved(
     scientific_notation=True,
 ):
     r"""
+    Outputs any k-resolved data.
 
     .. deprecated:: 0.2.0
         Always meant to be a temporary solution. This function will be removed in March of 2026
 
-    Outputs any k-resolved data.
 
     Parameters
     ----------
@@ -127,7 +127,7 @@ def output_k_resolved(
 
     # Output header
     if output_filename is not None:
-        f = open(output_filename, "w")
+        f = open(output_filename, "w", encoding="utf-8")
         f.write(header + "\n")
     else:
         lines = [header]
@@ -191,7 +191,7 @@ def output_k_resolved(
 # Remove in April 2026
 def plot_k_resolved(data, kp=None, output_filename=None, ylabel=None):
     r"""
-    Plot some k-resolved data.
+    Plots k-resolved data.
 
     .. deprecated:: 0.2.0
         Use :py:func:`magnopy.experimental.plot_dispersion` instead.

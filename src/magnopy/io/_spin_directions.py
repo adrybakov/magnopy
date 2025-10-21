@@ -52,21 +52,25 @@ old_dir.add("old_dir")
 
 def read_spin_directions(filename: str):
     r"""
-    Read directions of the spins from the file.
+    Reads spin directions from the file.
 
     Parameters
     ----------
-    filename : str or (3*M, ) |array-like|_
-        File with the spin directions. See notes for the specification of the file
-        format.
+
+    filename : str
+        File with the spin directions. See notes for the details of its content.
 
     Returns
     -------
+
     spin_directions : (M, ) :numpy:`ndarray`
-        If ``spin_directions`` is an |array-like|_, then first three elements are
+        Array with the spin directions. Each row is a spin direction vector normalized to
+        1.
+
 
     Notes
     -----
+
     The file is expected to contain three numbers per line, here is an example for two
     spins
 
@@ -75,10 +79,10 @@ def read_spin_directions(filename: str):
         S1_x S1_y S1_z
         S2_x S2_y S2_z
 
-    Only the direction of the spin vector is recognized, the modulus is ignored.
-    Comments are allowed at any place of the file and preceded by the symbol "#".
-    If the symbol "#" is found, the part of the line after it is ignored. Here
-    are examples of valid use of the comments
+    Only the direction of the spin vector is recognized, the modulus is ignored. Comments
+    are allowed at any place of the file and preceded by the symbol "#". If the symbol "#"
+    is found, then the rest of the line is ignored. Here are examples of valid use of the
+    comments
 
     .. code-block:: text
 
@@ -90,35 +94,28 @@ def read_spin_directions(filename: str):
     """
 
     spin_directions = []
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         for i, line in enumerate(f):
             # Remove comment lines
             if line.startswith("#"):
                 continue
             # Remove inline comments and leading/trailing whitespaces
             line = line.split("#")[0].strip()
-            # Check for empty lines empty lines
+            # Check for empty lines
             if line:
                 line = line.split()
                 if len(line) != 3:
                     raise ValueError(
-                        f"Expected three numbers per line (in line{i}),"
-                        f"got: {len(line)}."
+                        f"Expected three numbers per line (in line {i + 1}), got: {len(line)}."
                     )
-                for tmp in line:
-                    spin_directions.append(float(tmp))
-
-    if len(spin_directions) % 3 != 0:
-        raise ValueError(
-            f"Length of the spin list should be dividable by three, got: {len(spin_directions)}."
-        )
+                spin_directions.append(list(map(float, line)))
 
     spin_directions = np.array(spin_directions, dtype=float)
-    # Pay attention to the np.reshape keywords
-    spin_directions = np.reshape(spin_directions, (len(spin_directions) // 3, 3))
+    # Normalize the spin directions
     spin_directions = (
         spin_directions / np.linalg.norm(spin_directions, axis=1)[:, np.newaxis]
     )
+
     return spin_directions
 
 

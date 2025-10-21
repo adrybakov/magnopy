@@ -37,6 +37,23 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
+def _verified_materials(materials, M):
+    if materials is None:
+        materials = [i for i in range(M)]
+    else:
+        if len(materials) != M:
+            raise ValueError(f"Expected {M} materials, got {len(materials)}.")
+        materials_pool = set(materials)
+        higher_material = max(materials_pool)
+        for i in range(0, higher_material + 1):
+            if i not in materials_pool:
+                raise ValueError(
+                    f"Materials indices should be consecutive integers between 0 and {higher_material}. Missing {i}."
+                )
+
+    return materials
+
+
 def dump_vampire(
     spinham: SpinHamiltonian,
     seedname="vampire",
@@ -46,38 +63,67 @@ def dump_vampire(
     decimals=5,
     materials=None,
     no_logo=False,
-):
+) -> None:
     """
-    Save the Hamiltonian in the format suitable for |Vampire|_.
+    Saves spin Hamiltonian in the format suitable for |Vampire|_ (.UCF and .mat).
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
-        Spin Hamiltonian to be saved.
+        Spin Hamiltonian object to be saved.
+
     seedname : str, default "vampire"
-        Seedname for the .UCF and .mat files. Extensions are added automatically.
-        Input file always have the name "input".
+        Seedname for the .UCF and .mat files. Extensions are added automatically. Input
+        file is independent of ``seedname`` and always has the name "input-template".
+
     anisotropic : bool, default True
         Whether to output anisotropic exchange.
+
     dmi : bool, default True
         Whether to output DMI exchange.
+
     custom_mask : func, optional
-        Custom mask for the exchange parameter. Function which take (3,3) numpy:`ndarray`
-        as an input and returns (3,3) numpy:`ndarray` as an output. If given, then
-        ``anisotropic`` and ``dmi`` parameters are ignored.
+        Custom mask for the exchange parameter. Function that takes (3, 3)
+        :numpy:`ndarray` as an input and returns (3, 3) :numpy:`ndarray` as an output. If
+        given, then ``anisotropic`` and ``dmi`` parameters are ignored.
+
+        .. code-block:: python
+
+            parameter_to_output = custom_mask(parameter)
+
     decimals : int, default 4
         Number of decimals to be printed (only for the exchange values).
-    materials : list of int, optional
-        List of materials for the atoms. Has to have the same length as the number of
-        magnetic atoms in the ``spinham``. Order is the same as in :py:attr:`.SpinHamiltonian.magnetic_atoms`.
-        If not given, each atom will be considered as a separate material. Starting from 0.
-    no_logo : bool, default False
-        Whether to print the logo in the output files.
 
-    Returns
-    -------
-    content : str
-        Content of the .UCF file if ``filename`` is not given.
+    materials : list of int, optional
+        List of materials for the atoms. Length is the same as the number of magnetic
+        atoms in the ``spinham`` (``spinham.M``). Order is the same as in
+        :py:attr:`.SpinHamiltonian.magnetic_atoms`. If none given, each magnetic atom is
+        considered as a separate material. Material indices start from 0 and should
+        contain all consecutive integers between 0 and number of materials. Number of
+        materials cannot be higher than number of magnetic atoms.
+
+    no_logo : bool, default False
+        Whether to include the logo in the output files.
+
+    Notes
+    -----
+
+    Examples of the correct ``materials`` list for 5 magnetic atoms
+
+    .. code-block:: python
+
+        [0, 0, 0, 0, 0]
+        [1, 3, 2, 1, 0]
+        [0, 1, 2, 3, 4]
+
+    Examples of the incorrect ``materials`` list for 5 magnetic atoms
+
+    .. code-block:: python
+
+        [0, 6, 0, 0, 0]
+        [1, 3, 3, 1, 0]
+        [1, 2, 3, 4, 5]
     """
 
     head, _ = os.path.split(seedname)
@@ -87,7 +133,7 @@ def dump_vampire(
 
     dump_vampire_ucf(
         spinham,
-        filename=seedname + ".UCF",
+        filename=f"{seedname}.UCF",
         anisotropic=anisotropic,
         dmi=dmi,
         custom_mask=custom_mask,
@@ -97,13 +143,13 @@ def dump_vampire(
     )
     dump_vampire_mat(
         spinham,
-        filename=seedname + ".mat",
+        filename=f"{seedname}.mat",
         materials=materials,
         no_logo=no_logo,
     )
     with open(os.path.join(head, "input-template"), "w", encoding="utf-8") as file:
         if not no_logo:
-            file.write(logo(comment=True, date_time=True) + "\n")
+            file.write(f"{logo(comment=True, date_time=True)}\n")
 
         file.write(
             "\n".join(
@@ -112,36 +158,52 @@ def dump_vampire(
                     f"material:file={seedname}.mat",
                     f"material:unit-cell-file = {seedname}.UCF",
                     "#------------------------------------------",
-                    "# TODO: your simulation parameters",
+                    "# TODO: simulation setup",
                 ]
             )
         )
 
 
 def dump_vampire_mat(
-    spinham: SpinHamiltonian, filename=None, materials=None, no_logo=False
-):
+    spinham: SpinHamiltonian, filename, materials=None, no_logo=False
+) -> None:
     """
-    Write .mat file for |Vampire|_.
+    Generates .mat file for |Vampire|_.
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
-        Spin Hamiltonian to be saved.
-    filename : str, optional
-        Name for the .mat file. No extensions is added automatically.
-        If not given, the output is returned as a string.
+        Spin Hamiltonian object to be saved.
+
+    filename : str
+        Name for the .mat file. Extension ".mat" is added if not present.
+
     materials : list of int, optional
-        List of materials for the atoms. Has to have the same length as the number of
-        magnetic atoms in the ``spinham``. If not given, each atom will be considered
-        as a separate material. Material index starts from 0 and should contain all
-        consecutive integers between 0 and number of materials. Number of materials
-        cannot be higher than number of magnetic atoms.
+        List of materials for the atoms. Length is the same as the number of magnetic
+        atoms in the ``spinham`` (``spinham.M``). Order is the same as in
+        :py:attr:`.SpinHamiltonian.magnetic_atoms`. If none given, each magnetic atom is
+        considered as a separate material. Material indices start from 0 and should
+        contain all consecutive integers between 0 and number of materials. Number of
+        materials cannot be higher than number of magnetic atoms.
+
     no_logo : bool, default False
-        Whether to print the logo in the output files.
+        Whether to include the logo in the output files.
+
+    Raises
+    ------
+
+    ValueError
+        If ``materials`` list is given and its length is not equal to the number of
+        magnetic atoms in the ``spinham``.
+
+    ValueError
+        If ``materials`` list does not contain all consecutive integers between 0 and
+        the highest material index.
 
     Notes
     -----
+
     Examples of the correct ``materials`` list for 5 magnetic atoms
 
     .. code-block:: python
@@ -149,24 +211,20 @@ def dump_vampire_mat(
         [0, 0, 0, 0, 0]
         [1, 3, 2, 1, 0]
         [0, 1, 2, 3, 4]
+
+    Examples of the incorrect ``materials`` list for 5 magnetic atoms
+
+    .. code-block:: python
+
+        [0, 6, 0, 0, 0]
+        [1, 3, 3, 1, 0]
+        [1, 2, 3, 4, 5]
     """
 
-    if materials is None:
-        materials = [i for i in range(len(spinham.magnetic_atoms.names))]
-    else:
-        if len(materials) != len(spinham.magnetic_atoms.names):
-            raise ValueError(
-                f"Expected {len(spinham.magnetic_atoms.names)} materials, got "
-                f"{len(materials)}."
-            )
-        materials_pool = set(materials)
-        higher_material = max(materials_pool)
-        for i in range(0, higher_material + 1):
-            if i not in materials_pool:
-                raise ValueError(
-                    f"Materials indices should be consecutive integers between 0 and "
-                    f"{higher_material}. Missing {i}."
-                )
+    if len(filename) < 4 or filename[-4:] != ".mat":
+        filename += ".mat"
+
+    materials = _verified_materials(materials, spinham.M)
 
     if no_logo:
         text = []
@@ -175,80 +233,118 @@ def dump_vampire_mat(
 
     text.append(f"material:num-materials = {max(materials) + 1}")
 
-    for i in range(spinham.M):
-        if materials[i] not in materials[:i]:
-            m_i = materials[i] + 1
+    for i, (material, name, spin, g_factor) in enumerate(
+        zip(
+            materials,
+            spinham.magnetic_atoms.names,
+            spinham.magnetic_atoms.spins,
+            spinham.magnetic_atoms.g_factors,
+        )
+    ):
+        if material not in materials[:i]:
+            m_i = material + 1
             text.append("#---------------------------------------------------")
             text.append(f"# Material {m_i}")
             text.append("#---------------------------------------------------")
-            text.append(
-                f"material[{m_i}]:material-name = {spinham.magnetic_atoms.names[i]}"
-            )
-            text.append(
-                f"material[{m_i}]:material-element = {get_atom_species(spinham.magnetic_atoms.names[i])}"
-            )
-            text.append(
-                f"material[{m_i}]:atomic-spin-moment={spinham.magnetic_atoms.spins[i] * spinham.magnetic_atoms.g_factors[i]} ! muB"
-            )
+            text.append(f"material[{m_i}]:material-name = {name}")
+            text.append(f"material[{m_i}]:material-element = {get_atom_species(name)}")
+            text.append(f"material[{m_i}]:atomic-spin-moment={spin * g_factor} ! muB")
             text.append(f"material[{m_i}]:initial-spin-direction = random")
             text.append(f"material[{m_i}]:damping-constant = 0.1")
             text.append(f"material[{m_i}]:uniaxial-anisotropy-constant = 0.0")
 
     text.append("#---------------------------------------------------")
 
-    text = "\n".join(text)
-
-    if filename is None:
-        return "".join(text)
-
     with open(filename, "w", encoding="utf-8") as file:
-        file.write("".join(text))
+        file.write("\n".join(text))
 
 
 def dump_vampire_ucf(
     spinham: SpinHamiltonian,
-    filename=None,
+    filename,
     anisotropic=True,
     dmi=True,
     custom_mask=None,
     decimals=5,
     materials=None,
     no_logo=False,
-):
+) -> None:
     """
-    Write .UCF file for |Vampire|_.
+    Generates .UCF file for |Vampire|_.
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
-        Spin Hamiltonian to be saved.
+        Spin Hamiltonian object to be saved.
+
     filename : str, optional
-        Name for the .UCF file. No extension is added automatically.
-        If not given, the output is returned as a string.
+        Name for the .UCF file. Extension ".UCF" is added if not present.
+
     anisotropic : bool, default True
         Whether to output anisotropic exchange.
+
     dmi : bool, default True
         Whether to output DMI exchange.
+
     custom_mask : func, optional
-        Custom mask for the exchange parameter. Function which take (3,3) numpy:`ndarray`
-        as an input and returns (3,3) numpy:`ndarray` as an output. If given, then
-        ``anisotropic`` and ``dmi`` parameters are ignored.
+        Custom mask for the exchange parameter. Function that takes (3, 3)
+        :numpy:`ndarray` as an input and returns (3, 3) :numpy:`ndarray` as an output. If
+        given, then ``anisotropic`` and ``dmi`` parameters are ignored.
+
+        .. code-block:: python
+
+            parameter_to_output = custom_mask(parameter)
+
     decimals : int, default 4
         Number of decimals to be printed (only for the exchange values).
-    materials : list of int, optional
-        List of materials for the atoms. Has to have the same length as the number of
-        magnetic atoms in the ``spinham``. Order is the same as in :py:attr:`.SpinHamiltonian.magnetic_atoms`.
-        If not given, each atom will be considered as a separate material.
-    no_logo : bool, default False
-        Whether to print the logo in the output files.
 
-    Returns
-    -------
-    content : str
-        Content of the .UCF file if ``filename`` is not given.
+    materials : list of int, optional
+        List of materials for the atoms. Length is the same as the number of magnetic
+        atoms in the ``spinham`` (``spinham.M``). Order is the same as in
+        :py:attr:`.SpinHamiltonian.magnetic_atoms`. If none given, each magnetic atom is
+        considered as a separate material. Material indices start from 0 and should
+        contain all consecutive integers between 0 and number of materials. Number of
+        materials cannot be higher than number of magnetic atoms.
+
+    no_logo : bool, default False
+        Whether to include the logo in the output files.
+
+    Raises
+    ------
+
+    ValueError
+        If ``materials`` list is given and its length is not equal to the number of
+        magnetic atoms in the ``spinham``.
+
+    ValueError
+        If ``materials`` list does not contain all consecutive integers between 0 and
+        the highest material index.
+
+    Notes
+    -----
+
+    Examples of the correct ``materials`` list for 5 magnetic atoms
+
+    .. code-block:: python
+
+        [0, 0, 0, 0, 0]
+        [1, 3, 2, 1, 0]
+        [0, 1, 2, 3, 4]
+
+    Examples of the incorrect ``materials`` list for 5 magnetic atoms
+
+    .. code-block:: python
+
+        [0, 6, 0, 0, 0]
+        [1, 3, 3, 1, 0]
+        [1, 2, 3, 4, 5]
     """
-    if materials is None:
-        materials = [i for i in range(len(spinham.magnetic_atoms.names))]
+
+    if len(filename) < 4 or filename[-4:] != ".UCF":
+        filename += ".UCF"
+
+    materials = _verified_materials(materials, spinham.M)
 
     original_convention = spinham.convention
     spinham.convention = Convention.get_predefined(name="Vampire")
@@ -338,13 +434,8 @@ def dump_vampire_ucf(
 
     spinham.convention = original_convention
 
-    text = "\n".join(text)
-
-    if filename is None:
-        return text
-
     with open(filename, "w", encoding="utf-8") as file:
-        file.write(text)
+        file.write("\n".join(text))
 
 
 # Populate __all__ with objects defined in this file

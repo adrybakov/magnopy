@@ -32,37 +32,44 @@ old_dir.add("old_dir")
 
 def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian:
     r"""
-    Load a SpinHamiltonian object from a .txt file produced by |GROGU|_.
+    Reads spin Hamiltonian from the .txt file produced by |GROGU|_.
 
     For more information on GROGU's file format see |GROGU-FF|_.
 
     Parameters
     ----------
+
     filename : str
-        File with the parameters and crystal structure of the spin Hamiltonian.
+        Path to the .txt file produced by |GROGU|_.
+
     spin_values : (M, ) iterable of floats, optional
-        Spin values for each magnetic atom. In the same order as in GROGU file. GROGU outputs
-        spin values from the results of DFT, therefore the spin values might not be
-        half-integers. If user does not define the spin values, then magnopy uses the
-        spin values from the GROGU file.
+        Spin values for all magnetic atom. Order is the same as in |GROGU|_ file. Magnetic
+        atoms are defined as those that have at least one parameter associated with them.
+        If none given, magnopy uses spin values computed from DFT (as provided in the
+        |GROGU|_ file).
+
     spglib_types : (M_prime, ) iterable of ints, optional
-        Spglib types for each atom (not only for magnetic, but for all). In the same order
-        as in GROGU file. If not provided, then there will be no "spglib_type" key in
-        ``spinham.atoms``.
+        Spglib types for all atoms (not only for magnetic ones, but for all). Order is the
+        same as in |GROGU|_ file. If none given, then there will be no "spglib_types" key
+        in ``spinham.atoms``.
 
     Returns
     -------
+
     spinham : :py:class:`.SpinHamiltonian`
-        Spin Hamiltonian loaded from file.
+        Spin Hamiltonian, that is built from the |GROGU|_ file.
 
     Raises
     ------
+
     ValueError
-        If the length of ``spin_values`` does not match the number of atoms in the
-        Hamiltonian.
-    ValuesError
+        If ``spin_values`` is provided and its length does not match the number of
+        magnetic atoms in the Hamiltonian.
+
+    ValueError
         If ``spglib_types`` is provided and its length does not match the number of
         atoms in the Hamiltonian.
+
     """
 
     convention = Convention.get_predefined("grogu")
