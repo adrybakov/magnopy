@@ -30,7 +30,7 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
-def load_grogu(filename) -> SpinHamiltonian:
+def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian:
     r"""
     Load a SpinHamiltonian object from a .txt file produced by |GROGU|_.
 
@@ -40,11 +40,29 @@ def load_grogu(filename) -> SpinHamiltonian:
     ----------
     filename : str
         File with the parameters and crystal structure of the spin Hamiltonian.
+    spin_values : (M, ) iterable of floats, optional
+        Spin values for each magnetic atom. In the same order as in GROGU file. GROGU outputs
+        spin values from the results of DFT, therefore the spin values might not be
+        half-integers. If user does not define the spin values, then magnopy uses the
+        spin values from the GROGU file.
+    spglib_types : (M_prime, ) iterable of ints, optional
+        Spglib types for each atom (not only for magnetic, but for all). In the same order
+        as in GROGU file. If not provided, then there will be no "spglib_type" key in
+        ``spinham.atoms``.
 
     Returns
     -------
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian loaded from file.
+
+    Raises
+    ------
+    ValueError
+        If the length of ``spin_values`` does not match the number of atoms in the
+        Hamiltonian.
+    ValuesError
+        If ``spglib_types`` is provided and its length does not match the number of
+        atoms in the Hamiltonian.
     """
 
     convention = Convention.get_predefined("grogu")
@@ -74,6 +92,13 @@ def load_grogu(filename) -> SpinHamiltonian:
     M = int(lines[i].split()[3])
     i += 1
 
+    # Check if spin_values were provided and of correct length
+    if spin_values is not None and len(spin_values) != M:
+        raise ValueError(f"Expected {M} spin values, got {len(spin_values)}")
+    # Check if spglib_types were provided and of correct length
+    if spglib_types is not None and len(spglib_types) != M:
+        raise ValueError(f"Expected {M} spglib types, got {len(spglib_types)}")
+
     name_to_index = {}
     atoms = dict(names=[], positions=[], spins=[], g_factors=[2 for _ in range(M)])
 
@@ -87,13 +112,20 @@ def load_grogu(filename) -> SpinHamiltonian:
         positions = list(map(float, words[1:4]))
         positions = positions @ np.linalg.inv(cell)
 
-        spin = float(words[4])
+        if spin_values is not None:
+            spin = spin_values[atom_index]
+        else:
+            spin = float(words[4])
 
         atoms["names"].append(name)
         atoms["positions"].append(positions)
         atoms["spins"].append(spin)
 
-    # Construct spin Hamiltonian:
+    # Add spglib types if provided
+    if spglib_types is not None:
+        atoms["spglib_types"] = [int(_) for _ in spglib_types]
+
+    # Construct spin Hamiltonian
     spinham = SpinHamiltonian(convention=convention, cell=cell, atoms=atoms)
 
     while (

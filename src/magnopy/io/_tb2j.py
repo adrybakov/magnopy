@@ -33,7 +33,7 @@ old_dir.add("old_dir")
 
 
 def load_tb2j(
-    filename, spin_values=None, g_factors=None, quiet=True
+    filename, spin_values=None, spglib_types=None, g_factors=None, quiet=True
 ) -> SpinHamiltonian:
     r"""
     Read spin Hamiltonian from the output of |TB2J|_.
@@ -43,10 +43,16 @@ def load_tb2j(
     filename : str
         Path to the |TB2J|_ output file.
     spin_values : (M, ) iterable of floats, optional
-        Spin values for each atom. In the same order as in TB2J file. TB2J outputs
-        magnetic moments and not spin values, therefore the spin values for each atom
-        are subject to user definition. If user does not define the spin values, then
-        magnopy set spin value as :math:`|\boldsymbol{m} / g_{factor}|` for each spin.
+        Spin values for each magnetic atom. In the same order as in TB2J file. TB2J
+        outputs magnetic moments and not spin values, therefore the spin values for each
+        atom are subject to user definition. If user does not define the spin values,
+        then magnopy set spin value as :math:`|\boldsymbol{m} / g_{factor}|` for each
+        spin. Magnetic atoms are defined as those that have at least one parameter
+        associated with them.
+    spglib_types : (M_prime, ) iterable of ints, optional
+        Spglib types for each atom (not only for magnetic, but for all). In the same order
+        as in TB2J file. If not provided, then there will be no "spglib_type" key in
+        ``spinham.atoms``.
     g_factors : (M, ) iterable of floats, optional
         g-factors for each atom. In the same order as in TB2J file. TB2J does not
         provide g-factors, therefore g-factor for each atom is subject to user
@@ -59,6 +65,16 @@ def load_tb2j(
     -------
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian build from |TB2J|_ file. Convention is set to the one of TB2J.
+
+    Raises
+    ------
+    ValueError
+        If the length of ``spin_values`` does not match the number of atoms in the
+        Hamiltonian.
+    ValuesError
+        If ``spglib_types`` is provided and its length does not match the number of
+        atoms in the Hamiltonian.
+
 
     Notes
     -----
@@ -232,6 +248,15 @@ def load_tb2j(
         ]
 
     spinham.atoms["spins"] = true_spin_values
+
+    # Populate spglib_types of atoms
+    if spglib_types is not None:
+        if len(spglib_types) != len(spinham.atoms.names):
+            raise ValueError(
+                f"Expected {len(spinham.atoms.names)} spglib types, got {len(spglib_types)}"
+            )
+        spinham.atoms["spglib_types"] = [int(_) for _ in spglib_types]
+
     spinham._reset_internals()
 
     return spinham
