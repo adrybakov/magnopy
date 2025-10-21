@@ -34,6 +34,7 @@ New features
 * Extend ``--spin-values`` for the |GROGU|_ as well in ``magnopy-optimize-sd`` and
   ``magnopy-lswt``.
 * Implement :issue:`75`: ``--spglib-types`` in ``magnopy-lswt``.
+* Add "E_0.txt" output file to ``magnopy-optimize-sd``.
 
 Deprecated
 ----------

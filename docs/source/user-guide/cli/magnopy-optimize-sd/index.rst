@@ -47,6 +47,14 @@ In addition, a number of .txt and/or .html files is produced.
 
 Visit |tutorial-optimize-sd|_ for examples of the output text and files.
 
+E_0.txt
+-------
+
+.. versionadded:: 0.4.0
+
+A file with the value of classical energy of the optimize state. It contains a number and
+unit string separated by a space symbol.
+
 INITIAL_GUESS.txt
 -----------------
 
