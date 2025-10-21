@@ -290,7 +290,7 @@ def solve_lswt(
         # Save pre-defined high-symmetry points in a .txt file
         filename = os.path.join(output_folder, "HIGH-SYMMETRY_POINTS.txt")
         label_n = max([5] + [len(label) for label in kp.hs_names])
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding="utf-8") as f:
             f.write(
                 f"{'Label':{label_n}} {'k_x':>12} {'k_y':>12} {'k_z':>12}    {'r_b1':>12} {'r_b2':>12} {'r_b3':>12}\n"
             )
