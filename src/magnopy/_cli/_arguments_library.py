@@ -18,6 +18,24 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # ================================ END LICENSE =================================
+import sys
+from magnopy._constants._icons import ICON_IN_ARG
+
+
+def _get_command_info(args, hide_personal_data=False):
+    if hide_personal_data:
+        comment = f"Executed the command\n\n  magnopy-optimize-sd {' '.join(sys.argv[1:])}\n\n"
+    else:
+        comment = f"Executed the command\n\n  {' '.join(sys.argv)}\n\n"
+
+    # Save arguments to the comment
+    comment += "which resulted in argument values\n\n" + "\n".join(
+        [f"{ICON_IN_ARG} {key:20} : {value}" for key, value in vars(args).items()]
+    )
+
+    return comment
+
+
 def _add_spinham_input(parser):
     parser.add_argument(
         "-ss",
