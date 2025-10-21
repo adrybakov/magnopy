@@ -93,7 +93,9 @@ def manager():
             filename=args.spinham_filename, spin_values=args.spin_values
         )
     elif args.spinham_source.lower() == "grogu":
-        spinham = load_grogu(filename=args.spinham_filename)
+        spinham = load_grogu(
+            filename=args.spinham_filename, spin_values=args.spin_values
+        )
     else:
         raise ValueError(
             'Supported sources of spin Hamiltonian are "GROGU" and "TB2J", '

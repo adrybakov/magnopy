@@ -46,6 +46,7 @@ from magnopy._cli._arguments_library import (
     _add_relative,
     _add_spglib_symprec,
     _add_number_processors,
+    _add_spglib_types,
 )
 
 
@@ -71,6 +72,7 @@ def manager():
     _add_spin_values(parser=parser)
     _add_no_html(parser=parser)
     _add_hide_personal_data(parser=parser)
+    _add_spglib_types(parser=parser)
 
     # DEPRECATED in v0.2.0
     # Remove in March 2026
@@ -133,10 +135,16 @@ def manager():
     # Load spin Hamiltonian
     if args.spinham_source.lower() == "tb2j":
         spinham = load_tb2j(
-            filename=args.spinham_filename, spin_values=args.spin_values
+            filename=args.spinham_filename,
+            spin_values=args.spin_values,
+            spglib_types=args.spglib_types,
         )
     elif args.spinham_source.lower() == "grogu":
-        spinham = load_grogu(filename=args.spinham_filename)
+        spinham = load_grogu(
+            filename=args.spinham_filename,
+            spin_values=args.spin_values,
+            spglib_types=args.spglib_types,
+        )
     else:
         raise ValueError(
             'Supported sources of spin Hamiltonian are "GROGU" and "TB2J", '

@@ -238,6 +238,21 @@ def _add_spglib_symprec(parser):
     )
 
 
+def _add_spglib_types(parser):
+    parser.add_argument(
+        "-spg-t",
+        "--spglib-types",
+        metavar=("TYPE1", "TYPE2"),
+        nargs="*",
+        type=int,
+        default=None,
+        help="Set of spglib types for the space group search by spglib. Expects N non-zero "
+        "integers in total. N is the amount of all sites/atoms in the input files (not"
+        "just magnetic, but all).  If not given, then guesses automatically by wulfric "
+        "(see wulfric.get_spglib_types() at wulfric.org types for more details).",
+    )
+
+
 ################################################################################
 #                                  DEPRECATED                                  #
 ################################################################################
