@@ -30,6 +30,10 @@ New features
   ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.add_44``.
 * Extend hover information in ``magnopy.experimental.plot_spinham()``.
 * Parameter ``B``in ``magnopy.SpinHamiltonian.add_magnetic_field``.
+* Implement ``spin_values`` in ``load_grogu()``, same as in ``load_tb2j()``.
+* Extend ``--spin-values`` for the |GROGU|_ as well in ``magnopy-optimize-sd`` and
+  ``magnopy-lswt``.
+* Implement :issue:`75`: ``--spglib-types`` in ``magnopy-lswt``.
 
 Deprecated
 ----------
