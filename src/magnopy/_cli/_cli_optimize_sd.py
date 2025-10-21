@@ -30,6 +30,7 @@ from magnopy.io._grogu import load_grogu
 from magnopy.io._tb2j import load_tb2j
 from magnopy.scenarios._optimize_sd import optimize_sd
 from magnopy._cli._arguments_library import (
+    _get_command_info,
     _add_spinham_input,
     _add_spin_values,
     _add_magnetic_field,
@@ -41,6 +42,7 @@ from magnopy._cli._arguments_library import (
     _add_energy_tolerance,
     _add_torque_tolerance,
 )
+from magnopy._constants._icons import ICON_IN_FILE
 
 
 def manager():
@@ -68,6 +70,9 @@ def manager():
 
     # Parse arguments
     args = parser.parse_args()
+
+    # Save executed command and arguments into a comment
+    comment = _get_command_info(args=args, hide_personal_data=args.hide_personal_data)
 
     # Handle execution with no arguments
     if len(sys.argv) == 1:
@@ -106,10 +111,8 @@ def manager():
         spinham_filename = args.spinham_filename
     else:
         spinham_filename = os.path.abspath(args.spinham_filename)
-    comment = (
-        f'Parameters are loaded from "{args.spinham_source.upper()}".\n'
-        f"Load parameters from the file\n  {spinham_filename}"
-    )
+
+    comment += f'\n\nParameters are loaded from "{args.spinham_source.upper()}", source file\n{ICON_IN_FILE} {spinham_filename}'
 
     optimize_sd(
         spinham=spinham,

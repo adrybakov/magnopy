@@ -33,6 +33,7 @@ from magnopy.io._spin_directions import read_spin_directions
 from magnopy.io._tb2j import load_tb2j
 from magnopy.scenarios._solve_lswt import solve_lswt
 from magnopy._cli._arguments_library import (
+    _get_command_info,
     _add_spinham_input,
     _add_spin_values,
     _add_magnetic_field,
@@ -48,6 +49,7 @@ from magnopy._cli._arguments_library import (
     _add_number_processors,
     _add_spglib_types,
 )
+from magnopy._constants._icons import ICON_IN_FILE
 
 
 def manager():
@@ -79,6 +81,9 @@ def manager():
     _add_make_sd_image(parser=parser)
 
     args = parser.parse_args()
+
+    # Save executed command and arguments into a comment
+    comment = _get_command_info(args=args, hide_personal_data=args.hide_personal_data)
 
     # DEPRECATED in v0.2.0
     # Remove in March 2026
@@ -155,10 +160,8 @@ def manager():
         spinham_filename = args.spinham_filename
     else:
         spinham_filename = os.path.abspath(args.spinham_filename)
-    comment = (
-        f'Parameters are loaded from "{args.spinham_source.upper()}".\n'
-        f"Load parameters from the file\n  {spinham_filename}"
-    )
+
+    comment += f'\n\nParameters are loaded from "{args.spinham_source.upper()}", source file\n{ICON_IN_FILE} {spinham_filename}'
 
     solve_lswt(
         spinham=spinham,
