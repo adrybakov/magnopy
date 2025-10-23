@@ -91,13 +91,16 @@ def to_iso(parameter, matrix_form=False):
 
     Parameters
     ----------
+
     parameter : (3, 3) |array-like|_
         Full matrix of the exchange parameter (:math:`\boldsymbol{J}`).
+
     matrix_form : bool, default False
         Whether to return isotropic part of the matrix instead of isotropic parameter.
 
     Returns
     -------
+
     iso : float or (3, 3) :numpy:`ndarray`
         Isotropic parameter.
 
@@ -106,6 +109,7 @@ def to_iso(parameter, matrix_form=False):
 
     See Also
     --------
+
     from_iso
     to_dmi
     to_symm_anisotropy
@@ -176,16 +180,19 @@ def to_symm_anisotropy(parameter):
 
     Parameters
     ----------
+
     parameter : (3, 3) |array-like|_
         Full matrix of the exchange parameter (:math:`\boldsymbol{J}`).
 
     Returns
     -------
+
     aniso : float or (3, 3) :numpy:`ndarray`
         Matrix of a traceless, symmetric anisotropy.
 
     See Also
     --------
+
     to_iso
     to_dmi
 
@@ -258,13 +265,16 @@ def to_dmi(parameter, matrix_form=False):
 
     Parameters
     ----------
+
     parameter : (3, 3) |array-like|_
         Full matrix of the exchange parameter (:math:`\boldsymbol{J}`).
+
     matrix_form : bool, default False
         Whether to return dmi in a matrix form instead of a vector.
 
     Returns
     -------
+
     dmi : (3,) or (3, 3) :numpy:`ndarray`
         Antisymmetric exchange (DMI).
 
@@ -273,6 +283,7 @@ def to_dmi(parameter, matrix_form=False):
 
     See Also
     --------
+
     from_dmi
     to_iso
     to_symm_anisotropy
@@ -336,16 +347,19 @@ def from_iso(iso):
 
     Parameters
     ----------
+
     iso : int or float
         Isotropic exchange parameter.
 
     Returns
     -------
+
     parameter : (3, 3) :numpy:`ndarray`
         Matrix form of the isotropic exchange parameter (:math:`\boldsymbol{J}_{iso}`).
 
     See Also
     --------
+
     to_iso
     from_dmi
 
@@ -366,7 +380,7 @@ def from_iso(iso):
 
 def from_dmi(dmi):
     r"""
-    Computes matrix form of the Dzyaloshinsky-Moriya interaction parameter.
+    Computes matrix form of the Dzyaloshinskii-Moriya interaction parameter.
 
     .. math::
 
@@ -400,17 +414,20 @@ def from_dmi(dmi):
 
     Parameters
     ----------
+
     dmi : (3,) |array-like|_
-        Vector of Dzyaloshinsky-Moriya interaction parameter :math:`(D_x, D_y, D_z)`.
+        Vector of Dzyaloshinskii-Moriya interaction parameter :math:`(D_x, D_y, D_z)`.
 
     Returns
     -------
+
     parameter : (3, 3) :numpy:`ndarray`
-        Matrix form of the Dzyaloshinsky-Moriya interaction parameter
+        Matrix form of the Dzyaloshinskii-Moriya interaction parameter
         (:math:`\boldsymbol{J}_A`).
 
     See Also
     --------
+
     to_dmi
     from_iso
 

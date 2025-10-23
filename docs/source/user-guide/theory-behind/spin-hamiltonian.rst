@@ -170,7 +170,7 @@ This Hamiltonian can be written as the second term of the expanded form if one d
 Exchange interaction
 --------------------
 
-Bilinear exchange interaction with isotropic and Dzyaloshinsky-Moriya (DM) exchange can
+Bilinear exchange interaction with isotropic and Dzyaloshinskii-Moriya (DM) exchange can
 be written as
 
 .. math::

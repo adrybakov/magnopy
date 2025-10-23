@@ -53,7 +53,7 @@ def plot_spinham(
     _sphinx_gallery_fix=False,
 ):
     r"""
-    Visualize spin Hamiltonian.
+    Visualizes spin Hamiltonian.
 
     .. warning::
 
@@ -348,6 +348,10 @@ def plot_spinham(
 
 def change_cell(spinham, new_cell, new_atoms_specs):
     r"""
+    Changes the unit cell of a spin Hamiltonian.
+
+    .. warning::
+        Experimental feature. Not tested well.
 
     Parameters
     ----------
@@ -355,16 +359,16 @@ def change_cell(spinham, new_cell, new_atoms_specs):
     new_cell : (3, 3) |array-like|_
     new_atoms_specs : list of tuple
 
-        ..code-block:: python
+        .. code-block:: python
 
-            new_atoms_specs = [(index, nu), ]
+            new_atoms_specs = [(index, nu), ...]
 
         where ``index`` is an index of an atom in ``spinham.atoms`` and ``nu = (i,j,k)``
         is the unit cell to which an atom belongs.
 
     Returns
     -------
-    new_spinham
+    new_spinham : :py:class:`.SpinHamiltonian`
     """
 
     new_cell = np.array(new_cell)
@@ -567,7 +571,10 @@ def change_cell(spinham, new_cell, new_atoms_specs):
 # Remove in May 2026
 def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
     r"""
-    Plot some k-resolved data.
+    Plots some k-resolved data.
+
+    .. deprecated:: 0.4.0
+        Function deprecated in 0.4.0 and will be removed in May 2026. Use :py:func:`magnopy.io.plot_dispersion()` instead.
 
     If only the ``data`` are given, then an index of the omegas is used for abscissa (x
     axis).

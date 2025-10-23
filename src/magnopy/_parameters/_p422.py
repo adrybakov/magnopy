@@ -44,7 +44,7 @@ old_dir.add("old_dir")
 
 def to_biquadratic(parameter, tensor_form=False):
     r"""
-    Computes biquadratic exchange parameter from full matrix parameter.
+    Computes biquadratic exchange parameter from full tensor form.
 
 
     .. math::
@@ -77,13 +77,16 @@ def to_biquadratic(parameter, tensor_form=False):
 
     Parameters
     ----------
+
     parameter : (3, 3, 3, 3) |array-like|_
         Full tensor parameter (:math:`\boldsymbol{J}`).
+
     tensor_form : bool, default False
         Whether to return tensor form of biquadratic exchange parameter instead of the scalar.
 
     Returns
     -------
+
     B : float or (3, 3, 3, 3) :numpy:`ndarray`
         Biquadratic exchange parameter.
 
@@ -92,6 +95,7 @@ def to_biquadratic(parameter, tensor_form=False):
 
     See Also
     --------
+
     from_biquadratic
 
     Examples
@@ -205,16 +209,19 @@ def from_biquadratic(B):
 
     Parameters
     ----------
+
     B : float
         Biquadratic exchange parameter.
 
     Returns
     -------
+
     parameter : (3, 3, 3, 3) :numpy:`ndarray`
         Tensor form of the biquadratic exchange parameter.
 
     See Also
     --------
+
     to_biquadratic
 
     Examples
