@@ -22,29 +22,6 @@
 
 import numpy as np
 
-try:
-    import plotly.graph_objects as go
-
-    PLOTLY_AVAILABLE = True
-    PLOTLY_ERROR_MESSAGE = "If you see this message, please contact developers of the code (see magnopy.org)."
-except ImportError:
-    PLOTLY_AVAILABLE = False
-    PLOTLY_ERROR_MESSAGE = "\n".join(
-        [
-            "Installation of plotly is not found, can not produce .html pictures.",
-            "Either install plotly with",
-            "",
-            "    pip install plotly",
-            "",
-            "Or disable html output with",
-            "",
-            "    no_html=True (when using magnopy as Python library)",
-            "    --no-html (when using magnopy through command line interface)",
-            "",
-        ]
-    )
-
-
 # Save local scope at this moment
 old_dir = set(dir())
 old_dir.add("old_dir")
@@ -117,66 +94,6 @@ def read_spin_directions(filename: str):
     )
 
     return spin_directions
-
-
-def _plot_cones(fig, positions, spin_directions, color, name=None):
-    scale = 0.5
-
-    if not PLOTLY_AVAILABLE:
-        raise ImportError(PLOTLY_ERROR_MESSAGE)
-
-    # Prepare data
-    x, y, z = np.transpose(positions, axes=(1, 0))
-    u, v, w = np.transpose(spin_directions, axes=(1, 0))
-
-    fig.add_traces(
-        data=go.Cone(
-            x=x + u * scale,
-            y=y + v * scale,
-            z=z + w * scale,
-            u=u * (1 - scale),
-            v=v * (1 - scale),
-            w=w * (1 - scale),
-            sizemode="raw",
-            anchor="tail",
-            legendgroup=name,
-            name=name,
-            showlegend=name is not None,
-            showscale=False,
-            colorscale=[color, color],
-            hoverinfo="none",
-        )
-    )
-
-    fig.add_traces(
-        data=go.Scatter3d(
-            mode="markers",
-            x=x,
-            y=y,
-            z=z,
-            marker=dict(size=10, color=color),
-            hoverinfo="none",
-            showlegend=False,
-            legendgroup=name,
-        )
-    )
-
-    for i in range(0, len(x)):
-        fig.add_traces(
-            dict(
-                x=[x[i], x[i] + u[i] * scale],
-                y=[y[i], y[i] + v[i] * scale],
-                z=[z[i], z[i] + w[i] * scale],
-                mode="lines",
-                type="scatter3d",
-                hoverinfo="none",
-                line={"color": color, "width": 10},
-                legendgroup=name,
-                showlegend=False,
-            )
-        )
-
-    return fig
 
 
 # Populate __all__ with objects defined in this file
