@@ -35,6 +35,11 @@ New features
   ``magnopy-lswt``.
 * Implement :issue:`75`: ``--spglib-types`` in ``magnopy-lswt``.
 * Add "E_0.txt" output file to ``magnopy-optimize-sd``.
+* Add "E_0.txt", "E_2.txt" and "ONE_OPERATOR_TERMS.txt" output file to
+  ``magnopy-optimize-sd``.
+* ``magnopy.io.plot_dispersion``.
+* Major improvement of the console output for both ``magnopy-lswt`` and
+  ``magnopy-optimize-sd``.
 
 Deprecated
 ----------
@@ -48,3 +53,4 @@ Deprecated
   ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.add_44``.
   Use ``when_present="replace"`` instead.
 * ``h`` in ``magnopy.SpinHamiltonian.add_magnetic_field`` in favor of ``B``.
+* ``magnopy.experimental.plot_dispersion`` use ``magnopy.io.plot_dispersion`` instead.
