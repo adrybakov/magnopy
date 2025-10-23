@@ -33,7 +33,9 @@ old_dir.add("old_dir")
 
 def ivuzjo(N=10, J=10):
     r"""
-    Prepare a Hamiltonian as in the example of [1]_.
+    Prepares a Hamiltonian from the paper by Ivanov, Uzdin and Jónsson.
+
+    See [1]_ for details. The Hamiltonian is defined as
 
     .. math::
 
@@ -63,18 +65,22 @@ def ivuzjo(N=10, J=10):
 
     Parameters
     ----------
+
     N : int, default 10
         Size of the supercell (N x N).
+
     J : float, default 10
-        Value of the isotropic exchange in energy units (meV).
+        Value of the isotropic exchange in energy units (meV), sign is *not* ignored.
 
     Returns
     -------
+
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian (with magnetic field)
 
     References
     ----------
+
     .. [1] Ivanov, A.V., Uzdin, V.M. and Jónsson, H., 2021.
         Fast and robust algorithm for energy minimization of spin systems applied
         in an analysis of high temperature spin configurations in terms of skyrmion
@@ -92,8 +98,6 @@ def ivuzjo(N=10, J=10):
         >>> spinham = magnopy.examples.ivuzjo()
 
     """
-
-    J = 10
 
     D = J / 2
 
@@ -152,10 +156,11 @@ def ivuzjo(N=10, J=10):
 
 def full_ham():
     r"""
-    Prepare a Hamiltonian with all parameters present.
+    Prepares a Hamiltonian with all parameters being populated.
 
     Returns
     -------
+
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian.
 

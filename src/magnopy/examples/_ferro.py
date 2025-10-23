@@ -39,8 +39,10 @@ def cubic_ferro_nn(
     dimensions: int = 3,
 ) -> SpinHamiltonian:
     r"""
-    Hamiltonian on the cubic lattice with non-zero exchange
-    parameters between nearest-neighbors. One atom per unit cell.
+    Prepares ferromagnetic Hamiltonian on the cubic lattice with one atom per unit cell.
+
+    Only nearest-neighbor isotropic exchange interactions and on-site quadratic
+    anisotropy are populated. The Hamiltonian has the form
 
     .. math::
 
@@ -67,32 +69,37 @@ def cubic_ferro_nn(
 
     Parameters
     ----------
+
     a : float, default 1.0
         Lattice parameter of the cubic lattice.
         The unit cell of the Hamiltonian is defined as
 
         .. code-block:: python
 
-            [[a, 0, 0],
-             [0, a, 0],
-             [0, 0, a]]
+            [[a, 0, 0], [0, a, 0], [0, 0, a]]
+
     J_iso : float, default 1.0
         Isotropic exchange parameter for the pairs of the nearest-neighbor magnetic
-        sites, given in energy units. Only magnitude is important.
+        sites, given in energy units. Only magnitude is important, sign is ignored.
+
     J_21 : (3, 3) or (3, ) |array-like|_, default (0, 0, 0)
         On-site quadratic anisotropy.
+
     S : float, default 0.5
         Spin value of the magnetic site.
+
     dimensions : int, default 3
         Either 1, 2 or 3. Dimensionality of the spin Hamiltonian.
 
     Returns
     -------
+
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian.
 
     Examples
     --------
+
     To get an example with the default values use
 
     .. doctest::
@@ -145,7 +152,7 @@ def cubic_ferro_nn(
 
     With this function one can customize a few things of the Hamiltonian:
 
-    * Lattice parameter
+    *   Lattice parameter
 
         .. doctest::
 
@@ -156,7 +163,7 @@ def cubic_ferro_nn(
                    [0., 2., 0.],
                    [0., 0., 2.]])
 
-    * Spin values
+    *   Spin values
 
         .. doctest::
 
@@ -166,7 +173,7 @@ def cubic_ferro_nn(
             [1.5]
 
 
-    * Value of the isotropic exchange
+    *   Value of the isotropic exchange
 
         .. doctest::
 
@@ -200,7 +207,7 @@ def cubic_ferro_nn(
              [-0. -2. -0.]
              [-0. -0. -2.]]
 
-    * Diagonal of the on-site quadratic anisotropy
+    *   Diagonal of the on-site quadratic anisotropy
 
         .. doctest::
 
@@ -213,7 +220,7 @@ def cubic_ferro_nn(
              [ 0.  2.  0.]
              [ 0.  0. -1.]]
 
-    * Dimensionality of the nearest neighbors
+    *   Dimensionality of the nearest neighbors
 
         .. doctest::
 
