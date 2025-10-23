@@ -39,39 +39,48 @@ class LSWT:
     r"""
     Linear Spin Wave theory.
 
-    It is created from some spin Hamitlonian and set of direction vectors,
-    that define the orientation of spins.
+    It is created from some spin Hamiltonian and set of direction vectors, that defines
+    the ground state.
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian.
+
     spin_directions : (M, 3) |array-like|_
         Directions of spin vectors. Only directions of vectors are used, modulus is
-        ignored.
-        If spin Hamiltonian contains non-magnetic atom, then only the spin directions
-        for the magnetic atoms are expected. The order of spin directions is the same as
-        the order of magnetic atoms in ``spinham.atoms.spins``.
+        ignored. If spin Hamiltonian contains non-magnetic atom, then only the spin
+        directions for the magnetic atoms are expected. The order of spin directions is
+        the same as the order of magnetic atoms in
+        :py:attr:`SpinHamiltonian.magnetic_atoms`. See Notes for more details.
 
     Attributes
     ----------
+
     z : (M, 3) :numpy:`ndarray`
-        Spin directions.
+        Spin directions (directions of local quantization axes).
+
     p : (M, 3) :numpy:`ndarray`
-        Hybridized x and y components of the local coordinate system.
+        Hybridized x and y components of the local coordinate system
+        :math:`\mathbf{p} = \mathbf{x} + i \mathbf{y}`.
+
     M : int
         Number of spins in the unit cell
+
     cell : (3, 3) :numpy:`ndarray`
         Unit cell. Rows are vectors, columns are cartesian components.
+
     spins : (M, ) :numpy:`ndarray`
-        Spin values.
+        Spin values of the magnetic centers.
 
     Notes
     -----
-    If spin Hamiltonian contains three atoms Cr1, Br, Cr3 in that order. Assume that two
-    atoms are magnetic (Cr1 and Cr2), one atom is not (Br). Then ``spin_directions`` is
-    a (2, 3) array with ``spin_directions[0]`` being the direction for spin of Cr1 and
-    ``spin_directions[1]`` being the direction of spin for Cr2.
+
+    Let the spin Hamiltonian contain three atoms Cr1, Br, Cr3 in that order. Assume that
+    two atoms are magnetic (Cr1 and Cr3), one atom is not (Br). Then ``spin_directions``
+    is a (2, 3) array with ``spin_directions[0]`` being the direction for spin of Cr1 and
+    ``spin_directions[1]`` being the direction of spin for Cr3.
 
     Examples
     --------
@@ -435,18 +444,20 @@ class LSWT:
 
     def E_2(self, units="meV") -> float:
         r"""
-        Correction to the ground state energy that arises from the LSWT.
+        Computes the correction to the ground state energy that arises from the LSWT.
 
         Parameters
         ----------
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
-
         Returns
         -------
+
         E_2 : float
 
         Examples
@@ -473,23 +484,27 @@ class LSWT:
 
     def O(self, units="meV"):  # noqa E743
         r"""
-        Coefficient before the one-operator terms.
+        Computes coefficient of the one-operator terms.
 
         Parameters
         ----------
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         Returns
         -------
+
         O : (M, ) :numpy:`ndarray`
             Elements are complex numbers.
 
         Notes
         -----
+
         Before the diagonalization, the magnon Hamiltonian has the form
 
         .. math::
@@ -541,29 +556,35 @@ class LSWT:
 
     def A(self, k, relative=False, units="meV"):
         r"""
-        Part of the grand dynamical matrix.
+        Computes part of the grand dynamical matrix.
 
         Parameters
         ----------
+
         k : (3,) |array-like|_
             Reciprocal vector
+
         relative : bool, default False
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         Returns
         -------
+
         A : (M, M) :numpy:`ndarray`
             :math:`A_{\alpha\beta}(\boldsymbol{k})`.
 
         Notes
         -----
+
         Before the diagonalization, the magnon Hamiltonian has the form
 
         .. math::
@@ -598,6 +619,7 @@ class LSWT:
 
         See Also
         --------
+
         LSWT.B
         LSWT.GDM
 
@@ -635,29 +657,35 @@ class LSWT:
 
     def B(self, k, relative=False, units="meV"):
         r"""
-        Part of the grand dynamical matrix.
+        Computes part of the grand dynamical matrix.
 
         Parameters
         ----------
+
         k : (3,) |array-like|_
-            Reciprocal vector
+            Reciprocal vector.
+
         relative : bool, default False
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         Returns
         -------
+
         B : (M, M) :numpy:`ndarray`
             :math:`B_{\alpha\beta}(\boldsymbol{k})`.
 
         Notes
         -----
+
         Before the diagonalization, the magnon Hamiltonian has the form
 
         .. math::
@@ -692,6 +720,7 @@ class LSWT:
 
         See Also
         --------
+
         LSWT.A
         LSWT.GDM
 
@@ -727,29 +756,35 @@ class LSWT:
 
     def GDM(self, k, relative=False, units="meV"):
         r"""
-        Grand dynamical matrix.
+        Computes grand dynamical matrix.
 
         Parameters
         ----------
+
         k : (3,) |array-like|_
-            Reciprocal vector
+            Reciprocal vector.
+
         relative : bool, default False
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         Returns
         -------
+
         gdm : (2M, 2M) :numpy:`ndarray`
             Gran dynamical matrix.
 
         Notes
         -----
+
         Before the diagonalization, the magnon Hamiltonian has the form
 
         .. math::
@@ -794,6 +829,7 @@ class LSWT:
 
         See Also
         --------
+
         LSWT.A
         LSWT.B
 
@@ -825,32 +861,37 @@ class LSWT:
 
     def diagonalize(self, k, relative=False, units="meV"):
         r"""
-        Diagonalize the Hamiltonian for the given ``k`` point and return all possible
-        quantities at once.
+        Diagonalizes the Hamiltonian for the given ``k`` point.
 
         Parameters
         ----------
+
         k : (3,) |array-like|_
-            Reciprocal vector
+            Reciprocal vector.
+
         relative : bool, default False
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
             full list of supported units.
 
-            .. versionadded:: 0.3.0
-
         Returns
         -------
+
         omegas : (M, ) :numpy:`ndarray`
             Array of omegas. Note, that data type is complex. If the ground state is
             correct, then the complex part should be zero.
+
         delta : float
             Constant energy term that results from diagonalization. Note, that data type
             is complex. If the ground state is correct, then the complex part should be
             zero.
+
         G : (M, 2M) :numpy:`ndarray`
             Transformation matrix from the original boson operators.
 
@@ -874,8 +915,10 @@ class LSWT:
 
         See Also
         --------
+
         LSWT.omega
         LSWT.delta
+        LSWT.G
 
         Examples
         --------
@@ -941,19 +984,25 @@ class LSWT:
 
     def omega(self, k, relative=False, units="meV"):
         r"""
+        Computes magnon's eigenenergies at the given ``k`` point.
+
         Parameters
         ----------
+
         k : (3,) |array-like|_
-            Reciprocal vector
+            Reciprocal vector.
+
         relative : bool, default False
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
             full list of supported units.
 
-            .. versionadded:: 0.3.0
 
         Returns
         -------
@@ -963,6 +1012,7 @@ class LSWT:
 
         See Also
         --------
+
         LSWT.diagonalize
         LSWT.delta
 
@@ -982,7 +1032,7 @@ class LSWT:
 
     def delta(self, k, relative=False, units="meV"):
         r"""
-        Constant energy term of the diagonalized Hamiltonian.
+        Computes constant delta term of the diagonalized Hamiltonian.
 
         .. math::
 
@@ -990,26 +1040,32 @@ class LSWT:
 
         Parameters
         ----------
+
         k : (3,) |array-like|_
-            Reciprocal vector
+            Reciprocal vector.
+
         relative : bool, default False
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
             coordinates.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
             full list of supported units.
 
-            .. versionadded:: 0.3.0
 
         Returns
         -------
+
         delta : float
             Constant energy term that results from diagonalization. Note, that data type is complex. If the ground state is correct,
             then the complex part should be zero.
 
         See Also
         --------
+
         LSWT.diagonalize
         LSWT.omega
 
@@ -1028,7 +1084,7 @@ class LSWT:
 
     def G(self, k, relative=False):
         r"""
-        Transformation matrix to the new bosonic operators.
+        Computes transformation matrix to the new bosonic operators.
 
         .. math::
 
@@ -1040,8 +1096,10 @@ class LSWT:
 
         Parameters
         ----------
+
         k : (3,) |array-like|_
             Reciprocal vector
+
         relative : bool, default False
             If ``relative=True``, then ``k`` is interpreted as given relative to the
             reciprocal unit cell. Otherwise it is interpreted as given in absolute
@@ -1049,11 +1107,13 @@ class LSWT:
 
         Returns
         -------
+
         G : (M, 2M) :numpy:`ndarray`
             Transformation matrix from the original boson operators.
 
         See Also
         --------
+
         LSWT.diagonalize
         LSWT.omega
         LSWT.delta
@@ -1071,8 +1131,16 @@ class LSWT:
         """
         return self.diagonalize(k=k, relative=relative)[2]
 
-    # Removed in v0.2.0. Warning will be removed in March of 2026
+    # REMOVED in v0.2.0. Warning will be removed in March of 2026
     def G_inv(self, *args, **kwargs):
+        r"""
+        This method was removed in v0.2.0 in favor of LSWT.G.
+
+        Raises
+        ------
+        DeprecationWarning
+            This method was removed in v0.2.0 in favor of :py:meth:`.LSWT.G`.
+        """
         raise DeprecationWarning("This method was removed in v0.2.0 in favor of LSWT.G")
 
 
