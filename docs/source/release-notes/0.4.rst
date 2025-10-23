@@ -7,18 +7,32 @@ Version 0.4
 0.4.0
 =====
 
-**Date**: Undefined
+**Date**: 23 October 2025
+
+.. important::
+
+    Together with this release we release a master tutorial about magnopy:
+    |magnopy-tutorials|_. You can take it as a starting point to learn how to use
+    magnopy.
 
 Bugfix
 ------
 
-* Fix a bug in ``magnopy-lswt``, when it is used with ``--k-points`` argument. Fix
-  :issue:`74`.
+* Fix :issue:`74`: a bug in ``magnopy-lswt``, when it is used with ``--k-points`` argument.
+* Fix a bug in ``magnopy.examples.ivuzjo``: J=10 was fixed, now input value is used.
 
 New features
 ------------
 
+* Major improvement of the console output for both ``magnopy-lswt`` and
+  ``magnopy-optimize-sd``.
+* Add summary of the executed commands to the output of both ``magnopy-lswt`` and
+  ``magnopy-optimize-sd``.
 * Add output of magnetic field to ``magnopy-optimize-sd``.
+* Add "E_0.txt" output file to ``magnopy-optimize-sd``.
+* Add "E_0.txt", "E_2.txt" and "ONE_OPERATOR_TERMS.txt" output file to
+  ``magnopy-optimize-sd``.
+* Add parameter ``B``in ``magnopy.SpinHamiltonian.add_magnetic_field``.
 * Implement :issue:`72`: ``magnopy.Convention.__str__()`` and
   ``magnopy.Convention.__repr__()``.
 * Implement ``magnopy.Convention.__hash__()``.
@@ -28,18 +42,12 @@ New features
   ``magnopy.SpinHamiltonian.add_33``, ``magnopy.SpinHamiltonian.add_41``,
   ``magnopy.SpinHamiltonian.add_421``, ``magnopy.SpinHamiltonian.add_422``,
   ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.add_44``.
-* Extend hover information in ``magnopy.experimental.plot_spinham()``.
-* Parameter ``B``in ``magnopy.SpinHamiltonian.add_magnetic_field``.
 * Implement ``spin_values`` in ``load_grogu()``, same as in ``load_tb2j()``.
+* Implement :issue:`75`: ``--spglib-types`` in ``magnopy-lswt``.
+* Implement ``magnopy.io.plot_dispersion``.
 * Extend ``--spin-values`` for the |GROGU|_ as well in ``magnopy-optimize-sd`` and
   ``magnopy-lswt``.
-* Implement :issue:`75`: ``--spglib-types`` in ``magnopy-lswt``.
-* Add "E_0.txt" output file to ``magnopy-optimize-sd``.
-* Add "E_0.txt", "E_2.txt" and "ONE_OPERATOR_TERMS.txt" output file to
-  ``magnopy-optimize-sd``.
-* ``magnopy.io.plot_dispersion``.
-* Major improvement of the console output for both ``magnopy-lswt`` and
-  ``magnopy-optimize-sd``.
+* Extend hover information in ``magnopy.experimental.plot_spinham()``.
 
 Deprecated
 ----------

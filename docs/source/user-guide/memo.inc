@@ -7,9 +7,9 @@ usage: magnopy [-h] [-v] [{logo,warranty} ...]
 ██║ ╚═╝ ██║ ██║  ██║ ╚██████╔╝ ██║ ╚████║ ╚██████╔╝ ██║         ██║
 ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝  ╚═╝  ╚═══╝  ╚═════╝  ╚═╝         ╚═╝
                                                            ▄   ▄
-                      Version: 0.3.0                       █▀█▀█
+                      Version: 0.4.0                       █▀█▀█
                 Documentation: magnopy.org                 █▄█▄█
-             Release date: 23 September 2025                ███   ▄▄
+              Release date: 23 October 2025                 ███   ▄▄
                     License: GNU GPLv3                      ████ █  █
           Copyright (C) 2023-2025  Magnopy Team             ████    █
                                                             ▀▀▀▀▀▀▀▀

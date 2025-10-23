@@ -67,3 +67,12 @@ What can it do?
 * :ref:`Minimizes classical energy <user-guide_cli_optimize-sd>` as a function of the spin
   directions.
 * Visualizes spin Hamiltonian (experimental)
+
+How to support magnopy?
+=======================
+
+Magnopy is a relatively young code and we would highly appreciate your support.
+
+* If you use and like magnopy, please give it a star on `GitHub <https://github.com/magnopy/magnopy>`_.
+* Please give feedback on your experience with magnopy (see :ref:`support` page).
+* If you use magnopy in your research, please cite it (see :ref:`cite` page).

@@ -12,9 +12,9 @@ usage: magnopy-optimize-sd [-h] -ss {GROGU,TB2J,tb2j,grogu} -sf FILENAME
 ██║ ╚═╝ ██║ ██║  ██║ ╚██████╔╝ ██║ ╚████║ ╚██████╔╝ ██║         ██║
 ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝  ╚═╝  ╚═══╝  ╚═════╝  ╚═╝         ╚═╝
                                                            ▄   ▄
-                      Version: 0.3.0                       █▀█▀█
+                      Version: 0.4.0                       █▀█▀█
                 Documentation: magnopy.org                 █▄█▄█
-             Release date: 23 September 2025                ███   ▄▄
+              Release date: 23 October 2025                 ███   ▄▄
                     License: GNU GPLv3                      ████ █  █
           Copyright (C) 2023-2025  Magnopy Team             ████    █
                                                             ▀▀▀▀▀▀▀▀
@@ -40,7 +40,7 @@ options:
                         Tolerance parameter. Difference between classical
                         energies of two consecutive optimization steps.
   -tt, --torque-tolerance TORQUE_TOLERANCE
-                        Tolerance parameter. Maximum torque value among all
+                        Tolerance parameter. Maximum value of torque among all
                         spins at current optimization step.
   -s, --supercell xA_1 xA_2 xA_3
                         Definition of the supercell for the spin optimization.
