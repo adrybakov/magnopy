@@ -25,3 +25,4 @@ from ._k_resolved import *
 from ._spin_directions import *
 from ._tb2j import *
 from ._vampire import *
+from ._png_plots import *

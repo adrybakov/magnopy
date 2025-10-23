@@ -40,6 +40,14 @@ Vampire
     dump_vampire_mat
     dump_vampire_ucf
 
+Plotting
+========
+
+.. autosummary::
+    :toctree: generated/
+
+    plot_dispersion
+
 Deprecated
 ==========
 
