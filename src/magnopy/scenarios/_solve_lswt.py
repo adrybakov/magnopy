@@ -135,10 +135,11 @@ def solve_lswt(
         and input files. If ``True``, then only ``pathname`` is used.
 
     spglib_symprec : float, default 1e-5
+        .. versionadded:: 0.2.0
+
         Tolerance parameter for the space group symmetry search by |spglib|_. Reduce it
         if the space group is not the one you expected.
 
-        .. versionadded:: 0.2.0
 
     Notes
     -----
