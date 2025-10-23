@@ -4,9 +4,7 @@
 magnopy.scenarios
 *****************
 
-This module defines a set of complex calculations with the verbose input.
-It is used for the command line interface, mostly. However, it can be called from the
-script as well. Roughly, every function correspond to one command line script.
+Implementation of the command-line scripts, that is exposed to the API.
 
 .. currentmodule:: magnopy.scenarios
 

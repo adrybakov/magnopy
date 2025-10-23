@@ -1,7 +1,8 @@
-usage: magnopy-optimize-sd [-h] -sf FILENAME -ss KEYWORD [-sv [S1 [S2 ...]]]
-                           [-s xa_1 xa_2 xa_3] [-et ENERGY_TOLERANCE]
-                           [-tt TORQUE_TOLERANCE] [-mf h_x h_y h_z]
-                           [-of OUTPUT_FOLDER] [-no-html] [-hpd]
+usage: magnopy-optimize-sd [-h] -ss {GROGU,TB2J,tb2j,grogu} -sf FILENAME
+                           [-et ENERGY_TOLERANCE] [-tt TORQUE_TOLERANCE]
+                           [-s xA_1 xA_2 xA_3] [-mf B_X B_Y B_Z]
+                           [-of OUTPUT_FOLDER] [-sv [S1 ...]] [-no-html]
+                           [-hpd]
                            [-msdi MAKE_SD_IMAGE MAKE_SD_IMAGE MAKE_SD_IMAGE]
 
 ███╗   ███╗  █████╗   ██████╗  ███╗   ██╗  ██████╗  ██████╗  ██╗   ██╗
@@ -11,54 +12,69 @@ usage: magnopy-optimize-sd [-h] -sf FILENAME -ss KEYWORD [-sv [S1 [S2 ...]]]
 ██║ ╚═╝ ██║ ██║  ██║ ╚██████╔╝ ██║ ╚████║ ╚██████╔╝ ██║         ██║
 ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝  ╚═╝  ╚═══╝  ╚═════╝  ╚═╝         ╚═╝
                                                            ▄   ▄
-                      Version: 0.2.0                       █▀█▀█
+                      Version: 0.4.0                       █▀█▀█
                 Documentation: magnopy.org                 █▄█▄█
-             Release date: 10 September 2025                ███   ▄▄
+              Release date: 23 October 2025                 ███   ▄▄
                     License: GNU GPLv3                      ████ █  █
           Copyright (C) 2023-2025  Magnopy Team             ████    █
                                                             ▀▀▀▀▀▀▀▀
 
-This script optimizes classical energy of the spin Hamiltonian and finds the spin directions that describe a local minima of the energy landscape.
+This script optimizes classical energy of the spin Hamiltonian and finds spin directions that describe a local minima of the energy landscape.
 
 options:
   -h, --help            show this help message and exit
+  -ss, --spinham-source {GROGU,TB2J,tb2j,grogu}
+                        Magnopy supports two sources of spin Hamiltonian:
+                        GROGU or TB2J. Source of the spin Hamiltonian can not
+                        be deduced reliably from the Hamiltonian file. Thus,
+                        magnopy asks you to specify what was the source of the
+                        file that you pass to "--spinham-filename".
   -sf, --spinham-filename FILENAME
-                        Path to the spin Hamiltonian file, from where the
-                        parameters would be read.
-  -ss, --spinham-source KEYWORD
-                        Source of the spin Hamiltonian. Either "GROGU" or
-                        "TB2J"
-  -sv, --spin-values [S1 [S2 ...]]
-                        In the case when the parameters of spin Hamiltonian
-                        comes from TB2J, one might want to change the values
-                        of spins to be closer to half-integers. This option
-                        allows that. Order of the M numbers should match the
-                        order of magnetic atoms in the spin Hamiltonian. Note
-                        that those numbers are always positive. To specify AFM
-                        order use opposite spin directions and not spin values
-                        of the opposite sign.
-  -s, --supercell xa_1 xa_2 xa_3
-                        Specification of the supercell for the spin
-                        optimization. Expects three integers as an input. Pass
-                        1 1 1 to optimize within the original unit cell.
+                        Path to the file with the parameters of spin
+                        Hamiltonian. If you use "--spinham-source TB2J", then
+                        this is an "exchange.out" file, produced by TB2J. If
+                        you use "--spinham-source GROGU", then this is a .txt
+                        file with the Hamiltonian parameters produced by
+                        GROGU.
   -et, --energy-tolerance ENERGY_TOLERANCE
                         Tolerance parameter. Difference between classical
                         energies of two consecutive optimization steps.
   -tt, --torque-tolerance TORQUE_TOLERANCE
-                        Maximum torque among all spins.
-  -mf, --magnetic-field h_x h_y h_z
-                        Vector of external magnetic field, given in the units
-                        of Tesla.
+                        Tolerance parameter. Maximum value of torque among all
+                        spins at current optimization step.
+  -s, --supercell xA_1 xA_2 xA_3
+                        Definition of the supercell for the spin optimization.
+                        Expects three integers as an input, each integer is a
+                        multiple of the original unit cell along one of the
+                        three lattice vectors. By default optimizes on the
+                        unit cell.
+  -mf, --magnetic-field B_X B_Y B_Z
+                        Vector of the external magnetic field (magnetic flux
+                        density, B), given in the units of Tesla.
   -of, --output-folder OUTPUT_FOLDER
-                        Folder where all output files of magnopy wil be saved.
-  -no-html, --no-html   Disable plotting of the spin direction image in the
-                        .html format. html files are generally heavy (~> 5
-                        Mb). This option allows to disable their production to
-                        save disk space.
+                        Path to the folder where all output files of magnopy
+                        wil be saved. Defaults to "magnopy-results". If the
+                        folder does not exist, then magnopy will try to create
+                        it.
+  -sv, --spin-values [S1 ...]
+                        Only works with "--spinham-source TB2J". This option
+                        changes spin values of the magnetic atoms. It expects
+                        M numbers in the same order as the order of magnetic
+                        atoms in the input TB2J file. Magnetic atoms are
+                        defined as the atoms that have at least one
+                        interaction associated with them. Spin values are
+                        always positive. If you want to specify spin-down
+                        state or AFM order use spin directions and not the
+                        spin values.
+  -no-html, --no-html   .html files are generally heavy (~ 5 Mb). This option
+                        allows to disable their generation to save disk space.
   -hpd, --hide-personal-data
-                        Whether to strip the parts of the paths as to hide the
-                        file structure of you personal computer.
+                        Whether not to use os.path.abspath. Hides the file
+                        structure of your personal computer. Note, that the
+                        relative paths can still expose the structure of you
+                        filesystem.
   -msdi, --make-sd-image MAKE_SD_IMAGE MAKE_SD_IMAGE MAKE_SD_IMAGE
-                        make_sd_image is deprecated, image is made by default,
-                        use --no-html to suppress. This arguments will be
-                        removed from magnopy in March of 2026
+                        DEPRECATED in v0.2.0. Interactive .html images are
+                        generated by default, use "--no-html" to suppress.
+                        This arguments will be removed from magnopy in March
+                        of 2026

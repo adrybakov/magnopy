@@ -8,7 +8,7 @@ API reference
 
 :Release: |version|
 
-The main interface to the package should be imported as
+Main interface to the package should be imported as
 
 .. doctest::
 

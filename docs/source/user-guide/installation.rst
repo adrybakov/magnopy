@@ -4,11 +4,11 @@
 How to install magnopy
 **********************
 
-Requirement for magnopy installation are:
+Requirement for magnopy installation are
 
 * |Python|_ (>=3.9)
 
-And several libraries:
+And several third-party libraries
 
 .. literalinclude:: ../../../requirements.txt
 
@@ -19,7 +19,7 @@ Magnopy can be installed with :ref:`pip <user-guide_installation_pip>` or from
 Do you have Python?
 ===================
 
-Most likely Python is already installed on your machine (if not check these links:
+Most likely Python is already installed on your machine (if not check
 |Python-installation|_). One of the ways to check if you have python installed is to
 run the command in your terminal
 
@@ -31,7 +31,7 @@ If you see something like
 
 .. code-block:: bash
 
-    Python 3.10.9 (main, Dec 15 2022, 18:25:35) [Clang 14.0.0 (clang-1400.0.29.202)] on darwin
+    Python 3.13.5 (main, Jun 11 2025, 15:36:57) [Clang 15.0.0 (clang-1500.1.0.2.5)] on darwin
     Type "help", "copyright", "credits" or "license" for more information.
     >>>
 
@@ -62,7 +62,7 @@ you may need to use ``python3`` instead (and ``pip3`` instead of ``pip``).
 Installation with pip
 =====================
 
-Magnopy is published and distributed from the |PYPI|_. To install it use the command
+Magnopy is published and distributed via |PYPI|_. To install it use the command
 (you may need to use ``pip3``)
 
 .. code-block:: bash
@@ -70,19 +70,23 @@ Magnopy is published and distributed from the |PYPI|_. To install it use the com
     pip install magnopy
 
 .. hint::
-    You can use the command
+    If you execute
 
     .. code-block::
 
         magnopy
 
-    to check whether the installation worked.
+    and see something like
+
+    .. literalinclude:: memo.inc
+
+    then the installation worked and magnopy is ready to use.
 
 If there are any bugs with the installation, please drop a message to the developers
-through one of our :ref:`support` channels and we would be happy to help.
+through one of our :ref:`support <support>` channels and we would be happy to help.
 
-Optionally, if you want magnopy to produce .png and .html files with graphics you can
-install |plotly|_ and |matplotlib|_ manually or install them with magnopy as
+Optionally, if you want magnopy to be able to produce .png and .html files you can
+install |plotly|_ and |matplotlib|_ manually or install them as magnopy's dependencies
 
 .. code-block:: bash
 
@@ -90,7 +94,7 @@ install |plotly|_ and |matplotlib|_ manually or install them with magnopy as
 
 .. note::
     You may need to escape the ``[`` and ``]`` characters, because they are special
-    characters in most shells. For example, in bash you can use backslash to escape them
+    characters in most shells. For example, in bash you can use backslash
 
     .. code-block:: bash
 
@@ -103,7 +107,7 @@ install |plotly|_ and |matplotlib|_ manually or install them with magnopy as
         pip install "magnopy[visual]"
 
 .. hint::
-    If you are using |jupyter|_, then magnopy can be installed with
+    If you are using |jupyter|_, then magnopy can be installed as
 
     .. code-block::
 
@@ -115,17 +119,17 @@ install |plotly|_ and |matplotlib|_ manually or install them with magnopy as
 
         %pip install "magnopy[visual]"
 
-    within it.
+    within it. You may need to have to restart you kernel as well.
 
 .. _user-guide_installation_source:
 
 Installation from source
 ========================
 
-Alternatively, source code of magnopy is publicly available under the GPL-3.0 license,
-therefore it is possible to install it from source.
+Source code of magnopy is publicly available (see |repository|_),
+therefore magnopy can be installed from source.
 
-*   Clone the project to your local computer (in other words: download the source code)
+*   Clone the project (in other words, download the source code)
 
     .. code-block:: bash
 
@@ -149,12 +153,27 @@ therefore it is possible to install it from source.
 
         pip install .
 
+    or
+
+    .. code-block:: bash
+
+        pip install ".[visual]"
+
 Update
 ======
 
-If you want to update the package to the latest available version (|version|),
-then use the command (you may need to use ``pip3``)
+New versions of magnopy are often published. We recommend to update from time to time to
+get the new features and bug fixes.
+
+To update magnopy to the latest available version (|version|) use the command (you may
+need to use ``pip3``)
 
 .. code-block:: bash
 
     pip install magnopy --upgrade
+
+or
+
+.. code-block:: bash
+
+    pip install "magnopy[visual]" --upgrade

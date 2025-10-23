@@ -36,21 +36,43 @@ ARRAY = harrays(
     elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
 )
 RANDOM_UC = harrays(int, (4, 3), elements=st.integers(min_value=-1000, max_value=1000))
-CONVENTION = Convention(
-    spin_normalized=False,
-    multiple_counting=True,
-    c1=1,
-    c21=1,
-    c22=1,
-    c31=1,
-    c32=1,
-    c33=1,
-    c41=1,
-    c421=1,
-    c422=1,
-    c43=1,
-    c44=1,
-)
+
+
+def get_spinham(natoms=9, for_supercell=False):
+    if for_supercell:
+        atoms = dict(
+            names=["Cr1", "Cr2"],
+            spins=[1, 2],
+            positions=[[0, 0, 0], [0.5, 0.5, 0.5]],
+            g_factors=[2, 2],
+        )
+    else:
+        atoms = dict(
+            names=["Cr" for _ in range(natoms)],
+            spins=[1 for _ in range(natoms)],
+            positions=[[0.1 * i, 0, 0] for i in range(natoms)],
+            g_factors=[2 for _ in range(natoms)],
+        )
+
+    return SpinHamiltonian(
+        cell=np.eye(3),
+        atoms=atoms,
+        convention=Convention(
+            spin_normalized=False,
+            multiple_counting=True,
+            c1=1,
+            c21=1,
+            c22=1,
+            c31=1,
+            c32=1,
+            c33=1,
+            c41=1,
+            c421=1,
+            c422=1,
+            c43=1,
+            c44=1,
+        ),
+    )
 
 
 @given(
@@ -60,15 +82,35 @@ CONVENTION = Convention(
     ARRAY,
 )
 def test_add_421(alpha, beta, nu, parameter):
-    atoms = {"names": ["Cr" for _ in range(9)], "spins": [1 for _ in range(9)]}
-
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=CONVENTION)
+    spinham = get_spinham()
 
     if 0 <= alpha < len(spinham.atoms.names) and 0 <= beta < len(spinham.atoms.names):
         spinham.add_421(alpha, beta, nu, parameter)
     else:
         with pytest.raises(ValueError):
             spinham.add_421(alpha, beta, nu, parameter)
+
+
+@pytest.mark.parametrize(
+    "when_present, parameter",
+    [("skip", 1.0), ("replace", 2.0), ("add", 3.0), ("mean", 1.5)],
+)
+def test_add_421_when_present(when_present, parameter):
+    spinham = get_spinham()
+
+    spinham.add_421(alpha=0, beta=1, nu=(1, 0, 0), parameter=np.ones((3, 3, 3, 3)))
+
+    with pytest.raises(ValueError):
+        spinham.add_421(alpha=0, beta=1, nu=(1, 0, 0), parameter=np.ones((3, 3, 3, 3)))
+
+    spinham.add_421(
+        alpha=0,
+        beta=1,
+        nu=(1, 0, 0),
+        parameter=2 * np.ones((3, 3, 3, 3)),
+        when_present=when_present,
+    )
+    assert np.allclose(spinham._421[0][3], parameter * np.ones((3, 3, 3, 3)))
 
 
 @given(
@@ -101,9 +143,7 @@ def test_add_421_sorting(
     nu4,
     parameter,
 ):
-    atoms = {"names": ["Cr" for _ in range(9)], "spins": [1 for _ in range(9)]}
-
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=CONVENTION)
+    spinham = get_spinham()
 
     spinham.add_421(alpha1, beta1, nu1, parameter)
 
@@ -113,8 +153,8 @@ def test_add_421_sorting(
     else:
         spinham.add_421(alpha2, beta2, nu2, parameter)
 
-    spinham.add_421(alpha3, beta3, nu3, parameter, replace=True)
-    spinham.add_421(alpha4, beta4, nu4, parameter, replace=True)
+    spinham.add_421(alpha3, beta3, nu3, parameter, when_present="replace")
+    spinham.add_421(alpha4, beta4, nu4, parameter, when_present="replace")
 
     for i in range(len(spinham._421) - 1):
         assert spinham._421[i][:-1] <= spinham._421[i + 1][:-1]
@@ -127,15 +167,15 @@ def test_add_421_sorting(
     RANDOM_UC,
 )
 def test_remove_421(r_alpha, r_beta, r_nu, nus):
-    atoms = {"names": ["Cr" for _ in range(4)], "spins": [1 for _ in range(4)]}
-
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=CONVENTION)
+    spinham = get_spinham(natoms=4)
 
     for alpha in range(len(spinham.atoms.names)):
         for beta in range(alpha, len(spinham.atoms.names)):
             for nu in nus:
                 nu = (int(nu[0]), int(nu[1]), int(nu[2]))
-                spinham.add_421(alpha, beta, nu, np.ones((3, 3, 3, 3)), replace=True)
+                spinham.add_421(
+                    alpha, beta, nu, np.ones((3, 3, 3, 3)), when_present="replace"
+                )
 
     bond = [r_alpha, r_beta, r_nu]
     if 0 <= r_alpha < len(spinham.atoms.names) and 0 <= r_beta < len(
@@ -163,13 +203,7 @@ def test_remove_421(r_alpha, r_beta, r_nu, nus):
 
 @given(ARRAY)
 def test_iterator_index_bug(parameter):
-    atoms = {"names": ["Cr" for _ in range(9)], "spins": [1 for _ in range(9)]}
-
-    spinham = SpinHamiltonian(
-        cell=np.eye(3),
-        atoms=atoms,
-        convention=Convention(multiple_counting=True, spin_normalized=False),
-    )
+    spinham = get_spinham()
 
     spinham.add_421(alpha=8, beta=7, nu=(0, 3, -4), parameter=parameter)
     list(spinham.p421)
@@ -177,13 +211,7 @@ def test_iterator_index_bug(parameter):
 
 @given(ARRAY, st.floats(min_value=0.1, max_value=1e4))
 def test_mul(parameter, number):
-    atoms = {"names": ["Cr" for _ in range(9)], "spins": [1 for _ in range(9)]}
-
-    spinham = SpinHamiltonian(
-        cell=np.eye(3),
-        atoms=atoms,
-        convention=Convention(multiple_counting=True, spin_normalized=False),
-    )
+    spinham = get_spinham()
 
     spinham.add_421(alpha=0, beta=1, nu=(0, 3, -4), parameter=parameter)
     spinham.add_421(alpha=4, beta=2, nu=(1, 0, 0), parameter=parameter * 1.421)
@@ -207,13 +235,7 @@ def test_mul(parameter, number):
 
 @given(ARRAY, st.floats(min_value=0.1, max_value=1e4))
 def test_rmul(parameter, number):
-    atoms = {"names": ["Cr" for _ in range(9)], "spins": [1 for _ in range(9)]}
-
-    spinham = SpinHamiltonian(
-        cell=np.eye(3),
-        atoms=atoms,
-        convention=Convention(multiple_counting=True, spin_normalized=False),
-    )
+    spinham = get_spinham()
 
     spinham.add_421(alpha=0, beta=1, nu=(0, 3, -4), parameter=parameter)
     spinham.add_421(alpha=4, beta=2, nu=(1, 0, 0), parameter=parameter * 1.421)
@@ -237,19 +259,8 @@ def test_rmul(parameter, number):
 
 @given(ARRAY, ARRAY)
 def test_add(parameter1, parameter2):
-    atoms = dict(
-        names=["Cr" for _ in range(9)],
-        spins=[1 for _ in range(9)],
-        positions=[[0.1 * i, 0, 0] for i in range(9)],
-        g_factors=[2 for _ in range(9)],
-    )
-
-    spinham1 = SpinHamiltonian(
-        cell=np.eye(3), atoms=atoms, convention=Convention(multiple_counting=True)
-    )
-    spinham2 = SpinHamiltonian(
-        cell=np.eye(3), atoms=atoms, convention=Convention(multiple_counting=True)
-    )
+    spinham1 = get_spinham()
+    spinham2 = get_spinham()
 
     spinham1.add_421(alpha=0, beta=1, nu=(0, 3, -4), parameter=parameter1)
     spinham1.add_421(alpha=4, beta=2, nu=(1, 0, 0), parameter=parameter1 * 1.32)
@@ -281,14 +292,7 @@ def test_add(parameter1, parameter2):
     st.integers(min_value=1, max_value=5),
 )
 def test_make_supercell(parameter1, i, j, k):
-    atoms = dict(
-        names=["Cr1", "Cr2"],
-        spins=[1, 2],
-        positions=[[0, 0, 0], [0.5, 0.5, 0.5]],
-        g_factors=[2, 2],
-    )
-
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=CONVENTION)
+    spinham = get_spinham(for_supercell=True)
 
     spinham.add_421(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter1)
     spinham.add_421(alpha=0, beta=1, nu=(1, 0, 0), parameter=parameter1 * 1.42)

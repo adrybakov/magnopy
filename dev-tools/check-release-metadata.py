@@ -83,7 +83,9 @@ def check_init(version, root_dir: str):
     good = [True, True, True]
 
     # Read __init__.py
-    with open(os.path.join(root_dir, "src", "magnopy", "__init__.py"), "r") as f:
+    with open(
+        os.path.join(root_dir, "src", "magnopy", "__init__.py"), "r", encoding="utf-8"
+    ) as f:
         init_file_content = f.readlines()
 
     # Run trough the lines
@@ -172,7 +174,7 @@ def check_release_notes(version: str, root_dir: str):
     # Check the toctree in the index file
     # Read index.rst
     found_pages = []
-    with open(os.path.join(path, "index.rst"), "r") as f:
+    with open(os.path.join(path, "index.rst"), "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip().split(".")
 
@@ -195,7 +197,7 @@ def check_release_notes(version: str, root_dir: str):
 
     # Check the version note in the minor version file
     # For the x.x.0 versions there are no note required, but 'Whats new?' section
-    with open(os.path.join(path, f"{major}.{minor}.rst"), "r") as f:
+    with open(os.path.join(path, f"{major}.{minor}.rst"), "r", encoding="utf-8") as f:
         found_note = False
         date_line = None
         for line in f:

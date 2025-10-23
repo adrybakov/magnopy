@@ -38,17 +38,21 @@ def _check_grand_dynamical_matrix(D):
 
     Parameters
     ----------
+
     D : |array-like|_
         Candidate for the grand dynamical matrix
 
     Returns
     -------
+
     D : (2N, 2N) :numpy:`ndarray`
         Grand dynamical matrix.
+
     N : int
 
     Raises
     ------
+
     ValueError
         If the check is not passed
     """
@@ -80,8 +84,9 @@ def _inverse_by_colpa(matrix):
 
 def solve_via_colpa(D, sort_by_first_N=True):
     r"""
-    Diagonalize grand-dynamical matrix following the method of Colpa (section 3, remark
-    1 of [1]_).
+    Diagonalizes grand-dynamical matrix following the method of Colpa.
+
+    An algorithm is described in section 3, remark 1 of [1]_.
 
     Solves the Bogoliubov Hamiltonian of the form
 
@@ -139,6 +144,7 @@ def solve_via_colpa(D, sort_by_first_N=True):
 
     Parameters
     ----------
+
     D : (2N, 2N) |array-like|_
         Grand dynamical matrix. If it is Hermitian and positive-defined, then obtained
         eigenvalues are positive and real.
@@ -179,14 +185,17 @@ def solve_via_colpa(D, sort_by_first_N=True):
 
     Raises
     ------
+
     ColpaFailed
         If the algorithm fails. Typically it means that the grand dynamical matrix
         :math:`\boldsymbol{D}` is not positive-defined.
+
     ValueError
         If the grand dynamical matrix is not square or its shape is not even.
 
     References
     ----------
+
     .. [1] Colpa, J.H.P., 1978.
         Diagonalization of the quadratic boson hamiltonian.
         Physica A: Statistical Mechanics and its Applications,

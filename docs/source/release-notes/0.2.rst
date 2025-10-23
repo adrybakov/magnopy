@@ -50,7 +50,7 @@ New features
   in ``magnopy-optimize-sd``.
 * ``-no-html, --no-html``, ``-hpd, --hide-personal-data``,
   ``-spg-s, --spglib-symprec``, ``-msdi, --make-sd-image`` in ``magnopy-lswt``.
-* Output of "INITIAL_GUESS.TXT", "SPIN_DIRECTIONS.html" and "SPIN_POSITIONS.txt"
+* Output of "INITIAL_GUESS.txt", "SPIN_DIRECTIONS.html" and "SPIN_POSITIONS.txt"
   of the ``magnopy-optimize-sd`` script.
 * Output of "K-POINTS.html", "SPIN_VECTORS.txt", "HIGH-SYMMETRY_POINTS.txt", "K-POINTS.txt"
   and  "SPIN_DIRECTIONS.html" of the ``magnopy-lswt`` script.

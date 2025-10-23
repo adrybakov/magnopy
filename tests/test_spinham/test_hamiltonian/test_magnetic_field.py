@@ -50,14 +50,14 @@ def test_add_remove(h):
 
     assert len(spinham.p1) == 0
 
-    spinham.add_magnetic_field(h=h)
+    spinham.add_magnetic_field(B=h)
     assert len(spinham.p1) == 9
 
     BOHR_MAGNETON = 0.057883818060  # meV / Tesla
     zeeman_parameters = [BOHR_MAGNETON * 2 * h for _ in range(9)]
     assert np.allclose(zeeman_parameters, [parameter for _, parameter in spinham.p1])
 
-    spinham.add_magnetic_field(h=-h)
+    spinham.add_magnetic_field(B=-h)
     assert np.allclose(np.zeros((9, 3)), [parameter for _, parameter in spinham.p1])
 
 
@@ -76,11 +76,11 @@ def test_double_add(h):
 
     assert len(spinham.p1) == 0
 
-    spinham.add_magnetic_field(h=h)
+    spinham.add_magnetic_field(B=h)
 
     params = np.array([parameter for _, parameter in spinham.p1])
 
-    spinham.add_magnetic_field(h=h)
+    spinham.add_magnetic_field(B=h)
 
     double_params = np.array([parameter for _, parameter in spinham.p1])
 
@@ -99,7 +99,7 @@ def test_add_nothing(h):
 
     assert len(spinham.p1) == 0
 
-    spinham.add_magnetic_field(h=h)
+    spinham.add_magnetic_field(B=h)
     assert len(spinham.p1) == 0
 
 
@@ -115,7 +115,7 @@ def test_add_with_indices(alpha, h):
 
     assert len(spinham.p1) == 0
 
-    spinham.add_magnetic_field(h=h, alphas=[alpha])
+    spinham.add_magnetic_field(B=h, alphas=[alpha])
     assert len(spinham.p1) == 1
 
     BOHR_MAGNETON = 0.057883818060  # meV / Tesla
@@ -136,7 +136,7 @@ def test_check_update_of_magnetic_atoms(alpha, h):
     assert len(spinham.p1) == 0
     assert spinham.M == 0
 
-    spinham.add_magnetic_field(h=h, alphas=[alpha])
+    spinham.add_magnetic_field(B=h, alphas=[alpha])
     assert len(spinham.p1) == 1
     assert spinham.M == 1
 

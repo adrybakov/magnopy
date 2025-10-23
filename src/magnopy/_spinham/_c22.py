@@ -40,23 +40,31 @@ def _get_primary_p22(alpha, beta, nu, parameter=None):
 
     Parameters
     ----------
+
     alpha : int
         Index of the first atom.
+
     beta : int
         Index of the second atom.
+
     nu : tuple of 3 int
         Unit cell for the second atom.
+
     parameter : (3, 3) :numpy:`ndarray`, optional
         Full matrix of the parameter.
 
     Returns
     -------
+
     alpha : int
         Index of the first atom.
+
     beta : int
         Index of the second atom.
+
     nu : tuple of 3 int
         Unit cell for the second atom.
+
     parameter : (3, 3) :numpy:`ndarray`
         Full matrix of the parameter. It is returned only if ``parameter is not None``.
     """
@@ -127,6 +135,7 @@ def _p22(spinham):
 
     Returns
     -------
+
     parameters : iterator
         List of parameters. The list has a form of
 
@@ -147,6 +156,7 @@ def _p22(spinham):
 
     See Also
     --------
+
     add_22
     remove_22
     """
@@ -154,8 +164,17 @@ def _p22(spinham):
     return _P22_iterator(spinham)
 
 
+# ARGUMENT "replace" DEPRECATED since 0.4.0
+# Remove in May of 2026
 def _add_22(
-    spinham, alpha: int, beta: int, nu: tuple, parameter, units=None, replace=False
+    spinham,
+    alpha: int,
+    beta: int,
+    nu: tuple,
+    parameter,
+    units=None,
+    when_present="raise error",
+    replace=None,
 ) -> None:
     r"""
     Adds a (two spins & two sites) parameter to the Hamiltonian.
@@ -165,21 +184,19 @@ def _add_22(
     ``alpha, beta, nu, parameter``.
 
 
-    Raises
-    ------
-    ValueError
-        If an atom already has a parameter associated with it.
-
     Parameters
     ----------
+
     alpha : int
         Index of an atom from the (0, 0, 0) unit cell.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     beta : int
         Index of an atom from the nu unit cell.
 
         ``0 <= beta < len(spinham.atoms.names)``.
+
     nu : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the second atom.
@@ -192,27 +209,58 @@ def _add_22(
 
     parameter : (3, 3) |array-like|_
         Value of the parameter (:math:`3\times3` matrix). Given in the units of ``units``.
+
     units : str, optional
+        .. versionadded:: 0.3.0
+
         Units in which the ``parameter`` is given. Parameters have the the units of energy.
         By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
         units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
 
-        .. versionadded:: 0.3.0
+    when_present : str, default "raise error"
+        .. versionadded:: 0.4.0
+
+        Action to take if a pair of atoms already has a parameter associated with it.
+        Case-insensitive. Supported values are:
+
+        - ``"raise error"`` (default): raises an error if a pair of atoms already has a
+          parameter associated with it.
+        - ``"replace"``: replace existing value of the parameter with the new one.
+        - ``"add"``: add the value of the parameter to the existing one.
+        - ``"mean"``: replace the value of the parameter with the arithmetic mean of
+          existing and new parameters.
+        - ``"skip"``: Leave existing parameter unchanged and continue without raising an
+          error.
 
     replace : bool, default False
-        Whether to replace the value of the parameter if the pair of atoms
-        ``alpha, beta, nu`` or its double already have a parameter associated
-        with it.
+        Whether to replace the value of the parameter if a pair of atoms already has a
+        parameter associated with it.
+
+        .. deprecated:: 0.4.0
+            The ``replace`` argument will be removed in May of 2026. Use
+            ``modify="replace"`` instead.
+
+
+    Raises
+    ------
+
+    ValueError
+        If a pair of atoms already has a parameter associated with it and ``when_present="raise error"``.
+
+    ValueError
+        If ``when_present`` has an unsupported value.
 
     See Also
     --------
+
     p22
     remove_22
 
     Notes
     -----
+
     If ``spinham.convention.multiple_counting`` is ``True``, then this function adds both
     the bond and its double to the Hamiltonian. It will cause an ``ValueError`` to
     add the double of the bond after the bond is added.
@@ -223,6 +271,19 @@ def _add_22(
     For the definition of the primary version see
     :ref:`user-guide_theory-behind_multiple-counting`.
     """
+
+    if replace is not None:
+        import warnings
+
+        warnings.warn(
+            'The "replace" argument is deprecated since version 0.4.0 and will be removed in May of 2026. Use when_present="replace" instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if replace:
+            when_present = "replace"
+        else:
+            when_present = "raise error"
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     _validate_atom_index(index=beta, atoms=spinham.atoms)
@@ -241,22 +302,35 @@ def _add_22(
         alpha=alpha, beta=beta, nu=nu, parameter=parameter
     )
 
-    # TD-BINARY_SEARCH
-
+    # TODO BINARY SEARCH
     # Try to find the place for the new one inside the list
     index = 0
     while index < len(spinham._22):
         # If already present in the model
         if spinham._22[index][:3] == [alpha, beta, nu]:
             # Either replace
-            if replace:
-                spinham._22[index] = [alpha, beta, nu, parameter]
-                return
+            if when_present.lower() == "replace":
+                spinham._22[index][3] = parameter
+            # Or add
+            elif when_present.lower() == "add":
+                spinham._22[index][3] = spinham._22[index][3] + parameter
+            # Or replace with mean value
+            elif when_present.lower() == "mean":
+                spinham._22[index][3] = (spinham._22[index][3] + parameter) / 2.0
+            # Or do nothing
+            elif when_present.lower() == "skip":
+                pass
             # Or raise an error
-            raise ValueError(
-                f"Exchange like parameter is already set for the pair of atoms "
-                f"{alpha} and {beta} ({nu}). Or for their double bond."
-            )
+            elif when_present.lower() == "raise error":
+                raise ValueError(
+                    f"(Two spins & two sites) parameter is already set for the pair of atoms {alpha} and {beta} ({nu}). Or for their double bond."
+                )
+            else:
+                raise ValueError(
+                    f'Unsupported value of when_present: "{when_present}". Supported values are: "raise error", "replace", "add", "mean", "skip".'
+                )
+
+            return
 
         # If it should be inserted before current element
         if spinham._22[index][:3] > [alpha, beta, nu]:
@@ -279,14 +353,17 @@ def _remove_22(spinham, alpha: int, beta: int, nu: tuple) -> None:
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom from the (0, 0, 0) unit cell.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     beta : int
         Index of an atom from the nu unit cell.
 
         ``0 <= beta < len(spinham.atoms.names)``.
+
     nu : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the second atom.
@@ -299,11 +376,13 @@ def _remove_22(spinham, alpha: int, beta: int, nu: tuple) -> None:
 
     See Also
     --------
+
     p22
     add_22
 
     Notes
     -----
+
     If ``spinham.convention.multiple_counting`` is ``True``, then this function removes
     all versions of the bond from the Hamiltonian.
 

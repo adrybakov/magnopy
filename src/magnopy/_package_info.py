@@ -29,33 +29,56 @@ from magnopy import __doclink__, __release_date__, __version__
 old_dir = set(dir())
 old_dir.add("old_dir")
 
+# fmt: off
+BINARY_LOGO  =  [
+    [1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,1,1,1,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,0,0,0,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,0,0,0,1],
+    [0,1,1,1,1,0,0,1,1,0,1,1,0,1,0,0,0,1,0,1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,1,0,1,1],
+    [0,1,1,1,1,0,0,1,0,1,0,1,0,1,1,1,1,1,0,1,0,0,1,1,0,1,0,1,0,1,0,1,0,0,0,1,0,1,1,1,1,0,0,0,1,1,1,0],
+    [0,1,1,1,1,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,1,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,0],
+    [0,1,1,1,1,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,1,1,1,0,0,1,0,0,0,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,1,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+]
+# fmt: on
+
 
 def logo(info=None, line_length=None, flat=False, date_time=False, comment=None):
     """
-    Logo generator for Magnopy package.
+    Generates a logo of Magnopy.
 
-    Returns the logo and information about the package.
+    Returns the logo and some information about the package.
 
     Parameters
     ----------
+
     info : list of str, optional
         Information about the package, that is displayed below the logo. Each element
         should not exceed 58 characters. By default it displays the version, link to the
         documentation, release date and license. Pass an empty list to display the logo
         only.
+
     line_length : int, optional
         Length of the lines to be returned. Minimum value is 70.
+
     flat : bool
         Whether to return a flat logo or not.
+
     date_time : bool, default False
         Whether to include the date and time to the info or not.
+
     comment : str or bool, optional
-        Whether to use some character at the beginning of each string. If bool and
-        True, then "# " is used. If str, then this string is used. If None, then
-        no character is used.
+        Whether to use some character at the beginning of each string. If ``bool`` and
+        ``True``, then "# " is used. If ``str``, then this string is used. If ``None``,
+        then no character is used.
 
     Returns
     -------
+
     logo_info : str
         Logo and information about the package.
 

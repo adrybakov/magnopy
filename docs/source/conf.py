@@ -60,6 +60,8 @@ extensions = [
     "sphinx.ext.intersphinx",  # Link to other projects
 ]
 
+copybutton_exclude = ".linenos, .gp"
+
 ##########################################################################################
 ##                                  Intersphinx mapping                                 ##
 ##########################################################################################
@@ -93,7 +95,7 @@ html_static_path = ["_static"]
 html_css_files = ["magnopy.css"]
 
 html_title = "magnopy"
-# html_favicon = "img/favicon.png"
+html_favicon = "_static/favicon.ico"
 
 # Theme-specific options
 html_theme_options = {
@@ -107,10 +109,10 @@ html_theme_options = {
     },
     "navbar_align": "left",
     # Add logo later
-    # "logo": {
-    #     "image_light": "_static/logo_black.png",
-    #     "image_dark": "_static/logo_white.png",
-    # },
+    "logo": {
+        "image_light": "_static/magnopy-logo-black.png",
+        "image_dark": "_static/magnopy-logo-white.png",
+    },
     "header_links_before_dropdown": 4,
     "icon_links": [
         {
@@ -261,6 +263,15 @@ custom_links = {
     "jupyter": ("jupyter lab or notebook", "https://jupyter.org/"),
     "matplotlib": ("matplotlib", "https://matplotlib.org/"),
     "magnopy-tutorials": ("Tutorials", "https://tutorials.magnopy.org/en/latest/"),
+    "tutorial-optimize-sd": (
+        "tutorial for magnopy-optimize-sd",
+        "https://tutorials.magnopy.org/en/latest/FIXME",
+    ),
+    "tutorial-lswt": (
+        "tutorial for magnopy-lswt",
+        "https://tutorials.magnopy.org/en/latest/FIXME",
+    ),
+    "scipy": ("scipy", "https://scipy.org/"),
 }
 rst_epilog += "\n".join(
     map(

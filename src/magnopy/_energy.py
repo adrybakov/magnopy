@@ -125,16 +125,18 @@ def _rotate_sd(reference_sd, rotation):
 
 class Energy:
     r"""
-    Ground state energy of the given spin Hamiltonian.
+    Classical energy of the spin Hamiltonian.
 
-    This class is optimized for the computation of the energy for any spin
-    directions for the given Hamiltonian.
+    This class is optimized for calculation of the energy for any spin directions for the
+    given Hamiltonian.
 
-    If the spin Hamiltonian is modified, then a new instance of the energy class
-    should be created from it.
+    .. important::
+        If the spin Hamiltonian is modified, then a new instance of the energy class
+        should be created.
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian for the calculation of energy.
 
@@ -176,7 +178,7 @@ class Energy:
 
         >>> energy = magnopy.Energy(spinham)
 
-    Finally, ``energy`` an be used to compute classical energy of the Hamiltonian,
+    Finally, ``energy`` can be used to compute classical energy of the Hamiltonian,
     its gradient, torque or search for the local minima.
 
     .. doctest::
@@ -349,16 +351,19 @@ class Energy:
 
         Parameters
         ----------
+
         spin_directions : (M, 3) |array-like|_
-            Directions of spin vectors. Only directions of vectors are used,
-            modulus is ignored. ``M`` is the amount of magnetic atoms in the
-            Hamiltonian. The order of spin directions is the same as the order
-            of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+            Directions of spin vectors. Only directions of vectors are used, modulus is
+            ignored. ``M`` is the amount of magnetic atoms in the Hamiltonian. The order
+            of spin directions is the same as the order of magnetic atoms in
+            ``spinham.magnetic_atoms.spins``.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -366,8 +371,9 @@ class Energy:
 
         Returns
         -------
+
         E_0 : float
-            Classic energy of state with ``spin_directions``. Return in the units of
+            Classic energy of state with ``spin_directions``. Returned in the units of
             ``units``.
 
 
@@ -520,16 +526,19 @@ class Energy:
 
         Parameters
         ----------
+
         spin_directions : (M, 3) |array-like|_
             Directions of spin vectors. Only directions of vectors are used,
             modulus is ignored. ``M`` is the amount of magnetic atoms in the
             Hamiltonian. The order of spin directions is the same as the order
             of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -537,6 +546,7 @@ class Energy:
 
         Returns
         -------
+
         gradient : (M, 3) :numpy:`ndarray`
             Gradient of energy.
 
@@ -682,16 +692,18 @@ class Energy:
 
         Parameters
         ----------
+
         spin_directions : (M, 3) |array-like|_
             Directions of spin vectors. Only directions of vectors are used,
             modulus is ignored. ``M`` is the amount of magnetic atoms in the
             Hamiltonian. The order of spin directions is the same as the order
             of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
-
-            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -699,6 +711,7 @@ class Energy:
 
         Returns
         -------
+
         torque : (M, 3) :numpy:`ndarray`
 
             .. code-block:: python
@@ -885,26 +898,32 @@ class Energy:
         quiet=False,
     ):
         r"""
-        Optimize classical energy by varying the directions of spins in the unit cell.
+        Optimizes classical energy by varying the directions of spins in the unit cell.
 
         Parameters
         ----------
+
         initial_guess : (M, 3) or (3,) |array-like|_, optional
             Initial guess for the direction of the spin vectors.
+
         energy_tolerance : float, default 1e-5
             Energy tolerance for the two consecutive steps of the optimization. In the units of meV.
+
         torque_tolerance : float, default 1e-5
             Torque tolerance for the two consecutive steps of the optimization. In the units of meV.
+
         quiet : bool, default False
             Whether to suppress the output of the progress.
 
         Returns
         -------
+
         optimized_directions : (M, 3) :numpy:`ndarray`
             Optimized direction of the spin vectors.
 
         See Also
         --------
+
         optimize_generator
         """
 
@@ -1013,6 +1032,7 @@ class Energy:
                 warnings.warn(
                     f"BFGS curvature failure repeated {curv_fail_run} times: s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. Hessian was reset.",
                     RuntimeWarning,
+                    stacklevel=2,
                 )
             else:
                 curv_fail_run = 0
@@ -1049,30 +1069,41 @@ class Energy:
         torque_tolerance=1e-5,
     ):
         r"""
-        Optimize classical energy by varying the directions of spins in the unit cell.
+        Optimizes classical energy by varying the directions of spins in the unit cell.
 
         .. versionadded:: 0.2.0
 
+        .. warning::
+            This method is experimental, use at your own risk. Use
+            :py:meth:`.Energy.optimize` as a stable alternative.
+
         Parameters
         ----------
+
         initial_guess : (M, 3) or (3,) |array-like|_, optional
             Initial guess for the direction of the spin vectors.
+
         energy_tolerance : float, default 1e-5
             Energy tolerance for the two consecutive steps of the optimization.
+
         torque_tolerance : float, default 1e-5
             Torque tolerance for the two consecutive steps of the optimization.
 
         Yields
         ------
+
         energy : float
             Classical energy of the iteration step
+
         gradient : (M, 3) :numpy:`ndarray`
             Gradient vectors for each spin of the iteration step.
+
         spin_directions : (M, 3) :numpy:`ndarray`
             Directions of the spin vectors of the iteration step.
 
         See Also
         --------
+
         optimize
         """
 
@@ -1092,6 +1123,9 @@ class Energy:
 
         first_iteration = True
         step_counter = 1
+        # Curvature failure guard to avoid silent looping in degenerate manifolds
+        curv_fail_run = 0
+        max_curv_fails = 10
 
         yield (energy_k, gradient_k, sd_k)
 
@@ -1128,19 +1162,42 @@ class Energy:
                 break
 
             y_k = gradient_next - gradient_k
+            # Curvature safeguard: avoid divide-by-zero / non-finite ys
+            ys = float(y_k @ s_k)
+            EYE = np.eye(hessinv_k.shape[0], dtype=float)
 
-            rho_k = 1 / (y_k @ s_k)
+            if (not np.isfinite(ys)) or (abs(ys) < 1e-12):
+                # Degenerate case: skip the inverse-BFGS update (or reset H if preferred)
+                curv_fail_run += 1
+                if curv_fail_run > max_curv_fails:
+                    raise RuntimeError(
+                        f"BFGS curvature failure repeated {curv_fail_run} times: "
+                        f"s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. "
+                        "Try a different initial guess (i.e. re-run magnopy-optimize-sd or energy.optimize())."
+                    )
+                # Reset hessian:
+                hessinv_k = EYE
+                warnings.warn(
+                    f"BFGS curvature failure repeated {curv_fail_run} times: s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. Hessian was reset.",
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
+            else:
+                curv_fail_run = 0
+                rho_k = 1.0 / ys
+                OUTER = np.outer(y_k, s_k)
 
-            EYE = np.eye(3 * self.M)
-            OUTER = np.outer(y_k, s_k)
+                # Safe initial scaling of H^{-1}
+                if first_iteration:
+                    first_iteration = False
+                    denom = float(y_k @ y_k)
+                    if np.isfinite(denom) and denom > 0.0:
+                        hessinv_k = (ys / denom) * hessinv_k
 
-            if first_iteration:
-                first_iteration = False
-                hessinv_k = (y_k @ s_k) / (y_k @ y_k) * hessinv_k
-
-            hessinv_k = (EYE - rho_k * OUTER.T) @ hessinv_k @ (
-                EYE - rho_k * OUTER
-            ) + rho_k * s_k @ s_k
+                # Stable inverse-BFGS update
+                hessinv_k = (EYE - rho_k * OUTER.T) @ hessinv_k @ (
+                    EYE - rho_k * OUTER
+                ) + rho_k * np.outer(s_k, s_k)
 
             sd_k = sd_next
             energy_k = energy_next

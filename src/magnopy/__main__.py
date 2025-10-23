@@ -38,8 +38,8 @@ def main():
     parser.add_argument(
         "commands",
         default=None,
-        help="command/commands on what to do. Use to display some information about package.",
-        choices=["logo", "warranty"],
+        help="command/commands on what to do. Use to display some information about package. Choose from 'logo', 'warranty'",
+        metavar="command",
         nargs="*",
     )
     parser.add_argument(

@@ -5,8 +5,8 @@ Units
 *****
 
 
-Magnopy supports a number of units for some of the data it deals with. Both for the input
-and the output. On this page we describe what units are supported and in which context.
+Magnopy supports a number of units both for input and output data. On this page we
+describe what units are supported and in which context.
 
 .. _user-guide_usage_units_energy-units:
 
@@ -127,10 +127,10 @@ Erg                      ``"Erg"``
 Units of Hamiltonian's parameters
 =================================
 
-Parameters of the :ref:`user-guide_theory-behind_spin-hamiltonian` are typically stored
-in some units of energy (i.e meV or Joule) or some units that offer direct conversion to
-some energy scale (like Kelvin, via Boltzmann constant). Magnopy takes the same approach
-and support a number of energy-like units.
+Parameters of the :py:class:`.SpinHamiltonian` are typically stored in the units of energy
+(i.e meV or Joule) or some units that offer direct conversion to some energy scale (like
+Kelvin, via Boltzmann constant). Magnopy takes the same approach and support a number of
+energy-like units.
 
 
 .. note::
@@ -147,7 +147,7 @@ and support a number of energy-like units.
         >>> print(list(_PARAMETER_UNITS))
         ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'k', 'kelvin']
 
-For the parameters fo the spin Hamiltonian magnopy supports all
+For the parameters of the spin Hamiltonian magnopy supports all
 :ref:`user-guide_usage_units_energy-units` from above and
 
 ====== =====================
@@ -216,8 +216,8 @@ list of supported units is extended by the frequency units.
 
     .. doctest::
 
-        >>> from magnopy._constants._units import _FREQ_UNITS
-        >>> print(list(_FREQ_UNITS))
+        >>> from magnopy._constants._units import _MAGNON_ENERGY_UNITS
+        >>> print(list(_MAGNON_ENERGY_UNITS))
         ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'hertz', 'hz', 'gigahertz', 'ghz', 'terahertz', 'thz']
 
 
@@ -237,9 +237,9 @@ TeraHertz ``"TeraHertz"``, ``"THz"``
 
     .. doctest::
 
-        >>> Hz = _FREQ_UNITS["hz"]
-        >>> GHz = _FREQ_UNITS["ghz"]
-        >>> THz = _FREQ_UNITS["thz"]
+        >>> Hz = _MAGNON_ENERGY_UNITS["hz"]
+        >>> GHz = _MAGNON_ENERGY_UNITS["ghz"]
+        >>> THz = _MAGNON_ENERGY_UNITS["thz"]
 
     .. doctest::
 

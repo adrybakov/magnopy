@@ -42,18 +42,18 @@ except ImportError:
         ]
     )
 
-from magnopy._constants._units import _FREQ_UNITS
+from magnopy._constants._units import _MAGNON_ENERGY_UNITS
 
 
 def plot_spinham(
-    spinham,
+    spinham: SpinHamiltonian,
     distance_digits=5,
     plot_dmi=True,
     dmi_vectors_scale=1,
     _sphinx_gallery_fix=False,
 ):
     r"""
-    Visualize spin Hamiltonian.
+    Visualizes spin Hamiltonian.
 
     .. warning::
 
@@ -93,7 +93,25 @@ def plot_spinham(
 
     points = spinham.magnetic_atoms.positions @ spinham.cell
 
-    hoverinfo = ["" for _ in range(spinham.M)]
+    hoverinfo = [
+        "<br>".join(
+            [
+                f'Magnetic center "{name}", located at',
+                f"  Relative: ({pos[0]:.8f}, {pos[1]:.8f}, {pos[2]:.8f})",
+                f"  Absolute: ({(pos @ spinham.cell)[0]:.8f}, {(pos @ spinham.cell)[1]:.8f}, {(pos @ spinham.cell)[2]:.8f})",
+                "",
+                f"With spin value {spin:.3f}",
+                "",
+                f"and g-factor {g_factor:.3f}",
+            ]
+        )
+        for name, pos, spin, g_factor in zip(
+            spinham.magnetic_atoms.names,
+            spinham.magnetic_atoms.positions,
+            spinham.magnetic_atoms.spins,
+            spinham.magnetic_atoms.g_factors,
+        )
+    ]
 
     for alpha, parameter in spinham.p1:
         alpha = spinham.map_to_magnetic[alpha]
@@ -183,6 +201,9 @@ def plot_spinham(
     distances = []
     dmi_vectors = []
     dmi_positions = []
+    alphas = []
+    betas = []
+    nus = []
 
     cells_to_plot = []
     for alpha, beta, nu, parameter in spinham.p22:
@@ -193,6 +214,9 @@ def plot_spinham(
         end_points.append(start_points[-1] + vector)
         distances.append(round(np.linalg.norm(vector), ndigits=distance_digits))
         parameters.append(parameter)
+        alphas.append(alpha)
+        betas.append(beta)
+        nus.append(nu)
 
         dmi_vectors.append(to_dmi(parameter=parameter))
         dmi_positions.append(start_points[-1] + vector / 2)
@@ -208,6 +232,9 @@ def plot_spinham(
     distances = np.array(distances)[indices]
     dmi_positions = np.array(dmi_positions)[indices]
     dmi_vectors = np.array(dmi_vectors)[indices]
+    alphas = np.array(alphas, dtype=int)[indices]
+    betas = np.array(betas, dtype=int)[indices]
+    nus = np.array(nus, dtype=int)[indices]
 
     dmi_max_length = np.array([np.linalg.norm(_) for _ in dmi_vectors]).max()
 
@@ -232,18 +259,21 @@ def plot_spinham(
     hoverinfo = [
         "<br>".join(
             [
+                "Bond",
+                f'  from magnetic center "{spinham.atoms.names[alpha]}" in (0, 0, 0) unit cell',
+                f'  to magnetic center "{spinham.atoms.names[beta]}" in ({nu[0]}, {nu[1]}, {nu[2]}) unit cell',
                 "",
                 "Full two-spins/two-sites parameter:",
-                f"  {_[0][0]:10.5f} {_[0][1]:10.5f} {_[0][2]:10.5f}",
-                f"  {_[1][0]:10.5f} {_[1][1]:10.5f} {_[1][2]:10.5f}",
-                f"  {_[2][0]:10.5f} {_[2][1]:10.5f} {_[2][2]:10.5f}",
+                f"  {param[0][0]:10.5f} {param[0][1]:10.5f} {param[0][2]:10.5f}",
+                f"  {param[1][0]:10.5f} {param[1][1]:10.5f} {param[1][2]:10.5f}",
+                f"  {param[2][0]:10.5f} {param[2][1]:10.5f} {param[2][2]:10.5f}",
                 "",
-                f"Isotropic: {to_iso(_)}",
+                f"Isotropic: {to_iso(param):10.5f}",
                 "",
-                f"DMI: {to_dmi(_)[0]:10.5f} {to_dmi(_)[1]:10.5f} {to_dmi(_)[2]:10.5f}",
+                f"DMI: {to_dmi(param)[0]:10.5f} {to_dmi(param)[1]:10.5f} {to_dmi(param)[2]:10.5f}",
             ]
         )
-        for _ in parameters
+        for alpha, beta, nu, param in zip(alphas, betas, nus, parameters)
     ]
 
     legend_label = "Other_cells"
@@ -268,7 +298,7 @@ def plot_spinham(
         cell=spinham.cell,
         legend_label="(0, 0, 0) unit cell",
         color="Grey",
-        plot_vectors=False,
+        plot_vectors=True,
     )
 
     pe2.plot_points(
@@ -318,6 +348,10 @@ def plot_spinham(
 
 def change_cell(spinham, new_cell, new_atoms_specs):
     r"""
+    Changes the unit cell of a spin Hamiltonian.
+
+    .. warning::
+        Experimental feature. Not tested well.
 
     Parameters
     ----------
@@ -325,16 +359,16 @@ def change_cell(spinham, new_cell, new_atoms_specs):
     new_cell : (3, 3) |array-like|_
     new_atoms_specs : list of tuple
 
-        ..code-block:: python
+        .. code-block:: python
 
-            new_atoms_specs = [(index, nu), ]
+            new_atoms_specs = [(index, nu), ...]
 
         where ``index`` is an index of an atom in ``spinham.atoms`` and ``nu = (i,j,k)``
         is the unit cell to which an atom belongs.
 
     Returns
     -------
-    new_spinham
+    new_spinham : :py:class:`.SpinHamiltonian`
     """
 
     new_cell = np.array(new_cell)
@@ -406,7 +440,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         # Three spins
@@ -425,7 +459,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         for alpha, beta, gamma, nu, _lambda, parameter in spinham._33:
@@ -444,7 +478,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     nu=new_nu,
                     _lambda=new_lambda,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         # Four spins
@@ -463,7 +497,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         for alpha, beta, nu, parameter in spinham._422:
@@ -477,7 +511,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     beta=new_beta,
                     nu=new_nu,
                     parameter=parameter,
-                    replace=True,
+                    when_present="replace",
                 )
 
         for alpha, beta, gamma, nu, _lambda, parameter in spinham._43:
@@ -495,7 +529,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                 nu=new_nu,
                 _lambda=new_lambda,
                 parameter=parameter,
-                replace=True,
+                when_present="replace",
             )
 
         for (
@@ -527,15 +561,20 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                 _lambda=new_lambda,
                 rho=new_rho,
                 parameter=parameter,
-                replace=True,
+                when_present="replace",
             )
 
     return new_spinham
 
 
+# DEPRECATED in v0.4.0
+# Remove in May 2026
 def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
     r"""
-    Plot some k-resolved data.
+    Plots some k-resolved data.
+
+    .. deprecated:: 0.4.0
+        Function deprecated in 0.4.0 and will be removed in May 2026. Use :py:func:`magnopy.io.plot_dispersion()` instead.
 
     If only the ``data`` are given, then an index of the omegas is used for abscissa (x
     axis).
@@ -555,10 +594,18 @@ def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
         Label for the ordinate (y axis). Do not include units, units are included automatically.
     """
 
+    import warnings
+
+    warnings.warn(
+        "Function magnopy.experimental.plot_dispersion() was deprecated in 0.4.0 and will be removed in May 2026. Use magnopy.io.plot_dispersion() instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
     if not MATPLOTLIB_AVAILABLE:
         import warnings
 
-        warnings.warn(MATPLOTLIB_ERROR_MESSAGE, RuntimeWarning)
+        warnings.warn(MATPLOTLIB_ERROR_MESSAGE, RuntimeWarning, stacklevel=2)
 
         return
 
@@ -611,7 +658,7 @@ def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
 
     ylims = ax.get_ylim()
 
-    meV_to_THz = _FREQ_UNITS["mev"] / _FREQ_UNITS["thz"]
+    meV_to_THz = _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS["thz"]
 
     twinax = ax.twinx()
 

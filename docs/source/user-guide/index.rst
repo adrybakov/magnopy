@@ -11,8 +11,8 @@ Magnopy user guide
 
     installation
 
-Magnopy is a python library and can be installed as any python library. See the page above
-for more details.
+Magnopy is a python library and can be installed as any other python library. See the page
+above for more details.
 
 
 .. toctree::
@@ -20,14 +20,17 @@ for more details.
     :maxdepth: 1
 
     cli/how-to-execute
+
+We do not want to limit magnopy to users who are familiar with python. For that purpose we
+prepared a number of the scripts to perform calculation with magnopy, that can be executed
+as any other command line tool. Read the gide by the link above to learn how to execute a
+script and then visit one of the guides below to read more about each script.
+
+.. toctree::
+    :maxdepth: 1
+
     cli/magnopy-optimize-sd/index
     cli/magnopy-lswt/index
-
-Magnopy is a python library and to get the most of it one need to use it as one.
-Nevertheless, we do not want to limit it accessability only to users who is familiar
-with python. For that purpose we introduced a number of the scripts that perform
-calculation with magnopy and can be executed as any other command line tool. Please visit
-the one of the guides from above to read more about each script.
 
 
 .. toctree::
@@ -36,8 +39,9 @@ the one of the guides from above to read more about each script.
 
     how-to/index
 
-Full tutorials about magnopy are hosted on a separate web-site. Please visit
-|magnopy-tutorials|_ to go through the tutorials that were given about the code.
+Full tutorials about magnopy are hosted on a separate web-site |magnopy-tutorials|_. Visit
+it and work through the "Master tutorial" if you wish to learn magnopy. Each tutorial
+offers a small set of exercises, that help to get comfortable in using magnopy.
 
 In the pages above we provide simple guides on how to achieve a small well-define task
 within magnopy. Those "How to ..." guides are written based on the questions that users
@@ -50,17 +54,22 @@ please do not hesitate to ask it via our :ref:`support` channels.
     :maxdepth: 1
 
     usage/data-structures
+
+For deeper understanding of magnopy you can read the page from above, that graphically
+summarizes data structures of magnopy. Then you can read materials below where we explain
+each concept and give code examples.
+
+.. toctree::
+    :maxdepth: 1
+
     usage/cell
     usage/atoms
     usage/convention
     usage/units
     usage/spin-hamiltonian
+    usage/spin-directions
     usage/energy
     usage/lswt
-
-For the more in-deep understanding you can read the materials above where we explain
-a number of concepts, that helps to understand how magnopy can be used as a Python
-library.
 
 
 .. toctree::
@@ -72,5 +81,5 @@ library.
     theory-behind/multiple-counting
     theory-behind/energy-minimization
 
-With any tool it is important to understand how it operates and what it does exactly. Here
-we prepared some explanatory material about theory behind magnopy.
+It is important to understand how any tool operates and what it does exactly. In the pages
+above we prepared some explanatory material about theory behind magnopy.

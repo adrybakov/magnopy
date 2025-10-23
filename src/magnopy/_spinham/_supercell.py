@@ -33,13 +33,15 @@ old_dir.add("old_dir")
 
 def make_supercell(spinham: SpinHamiltonian, supercell):
     r"""
-    Creates a spin Hamiltonian on the supercell of the given one.
+    Creates a spin Hamiltonian on the supercell.
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
         Original spin Hamiltonian. ``spinham.cell`` is interpreted as the original
         unit cell.
+
     supercell : (3, ) tuple or list of int
         Repetitions of the unit cell (``spinham.cell``) along each lattice
         vector that define the unit cell. If :math:`(i, j, k)` is given, then the
@@ -50,6 +52,7 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
 
     Returns
     -------
+
     new_spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian that is defined on a ``supercell`` and has the same parameters
         as the given ``spinham`` propagated over the whole supercell.
@@ -284,7 +287,11 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
 
                     new_spinham.add_22(
-                        alpha=alpha, beta=beta, nu=nu, parameter=parameter, replace=True
+                        alpha=alpha,
+                        beta=beta,
+                        nu=nu,
+                        parameter=parameter,
+                        when_present="replace",
                     )
 
                 # Three spins
@@ -298,7 +305,11 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
 
                     new_spinham.add_32(
-                        alpha=alpha, beta=beta, nu=nu, parameter=parameter, replace=True
+                        alpha=alpha,
+                        beta=beta,
+                        nu=nu,
+                        parameter=parameter,
+                        when_present="replace",
                     )
 
                 for alpha, beta, gamma, nu, _lambda, parameter in spinham._33:
@@ -315,7 +326,7 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                         nu=nu,
                         _lambda=_lambda,
                         parameter=parameter,
-                        replace=True,
+                        when_present="replace",
                     )
 
                 # Four spins
@@ -329,7 +340,11 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
 
                     new_spinham.add_421(
-                        alpha=alpha, beta=beta, nu=nu, parameter=parameter, replace=True
+                        alpha=alpha,
+                        beta=beta,
+                        nu=nu,
+                        parameter=parameter,
+                        when_present="replace",
                     )
 
                 for alpha, beta, nu, parameter in spinham._422:
@@ -337,7 +352,11 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
 
                     new_spinham.add_422(
-                        alpha=alpha, beta=beta, nu=nu, parameter=parameter, replace=True
+                        alpha=alpha,
+                        beta=beta,
+                        nu=nu,
+                        parameter=parameter,
+                        when_present="replace",
                     )
 
                 for alpha, beta, gamma, nu, _lambda, parameter in spinham._43:
@@ -354,7 +373,7 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                         nu=nu,
                         _lambda=_lambda,
                         parameter=parameter,
-                        replace=True,
+                        when_present="replace",
                     )
 
                 for (
@@ -382,7 +401,7 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                         _lambda=_lambda,
                         rho=rho,
                         parameter=parameter,
-                        replace=True,
+                        when_present="replace",
                     )
 
     return new_spinham

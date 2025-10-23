@@ -34,21 +34,26 @@ class PlotlyEngine(W_PlotlyEngine):
 
     Parameters
     ----------
+
     fig : plotly graph object, optional
         Figure to plot on. If not provided, then a new one is created as
         ``fig = go.Figure()``.
+
     _sphinx_gallery_fix : bool, default  False
         Fixes display issues when building documentation using sphinx gallery.
         Please, always ignore this argument
 
     Attributes
     ----------
+
     fig : plotly graph object
         Figure to plot on.
 
     Notes
     -----
-    This class is a part of ``magnopy[visual]``
+
+    This class is a part of ``magnopy[visual]`` and a child class of
+    :py:class:`wulfric.PlotlyEngine`.
     """
 
     def plot_spin_directions(
@@ -66,21 +71,28 @@ class PlotlyEngine(W_PlotlyEngine):
 
         Parameters
         ----------
+
         positions : (N, 3) |array-like|_
             Positions of magnetic centers.
+
         spin_directions : (N, 3) |array-like|_
             Direction of spin vectors for each magnetic center. Only direction is used,
             the modulus is ignored. Spin directions are all normalized to the same length
             but not necessary to 1.
+
         colors : str or list of str, default "#000000"
-            Color of the line. Any value that is supported by |plotly|_.
+            Color or colors for the arrows. Any value that is supported by |plotly|_.
+
         legend_label : str, optional
             Label of the line that is displayed in the figure.
+
         legend_group : str, optional
             Legend's group. If ``None``, then defaults to the random string of 10
             characters.
+
         row : int, default 1
             Row of the subplot.
+
         col : int, default 1
             Column of the subplot.
         """

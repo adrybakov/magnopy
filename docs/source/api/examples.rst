@@ -4,7 +4,7 @@
 magnopy.examples
 ****************
 
-This module contains a collection of example Hamiltonian.
+Generators of example spin Hamiltonians.
 
 .. currentmodule:: magnopy.examples
 

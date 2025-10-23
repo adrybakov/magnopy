@@ -29,12 +29,14 @@ old_dir.add("old_dir")
 
 def span_local_rf(direction_vector, hybridize=False):
     r"""
-    Span local right-handed reference frame based on the direction vector.
+    Spans local right-handed reference frame from the direction vector.
 
     Parameters
     ----------
+
     direction_vector : (3, ) |array-like|_
         Direction of the z axis of the local reference frame.
+
     hybridize : bool, default False
 
         * If ``hybridize == True``, then returns ``p_alpha, z_alpha``.
@@ -42,14 +44,19 @@ def span_local_rf(direction_vector, hybridize=False):
 
     Returns
     -------
+
     x_alpha : (3, ) :numpy:`ndarray`
+
     y_alpha : (3, ) :numpy:`ndarray`
+
     p_alpha : (3, ) :numpy:`ndarray`
         ``p_alpha = x_alpha + 1j * y_alpha``.
+
     z_alpha : (3, ) :numpy:`ndarray`
 
     See Also
     --------
+
     span_local_rfs
 
     Examples
@@ -154,13 +161,15 @@ def span_local_rf(direction_vector, hybridize=False):
 
 def span_local_rfs(directional_vectors, hybridize=False):
     r"""
-    Span a series of local right-handed reference frames based on a series of the
-    direction vectors.
+    Spans a set of local right-handed reference frames from a set of the direction
+    vectors.
 
     Parameters
     ----------
+
     direction_vectors : (M, 3) |array-like|_
         Direction of the z axis of the local reference frames.
+
     hybridize : bool, default False
 
         * If ``hybridize == True``, then returns ``p_alphas, z_alphas``.
@@ -169,13 +178,17 @@ def span_local_rfs(directional_vectors, hybridize=False):
     Returns
     -------
     x_alphas : (M, 3) :numpy:`ndarray`
+
     y_alphas : (M, 3) :numpy:`ndarray`
+
     p_alphas : (M, 3) :numpy:`ndarray`
         ``p_alpha = x_alpha + 1j * y_alpha``.
+
     z_alphas : (M, 3) :numpy:`ndarray`
 
     See Also
     --------
+
     span_local_rf
 
     Examples

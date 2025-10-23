@@ -7,8 +7,9 @@ Convention
 For the theoretical background of the convention problem and why it is important see
 :ref:`user-guide_theory-behind_convention-problem`.
 
-Magnopy implements a compact :py:class:`.Convention` class to store the convention of the
-spin Hamiltonian. It stores all parameters that define convention in one data structure.
+Magnopy implements a compact, hashable :py:class:`.Convention` class to store the
+convention of the spin Hamiltonian. It stores all parameters that define convention in one
+data structure.
 
 .. doctest::
 
@@ -20,8 +21,8 @@ spin Hamiltonian. It stores all parameters that define convention in one data st
     True
     >>> convention.c21
     1.0
-    >>> convention.summary()
-    custom convention where
+    >>> print(convention)
+    "custom" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are not normalized;
       * c1 = 1.0;
@@ -40,14 +41,14 @@ There are two boolean properties (:py:attr:`.Convention.multiple_counting` and
 :py:attr:`.Convention.spin_normalized`) and eleven constants that fully define the
 convention of the spin Hamiltonian.
 
-Convention is one of three objects that are required for the creation of the
-:py:class:`.SpinHamiltonian` class. It is stored as an its attribute
-:py:attr:`.SpinHamiltonian.convention`.
+:py:class:`.Convention` is one of the three objects that are required for creation of the
+:py:class:`.SpinHamiltonian` class. It is stored as an immutable attribute
+:py:attr:`.SpinHamiltonian.cell`.
 
 Modified convention
 ===================
 
-Every instance of the convention class is meant to be static, therefore the properties of
+Every instance of the convention class is meant to be static, therefore, the properties of
 the convention can not be changed
 
 .. doctest::
@@ -66,8 +67,8 @@ allows you to change several properties of convention while keeping the other on
 .. doctest::
 
     >>> new_convention = convention.get_modified(c1=-1.0, c33 = 1.0)
-    >>> new_convention.summary()
-    custom convention where
+    >>> print(new_convention)
+    "custom" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are not normalized;
       * c1 = -1.0;
@@ -87,14 +88,14 @@ Pre-defined conventions
 =======================
 
 Magnopy gives access to the predefined conventions of the spin Hamiltonian from other
-popular codes
+codes
 
 .. doctest::
 
     >>> tb2j_convention = Convention.get_predefined("tb2j")
     >>> vampire_convention = Convention.get_predefined("vampire")
-    >>> tb2j_convention.summary()
-    tb2j convention where
+    >>> print(tb2j_convention)
+    "tb2j" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are normalized to 1;
       * Undefined c1 factor;
@@ -108,8 +109,8 @@ popular codes
       * Undefined c422 factor;
       * Undefined c43 factor;
       * Undefined c44 factor.
-    >>> vampire_convention.summary()
-    vampire convention where
+    >>> print(vampire_convention)
+    "vampire" convention where
       * Bonds are counted multiple times in the sum;
       * Spin vectors are normalized to 1;
       * Undefined c1 factor;

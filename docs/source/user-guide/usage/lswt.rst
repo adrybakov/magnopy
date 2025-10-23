@@ -4,32 +4,18 @@
 LSWT
 ****
 
-:py:class:`.LSWT` class is the main point for the computation at the level of
-the linear spin wave theory. It is created from some spi Hamiltonian. The parameters of
+All computations related to the linear spin wave theory (LSWT) are performed
+by the :py:class:`.LSWT` class. It is created from a spin Hamiltonian. The parameters of
 the spin Hamiltonian are optimized for the calculations of the LSWT upon creation of the
-:py:class:`.LSWT` instance and the spin Hamiltonian is not stored within the :py:class:`.LSWT`
-class.
+:py:class:`.LSWT` instance and the spin Hamiltonian is not stored within the
+:py:class:`.LSWT` class.
 
 .. doctest::
 
     >>> import numpy as np
     >>> import magnopy
-    >>> cell = np.eye(3)
-    >>> atoms = {
-    ...     "names" : ["Fe1"],
-    ...     "species" : ["Fe"],
-    ...     "positions" : [[0.0, 0.0, 0.0]],
-    ...     "spins" : [5/2],
-    ...     "g_factors" : [2]
-    ... }
-    >>> convention = magnopy.Convention(
-    ...     multiple_counting=True, spin_normalized=False, c1=1, c21=1, c22=-1 / 2, c31=1, c41=1
-    ... )
-    >>> spinham = magnopy.SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
-    >>> spinham.add_21(alpha=0, parameter=np.diag([2, -1, -2]))
-    >>> spinham.add_22(alpha = 0, beta = 0, nu = (1, 0, 0), parameter = np.eye(3))
-    >>> spinham.add_22(alpha = 0, beta = 0, nu = (0, 1, 0), parameter = np.eye(3))
-    >>> spinham.add_22(alpha = 0, beta = 0, nu = (0, 0, 1), parameter = np.eye(3))
+    >>> # Hamiltonian for the nearest-neighbor ferromagnet on a cubic lattice
+    >>> spinham = magnopy.examples.cubic_ferro_nn(S=5/2, J_iso=1, J_21=np.diag([2, -1, -2]))
     >>> lswt = magnopy.LSWT(spinham=spinham, spin_directions = [[0, 0, 1]])
 
 Once created, it can be used to access the properties of the LSWT Hamiltonian

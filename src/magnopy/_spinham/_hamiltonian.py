@@ -110,17 +110,22 @@ class SpinHamiltonian:
 
     Parameters
     ----------
+
     convention : :py:class:`.Convention` or str
         A convention of the spin Hamiltonian.
+
     cell : (3, 3) |array-like|_
         Matrix of a cell, rows are interpreted as vectors.
+
     atoms : dict
         Dictionary with atoms.
+
     units : str, default "meV"
-        Units of the parameters of the Hamiltonian. See :py:attr:`.SpinHamiltonian.units`
+        .. versionadded:: 0.3.0
+
+        Units of the Hamiltonian's parameters. See :py:attr:`.SpinHamiltonian.units`
         for more details. Case-insensitive.
 
-        .. versionadded:: 0.3.0
 
     Examples
     --------
@@ -194,11 +199,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         cell : (3, 3) :numpy:`ndarray`
             Matrix of the cell, rows are lattice vectors.
 
         Notes
         -----
+
         If is not recommended to change the ``cell`` property after the creation of
         :py:class:`.SpinHamiltonian`. In fact an attempt to do so will raise an
         ``AttributeError``:
@@ -249,9 +256,7 @@ class SpinHamiltonian:
     @cell.setter
     def cell(self, new_value):
         raise AttributeError(
-            "Change of the cell attribute is not supported after "
-            "the creation of SpinHamiltonian instance. If you need to modify cell, "
-            "then use pre-defined methods of SpinHamiltonian or create a new one."
+            "Change of the cell attribute is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.cell is immutable."
         )
 
     @property
@@ -261,11 +266,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         atoms : dict (with added sugar)
             Dictionary with the atoms.
 
         Notes
         -----
+
         If is not recommended to change the atoms property after the creation of
         :py:class:`.SpinHamiltonian`. In fact an attempt to do so will raise an
         ``AttributeError``:
@@ -311,9 +318,7 @@ class SpinHamiltonian:
     @atoms.setter
     def atoms(self, new_value):
         raise AttributeError(
-            "Change of the atoms dictionary is not supported after "
-            "the creation of SpinHamiltonian instance. If you need to modify atoms, "
-            "then use pre-defined methods of SpinHamiltonian or create a new one."
+            "Change of the atoms dictionary is not supported after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable."
         )
 
     def _reset_internals(self):
@@ -394,6 +399,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         map_to_magnetic (L, ) list of int
             Index map. Integers. ``L = len(spinham.atoms.names)``
         """
@@ -410,6 +416,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         map_to_all (M, ) list of int
             Index map. Integers. ``M = len(spinham.magnetic_atoms.names)``
         """
@@ -431,11 +438,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         magnetic_atoms : list of int
             Indices of magnetic atoms in the ``spinham.atoms``. Sorted.
 
         See Also
         --------
+
         M
         """
 
@@ -451,11 +460,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         M : int
             Number of spins (magnetic atoms) in the unit cell.
 
         See Also
         --------
+
         magnetic_atoms
         """
 
@@ -469,8 +480,14 @@ class SpinHamiltonian:
         r"""
         Convention of the spin Hamiltonian.
 
+        Returns
+        -------
+
+        convention : :py:class:`.Convention`
+
         See Also
         --------
+
         Convention
         """
 
@@ -892,9 +909,14 @@ class SpinHamiltonian:
         The parameters that the user tries to add afterwards are expected to be in the new
         units already.
 
+        Returns
+        -------
+
+        units : str
 
         See Also
         --------
+
         :ref:`user-guide_usage_units`
         """
 
@@ -948,14 +970,16 @@ class SpinHamiltonian:
     ############################################################################
     #                          External magnetic field                         #
     ############################################################################
-    def add_magnetic_field(self, h, alphas=None) -> None:
+    # ARGUMENT "h" DEPRECATED since 0.4.0
+    # Remove in May of 2026
+    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
         r"""
         Adds external magnetic field to the Hamiltonian in the form of one spin
         parameters.
 
         .. math::
 
-            \mu_B  g_{\alpha} \boldsymbol{h}\cdot\boldsymbol{S}_{\mu,\alpha}
+            \mu_B  g_{\alpha} \boldsymbol{B}\cdot\boldsymbol{S}_{\mu,\alpha}
             =
             C_1
             \boldsymbol{S}_{\mu,\alpha}
@@ -968,17 +992,27 @@ class SpinHamiltonian:
 
             \boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})
             =
-            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{h}
+            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{B}
 
         Parameters
         ----------
-        h : (3, ) |array-like|_
-            Vector of magnetic field given in the units of Tesla.
+
+        B : (3, ) |array-like|_
+            Vector of magnetic field (magnetic flux density, B) given in the units of
+            Tesla.
+
         alphas : list of int, optional
             Indices of atoms, to which the magnetic field effect should be added.
 
+        h : (3, ) |array-like|_
+            Vector of magnetic field given in the units of Tesla.
+
+            .. deprecated:: 0.4.0
+                The argument will be removed in May of 2026. Use ``B`` instead.
+
         Notes
         -----
+
         To minimize the energy the magnetic moment will be aligned with the
         direction of the external field. But spin vector will be directed opposite to the
         direction of the magnetic field.
@@ -991,10 +1025,25 @@ class SpinHamiltonian:
           :py:attr:`.SpinHamiltonian.atoms`)
         """
 
+        if h is not None:
+            import warnings
+
+            warnings.warn(
+                'Argument "h" is deprecated as of 0.4.0, use "B" instead. "h" will be removed in May of 2026.',
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            B = h
+
+        if B is None:
+            raise TypeError(
+                "SpinHamiltonian.add_magnetic_field() missing 1 required argument: 'B'"
+            )
+
         if self.convention._c1 is None:
             self.convention._c1 = 1.0
 
-        h = np.array(h, dtype=float)
+        B = np.array(B, dtype=float)
 
         mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
 
@@ -1002,7 +1051,7 @@ class SpinHamiltonian:
             alphas = self.map_to_all
 
         zeeman_parameters = [
-            mu_B * self.atoms.g_factors[alpha] * h / self.convention.c1
+            mu_B * self.atoms.g_factors[alpha] * B / self.convention.c1
             for alpha in alphas
         ]
 
@@ -1035,7 +1084,7 @@ class SpinHamiltonian:
 
     def add_dipole_dipole(self, R_cut=None, E_cut=None, alphas=None):
         r"""
-        Add magnetic dipole dipole interaction to the Hamiltonian.
+        Adds magnetic dipole dipole interaction to the Hamiltonian.
 
         Magnetic dipole dipole interaction is added in the form of two-spin & two-sites
         parameter
@@ -1075,17 +1124,21 @@ class SpinHamiltonian:
 
         Parameters
         ----------
+
         R_cut : float, optional
             Cut off radius for the distance between a pair of atoms.
             :math:`R_{cut} \ge 0`.
+
         E_cut : float, optional
             Cut off value for the maximum value of the parameter.
             :math:`E_{cut} > 0`.
+
         alphas : list of int, optional
             Indices of atoms, to which the magnetic field effect should be added.
 
         Raises
         ------
+
         ValueError
             * If none of the  ``R_cut`` or ``E_cut`` are provided.
             * If ``R_cut < 0``
@@ -1252,6 +1305,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         spinham : :py:class:`.SpinHamiltonian`
             A new instance of the same Hamiltonian.
         """
@@ -1265,6 +1319,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         spinham : py:class:`.SpinHamiltonian`
             New instance of the spin Hamiltonian.
 

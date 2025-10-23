@@ -49,6 +49,7 @@ def _p41(spinham) -> list:
 
     Returns
     -------
+
     parameters : list
         List of parameters. The list has a form of
 
@@ -64,6 +65,7 @@ def _p41(spinham) -> list:
 
     See Also
     --------
+
     add_41
     remove_41
     """
@@ -71,41 +73,83 @@ def _p41(spinham) -> list:
     return spinham._41
 
 
-def _add_41(spinham, alpha: int, parameter, units=None, replace=False) -> None:
+def _add_41(
+    spinham, alpha: int, parameter, units=None, when_present="raise error", replace=None
+) -> None:
     r"""
     Adds a (four spins & one site) parameter to the Hamiltonian.
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom, with which the parameter is associated.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     parameter : (3, 3, 3, 3) |array-like|_
         Value of the parameter (:math:`3\times3\times3\times3` tensor). Given in the units of ``units``.
+
     units : str, optional
+        .. versionadded:: 0.3.0
+
         Units in which the ``parameter`` is given. Parameters have the the units of energy.
         By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
         units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
 
-        .. versionadded:: 0.3.0
+    when_present : str, default "raise error"
+        .. versionadded:: 0.4.0
+
+        Action to take if an atom already has a parameter associated with it.
+        Case-insensitive. Supported values are:
+
+        - ``"raise error"`` (default): raises an error if an atom already has a parameter
+          associated with it.
+        - ``"replace"``: replace existing value of the parameter with the new one.
+        - ``"add"``: add the value of the parameter to the existing one.
+        - ``"mean"``: replace the value of the parameter with the arithmetic mean of
+          existing and new parameters.
+        - ``"skip"``: Leave existing parameter unchanged and continue without raising an
+          error.
 
     replace : bool, default False
         Whether to replace the value of the parameter if an atom already has a
         parameter associated with it.
 
+        .. deprecated:: 0.4.0
+            The ``replace`` argument will be removed in May of 2026. Use
+            ``modify="replace"`` instead.
+
     Raises
     ------
+
     ValueError
-        If an atom already has a parameter associated with it.
+        If an atom already has a parameter associated with it and ``when_present="raise error"``.
+
+    ValueError
+        If ``when_present`` has an unsupported value.
 
     See Also
     --------
+
     p41
     remove_41
     """
+
+    if replace is not None:
+        import warnings
+
+        warnings.warn(
+            'The "replace" argument is deprecated since version 0.4.0 and will be removed in May of 2026. Use when_present="replace" instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if replace:
+            when_present = "replace"
+        else:
+            when_present = "raise error"
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     spinham._reset_internals()
@@ -118,21 +162,35 @@ def _add_41(spinham, alpha: int, parameter, units=None, replace=False) -> None:
             parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
         )
 
-    # TD-BINARY_SEARCH
+    # TODO BINARY SEARCH
     # Try to find the place for the new one inside the list
     index = 0
     while index < len(spinham._41):
         # If already present in the model
         if spinham._41[index][0] == alpha:
             # Either replace
-            if replace:
-                spinham._41[index] = [alpha, parameter]
-                return
+            if when_present.lower() == "replace":
+                spinham._41[index][1] = parameter
+            # Or add
+            elif when_present.lower() == "add":
+                spinham._41[index][1] = spinham._41[index][1] + parameter
+            # Or replace with mean value
+            elif when_present.lower() == "mean":
+                spinham._41[index][1] = (spinham._41[index][1] + parameter) / 2.0
+            # Or do nothing
+            elif when_present.lower() == "skip":
+                pass
             # Or raise an error
-            raise ValueError(
-                f"On-site quartic anisotropy already set "
-                f"for atom {alpha} ('{spinham.atoms.names[alpha]}')"
-            )
+            elif when_present == "raise error":
+                raise ValueError(
+                    f"(Four spins & one site) parameter is already set for atom {alpha} ('{spinham.atoms.names[alpha]}'."
+                )
+            else:
+                raise ValueError(
+                    f'Unsupported value of when_present: "{when_present}". Supported values are: "raise error", "replace", "add", "mean", "skip".'
+                )
+
+            return
 
         # If it should be inserted before current element
         if spinham._41[index][0] > alpha:
@@ -151,6 +209,7 @@ def _remove_41(spinham, alpha: int) -> None:
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom, with which the parameter is associated.
 
@@ -158,6 +217,7 @@ def _remove_41(spinham, alpha: int) -> None:
 
     See Also
     --------
+
     p41
     add_41
     """

@@ -27,7 +27,13 @@ jobs:
     uses: magnopy/magnopy/.github/workflows/tests.yml@main
     with:
       python-version: '3.12'
+
   test-313:
     uses: magnopy/magnopy/.github/workflows/tests.yml@main
     with:
       python-version: '3.13'
+
+  test-314:
+    uses: magnopy/magnopy/.github/workflows/tests.yml@main
+    with:
+      python-version: '3.14'

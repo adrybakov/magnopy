@@ -23,8 +23,8 @@ import pytest
 from magnopy._constants._units import (
     _PARAMETER_UNITS,
     _PARAMETER_UNITS_MAKEUP,
-    _FREQ_UNITS,
-    _FREQ_UNITS_MAKEUP,
+    _MAGNON_ENERGY_UNITS,
+    _MAGNON_ENERGY_UNITS_MAKEUP,
     _ENERGY_UNITS,
     _ENERGY_UNITS_MAKEUP,
 )
@@ -34,7 +34,7 @@ from magnopy._constants._units import (
     "units, units_makeup",
     [
         (_PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP),
-        (_FREQ_UNITS, _FREQ_UNITS_MAKEUP),
+        (_MAGNON_ENERGY_UNITS, _MAGNON_ENERGY_UNITS_MAKEUP),
         (_ENERGY_UNITS, _ENERGY_UNITS_MAKEUP),
     ],
 )

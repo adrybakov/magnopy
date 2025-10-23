@@ -4,6 +4,8 @@
 magnopy.io
 **********
 
+Input-output function of magnopy.
+
 .. currentmodule:: magnopy.io
 
 Other
@@ -40,8 +42,24 @@ Vampire
     dump_vampire_mat
     dump_vampire_ucf
 
+Plotting
+========
+
+.. autosummary::
+    :toctree: generated/
+
+    plot_dispersion
+
 Deprecated
 ==========
+
+.. warning::
+
+    These functions are deprecated and will be removed in future releases.
+
+    Do not use them in the new code.
+
+    Remove then from the existing code.
 
 .. autosummary::
     :toctree: generated/
