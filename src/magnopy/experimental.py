@@ -563,6 +563,8 @@ def change_cell(spinham, new_cell, new_atoms_specs):
     return new_spinham
 
 
+# DEPRECATED in v0.4.0
+# Remove in May 2026
 def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
     r"""
     Plot some k-resolved data.
@@ -584,6 +586,14 @@ def plot_dispersion(data, kp=None, output_filename=None, ylabel=None):
     ylabel : str, optional
         Label for the ordinate (y axis). Do not include units, units are included automatically.
     """
+
+    import warnings
+
+    warnings.warn(
+        "Function magnopy.experimental.plot_dispersion() was deprecated in 0.4.0 and will be removed in May 2026. Use magnopy.io.plot_dispersion() instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     if not MATPLOTLIB_AVAILABLE:
         import warnings
