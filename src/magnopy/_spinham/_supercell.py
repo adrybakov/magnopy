@@ -37,9 +37,11 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
         Original spin Hamiltonian. ``spinham.cell`` is interpreted as the original
         unit cell.
+
     supercell : (3, ) tuple or list of int
         Repetitions of the unit cell (``spinham.cell``) along each lattice
         vector that define the unit cell. If :math:`(i, j, k)` is given, then the
@@ -50,6 +52,7 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
 
     Returns
     -------
+
     new_spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian that is defined on a ``supercell`` and has the same parameters
         as the given ``spinham`` propagated over the whole supercell.

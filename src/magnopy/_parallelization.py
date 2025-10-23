@@ -35,10 +35,12 @@ def multiprocess_over_k(
 
     Parameters
     ----------
+
     kpoints : (N, 3) |array-like|_
         List of the kpoints.
+
     function : callable
-        Function that process one kpoint and will be called as
+        Function that process one kpoint and is called as
 
         .. code-block:: python
 
@@ -48,11 +50,12 @@ def multiprocess_over_k(
         If ``relative=True``, then ``k`` is interpreted as given relative to the
         reciprocal unit cell. Otherwise it is interpreted as given in absolute
         coordinates.
+
     units : str, default "meV"
+        .. versionadded:: 0.3.0
+
         Units of energy. See :py:attr:`.SpinHamiltonian.units` for the list of
         supported units.
-
-        .. versionadded:: 0.3.0
 
     number_processors : int, optional
         By default magnopy uses all available processes. Pass ``number_processors=1`` to
@@ -60,6 +63,7 @@ def multiprocess_over_k(
 
     Returns
     -------
+
     results : (N, ) list
         List of objects that are returned by the ``function``.
 
