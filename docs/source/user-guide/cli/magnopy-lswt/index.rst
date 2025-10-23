@@ -65,6 +65,31 @@ each of :math:`L` k-points.
 Each line has one number on it. The number is a delta term of the magnon Hamiltonian.
 
 
+E_0.txt
+-------
+
+.. versionadded:: 0.4.0
+
+A file with the value of classical energy of the ground state.
+
+There is one line in the file.
+
+It contains a number and unit string separated by a space symbol.
+
+
+E_2.txt
+-------
+
+.. versionadded:: 0.4.0
+
+A file with the value of quantum correction to the classical energy of the ground state,
+that results from linear spin wave theory.
+
+There is one line in the file.
+
+It contains a number and unit string separated by a space symbol.
+
+
 HIGH-SYMMETRY_POINTS.txt
 ------------------------
 
@@ -174,6 +199,21 @@ of magnon energies for each of :math:`L` k-points.
 Each line has :math:`M` numbers on it, separated by at least one space symbol.
 
 Each number is an imaginary part of the magnon energy of :math:`i`-th magnon mode.
+
+ONE_OPERATOR_TERMS.txt
+-----------------------------
+
+Coefficients before the one-operator terms of the magnon Hamiltonian.
+
+There are :math:`M + 1` lines in the file. M is a number of magnetic atoms in the spin
+Hamiltonian.
+
+First line is a header, that indicates the meaning of each column. Then, there are :math:`M`
+lines with values of the coefficients.
+
+Each line has two numbers on it, separated by at least one space symbol.
+
+First number is the real part of the coefficient, second - imaginary part.
 
 SPIN_DIRECTIONS.html
 --------------------

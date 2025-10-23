@@ -29,8 +29,11 @@ from magnopy._energy import Energy
 from magnopy._lswt import LSWT
 from magnopy._package_info import logo
 from magnopy._parallelization import multiprocess_over_k
-from magnopy.experimental import plot_dispersion
+from magnopy.io import plot_dispersion
 from magnopy._plotly_engine import PlotlyEngine
+from magnopy._constants._icons import ICON_OUT_FILE
+from magnopy.io._warnings import _envelope_warning
+
 
 try:
     import scipy  # noqa F401
@@ -38,6 +41,20 @@ try:
     SCIPY_AVAILABLE = True
 except ImportError:
     SCIPY_AVAILABLE = False
+
+try:
+    import plotly  # noqa F401
+
+    PLOTLY_AVAILABLE = True
+except ImportError:
+    PLOTLY_AVAILABLE = False
+
+try:
+    import matplotlib.pyplot as plt  # noqa F401
+
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    MATPLOTLIB_AVAILABLE = False
 
 
 # Save local scope at this moment
@@ -60,49 +77,63 @@ def solve_lswt(
     spglib_symprec=1e-5,
 ) -> None:
     r"""
-    Solves the spin Hamiltonian at the level of Linear Spin Wave theory.
-    Outputs progress in the standard output (``print()``) and saves some data to
-    the files on the disk.
+    Computes magnon Hamiltonian at the level of Linear Spin Wave theory.
+
+    Progress of calculation is shown in the standard output (``print()``). A bunch of the
+    output files is created and saved on the disk inside the ``output_folder``.
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
-        Spin Hamiltonian.
+        Spin Hamiltonian object.
+
     spin_directions : (M, 3) |array-like|_, optional.
         Directions of the local quantization axis for each spin. Magnitude of the vector
         is ignored, only the direction is considered. If ``None``, then magnopy attempts
         to optimize classical energy of spin Hamiltonian to determine spin directions.
+
     k_path : str, optional
         Specification of the k-path. The format is "G-X-Y|G-Z" For more details
         on the format see documentation of |wulfric|_. If nothing given, then the
         k-path is computed by |wulfric|_ automatically based on the lattice type.
         Ignored if ``kpoints`` are given.
+
     kpoints : (N, 3) |array-like|_, optional
         Explicit list of k-points to be used instead of automatically generated.
+
     relative : bool, default False
         If ``relative == True``, then ``kpoints`` are interpreted as given relative to
         the reciprocal unit cell. Otherwise it is interpreted as given in absolute
         coordinates.
+
     magnetic_field : (3, ) |array-like|_
-        Vector of external magnetic field, given in Tesla.
+        Vector of external magnetic field (magnetic flux density, B), given in Tesla.
+
     output_folder : str, default "magnopy-results"
-        Name for the folder where to save the output files. If the folder does not exist
-        then it will be created.
+        Name for the folder where to save the output files. The folder is created if it
+        does not exist.
+
     number_processors : int, optional
         Number of processors to be used in computation. By default magnopy uses all
         available processes. Use ``number_processors=1`` to run in serial mode.
+
     comment : str, optional
-        Any comment to output right after the logo.
+        Any comment, that will be shown in the standard output right after the magnopy's
+        logo.
+
     no_html : bool, default False
-        Whether to produce .html files with interactive representation of the data.
-        If ``no_html=False``, then requires |plotly|_ to be installed.
-
         .. versionadded:: 0.2.0
+
+        Whether to produce .html files. If ``no_html = False``, then |plotly|_ is expected
+        to be available.
+
     hide_personal_data : bool, default False
-        Whether to use ``os.path.abspath()`` when printing the paths to the output and
-        input files.
-
         .. versionadded:: 0.2.0
+
+        If ``False``, then ``os.path.abspath(pathname)`` is used to show full paths to the output
+        and input files. If ``True``, then only ``pathname`` is used.
+
     spglib_symprec : float, default 1e-5
         Tolerance parameter for the space group symmetry search by |spglib|_. Reduce it
         if the space group is not the one you expected.
@@ -133,62 +164,159 @@ def solve_lswt(
     """
 
     ################################################################################
-    ##                   Data verification and envelope function                  ##
+    ##                                  Filenames                                 ##
     ################################################################################
+    # Create the output directory if it does not exist
+    os.makedirs(output_folder, exist_ok=True)
+
     def envelope_path(pathname):
         if hide_personal_data:
             return pathname
         else:
             return os.path.abspath(pathname)
 
-    # Create the output directory if it does not exist
-    os.makedirs(output_folder, exist_ok=True)
+    SPIN_VECTORS_TXT = envelope_path(os.path.join(output_folder, "SPIN_VECTORS.txt"))
+    SPIN_DIRECTIONS_HTML = envelope_path(
+        os.path.join(output_folder, "SPIN_DIRECTIONS.html")
+    )
+    HIGH_SYMMETRY_POINTS_TXT = envelope_path(
+        os.path.join(output_folder, "HIGH-SYMMETRY_POINTS.txt")
+    )
+    K_POINTS_HTML = envelope_path(os.path.join(output_folder, "K-POINTS.html"))
+    K_POINTS_TXT = envelope_path(os.path.join(output_folder, "K-POINTS.txt"))
+    OMEGAS_TXT = envelope_path(os.path.join(output_folder, "OMEGAS.txt"))
+    OMEGAS_PNG = envelope_path(os.path.join(output_folder, "OMEGAS.png"))
+    OMEGAS_IMAG_TXT = envelope_path(os.path.join(output_folder, "OMEGAS-IMAG.txt"))
+    OMEGAS_IMAG_PNG = envelope_path(os.path.join(output_folder, "OMEGAS-IMAG.png"))
+    DELTAS_TXT = envelope_path(os.path.join(output_folder, "DELTAS.txt"))
+    DELTAS_PNG = envelope_path(os.path.join(output_folder, "DELTAS.png"))
+    E_0_TXT = envelope_path(os.path.join(output_folder, "E_0.txt"))
+    E_2_TXT = envelope_path(os.path.join(output_folder, "E_2.txt"))
+    ONE_OPERATOR_TERMS_TXT = envelope_path(
+        os.path.join(output_folder, "ONE_OPERATOR_TERMS.txt")
+    )
 
     all_good = True
 
     ################################################################################
-    ##                              Logo and comment                              ##
+    ##                       Logo, comment and plotly check                       ##
     ################################################################################
     # Print logo and a comment
-    print(logo(date_time=True))
+    print(logo(date_time=True, line_length=80))
     if comment is not None:
-        print(f"\n{' Comment ':=^90}\n")
+        print(f"\n{' Comment ':=^80}\n")
         print(comment)
 
-    ################################################################################
-    ##                                Ground state                                ##
-    ################################################################################
-    # Print header
-    print(f"\n{' Ground state ':=^90}\n")
+    if no_html:
+        print("\nHTML output is disabled by user (no_html=True).")
 
-    # Add magnetic field if any
+    if not PLOTLY_AVAILABLE and not no_html:
+        print(
+            _envelope_warning(
+                "Cannot produce files\n  - "
+                + "\n  - ".join(
+                    [os.path.basename(_) for _ in [K_POINTS_HTML, SPIN_DIRECTIONS_HTML]]
+                )
+                + "\nbecause plotly is not available.\n"
+                "You can install plotly with 'pip install plotly'"
+            )
+        )
+
+    if not SCIPY_AVAILABLE and not no_html:
+        print(
+            _envelope_warning(
+                "Cannot produce files\n  - "
+                + "\n  - ".join([os.path.basename(_) for _ in [K_POINTS_HTML]])
+                + "\nbecause scipy is not available."
+                "\nYou can install scipy with 'pip install scipy'"
+            )
+        )
+
+    if not MATPLOTLIB_AVAILABLE:
+        print(
+            _envelope_warning(
+                "Cannot produce files\n  - "
+                + "\n  - ".join(
+                    [
+                        os.path.basename(_)
+                        for _ in [OMEGAS_PNG, OMEGAS_IMAG_PNG, DELTAS_PNG]
+                    ]
+                )
+                + "\nbecause matplotlib is not available.\n"
+                "You can install matplotlib with 'pip install matplotlib'"
+            )
+        )
+
+    ################################################################################
+    ##                              External effects                              ##
+    ################################################################################
+    print(f"\n{' External effects ':=^80}\n")
+
+    # Magnetic field
     if magnetic_field is not None:
+        print(
+            f"Magnetic flux density : "
+            f"|{magnetic_field[0]:.5f}, {magnetic_field[1]:.5f}, {magnetic_field[2]:.5f}|"
+            f" = {np.linalg.norm(magnetic_field):.5f} Tesla"
+        )
         spinham.add_magnetic_field(B=magnetic_field)
+    else:
+        print("Magnetic flux density : None")
+    ################################################################################
+    ##                       Optimization of spin directions                      ##
+    ################################################################################
 
-    # Get energy class
+    # Energy class will be needed later on as well,
+    # thus it is outside of the if-block
     energy = Energy(spinham=spinham)
 
-    # Optimize spin directions
     if spin_directions is None:
-        print("Spin directions are not given, start to optimize ...")
+        print(f"\n{' Optimization of spin directions ':=^80}\n")
+
+        print(
+            "Spin directions for the ground state are not given, attempt to optimize.\n"
+        )
+
+        # Tolerance parameters
+        print(f"Energy tolerance      : {1e-5:.5e} meV")
+        print(f"Torque tolerance      : {1e-5:.5e}")
+        print(
+            "Supercell             : 1 x 1 x 1 (original unit cell of the Hamiltonian)"
+        )
+        print(
+            "\nNote: we recommend to obtain ground state outside of the magnopy-lswt program\n"
+            "and provide --spin-directions argument to it. See magnopy-optimize-sd, for\n"
+            "dedicated spin optimization of magnopy."
+        )
 
         spin_directions = energy.optimize(
             energy_tolerance=1e-5, torque_tolerance=1e-5, quiet=False
         )
-        print("Optimization is done.")
-    # Or normalize them
     else:
-        print("Spin directions of the ground state are provided by the user.")
-
+        # Normalize spin directions to unity
         spin_directions = np.array(spin_directions, dtype=float)
         spin_directions = (
             spin_directions / np.linalg.norm(spin_directions, axis=1)[:, np.newaxis]
         )
 
+    ################################################################################
+    ##                                Ground state                                ##
+    ################################################################################
+    print(f"\n{' Ground state ':=^80}\n")
+
+    # Even if they are present in spinham.atoms
+    # this function will get the correct ones
+    spglib_types = wulfric.get_spglib_types(atoms=spinham.magnetic_atoms)
+
+    name_n = max([4] + [len(name) for name in spinham.magnetic_atoms["names"]])
+    print("Order of the atoms and their spglib types are")
+    print(f"{'Name':<{name_n}} spglib_type")
+    for n_i, name in enumerate(spinham.magnetic_atoms["names"]):
+        print(f"{name:{name_n}} {spglib_types[n_i]:^11}")
+
     # Save spin directions and spin values to the .txt file
-    filename = os.path.join(output_folder, "SPIN_VECTORS.txt")
     np.savetxt(
-        filename,
+        SPIN_VECTORS_TXT,
         np.concatenate(
             (spin_directions, np.array(spinham.magnetic_atoms["spins"])[:, np.newaxis]),
             axis=1,
@@ -196,56 +324,51 @@ def solve_lswt(
         fmt="%12.8f %12.8f %12.8f   %12.8f",
     )
     print(
-        f"\nDirections of spin vectors of the ground state and spin values are saved in file\n  {envelope_path(filename)}"
+        f"\nDirections of spin vectors of the ground state and spin values are saved in "
+        f"file\n{ICON_OUT_FILE} {SPIN_VECTORS_TXT}"
     )
     # Save spin directions as a .html file
-    if not no_html:
-        filename = os.path.join(output_folder, "SPIN_DIRECTIONS.html")
-
+    if not no_html and PLOTLY_AVAILABLE:
         pe = PlotlyEngine()
-
         pe.plot_cell(
             spinham.cell,
             color="Black",
             legend_label="Unit cell",
         )
-
         pe.plot_spin_directions(
-            positions=np.array(spinham.magnetic_atoms.positions) @ spinham.cell,
+            positions=np.array(spinham.magnetic_atoms["positions"]) @ spinham.cell,
             spin_directions=spin_directions,
             colors="#A47864",
             legend_label="Spins of the unit cell",
         )
-
         pe.save(
-            output_name=filename,
+            output_name=SPIN_DIRECTIONS_HTML,
             axes_visible=True,
             legend_position="top",
             kwargs_write_html=dict(include_plotlyjs=True, full_html=True),
         )
-
         print(
-            f"\nImage of spin directions is saved in file\n  {envelope_path(filename)}.html\n"
+            f"\nImage of the spin directions is saved in file\n{ICON_OUT_FILE} {SPIN_DIRECTIONS_HTML}"
         )
 
-    # Output order of atoms and their spglib types as understood by wulfric
-    spglib_types = wulfric.get_spglib_types(atoms=spinham.magnetic_atoms)
-    name_n = max([4] + [len(name) for name in spinham.magnetic_atoms["names"]])
-    print("Order of the atoms is")
-    print(f"{'Name':<{name_n}} spglib_type")
-    for n_i, name in enumerate(spinham.magnetic_atoms["names"]):
-        print(f"{name:{name_n}} {spglib_types[n_i]:>11}")
-
-    # Output classical energy
+    # Classical energy
     E_0 = energy.E_0(spin_directions=spin_directions)
-    print(f"\n{'Classic ground state energy (E_0)':<51} is {E_0:>15.6f} meV\n")
+    with open(E_0_TXT, "w", encoding="utf-8") as f:
+        f.write(f"{E_0:.8f} meV\n")
+    print(
+        f"\nClassic energy of optimized state (E_0 = {E_0:.3f} meV) is saved in file\n{ICON_OUT_FILE} {E_0_TXT}"
+    )
 
     ################################################################################
     ##                            K-points and k-path                             ##
     ################################################################################
-    # Treat kpoints
-    print(f"\n{' K-points and k-path ':=^90}\n")
+    print(f"\n{' K-points and k-path ':=^80}\n")
 
+    ticks = None
+    labels = None
+    kpoints_relative = np.array([[]])
+    kpoints_absolute = np.array([[]])
+    x_data = np.array([])
     if kpoints is not None:
         if relative:
             kpoints_relative = np.array(kpoints, dtype=float)
@@ -258,26 +381,25 @@ def solve_lswt(
                 wulfric.cell.get_reciprocal(cell=spinham.cell)
             )
 
-        flat_indices = np.concatenate(
+        x_data = np.concatenate(
             (
                 [0.0],
                 np.linalg.norm(kpoints_absolute[1:] - kpoints_absolute[:-1], axis=1),
             )
         )
-        kp = None
 
-        print("K-points are provided by the user.")
+        print("K-points are provided by user.")
 
     else:
+        print("Deducing k-points based on the crystal symmetry.")
         spglib_data = wulfric.get_spglib_data(
             cell=spinham.cell, atoms=spinham.atoms, spglib_symprec=spglib_symprec
         )
         print(
-            "Deducing k-points based on the crystal symmetry.",
-            f"spglib_symprec is  {spglib_symprec:.5e}.",
-            f"Space group is     {spglib_data.space_group_number}",
-            f"Bravais lattice is {spglib_data.crystal_family + spglib_data.centring_type}",
-            "Using convention of HPKOT paper. See docs of wulfric for details (wulfric.org).",
+            f"\nspglib_symprec  : {spglib_symprec:.5e}.",
+            f"Space group     : {spglib_data.space_group_number}",
+            f"Bravais lattice : {spglib_data.crystal_family + spglib_data.centring_type}",
+            "Convention      : HPKOT paper (see wulfric.org for more details).",
             sep="\n",
         )
         kp = wulfric.Kpoints.from_crystal(
@@ -287,10 +409,26 @@ def solve_lswt(
             spglib_data=spglib_data,
         )
 
+        # Try to set custom k path
+        if k_path is not None:
+            try:
+                kp.path = k_path
+            except ValueError:
+                all_good = False
+                print(
+                    _envelope_warning(
+                        "User-provided k-path contains undefined labels of high-symmetry points."
+                        "\nPre-defined points are\n  - "
+                        + "\n  - ".join(kp.hs_names)
+                        + "\nUsing recommended k-path instead.",
+                    )
+                )
+
+        print(f"K-path          : {kp.path_string}")
+
         # Save pre-defined high-symmetry points in a .txt file
-        filename = os.path.join(output_folder, "HIGH-SYMMETRY_POINTS.txt")
         label_n = max([5] + [len(label) for label in kp.hs_names])
-        with open(filename, "w", encoding="utf-8") as f:
+        with open(HIGH_SYMMETRY_POINTS_TXT, "w", encoding="utf-8") as f:
             f.write(
                 f"{'Label':{label_n}} {'k_x':>12} {'k_y':>12} {'k_z':>12}    {'r_b1':>12} {'r_b2':>12} {'r_b3':>12}\n"
             )
@@ -301,112 +439,103 @@ def solve_lswt(
                     f"{label:<{label_n}} {k_abs[0]:12.8f} {k_abs[1]:12.8f} {k_abs[2]:12.8f}    {k_rel[0]:12.8f} {k_rel[1]:12.8f} {k_rel[2]:12.8f}\n"
                 )
         print(
-            f"\nFull list of pre-defined high-symmetry points is saved in file\n  {envelope_path(filename)}\n"
+            f"\nFull list of pre-defined high-symmetry points is saved in file\n{ICON_OUT_FILE} {HIGH_SYMMETRY_POINTS_TXT}"
         )
 
-        # Try to set custom k path
-        if k_path is not None:
-            print("K-path is provided by the user.")
-            try:
-                kp.path = k_path
-            except ValueError:
-                all_good = False
-                print(f"\n{'  WARNING  ':!^90}")
-                print(
-                    "User-provided k-path contains labels of high-symmetry point that are not defined.",
-                    "See file",
-                    f"  {envelope_path(filename)}",
-                    "for the list of pre-defined high-symmetry points.",
-                    "Using recommended k-path instead:",
-                    f"  {kp.path_string}",
-                    sep="\n",
-                )
-                print(f"{'  END OF WARNING  ':!^90}\n")
-        else:
-            print("Using recommended k-path:", f"  {kp.path_string}")
         kpoints_relative = kp.points(relative=True)
         kpoints_absolute = kpoints_relative @ kp.rcell
-        flat_indices = kp.flat_points(relative=False)
+        x_data = kp.flat_points(relative=False)
+        ticks = kp.ticks(relative=False)
+        labels = kp.labels
 
         # Produce .html file with the hs points, k-path and brillouin zones
-        if not no_html:
-            if SCIPY_AVAILABLE:
-                filename = os.path.join(output_folder, "K-POINTS.html")
-                pe = wulfric.PlotlyEngine()
+        if not no_html and PLOTLY_AVAILABLE and SCIPY_AVAILABLE:
+            pe = wulfric.PlotlyEngine()
 
-                prim_cell, _ = wulfric.crystal.get_primitive(
-                    cell=spinham.cell,
-                    atoms=spinham.atoms,
-                    convention="SC",
-                    spglib_data=spglib_data,
-                )
-                pe.plot_brillouin_zone(
-                    cell=prim_cell,
-                    color="red",
-                    legend_label="Brillouin zone of the primitive cell",
-                )
-                pe.plot_brillouin_zone(
-                    cell=spinham.cell,
-                    color="chocolate",
-                    legend_label="Brillouin zone of the spinham.cell",
-                )
-                pe.plot_kpath(kp=kp)
-                pe.plot_kpoints(kp=kp, only_from_kpath=True)
+            prim_cell, _ = wulfric.crystal.get_primitive(
+                cell=spinham.cell,
+                atoms=spinham.atoms,
+                convention="SC",
+                spglib_data=spglib_data,
+            )
+            pe.plot_brillouin_zone(
+                cell=prim_cell,
+                color="red",
+                legend_label="Brillouin zone of the primitive cell",
+            )
+            pe.plot_brillouin_zone(
+                cell=spinham.cell,
+                color="chocolate",
+                legend_label="Brillouin zone of the spinham.cell",
+            )
+            pe.plot_kpath(kp=kp)
+            pe.plot_kpoints(kp=kp, only_from_kpath=True)
 
-                pe.save(output_name=filename)
-                print(
-                    f"\nHigh-symmetry points and chosen k-path are plotted in\n  {envelope_path(filename)}"
-                )
-            else:
-                print(
-                    "\nCan not plot Brillouin zone without scipy. Please install it with\n  pip install scipy"
-                )
+            pe.save(output_name=K_POINTS_HTML)
+            print(
+                f"\nHigh-symmetry points and chosen k-path are plotted in\n{ICON_OUT_FILE} {K_POINTS_HTML}"
+            )
 
     # Save k-points info to the .txt file
-    filename = os.path.join(output_folder, "K-POINTS.txt")
     np.savetxt(
-        filename,
+        K_POINTS_TXT,
         np.concatenate(
-            (
-                kpoints_absolute,
-                kpoints_relative,
-                flat_indices[:, np.newaxis],
-            ),
-            axis=1,
+            (kpoints_absolute, kpoints_relative, x_data[:, np.newaxis]), axis=1
         ),
         fmt="%12.8f %12.8f %12.8f   %12.8f %12.8f %12.8f   %12.8f",
         header=f"{'k_x':>12} {'k_y':>12} {'k_z':>12}   {'r_b1':>12} {'r_b2':>12} {'r_b3':>12}   {'flat index':>12}",
         comments="",
     )
-    print(f"\nExplicit list of k-points is saved in file\n  {envelope_path(filename)}")
+    print(
+        f"\nExplicit list of k-points is saved in file\n{ICON_OUT_FILE} {K_POINTS_TXT}"
+    )
 
     ################################################################################
     ##                                    LSWT                                    ##
     ################################################################################
-    print(f"\n{' Start LSWT ':=^90}\n")
+    print(f"\n{' LSWT ':=^80}\n")
     lswt = LSWT(spinham=spinham, spin_directions=spin_directions)
 
-    # Output correction energy
+    # Correction to the classical energy
+    E_2 = lswt.E_2()
+    with open(E_2_TXT, "w", encoding="utf-8") as f:
+        f.write(f"{E_2:.8f} meV\n")
     print(
-        f"{'Correction to the classic ground state energy (E_2)':<50} is {lswt.E_2():>15.6f} meV\n"
+        f"\nCorrection to the classic ground state energy (E_2 = {E_2:.3f} meV) is saved in file\n{ICON_OUT_FILE} {E_2_TXT}"
     )
 
-    # Output one-operator coefficients
-    print(
-        "Coefficients before one-operator terms (shall be zero if the ground state is correct)"
+    # One-operator coefficients
+    one_operator_coefficients = lswt.O()
+    np.savetxt(
+        ONE_OPERATOR_TERMS_TXT,
+        np.concatenate(
+            (
+                one_operator_coefficients.real[:, np.newaxis],
+                one_operator_coefficients.imag[:, np.newaxis],
+            ),
+            axis=1,
+        ),
+        fmt="%12.8f %12.8f",
+        header=f"{'Re(O_alpha)':>12} {'Im(O_alpha)':>12}",
+        comments="",
     )
-    print("  " + "\n  ".join([f"{o:12.8f}" for o in lswt.O()]))
-    if not np.allclose(lswt.O(), np.zeros(lswt.O().shape)):
+    print(
+        f"\nCoefficients before one-operator term are saved in file\n{ICON_OUT_FILE} {ONE_OPERATOR_TERMS_TXT}"
+    )
+    print("(shall be zero if the ground state is correct)")
+
+    if not np.allclose(
+        one_operator_coefficients, np.zeros(one_operator_coefficients.shape)
+    ):
         all_good = False
-        print(f"\n{'  WARNING  ':!^90}")
         print(
-            "Coefficients before the one-operator terms are not zero. It might indicate  that",
-            "the ground state (spin directions) is not a ground state of the considered spin",
-            "Hamiltonian. The results might not be meaningful. If coefficients are << 1, that might",
-            "be an artifact of the finite point arithmetic and the results might be just fine.",
-            sep="\n",
+            _envelope_warning(
+                "Coefficients before the one-operator terms are not zero. It might indicate that "
+                "the ground state (spin directions) is not a ground state of the considered spin "
+                "Hamiltonian. The results might not be meaningful. If coefficients are << 1, that might "
+                "be an artifact of the finite point arithmetic and the results might be just fine."
+            )
         )
-        print(f"{'  END OF WARNING  ':!^90}\n")
 
     # Compute data for each k-point
     print("\nStart calculations over k-points ... ", end="")
@@ -416,83 +545,111 @@ def solve_lswt(
         relative=False,
         number_processors=number_processors,
     )
-    omegas = np.array([i[0] for i in results])
+    omegas = np.array([i[0] for i in results]).T
     deltas = np.array([i[1] for i in results])
-    n_modes = len(omegas[0])
+    n_modes = len(omegas)
+    has_imaginary = not np.allclose(omegas.imag, np.zeros(omegas.imag.shape))
+    has_nans = np.any(np.isnan(omegas))
     print("Done")
 
-    # Save omegas to the .txt file
-    filename = os.path.join(output_folder, "OMEGAS.txt")
+    if has_nans:
+        all_good = False
+        print(
+            _envelope_warning(
+                "Some eigenfrequiencies could not be computed (NaN values). It might indicate "
+                "that the ground state (spin directions) is not a ground state of the considered "
+                "spin Hamiltonian. The results might not be meaningful."
+            )
+        )
+
+    if has_imaginary:
+        all_good = False
+        print(
+            _envelope_warning(
+                "Eigenfrequiencies has non-zero imaginary component for some k vectors. It might "
+                "indicate that the ground state (spin directions) is not a ground state of the "
+                "considered spin Hamiltonian. The results might not be meaningful."
+            )
+        )
+
+    ################################################################################
+    ##                                 Text output                                ##
+    ################################################################################
+    print(f"\n{' Output ':=^80}\n")
+
+    # Omegas
     np.savetxt(
-        filename,
-        omegas.real,
+        OMEGAS_TXT,
+        omegas.real.T,
         fmt=("%15.6e " * n_modes)[:-1],
         header=" ".join([f"{f'mode {i + 1}':>15}" for i in range(n_modes)]),
         comments="",
     )
-    print(f"\nOmegas are saved in file\n  {envelope_path(filename)}")
+    print(f"\nOmegas are saved in file\n{ICON_OUT_FILE} {OMEGAS_TXT}")
 
-    # Plot omegas as a .png
-    filename = filename[:-4] + ".png"
-    # TODO: REFACTOR
-    plot_dispersion(
-        data=omegas.real,
-        kp=kp,
-        output_filename=filename,
-        ylabel=R"$\omega_{\alpha}(\boldsymbol{k})$",
-    )
-    print(f"Plot is saved in file\n  {envelope_path(filename)}")
+    # Deltas
+    np.savetxt(DELTAS_TXT, deltas.real, fmt="%10.6e", header="Delta", comments="")
+    print(f"Deltas are saved in file\n{ICON_OUT_FILE} {DELTAS_TXT}")
 
-    # Check for the imaginary part
-    if not np.allclose(omegas.imag, np.zeros(omegas.imag.shape)):
-        all_good = False
-        print(f"\n{'  WARNING  ':!^90}")
-        print(
-            "Eigenfrequiencies has non-zero imaginary component for some k vectors. It might\n"
-            "indicate that the ground state (spin directions) is not a ground state of the\n"
-            "considered spin Hamiltonian. The results might not be meaningful.\n"
-        )
-        filename = os.path.join(output_folder, "OMEGAS-IMAG.txt")
+    # Imaginary omegas
+    if has_imaginary or has_nans:
         np.savetxt(
-            filename,
-            omegas.imag,
+            OMEGAS_IMAG_TXT,
+            omegas.imag.T,
             fmt=("%15.6e " * n_modes)[:-1],
             header=" ".join([f"{f'mode {i + 1}':>15}" for i in range(n_modes)]),
             comments="",
         )
-        print(f"Imaginary part of omegas is saved in file\n  {envelope_path(filename)}")
-
-        filename = filename[:-4] + ".png"
-        # TODO: REFACTOR
-        plot_dispersion(
-            data=omegas.imag,
-            kp=kp,
-            output_filename=filename,
-            ylabel=R"$\mathcal{Im}(\omega_{\alpha}(\boldsymbol{k}))$",
+        print(
+            f"Imaginary part of omegas is saved in file\n{ICON_OUT_FILE} {OMEGAS_IMAG_TXT}"
         )
-        print(f"Plot of imaginary part is saved in file\n  {envelope_path(filename)}")
-        print(f"{'  END OF WARNING  ':!^90}\n")
 
-    # Save deltas to the .txt file
-    filename = os.path.join(output_folder, "DELTAS.txt")
-    np.savetxt(filename, deltas.real, fmt="%10.6e", header="Delta", comments="")
-    print(f"Deltas are saved in file\n  {envelope_path(filename)}")
+    ################################################################################
+    ##                                 png output                                 ##
+    ################################################################################
 
-    # Plot deltas as a .png
-    filename = filename[:-4] + ".png"
-    # TODO: REFACTOR
-    plot_dispersion(
-        data=deltas.real,
-        kp=kp,
-        output_filename=filename,
-        ylabel=R"$\Delta(\boldsymbol{k})$",
-    )
-    print(f"Plot is saved in file\n  {envelope_path(filename)}")
+    if MATPLOTLIB_AVAILABLE:
+        # Omegas
+        plot_dispersion(
+            modes=omegas.real,
+            x_data=x_data,
+            ticks=ticks,
+            labels=labels,
+            output_filename=OMEGAS_PNG,
+            ylabel=R"$\omega_{\alpha}(\boldsymbol{k})$",
+        )
+        print(f"Plot is saved in file\n{ICON_OUT_FILE} {OMEGAS_PNG}")
+
+        # Deltas
+
+        plot_dispersion(
+            modes=deltas.real,
+            x_data=x_data,
+            ticks=ticks,
+            labels=labels,
+            output_filename=DELTAS_PNG,
+            ylabel=R"$\Delta(\boldsymbol{k})$",
+        )
+        print(f"Plot is saved in file\n{ICON_OUT_FILE} {DELTAS_PNG}")
+
+        # Imaginary omegas
+        if has_imaginary or has_nans:
+            plot_dispersion(
+                modes=omegas.imag,
+                x_data=x_data,
+                ticks=ticks,
+                labels=labels,
+                output_filename=OMEGAS_IMAG_PNG,
+                ylabel=R"$\mathcal{Im}(\omega_{\alpha}(\boldsymbol{k}))$",
+            )
+            print(
+                f"Plot of imaginary part is saved in file\n{ICON_OUT_FILE} {OMEGAS_IMAG_PNG}"
+            )
 
     if all_good:
-        print(f"\n{' Finished OK ':=^90}")
+        print(f"\n{' Finished OK ':=^80}")
     else:
-        print(f"\n{' Finished with WARNINGS ':=^90}")
+        print(f"\n{' Finished with WARNINGS ':=^80}")
 
 
 # Populate __all__ with objects defined in this file
