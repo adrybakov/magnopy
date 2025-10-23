@@ -127,14 +127,16 @@ class Energy:
     r"""
     Classical energy of the spin Hamiltonian.
 
-    This class is optimized for the computation of the energy for any spin
-    directions for the given Hamiltonian.
+    This class is optimized for calculation of the energy for any spin directions for the
+    given Hamiltonian.
 
-    If the spin Hamiltonian is modified, then a new instance of the energy class
-    should be created from it.
+    .. important::
+        If the spin Hamiltonian is modified, then a new instance of the energy class
+        should be created.
 
     Parameters
     ----------
+
     spinham : :py:class:`.SpinHamiltonian`
         Spin Hamiltonian for the calculation of energy.
 
@@ -176,7 +178,7 @@ class Energy:
 
         >>> energy = magnopy.Energy(spinham)
 
-    Finally, ``energy`` an be used to compute classical energy of the Hamiltonian,
+    Finally, ``energy`` can be used to compute classical energy of the Hamiltonian,
     its gradient, torque or search for the local minima.
 
     .. doctest::
@@ -349,16 +351,19 @@ class Energy:
 
         Parameters
         ----------
+
         spin_directions : (M, 3) |array-like|_
-            Directions of spin vectors. Only directions of vectors are used,
-            modulus is ignored. ``M`` is the amount of magnetic atoms in the
-            Hamiltonian. The order of spin directions is the same as the order
-            of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+            Directions of spin vectors. Only directions of vectors are used, modulus is
+            ignored. ``M`` is the amount of magnetic atoms in the Hamiltonian. The order
+            of spin directions is the same as the order of magnetic atoms in
+            ``spinham.magnetic_atoms.spins``.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -366,8 +371,9 @@ class Energy:
 
         Returns
         -------
+
         E_0 : float
-            Classic energy of state with ``spin_directions``. Return in the units of
+            Classic energy of state with ``spin_directions``. Returned in the units of
             ``units``.
 
 
@@ -520,16 +526,19 @@ class Energy:
 
         Parameters
         ----------
+
         spin_directions : (M, 3) |array-like|_
             Directions of spin vectors. Only directions of vectors are used,
             modulus is ignored. ``M`` is the amount of magnetic atoms in the
             Hamiltonian. The order of spin directions is the same as the order
             of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
 
-            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -537,6 +546,7 @@ class Energy:
 
         Returns
         -------
+
         gradient : (M, 3) :numpy:`ndarray`
             Gradient of energy.
 
@@ -682,16 +692,18 @@ class Energy:
 
         Parameters
         ----------
+
         spin_directions : (M, 3) |array-like|_
             Directions of spin vectors. Only directions of vectors are used,
             modulus is ignored. ``M`` is the amount of magnetic atoms in the
             Hamiltonian. The order of spin directions is the same as the order
             of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+
         units : str, default "meV"
+            .. versionadded:: 0.3.0
+
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
-
-            .. versionadded:: 0.3.0
 
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
@@ -699,6 +711,7 @@ class Energy:
 
         Returns
         -------
+
         torque : (M, 3) :numpy:`ndarray`
 
             .. code-block:: python
@@ -885,26 +898,32 @@ class Energy:
         quiet=False,
     ):
         r"""
-        Optimize classical energy by varying the directions of spins in the unit cell.
+        Optimizes classical energy by varying the directions of spins in the unit cell.
 
         Parameters
         ----------
+
         initial_guess : (M, 3) or (3,) |array-like|_, optional
             Initial guess for the direction of the spin vectors.
+
         energy_tolerance : float, default 1e-5
             Energy tolerance for the two consecutive steps of the optimization. In the units of meV.
+
         torque_tolerance : float, default 1e-5
             Torque tolerance for the two consecutive steps of the optimization. In the units of meV.
+
         quiet : bool, default False
             Whether to suppress the output of the progress.
 
         Returns
         -------
+
         optimized_directions : (M, 3) :numpy:`ndarray`
             Optimized direction of the spin vectors.
 
         See Also
         --------
+
         optimize_generator
         """
 
@@ -1050,7 +1069,7 @@ class Energy:
         torque_tolerance=1e-5,
     ):
         r"""
-        Optimize classical energy by varying the directions of spins in the unit cell.
+        Optimizes classical energy by varying the directions of spins in the unit cell.
 
         .. versionadded:: 0.2.0
 
@@ -1060,24 +1079,31 @@ class Energy:
 
         Parameters
         ----------
+
         initial_guess : (M, 3) or (3,) |array-like|_, optional
             Initial guess for the direction of the spin vectors.
+
         energy_tolerance : float, default 1e-5
             Energy tolerance for the two consecutive steps of the optimization.
+
         torque_tolerance : float, default 1e-5
             Torque tolerance for the two consecutive steps of the optimization.
 
         Yields
         ------
+
         energy : float
             Classical energy of the iteration step
+
         gradient : (M, 3) :numpy:`ndarray`
             Gradient vectors for each spin of the iteration step.
+
         spin_directions : (M, 3) :numpy:`ndarray`
             Directions of the spin vectors of the iteration step.
 
         See Also
         --------
+
         optimize
         """
 

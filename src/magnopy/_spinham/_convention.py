@@ -36,37 +36,52 @@ class Convention:
     R"""
     Convention of the spin Hamiltonian.
 
-    For the detailed description of the convention problem see :ref:`user-guide_theory-behind_convention-problem`.
+    For the detailed description of the convention problem see
+    :ref:`user-guide_theory-behind_convention-problem`.
 
     Parameters
     ----------
+
     multiple_counting : bool, optional
         Whether the pairs of spins are counted multiple times in the Hamiltonian's sums.
+
     spin_normalized : bool, optional
         Whether spin vectors/operators are normalized to 1. If ``True``, then spin
         vectors/operators are normalized.
+
     c1 : float, optional
         Numerical factor before the (one spin & one site) term of the Hamiltonian.
+
     c21 : float, optional
         Numerical factor before the (two spins & one site) term of the Hamiltonian.
+
     c22 : float, optional
         Numerical factor before the (two spins & two sites) term of the Hamiltonian.
+
     c31 : float, optional
         Numerical factor before the (three spins & one site) term of the Hamiltonian.
+
     c32 : float, optional
         Numerical factor before the (three spins & two sites) term of the Hamiltonian.
+
     c33 : float, optional
         Numerical factor before the (three spins & three sites) term of the Hamiltonian.
+
     c41 : float, optional
         Numerical factor before the (four spins & one site) term of the Hamiltonian.
+
     c421 : float, optional
         Numerical factor before the (four spins & two sites & 1+3) term of the Hamiltonian.
+
     c422 : float, optional
         Numerical factor before the (four spins & two sites & 2+2) term of the Hamiltonian.
+
     c43 : float, optional
         Numerical factor before the (four spins & three sites) term of the Hamiltonian.
+
     c44 : float, optional
         Numerical factor before the (four spins & four sites) term of the Hamiltonian.
+
     name : str, default "custom"
         A label for the convention. Any string, case-insensitive.
 
@@ -479,6 +494,11 @@ class Convention:
     def name(self) -> str:
         r"""
         A label for the convention. Any string, case-insensitive.
+
+        Returns
+        -------
+
+        name : str
         """
 
         return self._name
@@ -496,6 +516,11 @@ class Convention:
         Whether the pairs of spins are counted multiple times in the Hamiltonian's sums.
 
         If ``True``, then pairs are counted multiple times.
+
+        Returns
+        -------
+
+        multiple_counting : bool
         """
         if self._multiple_counting is None:
             raise ConventionError(convention=self, property="multiple_counting")
@@ -516,6 +541,11 @@ class Convention:
         Whether spin vectors/operators are normalized to 1.
 
         If ``True``, then spin vectors/operators are normalized.
+
+        Returns
+        -------
+
+        spin_normalized : bool
         """
         if self._spin_normalized is None:
             raise ConventionError(convention=self, property="spin_normalized")
@@ -534,6 +564,11 @@ class Convention:
     def c1(self) -> float:
         r"""
         Numerical factor before the (one spin & one site) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c1 : float
         """
         if self._c1 is None:
             raise ConventionError(convention=self, property="c1")
@@ -552,6 +587,11 @@ class Convention:
     def c21(self) -> float:
         r"""
         Numerical factor before the (two spins & one site) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c21 : float
         """
         if self._c21 is None:
             raise ConventionError(convention=self, property="c21")
@@ -567,6 +607,11 @@ class Convention:
     def c22(self) -> float:
         r"""
         Numerical factor before the (two spins & two sites) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c22 : float
         """
         if self._c22 is None:
             raise ConventionError(convention=self, property="c22")
@@ -585,6 +630,11 @@ class Convention:
     def c31(self) -> float:
         r"""
         Numerical factor before the (three spins & one site) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c31 : float
         """
         if self._c31 is None:
             raise ConventionError(convention=self, property="c31")
@@ -600,6 +650,11 @@ class Convention:
     def c32(self) -> float:
         r"""
         Numerical factor before the (three spins & two sites) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c32 : float
         """
         if self._c32 is None:
             raise ConventionError(convention=self, property="c32")
@@ -615,6 +670,11 @@ class Convention:
     def c33(self) -> float:
         r"""
         Numerical factor before the (three spins & three sites) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c33 : float
         """
         if self._c33 is None:
             raise ConventionError(convention=self, property="c33")
@@ -633,6 +693,11 @@ class Convention:
     def c41(self) -> float:
         r"""
         Numerical factor before the (four spins & one site) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c41 : float
         """
         if self._c41 is None:
             raise ConventionError(convention=self, property="c41")
@@ -648,6 +713,11 @@ class Convention:
     def c421(self) -> float:
         r"""
         Numerical factor before the (four spins & two sites (1+3)) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c421 : float
         """
         if self._c421 is None:
             raise ConventionError(convention=self, property="c421")
@@ -663,6 +733,11 @@ class Convention:
     def c422(self) -> float:
         r"""
         Numerical factor before the (four spins & two sites (2+2)) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c422 : float
         """
         if self._c422 is None:
             raise ConventionError(convention=self, property="c422")
@@ -678,6 +753,11 @@ class Convention:
     def c43(self) -> float:
         r"""
         Numerical factor before the (four spins & three sites) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c43 : float
         """
         if self._c43 is None:
             raise ConventionError(convention=self, property="c43")
@@ -693,6 +773,11 @@ class Convention:
     def c44(self) -> float:
         r"""
         Numerical factor before the (four spins & four sites) sum of the Hamiltonian.
+
+        Returns
+        -------
+
+        c44 : float
         """
         if self._c44 is None:
             raise ConventionError(convention=self, property="c44")
@@ -742,6 +827,7 @@ class Convention:
 
         Parameters
         ----------
+
         name : str
             Name of the desired pre-defined convention. Supported are
 
@@ -754,6 +840,7 @@ class Convention:
 
         Returns
         -------
+
         convention : :py:class:`.Convention`
 
         Examples
@@ -864,43 +951,56 @@ class Convention:
         multiple_counting : bool, optional
             Whether the pairs of spins are counted multiple times in the Hamiltonian's sums.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         spin_normalized : bool, optional
             Whether spin vectors/operators are normalized to 1. If ``True``, then spin
             vectors/operators are normalized.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c1 : float, optional
             Numerical factor before the (one spin & one site) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c21 : float, optional
             Numerical factor before the (two spins & one site) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c22 : float, optional
             Numerical factor before the (two spins & two sites) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c31 : float, optional
             Numerical factor before the (three spins & one site) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c32 : float, optional
             Numerical factor before the (three spins & two sites) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c33 : float, optional
             Numerical factor before the (three spins & three sites) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c41 : float, optional
             Numerical factor before the (four spins & one site) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c421 : float, optional
             Numerical factor before the (four spins & two sites & 1+3) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c422 : float, optional
             Numerical factor before the (four spins & two sites & 2+2) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c43 : float, optional
             Numerical factor before the (four spins & three sites) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         c44 : float, optional
             Numerical factor before the (four spins & four sites) term of the Hamiltonian.
             Modified to the given value, if None, then kept the same as in the original convention.
+
         name : str, optional
             A label for the convention. Any string, case-insensitive.
             Modified to the given value, if None, then kept the same as in the original convention.
