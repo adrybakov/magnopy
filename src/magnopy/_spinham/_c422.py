@@ -40,12 +40,16 @@ def _get_primary_p422(alpha, beta, nu, parameter=None):
 
     Parameters
     ----------
+
     alpha : int
         Index of the first atom.
+
     beta : int
         Index of the second atom.
+
     nu : tuple of 3 int
         Unit cell for the second atom.
+
     parameter : (3, 3, 3, 3) :numpy:`ndarray`, optional
         Full matrix of the parameter.
 
@@ -53,10 +57,13 @@ def _get_primary_p422(alpha, beta, nu, parameter=None):
     -------
     alpha : int
         Index of the first atom.
+
     beta : int
         Index of the second atom.
+
     nu : tuple of 3 int
         Unit cell for the second atom.
+
     parameter : (3, 3, 3, 3) :numpy:`ndarray`
         Full matrix of the parameter. It is returned only if ``parameter is not None``.
     """
@@ -129,6 +136,7 @@ def _p422(spinham):
 
     Returns
     -------
+
     parameters : iterator
         List of parameters. The list has a form of
 
@@ -149,6 +157,7 @@ def _p422(spinham):
 
     See Also
     --------
+
     add_422
     remove_422
     """
@@ -174,14 +183,17 @@ def _add_422(
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom from the (0, 0, 0) unit cell.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     beta : int
         Index of an atom from the nu unit cell.
 
         ``0 <= beta < len(spinham.atoms.names)``.
+
     nu : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the second atom.
@@ -194,16 +206,19 @@ def _add_422(
 
     parameter : (3, 3, 3, 3) |array-like|_
         Value of the parameter (:math:`3\times3\times3\times3` matrix). Given in the units of ``units``.
+
     units : str, optional
+        .. versionadded:: 0.3.0
+
         Units in which the ``parameter`` is given. Parameters have the the units of energy.
         By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
         units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
 
-        .. versionadded:: 0.3.0
-
     when_present : str, default "raise error"
+        .. versionadded:: 0.4.0
+
         Action to take if a pair of atoms already has a parameter associated with it.
         Case-insensitive. Supported values are:
 
@@ -216,8 +231,6 @@ def _add_422(
         - ``"skip"``: Leave existing parameter unchanged and continue without raising an
           error.
 
-        .. versionadded:: 0.4.0
-
     replace : bool, default False
         Whether to replace the value of the parameter if a pair of atoms already has a
         parameter associated with it.
@@ -226,21 +239,24 @@ def _add_422(
             The ``replace`` argument will be removed in May of 2026. Use
             ``modify="replace"`` instead.
 
-
     Raises
     ------
+
     ValueError
         If a pair of atoms already has a parameter associated with it and ``when_present="raise error"``.
+
     ValueError
         If ``when_present`` has an unsupported value.
 
     See Also
     --------
+
     p422
     remove_422
 
     Notes
     -----
+
     If ``spinham.convention.multiple_counting`` is ``True``, then this function adds both
     the bond and its double to the Hamiltonian. It will cause an ``ValueError`` to
     add the double of the bond after the bond is added.
@@ -332,14 +348,17 @@ def _remove_422(spinham, alpha: int, beta: int, nu: tuple) -> None:
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom from the (0, 0, 0) unit cell.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     beta : int
         Index of an atom from the nu unit cell.
 
         ``0 <= beta < len(spinham.atoms.names)``.
+
     nu : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the second atom.
@@ -352,11 +371,13 @@ def _remove_422(spinham, alpha: int, beta: int, nu: tuple) -> None:
 
     See Also
     --------
+
     p422
     add_422
 
     Notes
     -----
+
     If ``spinham.convention.multiple_counting`` is ``True``, then this function removes
     all versions of the bond from the Hamiltonian.
 

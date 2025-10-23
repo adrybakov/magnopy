@@ -40,16 +40,22 @@ def _get_primary_p33(alpha, beta, gamma, nu, _lambda, parameter=None):
 
     Parameters
     ----------
+
     alpha : int
         Index of the first atom.
+
     beta : int
         Index of the second atom.
+
     gamma : int
         Index of the third atom.
+
     nu : tuple of 3 int
         Unit cell for the second atom.
+
     _lambda : tuple of 3 int
         Unit cell for the third atom.
+
     parameter : (3, 3, 3) :numpy:`ndarray`, optional
         Full matrix of the parameter.
 
@@ -57,14 +63,19 @@ def _get_primary_p33(alpha, beta, gamma, nu, _lambda, parameter=None):
     -------
     alpha : int
         Index of the first atom.
+
     beta : int
         Index of the second atom.
+
     gamma : int
         Index of the third atom.
+
     nu : tuple of 3 int
         Unit cell for the second atom.
+
     _lambda : tuple of 3 int
         Unit cell for the third atom.
+
     parameter : (3, 3, 3) :numpy:`ndarray`, optional
         Full matrix of the parameter. It is returned only if ``parameter is not None``.
     """
@@ -276,6 +287,7 @@ def _p33(spinham):
 
     Returns
     -------
+
     parameters : iterator
         List of parameters. The list has a form of
 
@@ -301,6 +313,7 @@ def _p33(spinham):
 
     See Also
     --------
+
     add_33
     remove_33
     """
@@ -330,18 +343,22 @@ def _add_33(
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom from the (0, 0, 0) unit cell.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     beta : int
         Index of an atom from the nu unit cell.
 
         ``0 <= beta < len(spinham.atoms.names)``.
+
     gamma : int
         Index of an atom from the _lambda unit cell.
 
         ``0 <= gamma < len(spinham.atoms.names)``.
+
     nu : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the second atom.
@@ -363,16 +380,19 @@ def _add_33(
 
     parameter : (3, 3, 3) |array-like|_
         Value of the parameter (:math:`3\times3\times3` matrix). Given in the units of ``units``.
+
     units : str, optional
+        .. versionadded:: 0.3.0
+
         Units in which the ``parameter`` is given. Parameters have the the units of energy.
         By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
         units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
 
-        .. versionadded:: 0.3.0
-
     when_present : str, default "raise error"
+        .. versionadded:: 0.4.0
+
         Action to take if triple of atoms already has a parameter associated with it.
         Case-insensitive. Supported values are:
 
@@ -385,8 +405,6 @@ def _add_33(
         - ``"skip"``: Leave existing parameter unchanged and continue without raising an
           error.
 
-        .. versionadded:: 0.4.0
-
     replace : bool, default False
         Whether to replace the value of the parameter if triple of atoms already has a
         parameter associated with it.
@@ -395,22 +413,25 @@ def _add_33(
             The ``replace`` argument will be removed in May of 2026. Use
             ``modify="replace"`` instead.
 
-
     Raises
     ------
+
     ValueError
         If triple of atoms already has a parameter associated with it and
         ``when_present="raise error"``.
+
     ValueError
         If ``when_present`` has an unsupported value.
 
     See Also
     --------
+
     p33
     remove_33
 
     Notes
     -----
+
     If ``spinham.convention.multiple_counting`` is ``True``, then this function adds
     the bond and all its duplicates to the Hamiltonian. It will cause an ``ValueError``
     to add the duplicate of the bond after the bond is added.

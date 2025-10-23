@@ -49,6 +49,7 @@ def _p41(spinham) -> list:
 
     Returns
     -------
+
     parameters : list
         List of parameters. The list has a form of
 
@@ -64,6 +65,7 @@ def _p41(spinham) -> list:
 
     See Also
     --------
+
     add_41
     remove_41
     """
@@ -79,22 +81,27 @@ def _add_41(
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom, with which the parameter is associated.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     parameter : (3, 3, 3, 3) |array-like|_
         Value of the parameter (:math:`3\times3\times3\times3` tensor). Given in the units of ``units``.
+
     units : str, optional
+        .. versionadded:: 0.3.0
+
         Units in which the ``parameter`` is given. Parameters have the the units of energy.
         By default assumes :py:attr:`.SpinHamiltonian.units`. For the list of the supported
         units see :ref:`user-guide_usage_units_parameter-units`. If given ``units`` are different from
         :py:attr:`.SpinHamiltonian.units`, then the parameter's value will be converted
         automatically from ``units`` to :py:attr:`.SpinHamiltonian.units`.
 
-        .. versionadded:: 0.3.0
-
     when_present : str, default "raise error"
+        .. versionadded:: 0.4.0
+
         Action to take if an atom already has a parameter associated with it.
         Case-insensitive. Supported values are:
 
@@ -107,8 +114,6 @@ def _add_41(
         - ``"skip"``: Leave existing parameter unchanged and continue without raising an
           error.
 
-        .. versionadded:: 0.4.0
-
     replace : bool, default False
         Whether to replace the value of the parameter if an atom already has a
         parameter associated with it.
@@ -119,13 +124,16 @@ def _add_41(
 
     Raises
     ------
+
     ValueError
         If an atom already has a parameter associated with it and ``when_present="raise error"``.
+
     ValueError
         If ``when_present`` has an unsupported value.
 
     See Also
     --------
+
     p41
     remove_41
     """
@@ -201,6 +209,7 @@ def _remove_41(spinham, alpha: int) -> None:
 
     Parameters
     ----------
+
     alpha : int
         Index of an atom, with which the parameter is associated.
 
@@ -208,6 +217,7 @@ def _remove_41(spinham, alpha: int) -> None:
 
     See Also
     --------
+
     p41
     add_41
     """

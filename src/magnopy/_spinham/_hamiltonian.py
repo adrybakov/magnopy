@@ -110,17 +110,22 @@ class SpinHamiltonian:
 
     Parameters
     ----------
+
     convention : :py:class:`.Convention` or str
         A convention of the spin Hamiltonian.
+
     cell : (3, 3) |array-like|_
         Matrix of a cell, rows are interpreted as vectors.
+
     atoms : dict
         Dictionary with atoms.
+
     units : str, default "meV"
-        Units of the parameters of the Hamiltonian. See :py:attr:`.SpinHamiltonian.units`
+        .. versionadded:: 0.3.0
+
+        Units of the Hamiltonian's parameters. See :py:attr:`.SpinHamiltonian.units`
         for more details. Case-insensitive.
 
-        .. versionadded:: 0.3.0
 
     Examples
     --------
@@ -194,11 +199,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         cell : (3, 3) :numpy:`ndarray`
             Matrix of the cell, rows are lattice vectors.
 
         Notes
         -----
+
         If is not recommended to change the ``cell`` property after the creation of
         :py:class:`.SpinHamiltonian`. In fact an attempt to do so will raise an
         ``AttributeError``:
@@ -259,11 +266,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         atoms : dict (with added sugar)
             Dictionary with the atoms.
 
         Notes
         -----
+
         If is not recommended to change the atoms property after the creation of
         :py:class:`.SpinHamiltonian`. In fact an attempt to do so will raise an
         ``AttributeError``:
@@ -390,6 +399,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         map_to_magnetic (L, ) list of int
             Index map. Integers. ``L = len(spinham.atoms.names)``
         """
@@ -406,6 +416,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         map_to_all (M, ) list of int
             Index map. Integers. ``M = len(spinham.magnetic_atoms.names)``
         """
@@ -427,11 +438,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         magnetic_atoms : list of int
             Indices of magnetic atoms in the ``spinham.atoms``. Sorted.
 
         See Also
         --------
+
         M
         """
 
@@ -447,11 +460,13 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         M : int
             Number of spins (magnetic atoms) in the unit cell.
 
         See Also
         --------
+
         magnetic_atoms
         """
 
@@ -465,8 +480,14 @@ class SpinHamiltonian:
         r"""
         Convention of the spin Hamiltonian.
 
+        Returns
+        -------
+
+        convention : :py:class:`.Convention`
+
         See Also
         --------
+
         Convention
         """
 
@@ -888,9 +909,14 @@ class SpinHamiltonian:
         The parameters that the user tries to add afterwards are expected to be in the new
         units already.
 
+        Returns
+        -------
+
+        units : str
 
         See Also
         --------
+
         :ref:`user-guide_usage_units`
         """
 
@@ -970,9 +996,11 @@ class SpinHamiltonian:
 
         Parameters
         ----------
+
         B : (3, ) |array-like|_
             Vector of magnetic field (magnetic flux density, B) given in the units of
             Tesla.
+
         alphas : list of int, optional
             Indices of atoms, to which the magnetic field effect should be added.
 
@@ -984,6 +1012,7 @@ class SpinHamiltonian:
 
         Notes
         -----
+
         To minimize the energy the magnetic moment will be aligned with the
         direction of the external field. But spin vector will be directed opposite to the
         direction of the magnetic field.
@@ -1055,7 +1084,7 @@ class SpinHamiltonian:
 
     def add_dipole_dipole(self, R_cut=None, E_cut=None, alphas=None):
         r"""
-        Add magnetic dipole dipole interaction to the Hamiltonian.
+        Adds magnetic dipole dipole interaction to the Hamiltonian.
 
         Magnetic dipole dipole interaction is added in the form of two-spin & two-sites
         parameter
@@ -1095,17 +1124,21 @@ class SpinHamiltonian:
 
         Parameters
         ----------
+
         R_cut : float, optional
             Cut off radius for the distance between a pair of atoms.
             :math:`R_{cut} \ge 0`.
+
         E_cut : float, optional
             Cut off value for the maximum value of the parameter.
             :math:`E_{cut} > 0`.
+
         alphas : list of int, optional
             Indices of atoms, to which the magnetic field effect should be added.
 
         Raises
         ------
+
         ValueError
             * If none of the  ``R_cut`` or ``E_cut`` are provided.
             * If ``R_cut < 0``
@@ -1272,6 +1305,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         spinham : :py:class:`.SpinHamiltonian`
             A new instance of the same Hamiltonian.
         """
@@ -1285,6 +1319,7 @@ class SpinHamiltonian:
 
         Returns
         -------
+
         spinham : py:class:`.SpinHamiltonian`
             New instance of the spin Hamiltonian.
 
