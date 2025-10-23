@@ -147,15 +147,15 @@ def optimize_sd(
     ################################################################################
     ##                              Logo and comment                              ##
     ################################################################################
-    print(logo(date_time=True))
+    print(logo(date_time=True, line_length=80))
     if comment is not None:
-        print(f"\n{' Comment ':=^90}\n")
+        print(f"\n{' Comment ':=^80}\n")
         print(comment)
 
     ################################################################################
     ##                          Optimization parameters                           ##
     ################################################################################
-    print(f"\n{' Optimization parameters ':=^90}\n")
+    print(f"\n{' Optimization parameters ':=^80}\n")
 
     # Tolerance parameters
     print(f"Energy tolerance      : {energy_tolerance:.5e} meV")
@@ -195,7 +195,7 @@ def optimize_sd(
     ################################################################################
     ##                                Optimization                                ##
     ################################################################################
-    print(f"\n{' Start optimization ':=^90}\n")
+    print(f"\n{' Start optimization ':=^80}\n")
 
     energy = Energy(spinham=spinham)
     spin_directions = energy.optimize(
@@ -209,7 +209,7 @@ def optimize_sd(
     ################################################################################
     ##                                 Text output                                ##
     ################################################################################
-    print(f"\n{' Output ':=^90}\n")
+    print(f"\n{' Output ':=^80}\n")
 
     # Classical energy
     E_0 = energy.E_0(spin_directions=spin_directions)
@@ -288,7 +288,7 @@ def optimize_sd(
     else:
         print("\nHTML output is disabled by user (no_html=True).\n")
 
-    print(f"\n{' Finished ':=^90}")
+    print(f"\n{' Finished ':=^80}")
 
 
 # Populate __all__ with objects defined in this file
