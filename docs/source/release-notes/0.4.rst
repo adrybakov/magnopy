@@ -4,10 +4,26 @@
 Version 0.4
 ***********
 
+0.4.1
+=====
+
+**Date**: 3 November 2025
+
+Bugfix
+------
+
+* Fix :issue:`80`: a bug in ``magnopy-lswt`` when using ``--k-points`` argument.
+
+
 0.4.0
 =====
 
 **Date**: 23 October 2025
+
+.. warning::
+
+    We do not recommend to use ``magnopy-lswt`` script with ``--k-points`` argument
+    of this version. There is a bug that was fixed in 0.4.1.
 
 .. important::
 
