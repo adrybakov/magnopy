@@ -382,10 +382,14 @@ def solve_lswt(
                 wulfric.cell.get_reciprocal(cell=spinham.cell)
             )
 
-        x_data = np.concatenate(
-            (
-                [0.0],
-                np.linalg.norm(kpoints_absolute[1:] - kpoints_absolute[:-1], axis=1),
+        x_data = np.cumsum(
+            np.concatenate(
+                (
+                    [0.0],
+                    np.linalg.norm(
+                        kpoints_absolute[1:] - kpoints_absolute[:-1], axis=1
+                    ),
+                )
             )
         )
 
@@ -622,7 +626,6 @@ def solve_lswt(
         print(f"Plot is saved in file\n{ICON_OUT_FILE} {OMEGAS_PNG}")
 
         # Deltas
-
         plot_dispersion(
             modes=deltas.real,
             x_data=x_data,

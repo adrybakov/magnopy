@@ -158,7 +158,6 @@ def plot_dispersion(
 
     if ticks is not None:
         ax.set_xticks(ticks=ticks, labels=labels, fontsize=13)
-        ax.set_xlim(ticks[0], ticks[-1])
         ax.vlines(
             ticks,
             0,
@@ -173,6 +172,7 @@ def plot_dispersion(
         ax.set_xticks([], [])
         ax.set_xlabel("k-points (arbitrary units)", fontsize=15)
 
+    ax.set_xlim(x_data[0], x_data[-1])
     ax.set_ylabel(f"{ylabel}, meV", fontsize=15)
 
     ax.hlines(
