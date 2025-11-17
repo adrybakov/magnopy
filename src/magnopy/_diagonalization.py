@@ -20,8 +20,6 @@
 # ================================ END LICENSE =================================
 
 
-from functools import cmp_to_key
-
 import numpy as np
 from numpy.linalg import LinAlgError
 
@@ -63,10 +61,12 @@ def _check_grand_dynamical_matrix(D):
         raise ValueError(f"Grand dynamical matrix is not 2-dimensional, got {D.shape}.")
 
     if D.shape[0] != D.shape[1]:
-        raise (f"Grand dynamical matrix is not square, got {D.shape}.")
+        raise ValueError(f"Grand dynamical matrix is not square, got {D.shape}.")
 
     if D.shape[0] % 2 != 0:
-        raise (f"Size of the grand dynamical matrix is not even, got {D.shape}.")
+        raise ValueError(
+            f"Size of the grand dynamical matrix is not even, got {D.shape}."
+        )
 
     return D, D.shape[0] // 2
 
@@ -82,7 +82,7 @@ def _inverse_by_colpa(matrix):
     return matrix
 
 
-def solve_via_colpa(D, sort_by_first_N=True):
+def solve_via_colpa(D):
     r"""
     Diagonalizes grand-dynamical matrix following the method of Colpa.
 
@@ -164,8 +164,8 @@ def solve_via_colpa(D, sort_by_first_N=True):
         :math:`b^{\dagger}_1b_1, \dots, b^{\dagger}_mb_m` and last N elements - to
         the :math:`b^{\dagger}_{m+1}b_{m+1}, \dots, b^{\dagger}_{2m}b_{2m}`.
 
-        Eigenvalues are sorted individually for the first N and the last N elements,
-        based on the transformation matrix and not on the values of E itself.
+        First N eigenvalues are sorted in descending order, while last N eigenvalues are
+        sorted in ascending order.
 
         .. math::
 
@@ -235,54 +235,52 @@ def solve_via_colpa(D, sort_by_first_N=True):
                [0.        +0.41330424j, 1.08204454+0.j        ]])
     """
 
+    # Guarantee that D is 2Nx2N matrix
     D, N = _check_grand_dynamical_matrix(D)
 
+    # Para-unitary matrix
     g = np.diag(np.concatenate((np.ones(N), -np.ones(N))))
 
+    # Cholesky decomposition D = K^{\dag}K
     try:
-        # In Colpa article decomposition is K^{\dag}K, while numpy gives KK^{\dag}
-        K = np.conjugate(np.linalg.cholesky(D)).T
+        # In Colpa article decomposition is K^{\dag}K,
+        # while numpy gives KK^{\dag} by default,
+        # thus upper=True is needed
+        K = np.linalg.cholesky(D, upper=True)
     except LinAlgError:
         raise ColpaFailed
 
+    # Solve the standard eigenvalue problem for K g K^{\dag}
     L, U = np.linalg.eig(K @ g @ np.conjugate(K).T)
 
     # Sort with respect to L, in descending order
-    U = np.concatenate((L[:, None], U.T), axis=1).T
-    # U = np.concatenate((L[np.newaxis, :], U), axis=0)
+
+    # Step 1 put L as a first line on top of U:
+    # [
+    #   [L_0, ..., L_2N],
+    #   [U_0_0, ..., U_0_2N],
+    #   ...
+    #   [U_2N_0, ..., U_2N_2N],
+    # ]
+    U = np.concatenate((L[np.newaxis, :], U), axis=0)
+
+    # Step 2 sort each row according to the sorted order of the first row (L)
     U = U[:, np.argsort(U[0])]
+
+    # Step 3 separate L and U, and reverse the order to have
+    # first N eigenvalues to be positive
+    # and last N eigenvalues to be negative
     L = U[0, ::-1]
     U = U[1:, ::-1]
 
+    # Compute actual eigenvalues of D
     E = g @ L
 
+    # Compute G_inv
     G_inv = np.linalg.inv(K) @ U @ np.sqrt(np.diag(E))
 
+    # Inverse it by the Colpa's method to get G
     G = _inverse_by_colpa(G_inv)
-
-    # Sort first N and second N individually based on the transformation matrix
-    tmp = np.concatenate((E[:, np.newaxis], G), axis=1)
-
-    def compare(array1, array2):
-        if sort_by_first_N:
-            difference = np.round(
-                array1[1 : N + 1].real - array2[1 : N + 1].real, decimals=15
-            )
-        else:
-            difference = np.round(
-                array1[N + 1 :].real - array2[N + 1 :].real, decimals=15
-            )
-
-        if np.allclose(difference, np.zeros(difference.shape)):
-            return 0.0
-
-        return difference[np.nonzero(difference)[0][0]]
-
-    upper_part = np.array(sorted(tmp[:N], key=cmp_to_key(compare)))
-    lower_part = np.array(sorted(tmp[N:], key=cmp_to_key(compare)))
-
-    E = np.concatenate((upper_part[:, 0], lower_part[:, 0]))
-    G = np.concatenate((upper_part[:, 1:], lower_part[:, 1:]), axis=0)
 
     return E, G
 
