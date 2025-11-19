@@ -35,6 +35,68 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
+# TODO: highly inefficient, improve performance
+def _sort_eigenvectors(E_plus, E_minus, G_plus, G_minus):
+    M = len(E_plus) // 2
+
+    target_order = np.zeros((2 * M, 4 * M), dtype=float)
+
+    target_order[:, ::2] = G_plus.real
+    target_order[:, 1::2] = G_plus.imag
+
+    # Make a copy to not mess with the original data
+    G_minus_copy = np.conjugate(G_minus.copy())
+
+    # Switch columns
+    G_minus_copy = np.concatenate((G_minus_copy[:, M:], G_minus_copy[:, :M]), axis=1)
+
+    array = np.zeros((2 * M, 4 * M), dtype=float)
+    array[:, ::2] = G_minus_copy.real
+    array[:, 1::2] = G_minus_copy.imag
+
+    # Sort first N rows of G_minus
+    indices = [_ for _ in range(M)]
+    sorted_indices = []
+    for i in range(M):
+        found_match = False
+        for match_index in indices:
+            if np.allclose(array[i, :], target_order[M + match_index, :], atol=1e-2):
+                sorted_indices.append(match_index)
+                indices.remove(match_index)
+                found_match = True
+                break
+
+        if not found_match:
+            raise RuntimeError(
+                "Could not sort eigenvectors. Please contact developers with your example case: magnopy.org"
+            )
+
+    E_minus[:M] = E_minus[:M][sorted_indices]
+    G_minus[:M, :] = G_minus[:M, :][sorted_indices, :]
+
+    # Sort second N rows of G_minus
+    indices = [_ for _ in range(M)]
+    sorted_indices = []
+    for i in range(M):
+        found_match = False
+        for match_index in indices:
+            if np.allclose(array[M + i, :], target_order[match_index, :], atol=1e-2):
+                sorted_indices.append(match_index)
+                indices.remove(match_index)
+                found_match = True
+                break
+
+        if not found_match:
+            raise RuntimeError(
+                "Could not sort eigenvectors. Please contact developers with your example case: magnopy.org"
+            )
+
+    E_minus[M:] = E_minus[M:][sorted_indices]
+    G_minus[M:, :] = G_minus[M:, :][sorted_indices, :]
+
+    return E_minus, G_minus
+
+
 class LSWT:
     r"""
     Linear Spin Wave theory.
@@ -938,46 +1000,62 @@ class LSWT:
         GDM_plus = self.GDM(k_plus, relative=relative)
         GDM_minus = self.GDM(k_minus, relative=relative)
 
+        # Diagonalize via Colpa's method
         try:
             E_plus, G_plus = solve_via_colpa(GDM_plus)
             E_minus, G_minus = solve_via_colpa(GDM_minus)
         except ColpaFailed:
+            # Try to diagonalize with suspected Goldstone mode
             try:
-                E_plus, G_plus = solve_via_colpa(-GDM_plus)
-                E_minus, G_minus = solve_via_colpa(-GDM_minus)
+                E_plus, G_plus = solve_via_colpa(
+                    GDM_plus + (1e-10) * np.eye(GDM_plus.shape[0], dtype=float),
+                )
+                E_minus, G_minus = solve_via_colpa(
+                    GDM_minus + (1e-10) * np.eye(GDM_minus.shape[0], dtype=float),
+                )
+            # Return NaNs if it still fails
             except ColpaFailed:
-                try:
-                    E_plus, G_plus = solve_via_colpa(
-                        GDM_plus + (1e-10) * np.eye(GDM_plus.shape[0], dtype=float),
-                    )
-                    E_minus, G_minus = solve_via_colpa(
-                        GDM_minus + (1e-10) * np.eye(GDM_minus.shape[0], dtype=float),
-                    )
-                except ColpaFailed:
-                    return (
-                        [np.nan for _ in range(self.M)],
-                        np.nan,
-                        [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
-                    )
+                return (
+                    [np.nan for _ in range(self.M)],
+                    np.nan,
+                    [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
+                )
+
+        # Sort eigenvalues based on the eigenvectors, see
+        # TODO: add reference to the research paper, when published
+
+        try:
+            # E_plus and G_plus keep their order from solve_via_colpa
+            E_minus, G_minus = _sort_eigenvectors(
+                E_plus=E_plus,
+                E_minus=E_minus,
+                G_plus=G_plus,
+                G_minus=G_minus,
+            )
+        except RuntimeError:
+            # Return NaNs if sorting fails
+            return (
+                [np.nan for _ in range(self.M)],
+                np.nan,
+                [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
+            )
 
         # Convert units if necessary
         if units != "meV":
             units = _validated_units(units=units, supported_units=_MAGNON_ENERGY_UNITS)
-            E_plus = E_plus * _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS[units]
-            E_minus = (
-                E_minus * _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS[units]
-            )
+            tmp_factor = _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS[units]
+            E_plus = E_plus * tmp_factor
+            E_minus = E_minus * tmp_factor
 
         energies = E_plus[: self.M] + E_minus[self.M :]
         transformation_matrices = G_plus[: self.M]
 
-        # Sort by energy values
-        sorting_indices = np.argsort(energies)
-
         return (
-            energies[sorting_indices],
-            complex(0.5 * (np.sum(E_plus[self.M :]) - np.sum(E_plus[: self.M]))),
-            transformation_matrices[sorting_indices],
+            energies,  # energies (M)
+            complex(
+                0.5 * (np.sum(E_plus[self.M :]) - np.sum(E_plus[: self.M]))
+            ),  # delta term
+            transformation_matrices,  # transformation matrix (M x 2M)
         )
 
     def omega(self, k, relative=False, units="meV"):
