@@ -101,4 +101,4 @@ def test_ferromagnet_one_spin_cubic(spin_direction, k):
 
     assert omega.imag == 0
 
-    assert (omega.real - omega_anal) < 1e-8
+    assert abs(omega.real - omega_anal) < 1e-8
