@@ -4,6 +4,17 @@
 Version 0.4
 ***********
 
+0.4.2
+=====
+
+**Date**: Undefined
+
+Bugfix
+------
+
+* Fix a rare bug with p21 parameter in the dispersion calculation.
+
+
 0.4.1
 =====
 

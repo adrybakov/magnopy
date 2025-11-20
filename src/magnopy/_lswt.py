@@ -286,7 +286,7 @@ class LSWT:
             if (0, 0, 0) not in self._J2:
                 self._J2[(0, 0, 0)] = np.zeros((self.M, self.M, 3, 3), dtype=float)
 
-            self._J2[(0, 0, 0)][alpha, alpha] += 2 * spinham.convention.c21 * parameter
+            self._J2[(0, 0, 0)][alpha, alpha] += spinham.convention.c21 * parameter
 
         # Three spins & one site
         for alpha, parameter in spinham.p31:
