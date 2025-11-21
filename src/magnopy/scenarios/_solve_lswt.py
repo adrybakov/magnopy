@@ -397,6 +397,7 @@ def solve_lswt(
 
     else:
         print("Deducing k-points based on the crystal symmetry.")
+        print("See wulfric.org for more details on procedure and conventions.")
         spglib_data = wulfric.get_spglib_data(
             cell=spinham.cell, atoms=spinham.atoms, spglib_symprec=spglib_symprec
         )
@@ -404,7 +405,7 @@ def solve_lswt(
             f"\nspglib_symprec  : {spglib_symprec:.5e}.",
             f"Space group     : {spglib_data.space_group_number}",
             f"Bravais lattice : {spglib_data.crystal_family + spglib_data.centring_type}",
-            "Convention      : HPKOT paper (see wulfric.org for more details).",
+            "Convention      : HPKOT",
             sep="\n",
         )
         kp = wulfric.Kpoints.from_crystal(
@@ -535,10 +536,12 @@ def solve_lswt(
         all_good = False
         print(
             _envelope_warning(
-                "Coefficients before the one-operator terms are not zero. It might indicate that "
-                "the ground state (spin directions) is not a ground state of the considered spin "
-                "Hamiltonian. The results might not be meaningful. If coefficients are << 1, that might "
-                "be an artifact of the finite point arithmetic and the results might be just fine."
+                "Coefficients before the one-operator terms are not zero. It might "
+                "indicate that the ground state (spin directions) is not a ground state "
+                "of the considered spin Hamiltonian and the results might not be "
+                "meaningful.  If O_alpha << 1 then the problem can also be numerical "
+                "(due to the finite point arithmetic) and the results are just fine in "
+                "that case. Contact developers if you are in doubts: magnopy.org."
             )
         )
 
@@ -561,9 +564,12 @@ def solve_lswt(
         all_good = False
         print(
             _envelope_warning(
-                "Some eigenfrequiencies could not be computed (NaN values). It might indicate "
-                "that the ground state (spin directions) is not a ground state of the considered "
-                "spin Hamiltonian. The results might not be meaningful."
+                "Some eigenfrequiencies could not be computed (NaN values). It might "
+                "indicate that the ground state (spin directions) is not a ground state "
+                "of the considered spin Hamiltonian and the results might not be "
+                "meaningful. The problem can also be numerical (due to the finite point "
+                "arithmetic) and the results are just fine in that case. Contact "
+                "developers if you are in doubts: magnopy.org."
             )
         )
 
@@ -571,9 +577,12 @@ def solve_lswt(
         all_good = False
         print(
             _envelope_warning(
-                "Eigenfrequiencies has non-zero imaginary component for some k vectors. It might "
-                "indicate that the ground state (spin directions) is not a ground state of the "
-                "considered spin Hamiltonian. The results might not be meaningful."
+                "Eigenfrequiencies has non-zero imaginary component for some k vectors. "
+                "It might indicate that the ground state (spin directions) is not a "
+                "ground state of the considered spin Hamiltonian and the results might "
+                "not be meaningful. If Im(omega) << 1 then the problem can also be "
+                "numerical (due to the finite point arithmetic) and the results are just "
+                "fine in that case. Contact developers if you are in doubts: magnopy.org."
             )
         )
 
