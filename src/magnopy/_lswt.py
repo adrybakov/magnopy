@@ -1022,11 +1022,20 @@ class LSWT:
                 )
             # Return NaNs if it still fails
             except ColpaFailed:
-                return (
-                    [np.nan for _ in range(self.M)],
-                    np.nan,
-                    [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
-                )
+                # Try to diagonalize for the negative GDMs
+                # Note: solve_via_colpa will return positive eigenvalues,
+                # so we need to negate them back
+                try:
+                    E_plus, G_plus = solve_via_colpa(-GDM_plus)
+                    E_minus, G_minus = solve_via_colpa(-GDM_minus)
+                    E_plus = -E_plus
+                    E_minus = -E_minus
+                except ColpaFailed:
+                    return (
+                        [np.nan for _ in range(self.M)],
+                        np.nan,
+                        [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
+                    )
 
         # Sort eigenvalues based on the eigenvectors, see
         # TODO: add reference to the research paper, when published

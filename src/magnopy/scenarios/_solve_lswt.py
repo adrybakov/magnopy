@@ -586,6 +586,18 @@ def solve_lswt(
             )
         )
 
+    if np.any(omegas.real < -1e-8):
+        all_good = False
+        print(
+            _envelope_warning(
+                "Some eigenfrequiencies are negative. This might indicate that the "
+                "ground state is not a ground state of the considered spin Hamiltonian "
+                "and the results might not be meaningful. Minimum of the spectrum can "
+                "indicate a better ground state. Stable ground state should always "
+                "have non-negative eigenfrequiencies of the excitations."
+            )
+        )
+
     ################################################################################
     ##                                 Text output                                ##
     ################################################################################
