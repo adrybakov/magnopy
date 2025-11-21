@@ -220,7 +220,7 @@ Renormalized parameters
     J^{ij}_{2,2}(\boldsymbol{r}_{\nu,\alpha\beta})+\\&+
     \delta_{\alpha,\beta}
     \Biggl(
-        2C_{2,1}
+        C_{2,1}
         J^{ij}_{2,1}(\boldsymbol{r}_{\alpha})
         +\\&\phantom{+\delta_{\alpha,\beta}\Biggl(}+
         3C_{3, 1}

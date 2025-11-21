@@ -4,8 +4,30 @@
 Version 0.4
 ***********
 
+0.4.2
+=====
+
+**Date**: 21 November 2025
+
+Bugfix
+------
+
+* Fix a rare bug with p21 parameter in the dispersion calculation.
+* Fix :issue:`79`: Incorrect sorting of the eigenvectors in some cases, introduced in 0.2.
+
+Improvements
+------------
+
+* Improve text of warnings of the ``magnopy-lswt`` script.
+
+
 0.4.1
 =====
+
+.. warning::
+
+    We recommend not to use this version of magnopy due to :issue:`79`, that can affect
+    some (not all) calculations of spin wave spectra. Use 0.4.2 and later instead.
 
 **Date**: 3 November 2025
 

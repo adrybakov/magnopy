@@ -4,6 +4,11 @@
 Version 0.3
 ***********
 
+.. warning::
+
+    We recommend not to use this version of magnopy due to :issue:`79`, that can affect
+    some (not all) calculations of spin wave spectra. Use 0.4.2 and later instead.
+
 0.3.0
 =====
 
