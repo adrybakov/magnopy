@@ -39,10 +39,8 @@ old_dir.add("old_dir")
 def _sort_eigenvectors(E_plus, E_minus, G_plus, G_minus):
     M = len(E_plus) // 2
 
-    target_order = np.zeros((2 * M, 4 * M), dtype=float)
-
-    target_order[:, ::2] = G_plus.real
-    target_order[:, 1::2] = G_plus.imag
+    target_order = np.absolute(G_plus)
+    target_angles = np.angle(G_plus)
 
     # Make a copy to not mess with the original data
     G_minus_copy = np.conjugate(G_minus.copy())
@@ -50,9 +48,8 @@ def _sort_eigenvectors(E_plus, E_minus, G_plus, G_minus):
     # Switch columns
     G_minus_copy = np.concatenate((G_minus_copy[:, M:], G_minus_copy[:, :M]), axis=1)
 
-    array = np.zeros((2 * M, 4 * M), dtype=float)
-    array[:, ::2] = G_minus_copy.real
-    array[:, 1::2] = G_minus_copy.imag
+    array = np.absolute(G_minus_copy)
+    array_angles = np.angle(G_minus_copy)
 
     # Sort first N rows of G_minus
     indices = [_ for _ in range(M)]
@@ -60,11 +57,16 @@ def _sort_eigenvectors(E_plus, E_minus, G_plus, G_minus):
     for i in range(M):
         found_match = False
         for match_index in indices:
-            if np.allclose(array[i, :], target_order[M + match_index, :], atol=1e-2):
-                sorted_indices.append(match_index)
-                indices.remove(match_index)
-                found_match = True
-                break
+            # Check that the modulus matches
+            if np.allclose(array[i, :], target_order[M + match_index, :]):
+                diff = array_angles[i, :] - target_angles[M + match_index, :]
+                diff += 2 * np.pi * ((diff + 1e-8 + 1e-5 * np.abs(diff)) < 0)
+                # Check that the phase shift is uniform
+                if np.allclose(diff, np.ones_like(diff) * diff[0], atol=1e-5):
+                    sorted_indices.append(match_index)
+                    indices.remove(match_index)
+                    found_match = True
+                    break
 
         if not found_match:
             raise RuntimeError(
@@ -80,11 +82,16 @@ def _sort_eigenvectors(E_plus, E_minus, G_plus, G_minus):
     for i in range(M):
         found_match = False
         for match_index in indices:
-            if np.allclose(array[M + i, :], target_order[match_index, :], atol=1e-2):
-                sorted_indices.append(match_index)
-                indices.remove(match_index)
-                found_match = True
-                break
+            # Check that the modulus matches
+            if np.allclose(array[M + i, :], target_order[match_index, :]):
+                diff = array_angles[M + i, :] - target_angles[match_index, :]
+                diff += 2 * np.pi * ((diff + 1e-8 + 1e-5 * np.abs(diff)) < 0)
+                # Check that the phase shift is uniform
+                if np.allclose(diff, np.ones_like(diff) * diff[0], atol=1e-5):
+                    sorted_indices.append(match_index)
+                    indices.remove(match_index)
+                    found_match = True
+                    break
 
         if not found_match:
             raise RuntimeError(
