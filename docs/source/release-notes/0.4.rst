@@ -4,6 +4,18 @@
 Version 0.4
 ***********
 
+0.4.3
+=====
+
+**Date**: 9 January 2026
+
+Improvement
+-----------
+
+* Make LSWT diagonalization more numerically stable. This should fix rare cases of non-continues
+  magnon spectra.
+* Improve speed of the diagonalization in LSWT diagonalization (up to the factor x2).
+
 0.4.2
 =====
 
