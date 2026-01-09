@@ -1,6 +1,6 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2025 Magnopy Team
+# Copyright (C) 2023-2026 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #

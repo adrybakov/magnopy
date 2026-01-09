@@ -1,6 +1,6 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2025 Magnopy Team
+# Copyright (C) 2023-2026 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
@@ -20,9 +20,9 @@
 # ================================ END LICENSE =================================
 
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 __doclink__ = "magnopy.org"
-__release_date__ = "21 November 2025"
+__release_date__ = "9 January 2026"
 
 from . import examples, io, scenarios, experimental
 from ._constants import _si as si

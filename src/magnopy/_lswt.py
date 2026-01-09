@@ -1,6 +1,6 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2025 Magnopy Team
+# Copyright (C) 2023-2026 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
@@ -33,75 +33,6 @@ from magnopy._constants._units import _ENERGY_UNITS, _MAGNON_ENERGY_UNITS
 # Save local scope at this moment
 old_dir = set(dir())
 old_dir.add("old_dir")
-
-
-# TODO: highly inefficient, improve performance
-def _sort_eigenvectors(E_plus, E_minus, G_plus, G_minus):
-    M = len(E_plus) // 2
-
-    target_order = np.absolute(G_plus)
-    target_angles = np.angle(G_plus)
-
-    # Make a copy to not mess with the original data
-    G_minus_copy = np.conjugate(G_minus.copy())
-
-    # Switch columns
-    G_minus_copy = np.concatenate((G_minus_copy[:, M:], G_minus_copy[:, :M]), axis=1)
-
-    array = np.absolute(G_minus_copy)
-    array_angles = np.angle(G_minus_copy)
-
-    # Sort first N rows of G_minus
-    indices = [_ for _ in range(M)]
-    sorted_indices = []
-    for i in range(M):
-        found_match = False
-        for match_index in indices:
-            # Check that the modulus matches
-            if np.allclose(array[i, :], target_order[M + match_index, :]):
-                diff = array_angles[i, :] - target_angles[M + match_index, :]
-                diff += 2 * np.pi * ((diff + 1e-8 + 1e-5 * np.abs(diff)) < 0)
-                # Check that the phase shift is uniform
-                if np.allclose(diff, np.ones_like(diff) * diff[0], atol=1e-5):
-                    sorted_indices.append(match_index)
-                    indices.remove(match_index)
-                    found_match = True
-                    break
-
-        if not found_match:
-            raise RuntimeError(
-                "Could not sort eigenvectors. Please contact developers with your example case: magnopy.org"
-            )
-
-    E_minus[:M] = E_minus[:M][sorted_indices]
-    G_minus[:M, :] = G_minus[:M, :][sorted_indices, :]
-
-    # Sort second N rows of G_minus
-    indices = [_ for _ in range(M)]
-    sorted_indices = []
-    for i in range(M):
-        found_match = False
-        for match_index in indices:
-            # Check that the modulus matches
-            if np.allclose(array[M + i, :], target_order[match_index, :]):
-                diff = array_angles[M + i, :] - target_angles[match_index, :]
-                diff += 2 * np.pi * ((diff + 1e-8 + 1e-5 * np.abs(diff)) < 0)
-                # Check that the phase shift is uniform
-                if np.allclose(diff, np.ones_like(diff) * diff[0], atol=1e-5):
-                    sorted_indices.append(match_index)
-                    indices.remove(match_index)
-                    found_match = True
-                    break
-
-        if not found_match:
-            raise RuntimeError(
-                "Could not sort eigenvectors. Please contact developers with your example case: magnopy.org"
-            )
-
-    E_minus[M:] = E_minus[M:][sorted_indices]
-    G_minus[M:, :] = G_minus[M:, :][sorted_indices, :]
-
-    return E_minus, G_minus
 
 
 class LSWT:
@@ -1001,24 +932,16 @@ class LSWT:
             (array([2.+0.j]), 0j, array([[1.+0.j, 0.+0.j]]))
         """
 
-        k_plus = np.array(k)
-        k_minus = -k_plus
-
-        GDM_plus = self.GDM(k_plus, relative=relative)
-        GDM_minus = self.GDM(k_minus, relative=relative)
+        GDM = self.GDM(np.array(k, dtype=float), relative=relative)
 
         # Diagonalize via Colpa's method
         try:
-            E_plus, G_plus = solve_via_colpa(GDM_plus)
-            E_minus, G_minus = solve_via_colpa(GDM_minus)
+            E, G = solve_via_colpa(GDM)
         except ColpaFailed:
             # Try to diagonalize with suspected Goldstone mode
             try:
-                E_plus, G_plus = solve_via_colpa(
-                    GDM_plus + (1e-10) * np.eye(GDM_plus.shape[0], dtype=float),
-                )
-                E_minus, G_minus = solve_via_colpa(
-                    GDM_minus + (1e-10) * np.eye(GDM_minus.shape[0], dtype=float),
+                E, G = solve_via_colpa(
+                    GDM + (1e-10) * np.eye(GDM.shape[0], dtype=float),
                 )
             # Return NaNs if it still fails
             except ColpaFailed:
@@ -1026,10 +949,8 @@ class LSWT:
                 # Note: solve_via_colpa will return positive eigenvalues,
                 # so we need to negate them back
                 try:
-                    E_plus, G_plus = solve_via_colpa(-GDM_plus)
-                    E_minus, G_minus = solve_via_colpa(-GDM_minus)
-                    E_plus = -E_plus
-                    E_minus = -E_minus
+                    E, G = solve_via_colpa(-GDM)
+                    E = -E
                 except ColpaFailed:
                     return (
                         [np.nan for _ in range(self.M)],
@@ -1037,40 +958,19 @@ class LSWT:
                         [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
                     )
 
-        # Sort eigenvalues based on the eigenvectors, see
-        # TODO: add reference to the research paper, when published
-
-        try:
-            # E_plus and G_plus keep their order from solve_via_colpa
-            E_minus, G_minus = _sort_eigenvectors(
-                E_plus=E_plus,
-                E_minus=E_minus,
-                G_plus=G_plus,
-                G_minus=G_minus,
-            )
-        except RuntimeError:
-            # Return NaNs if sorting fails
-            return (
-                [np.nan for _ in range(self.M)],
-                np.nan,
-                [[np.nan for _ in range(2 * self.M)] for _ in range(self.M)],
-            )
-
         # Convert units if necessary
         if units != "meV":
             units = _validated_units(units=units, supported_units=_MAGNON_ENERGY_UNITS)
             tmp_factor = _MAGNON_ENERGY_UNITS["mev"] / _MAGNON_ENERGY_UNITS[units]
-            E_plus = E_plus * tmp_factor
-            E_minus = E_minus * tmp_factor
+            E = E * tmp_factor
 
-        energies = E_plus[: self.M] + E_minus[self.M :]
-        transformation_matrices = G_plus[: self.M]
+        # Factor of two explained in the paper (TODO: add doi after publication)
+        energies = E[: self.M] * 2
+        transformation_matrices = G[: self.M]
 
         return (
             energies,  # energies (M)
-            complex(
-                0.5 * (np.sum(E_plus[self.M :]) - np.sum(E_plus[: self.M]))
-            ),  # delta term
+            complex(0.5 * (np.sum(E[self.M :]) - np.sum(E[: self.M]))),  # delta term
             transformation_matrices,  # transformation matrix (M x 2M)
         )
 
@@ -1241,22 +1141,3 @@ __all__ = list(set(dir()) - old_dir)
 # Remove all semi-private objects
 __all__ = [i for i in __all__ if not i.startswith("_")]
 del old_dir
-
-
-if __name__ == "__main__":
-    import magnopy
-
-    spinham = magnopy.io.load_grogu(
-        "/Users/rybakov.ad/Codes/magnopy/tmp-09.06.25/Ni-U4/converted_NiPS3.txt"
-    )
-    sd = np.loadtxt(
-        "/Users/rybakov.ad/Codes/magnopy/tmp-09.06.25/Ni-U4/optimize/SPIN_DIRECTIONS.txt"
-    )
-    lswt = LSWT(spinham, sd)
-    k = np.array([0, 0, 0], dtype=float)
-
-    D = lswt.GDM(k)
-
-    E, G = magnopy.solve_via_colpa(D)
-
-    print(np.linalg.inv(np.conjugate(G).T) @ D @ np.linalg.inv(G) == E)
