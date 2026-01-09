@@ -1,6 +1,6 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2025 Magnopy Team
+# Copyright (C) 2023-2026 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
@@ -1141,22 +1141,3 @@ __all__ = list(set(dir()) - old_dir)
 # Remove all semi-private objects
 __all__ = [i for i in __all__ if not i.startswith("_")]
 del old_dir
-
-
-if __name__ == "__main__":
-    import magnopy
-
-    spinham = magnopy.io.load_grogu(
-        "/Users/rybakov.ad/Codes/magnopy/tmp-09.06.25/Ni-U4/converted_NiPS3.txt"
-    )
-    sd = np.loadtxt(
-        "/Users/rybakov.ad/Codes/magnopy/tmp-09.06.25/Ni-U4/optimize/SPIN_DIRECTIONS.txt"
-    )
-    lswt = LSWT(spinham, sd)
-    k = np.array([0, 0, 0], dtype=float)
-
-    D = lswt.GDM(k)
-
-    E, G = magnopy.solve_via_colpa(D)
-
-    print(np.linalg.inv(np.conjugate(G).T) @ D @ np.linalg.inv(G) == E)
