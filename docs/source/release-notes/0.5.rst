@@ -1,0 +1,10 @@
+.. _release-notes_0.5:
+
+***********
+Version 0.5
+***********
+
+0.5.0
+=====
+
+**Date**: Undefined
