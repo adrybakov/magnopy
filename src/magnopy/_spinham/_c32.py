@@ -188,7 +188,6 @@ def _add_32(
     parameter,
     units=None,
     when_present="raise error",
-    replace=None,
 ) -> None:
     r"""
     Adds a (three spins & two sites) parameter to the Hamiltonian.
@@ -246,14 +245,6 @@ def _add_32(
         - ``"skip"``: Leave existing parameter unchanged and continue without raising an
           error.
 
-    replace : bool, default False
-        Whether to replace the value of the parameter if a pair of atoms already has a
-        parameter associated with it.
-
-        .. deprecated:: 0.4.0
-            The ``replace`` argument will be removed in May of 2026. Use
-            ``modify="replace"`` instead.
-
 
     Raises
     ------
@@ -283,19 +274,6 @@ def _add_32(
     For the definition of the primary version see
     :ref:`user-guide_theory-behind_multiple-counting`.
     """
-
-    if replace is not None:
-        import warnings
-
-        warnings.warn(
-            'The "replace" argument is deprecated since version 0.4.0 and will be removed in May of 2026. Use when_present="replace" instead.',
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        if replace:
-            when_present = "replace"
-        else:
-            when_present = "raise error"
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     _validate_atom_index(index=beta, atoms=spinham.atoms)

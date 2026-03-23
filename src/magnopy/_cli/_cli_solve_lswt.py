@@ -21,7 +21,6 @@
 
 
 import os
-import warnings
 import sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
@@ -40,7 +39,6 @@ from magnopy._cli._arguments_library import (
     _add_output_folder,
     _add_no_html,
     _add_hide_personal_data,
-    _add_make_sd_image,
     _add_spin_directions,
     _add_k_path,
     _add_k_points,
@@ -76,23 +74,10 @@ def manager():
     _add_hide_personal_data(parser=parser)
     _add_spglib_types(parser=parser)
 
-    # DEPRECATED in v0.2.0
-    # Remove in March 2026
-    _add_make_sd_image(parser=parser)
-
     args = parser.parse_args()
 
     # Save executed command and arguments into a comment
     comment = _get_command_info(args=args, hide_personal_data=args.hide_personal_data)
-
-    # DEPRECATED in v0.2.0
-    # Remove in March 2026
-    if args.make_sd_image is not None:
-        warnings.warn(
-            "This argument was deprecated in the release v0.2.0. Interactive .html images are now plotted by default, please use --no-html if you want to disable it. This argument will be removed from Magnopy in March of 2026",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
     # Handle execution with no arguments
     if len(sys.argv) == 1:

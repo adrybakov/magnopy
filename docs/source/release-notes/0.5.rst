@@ -8,3 +8,13 @@ Version 0.5
 =====
 
 **Date**: Undefined
+
+Removed
+-------
+
+* ``magnopy.LSWT.G_inv()``.
+* ``magnopy.experimental.plot_dispersion()`` (made permanent part of Magnopy: :py:func:`magnopy.io.plot_dispersion`).
+* ``magnopy.io.plot_k_resolved()``.
+* ``magnopy.io.output_k_resolved()``.
+* ``make_sd_image`` argument in CLI scripts.
+* ``replace`` argument in the ``magnopy.SpinHamiltonian.add_*`` methods.

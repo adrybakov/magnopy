@@ -18,18 +18,3 @@ magnopy.experimental
 
     plot_spinham
     change_cell
-
-Deprecated
-==========
-
-.. warning::
-    These functions are deprecated and will be removed in future releases.
-
-    Do not use them in the new code.
-
-    Remove them from the existing code.
-
-.. autosummary::
-    :toctree: generated/
-
-    plot_dispersion
