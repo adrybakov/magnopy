@@ -38,7 +38,7 @@ Improvements
 
 .. warning::
 
-    We recommend not to use this version of magnopy due to :issue:`79`, that can affect
+    We recommend not to use this version of Magnopy due to :issue:`79`, that can affect
     some (not all) calculations of spin wave spectra. Use 0.4.2 and later instead.
 
 **Date**: 3 November 2025
@@ -61,9 +61,9 @@ Bugfix
 
 .. important::
 
-    Together with this release we release a master tutorial about magnopy:
+    Together with this release we release a master tutorial about Magnopy:
     |magnopy-tutorials|_. You can take it as a starting point to learn how to use
-    magnopy.
+    Magnopy.
 
 Bugfix
 ------

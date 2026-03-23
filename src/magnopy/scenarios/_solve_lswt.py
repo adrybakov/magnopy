@@ -90,7 +90,7 @@ def solve_lswt(
 
     spin_directions : (M, 3) |array-like|_, optional.
         Directions of the local quantization axis for each spin. Magnitude of the vector
-        is ignored, only the direction is considered. If ``None``, then magnopy attempts
+        is ignored, only the direction is considered. If ``None``, then Magnopy attempts
         to optimize classical energy of spin Hamiltonian to determine spin directions.
 
     k_path : str, optional
@@ -115,11 +115,11 @@ def solve_lswt(
         does not exist.
 
     number_processors : int, optional
-        Number of processors to be used in computation. By default magnopy uses all
+        Number of processors to be used in computation. By default Magnopy uses all
         available processes. Use ``number_processors=1`` to run in serial mode.
 
     comment : str, optional
-        Any comment, that will be shown in the standard output right after the magnopy's
+        Any comment, that will be shown in the standard output right after the Magnopy's
         logo.
 
     no_html : bool, default False
@@ -144,7 +144,7 @@ def solve_lswt(
     Notes
     -----
 
-    When using this function of magnopy in your Python scripts make sure to safeguard
+    When using this function of Magnopy in your Python scripts make sure to safeguard
     your script with the
 
     .. code-block:: python

@@ -75,10 +75,10 @@ def plot_spinham(
     Returns
     -------
     pe1 : :py:class:`.PlotlyEngine`
-        Instance of the magnopy's plot engine, with plotted spin Hamiltonian. Ready to be
+        Instance of the Magnopy's plot engine, with plotted spin Hamiltonian. Ready to be
         saved or showed. Only on-site parameters are plotted
     pe2 : :py:class:`.PlotlyEngine`
-        Instance of the magnopy's plot engine, with plotted spin Hamiltonian. Ready to be
+        Instance of the Magnopy's plot engine, with plotted spin Hamiltonian. Ready to be
         saved or showed. Only two-spins/two-sites parameters are plotted.
     """
 

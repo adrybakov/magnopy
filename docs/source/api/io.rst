@@ -4,7 +4,7 @@
 magnopy.io
 **********
 
-Input-output function of magnopy.
+Input-output function of Magnopy.
 
 .. currentmodule:: magnopy.io
 

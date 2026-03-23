@@ -58,7 +58,7 @@ def multiprocess_over_k(
         supported units.
 
     number_processors : int, optional
-        By default magnopy uses all available processes. Pass ``number_processors=1`` to
+        By default Magnopy uses all available processes. Pass ``number_processors=1`` to
         run in serial.
 
     Returns
@@ -70,7 +70,7 @@ def multiprocess_over_k(
     Notes
     -----
 
-    When using this function of magnopy in your Python scripts make sure to safeguard
+    When using this function of Magnopy in your Python scripts make sure to safeguard
     your script with the
 
     .. code-block:: python

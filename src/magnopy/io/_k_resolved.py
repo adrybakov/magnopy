@@ -84,7 +84,7 @@ def output_k_resolved(
     """
 
     warnings.warn(
-        "This function was deprecated in the release v0.2.0. This function will be removed from magnopy in March of 2026",
+        "This function was deprecated in the release v0.2.0. This function will be removed from Magnopy in March of 2026",
         DeprecationWarning,
         stacklevel=2,
     )

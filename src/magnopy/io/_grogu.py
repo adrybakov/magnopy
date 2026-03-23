@@ -45,7 +45,7 @@ def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian
     spin_values : (M, ) iterable of floats, optional
         Spin values for all magnetic atom. Order is the same as in |GROGU|_ file. Magnetic
         atoms are defined as those that have at least one parameter associated with them.
-        If none given, magnopy uses spin values computed from DFT (as provided in the
+        If none given, Magnopy uses spin values computed from DFT (as provided in the
         |GROGU|_ file).
 
     spglib_types : (M_prime, ) iterable of ints, optional

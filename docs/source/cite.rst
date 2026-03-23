@@ -5,8 +5,8 @@ How to cite?
 ************
 
 
-The research article about magnopy code is in preparation, meanwhile please cite the
-code by its name ("magnopy") and mention this web-site ("magnopy.org").
+The research article about Magnopy code is in preparation, meanwhile please cite the
+code by its name ("Magnopy") and mention this web-site ("magnopy.org").
 
 For the method of linear spin-wave theory and Holstein-Primakoff representation cite
 

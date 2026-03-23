@@ -29,4 +29,4 @@ positional arguments:
 
 options:
   -h, --help       show this help message and exit
-  -v, --version    print version of magnopy
+  -v, --version    print version of Magnopy

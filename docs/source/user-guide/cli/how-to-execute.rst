@@ -4,9 +4,9 @@
 How to execute scripts?
 ***********************
 
-On this page we explain how the command-line interface of magnopy works.
+On this page we explain how the command-line interface of Magnopy works.
 
-A number of command-line scripts is defined in magnopy. Name of every single one of them
+A number of command-line scripts is defined in Magnopy. Name of every single one of them
 starts with ``magnopy-``. Examples on this page use ``magnopy-scenario`` as a placeholder
 for the script's name.
 
@@ -135,7 +135,7 @@ then a script will use ``True`` as a value for the argument with the keyword
 Long vs short keywords
 ======================
 
-Majority of arguments in magnopy's scripts have two equivalent keywords: a long one and a
+Majority of arguments in Magnopy's scripts have two equivalent keywords: a long one and a
 short one. You are free to use either of them. The long version of the keyword starts with
 ``--`` and the short version of the keyword starts with a single ``-``.
 
@@ -236,7 +236,7 @@ Lines 4-16
 
 Magnopy's logo and metadata.
 
-*   Version of magnopy that is installed. For example "0.3.0", which would mean "0" major
+*   Version of Magnopy that is installed. For example "0.3.0", which would mean "0" major
     version, "3" minor version and "0" micro version;
 *   Link to the web-site with documentation;
 *   Release date;

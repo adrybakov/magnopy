@@ -7,7 +7,7 @@ Spin Hamiltonian
 For the theoretical background on the spin Hamiltonian see
 :ref:`user-guide_theory-behind_spin-hamiltonian`.
 
-:py:class:`.SpinHamiltonian` class is at the heart of magnopy. Every calculation starts
+:py:class:`.SpinHamiltonian` class is at the heart of Magnopy. Every calculation starts
 with the definition of some spin Hamiltonian. This class stores the crystal structure,
 convention and all parameters in it.
 
@@ -327,7 +327,7 @@ Here is an example that illustrates the difference between all atoms and magneti
     ...     convention=conv
     ... )
 
-At this moment there is no magnetic atoms in the Hamiltonian (in the magnopy's context),
+At this moment there is no magnetic atoms in the Hamiltonian (in the Magnopy's context),
 even though all atoms of the crystal have non-zero spin value.
 
 .. doctest::

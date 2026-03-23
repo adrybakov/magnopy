@@ -71,7 +71,7 @@ have to specify the convention upon the creation of spin Hamiltonian. If the Ham
 is read from the know source (i.e. |TB2J|_, |GROGU|_), then the convention of this source is
 known and set automatically.
 
-The Convention in magnopy is implemented in the form of the small :py:class:`.Convention`
+The Convention in Magnopy is implemented in the form of the small :py:class:`.Convention`
 class and is fully defined by the following
 
 *   ``c1``, ``c21``, ``c22``, ``c31``, ``c32``, ``c33``, ``c41``, ``c421``, ``c422``,

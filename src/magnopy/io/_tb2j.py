@@ -47,7 +47,7 @@ def load_tb2j(
     spin_values : (M, ) iterable of floats, optional
         Spin values for all magnetic atoms. Order is the same as in |TB2J|_ file. Magnetic
         atoms are defined as those that have at least one parameter associated with them.
-        If none given, magnopy sets spin value as :math:`|\boldsymbol{m} / g_{factor}|`
+        If none given, Magnopy sets spin value as :math:`|\boldsymbol{m} / g_{factor}|`
         for each spin, where :math:`\boldsymbol{m}` is the magnetic moment, read from the
         |TB2J|_ file.
 
@@ -58,11 +58,11 @@ def load_tb2j(
 
     g_factors : (M, ) iterable of floats, optional
         g-factors for all atoms. Order is the same as in |TB2J|_ file. If none given, then
-        magnopy sets :math:`g = 2` for all atoms.
+        Magnopy sets :math:`g = 2` for all atoms.
 
     quiet : bool, default True
         If ``False``, warnings are printed when distances between atoms computed by
-        magnopy are different from the distances read from the |TB2J|_ file. This is a
+        Magnopy are different from the distances read from the |TB2J|_ file. This is a
         legacy feature, kept for the sake of backward compatibility. See Notes for
         details.
 

@@ -20,21 +20,21 @@
 
 .. hint::
 
-    We recommend to install magnopy with optional dependencies (|plotly|_ and |matplotlib|_)
+    We recommend to install Magnopy with optional dependencies (|plotly|_ and |matplotlib|_)
     whether possible.
 
     .. code-block:: bash
 
         pip install "magnopy[visual]"
 
-    Then, magnopy will produce graphical output (.html and .png) files in addition to the
+    Then, Magnopy will produce graphical output (.html and .png) files in addition to the
     .txt output with the actual data.
 
     Note that if you can not install either |plotly|_ or |matplotlib|_, then all functions
-    of magnopy are still available to you. The only missing part would be the
+    of Magnopy are still available to you. The only missing part would be the
     visualization.
 
-What is magnopy?
+What is Magnopy?
 ================
 
 Magnopy is a python code that, given
@@ -68,11 +68,11 @@ What can it do?
   directions.
 * Visualizes spin Hamiltonian (experimental)
 
-How to support magnopy?
+How to support Magnopy?
 =======================
 
 Magnopy is a relatively young code and we would highly appreciate your support.
 
-* If you use and like magnopy, please give it a star on `GitHub <https://github.com/magnopy/magnopy>`_.
-* Please give feedback on your experience with magnopy (see :ref:`support` page).
-* If you use magnopy in your research, please cite it (see :ref:`cite` page).
+* If you use and like Magnopy, please give it a star on `GitHub <https://github.com/magnopy/magnopy>`_.
+* Please give feedback on your experience with Magnopy (see :ref:`support` page).
+* If you use Magnopy in your research, cite it (see :ref:`cite` page).

@@ -19,7 +19,7 @@ References
 
 
 On this page we recall the approach and main formulas from [1]_ and [2]_. The
-minimization of the magnetic ground state in magnopy is implemented with the
+minimization of the magnetic ground state in Magnopy is implemented with the
 method described in [2]_.
 
 Minimization of the energy function can be formulated as a problem of minimizing the

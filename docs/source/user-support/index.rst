@@ -11,13 +11,13 @@ Github
 
 *   |GitHub-discussions|_
 
-    You can post general questions, discuss magnopy's results and everything else.
+    You can post general questions, discuss Magnopy's results and everything else.
     Github discussions have similar scope to |Forum-google-groups|_.
 
 *   |GitHub-issues|_
 
     Github issues are more specific. Issues should be used if you want to
-    :ref:`propose a feature <user-support_feature>` for magnopy or suspect that you
+    :ref:`propose a feature <user-support_feature>` for Magnopy or suspect that you
     :ref:`encountered a bug <user-support_bug>`.
 
     .. toctree::
@@ -36,5 +36,5 @@ Forum at google groups
 You may send email directly to magnopy@googlegroups.com or post you question on the
 |Forum-google-groups|_.
 
-If you became a member of the magnopy's google group, then you shall receive e-mails
-with announcements of the new releases of magnopy.
+If you became a member of the Magnopy's google group, then you shall receive e-mails
+with announcements of the new releases of Magnopy.

@@ -4,7 +4,7 @@
 Data structures (overview)
 **************************
 
-A number of data structures are defined in magnopy. Two of them are inherited from the
+A number of data structures are defined in Magnopy. Two of them are inherited from the
 |wulfric|_ package (:ref:`user-guide_usage_cell` and :ref:`user-guide_usage_atoms`). Some
 are used to store the parameters of spin Hamiltonian
 (:ref:`user-guide_usage_spin-hamiltonian` and  :ref:`user-guide_usage_convention`) or
@@ -15,7 +15,7 @@ levels of theory and serve as a collection of the things that can be computed
 For the technical reference on how each function, class, method or attribute behaves see
 :ref:`api`.
 
-The image below highlights connections between some of magnopy's data structures.
+The image below highlights connections between some of Magnopy's data structures.
 
 .. figure:: ../../../images/data-structure.png
     :target: ../../_images/data-structure.png

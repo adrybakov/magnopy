@@ -247,8 +247,8 @@ class SpinHamiltonian:
                    [0., 0., 2.]])
 
 
-        In the latter case correct behavior of magnopy **is not** guaranteed. Use only
-        if you have a deep understanding of the magnopy source code.
+        In the latter case correct behavior of Magnopy **is not** guaranteed. Use only
+        if you have a deep understanding of the Magnopy source code.
         """
 
         return self._cell
@@ -309,8 +309,8 @@ class SpinHamiltonian:
             >>> spinham.atoms
             {'names': ['Cr']}
 
-        In the latter case correct behavior of magnopy **is not** guaranteed. Use only
-        if you have a deep understanding of the magnopy source code.
+        In the latter case correct behavior of Magnopy **is not** guaranteed. Use only
+        if you have a deep understanding of the Magnopy source code.
         """
 
         return self._atoms

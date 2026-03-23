@@ -4,9 +4,9 @@
 Documentation
 *************
 
-The documentation of magnopy is build with |sphinx|_.
+The documentation of Magnopy is build with |sphinx|_.
 
-The best way to get a feeling about how the documentation of magnopy is structured is
+The best way to get a feeling about how the documentation of Magnopy is structured is
 to read the source code in the "docs/source/" directory and compare it's content and
 structure with this webpage. If you have any doubts we encourage you to
 :ref:`contact us <support>`.
@@ -29,12 +29,12 @@ Alternatively, you can use the command
 Documentation structure
 =======================
 
-Documentation of magnopy has two main parts
+Documentation of Magnopy has two main parts
 
 * User guide ("docs/source/user-guide/" directory)
 
   Hand-written |reStructuredText|_ files with the examples and explanation of the
-  magnopy's capabilities and theory behind.
+  Magnopy's capabilities and theory behind.
 
 * API ("docs/source/api/" directory)
 
@@ -52,19 +52,19 @@ among other things
 * "docs/source/index.rst" file
 
   The main page of the documentation. It includes the table of contents and the
-  introduction to the magnopy.
+  introduction to the Magnopy.
 
 * "docs/source/user-support/" directory
 
-  The page with the information about how to get support for the users of magnopy.
+  The page with the information about how to get support for the users of Magnopy.
 
 * "docs/source/release-notes/" directory
 
-  The release notes for each version of magnopy.
+  The release notes for each version of Magnopy.
 
 * "docs/source/development/" directory
 
-  Root folder for the documentation for the development of magnopy.
+  Root folder for the documentation for the development of Magnopy.
 
 
 Docstrings
@@ -73,4 +73,4 @@ Docstrings
 All public classes and functions have to have a docstring.
 The docstring has to be written in the |numpydoc|_ style guide.
 
-To get a feeling about the style you can read examples in the source code of magnopy.
+To get a feeling about the style you can read examples in the source code of Magnopy.

@@ -83,7 +83,7 @@ def optimize_sd(
         does not exist.
 
     comment : str, optional
-        Any comment, that will be shown in the standard output right after the magnopy's
+        Any comment, that will be shown in the standard output right after the Magnopy's
         logo.
 
     no_html : bool, default False

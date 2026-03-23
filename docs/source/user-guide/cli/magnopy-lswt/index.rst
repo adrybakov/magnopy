@@ -5,7 +5,7 @@ magnopy-lswt
 ************
 
 This scenario runs a calculation for the given spin Hamiltonian at the level of the
-linear spin wave theory and outputs majority of the results that magnopy can compute.
+linear spin wave theory and outputs majority of the results that Magnopy can compute.
 
 Visit |tutorial-lswt|_ for examples of input and output files.
 
@@ -15,13 +15,13 @@ Getting help
 ============
 
 We recommend to get the accurate and full list of script's parameters, that reflects
-installed version of magnopy with the command
+installed version of Magnopy with the command
 
 .. code-block::
 
     magnopy-lswt --help
 
-which outputs to the standard output channel (console or terminal) magnopy's metadata and
+which outputs to the standard output channel (console or terminal) Magnopy's metadata and
 *full* list of script's arguments. Here is an example of this output
 
 .. hint::

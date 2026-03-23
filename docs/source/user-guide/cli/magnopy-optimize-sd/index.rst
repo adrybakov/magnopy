@@ -16,13 +16,13 @@ Getting help
 ============
 
 We recommend to get the accurate and full list of script's parameters, that reflects
-installed version of magnopy with the command
+installed version of Magnopy with the command
 
 .. code-block::
 
     magnopy-optimize-sd --help
 
-which outputs to the standard output channel (console or terminal) magnopy's metadata and
+which outputs to the standard output channel (console or terminal) Magnopy's metadata and
 *full* list of script's arguments. Here is an example of this output
 
 .. hint::

@@ -6,7 +6,7 @@ Cell
 
 Cell is a set of three vectors that define periodic lattice in real space.
 
-To store it, magnopy uses the approach that is typical for many python-based codes
+To store it, Magnopy uses the approach that is typical for many python-based codes
 (|spglib|_, |wulfric|_, ...).
 
 ``cell`` is a two-dimensional :math:`3\times3` matrix (|array-like|_), that groups

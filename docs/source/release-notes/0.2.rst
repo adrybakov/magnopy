@@ -6,7 +6,7 @@ Version 0.2
 
 .. warning::
 
-    We recommend not to use this version of magnopy due to :issue:`79`, that can affect
+    We recommend not to use this version of Magnopy due to :issue:`79`, that can affect
     some (not all) calculations of spin wave spectra. Use 0.4.2 and later instead.
 
 0.2.1
@@ -14,7 +14,7 @@ Version 0.2
 .. warning::
 
     We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
-    this version of magnopy.
+    this version of Magnopy.
 
 **Date** : 10 September 2025
 
@@ -33,7 +33,7 @@ Bugfix
     old (<2.*) of |numpy|_.
 
     We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
-    this version of magnopy.
+    this version of Magnopy.
 
 **Date**: 10 September 2025
 
@@ -83,7 +83,7 @@ Removed
 Experimental
 ------------
 
-Add ``magnopy.experimental`` submodule, where experimental features of magnopy are located.
+Add ``magnopy.experimental`` submodule, where experimental features of Magnopy are located.
 Those features might migrate to the core package in the future versions or removed from it.
 
 * ``magnopy.experimental.plot_spinham``
