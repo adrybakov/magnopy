@@ -27,33 +27,50 @@
 
         pip install "magnopy[visual]"
 
-    Then, Magnopy will produce graphical output (.html and .png) files in addition to the
-    .txt output with the actual data.
+    as then Magnopy produces graphical output (.html and .png files) in addition to the
+    .txt files with the source data.
 
-    Note that if you can not install either |plotly|_ or |matplotlib|_, then all functions
-    of Magnopy are still available to you. The only missing part would be the
-    visualization.
+    However, if you can not install either |plotly|_ or |matplotlib|_, then all functions
+    of Magnopy are still available. Visualization would be the only missing part.
 
 What is Magnopy?
 ================
 
 Magnopy is a python code that, given
 :ref:`spin Hamiltonian<user-guide_theory-behind_spin-hamiltonian>` in **any**
-:ref:`convention <user-guide_theory-behind_convention-problem>`, computes bosonic (magnon)
+:ref:`convention <user-guide_theory-behind_convention-problem>` and a
+:ref:`vacuum state <user-guide_theory-behind_vacuum-state>`, computes bosonic (magnon)
 Hamiltonian of the form
 
 .. include:: core-formulas/bosonic-hamiltonian.inc
 
 where
 
-* :math:`E^{(0)}` is a classical energy of the ground state;
+* :math:`E^{(0)}` is a classical energy of the vacuum state;
+* :math:`E^{(2)}` is a quantum correction to the energy of the vacuum state that arises at
+  the level of linear spin wave theory (LSWT);
+* :math:`\omega_{\alpha}(\boldsymbol{k})` is magnon dispersion relation derived at the
+  level of LSWT;
 
-Next three terms are derived within the Linear Spin Wave Theory (LSWT):
+In addition to the LSWT Hamiltonian, Magnopy is capable of computing full quantum
+correction to the classical energy of the vacuum state, :math:`E^{corr}`, while LSWT
+only gives a part of it. In other words,
 
-* :math:`E^{(2)}` is a quantum correction to the ground state energy;
-* :math:`\omega_{\alpha}(\boldsymbol{k})` is magnon dispersion at the level of LSWT;
-* :math:`\sum_{\boldsymbol{k}}\Delta(\boldsymbol{k})` is an energy measure of
-  :math:`\pm \boldsymbol{k}` asymmetry.
+.. math::
+
+  E^{corr}
+  =
+  E^{(2)}
+  +
+  \dfrac{1}{2}
+  \sum_{\beta}
+  \sum_{\boldsymbol{k}}
+  \omega_{\beta}(\boldsymbol{k})
+  +
+  \ldots
+
+and magnopy can independently compute the left and right hand sides of this equation.
+
 
 What can it do?
 ===============

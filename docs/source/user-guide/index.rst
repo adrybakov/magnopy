@@ -79,6 +79,7 @@ each concept and give code examples.
     theory-behind/spin-hamiltonian
     theory-behind/convention-problem
     theory-behind/multiple-counting
+    theory-behind/vacuum-state
     theory-behind/energy-minimization
 
 It is important to understand how any tool operates and what it does exactly. In the pages
