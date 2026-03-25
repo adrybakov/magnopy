@@ -77,7 +77,7 @@ each concept and give code examples.
     :maxdepth: 1
 
     theory-behind/spin-hamiltonian
-    theory-behind/convention-problem
+    theory-behind/convention
     theory-behind/multiple-counting
     theory-behind/vacuum-state
     theory-behind/energy-minimization

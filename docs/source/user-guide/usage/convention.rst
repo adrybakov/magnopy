@@ -5,7 +5,7 @@ Convention
 **********
 
 For the theoretical background of the convention problem and why it is important see
-:ref:`user-guide_theory-behind_convention-problem`.
+:ref:`user-guide_theory-behind_convention`.
 
 Magnopy implements a compact, hashable :py:class:`.Convention` class to store the
 convention of the spin Hamiltonian. It stores all parameters that define convention in one

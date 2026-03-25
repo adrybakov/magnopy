@@ -38,7 +38,7 @@ What is Magnopy?
 
 Magnopy is a python code that, given
 :ref:`spin Hamiltonian<user-guide_theory-behind_spin-hamiltonian>` in **any**
-:ref:`convention <user-guide_theory-behind_convention-problem>` and a
+:ref:`convention <user-guide_theory-behind_convention>` and a
 :ref:`vacuum state <user-guide_theory-behind_vacuum-state>`, computes bosonic (magnon)
 Hamiltonian of the form
 
@@ -78,7 +78,7 @@ What can it do?
 * Computes :ref:`all terms of the magnon Hamiltonian <user-guide_cli_magnopy-lswt>` from
   above.
 * Supports :ref:`spin Hamiltonian <user-guide_theory-behind_spin-hamiltonian>` in any
-  :ref:`convention <user-guide_theory-behind_convention-problem>`.
+  :ref:`convention <user-guide_theory-behind_convention>`.
 * Supports a number of :ref:`physical units <user-guide_usage_units>` both for
   Hamiltonian's parameters and for the output quantities.
 * :ref:`Minimizes classical energy <user-guide_cli_optimize-sd>` as a function of the spin
