@@ -69,7 +69,7 @@ only gives a part of it. In other words,
   +
   \ldots
 
-and magnopy can independently compute the left and right hand sides of this equation.
+and Magnopy can independently compute the left and right hand sides of this equation.
 
 
 What can it do?
