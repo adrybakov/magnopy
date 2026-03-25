@@ -1,0 +1,15 @@
+.. _ug_tb_sh_1:
+
+***********
+( 1 ) terms
+***********
+
+TODO: add links to the relevant API
+
+Linear terms of the Hamiltonian are trivial and do not split in extra cases.
+
+.. math::
+    C_1
+    \sum_{\substack{\mu, \\ \alpha_1, \\ i_1}}
+    J^{i_1}_{\alpha_1}
+    S_{\mu, \alpha_1}^{i_1}

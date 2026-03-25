@@ -1,0 +1,42 @@
+.. _ug_tb_sh_4-2:
+
+******************
+(3, 1, 0, 0) terms
+******************
+
+TODO: add links to the relevant API
+
+Second case of quadlinear terms, where three of the four spin operators are associated
+with the same site, and the fourth spin operator is associated with a different site. In
+this page we imply that
+:math:`\boldsymbol{r}_{\mu,\alpha_1} \neq \boldsymbol{r}_{\mu + \nu_2, \alpha_2}`.
+
+.. math::
+    C_{4, 2}
+    \sum_{\substack{\mu, \nu_2, \\ \alpha_1, \alpha_2, \\ i_1, i_2, i_3, i_4}}
+    \Biggl(
+        &
+        J^{i_1, i_2, i_3, i_4}_{0, 0, \nu_2; \alpha_1, \alpha_1, \alpha_1, \alpha_2}
+        S_{\mu, \alpha_1}^{i_1}
+        S_{\mu, \alpha_1}^{i_2}
+        S_{\mu, \alpha_1}^{i_3}
+        S_{\mu + \nu_2, \alpha_2}^{i_4}
+        +\\&+
+        J^{i_1, i_2, i_3, i_4}_{0,\nu_2, 0; \alpha_1,\alpha_1,\alpha_2,\alpha_1}
+        S_{\mu, \alpha_1}^{i_1}
+        S_{\mu, \alpha_1}^{i_2}
+        S_{\mu + \nu_2, \alpha_2}^{i_3}
+        S_{\mu, \alpha_1}^{i_4}
+        +\\&+
+        J^{i_1, i_2, i_3, i_4}_{\nu_2, 0, 0; \alpha_1, \alpha_2, \alpha_1, \alpha_1}
+        S_{\mu, \alpha_1}^{i_1}
+        S_{\mu + \nu_2, \alpha_2}^{i_2}
+        S_{\mu, \alpha_2}^{i_3}
+        S_{\mu, \alpha_2}^{i_4}
+        +\\&+
+        J^{i_1, i_2, i_3, i_4}_{\nu_2, \nu_2, \nu_2; \alpha_1, \alpha_2, \alpha_2, \alpha_2}
+        S_{\mu, \alpha_1}^{i_1}
+        S_{\mu + \nu_2, \alpha_2}^{i_2}
+        S_{\mu + \nu_2, \alpha_2}^{i_3}
+        S_{\mu + \nu_2, \alpha_2}^{i_4}
+    \Biggr)

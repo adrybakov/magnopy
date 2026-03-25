@@ -272,10 +272,16 @@ custom_links = {
         "https://tutorials.magnopy.org/en/latest/FIXME",
     ),
     "scipy": ("scipy", "https://scipy.org/"),
+    "paper-2026": (
+        "paper about Magnopy",
+        "https://docs.magnopy.org/en/latest/cite.html",
+    ),
 }
 rst_epilog += "\n".join(
     map(
-        lambda x: f"\n.. |{x}| replace:: {custom_links[x][0]}\n.. _{x}: {custom_links[x][1]}",
+        lambda x: (
+            f"\n.. |{x}| replace:: {custom_links[x][0]}\n.. _{x}: {custom_links[x][1]}"
+        ),
         [i for i in custom_links],
     )
 )
