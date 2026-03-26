@@ -20,7 +20,7 @@
 # ================================ END LICENSE =================================
 
 r"""
-Routines for conversion of the full 3x3x3x3 tensor of 422 parameter into its parts and back.
+Routines for conversion of the full 3x3x3x3 tensor of 43 parameter into its parts and back.
 """
 
 import numpy as np
@@ -104,12 +104,12 @@ def to_biquadratic(parameter, tensor_form=False):
     .. doctest::
 
         >>> import numpy as np
-        >>> from magnopy import converter422
+        >>> from magnopy import converter43
         >>> parameter = np.ones((3, 3, 3, 3))
-        >>> B = converter422.to_biquadratic(parameter=parameter)
+        >>> B = converter43.to_biquadratic(parameter=parameter)
         >>> B
         1.0
-        >>> J_B = converter422.to_biquadratic(parameter=parameter, tensor_form=True)
+        >>> J_B = converter43.to_biquadratic(parameter=parameter, tensor_form=True)
         >>> J_B
         array([[[[1., 0., 0.],
                  [0., 0., 0.],
@@ -229,8 +229,8 @@ def from_biquadratic(B):
 
     .. doctest::
 
-        >>> from magnopy import converter422
-        >>> parameter = converter422.from_biquadratic(B=1)
+        >>> from magnopy import converter43
+        >>> parameter = converter43.from_biquadratic(B=1)
         >>> parameter.shape
         (3, 3, 3, 3)
         >>> parameter

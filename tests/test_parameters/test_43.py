@@ -25,7 +25,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays as harrays
 
-from magnopy import converter422
+from magnopy import converter43
 
 MAX_MODULUS = 1e4
 ARRAY_3X3X3X3 = harrays(
@@ -49,7 +49,7 @@ INDICES = [
 
 @given(st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS))
 def test_from_biquadratic(B):
-    parameter = converter422.from_biquadratic(B=B)
+    parameter = converter43.from_biquadratic(B=B)
 
     for i in range(3):
         for j in range(3):
@@ -63,7 +63,7 @@ def test_from_biquadratic(B):
 
 @given(ARRAY_3X3X3X3)
 def test_to_biquadratic(parameter):
-    B = converter422.to_biquadratic(parameter=parameter)
+    B = converter43.to_biquadratic(parameter=parameter)
 
     real_B = np.sum([parameter[i, j, u, v] for (i, j, u, v) in INDICES]) / 9
 
