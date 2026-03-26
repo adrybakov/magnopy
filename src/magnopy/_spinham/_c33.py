@@ -35,8 +35,6 @@ def _get_primary_p33(alpha, beta, gamma, nu, _lambda, parameter=None):
     r"""
     Return the primary version of the parameter.
 
-    For the definition of the primary version see
-    :ref:`user-guide_theory-behind_multiple-counting`.
 
     Parameters
     ----------
@@ -429,9 +427,6 @@ def _add_33(
 
     If ``spinham.convention.multiple_counting`` is ``False``, then only the primary
     version of the bond is added to the Hamiltonian.
-
-    For the definition of the primary version see
-    :ref:`user-guide_theory-behind_multiple-counting`.
     """
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
@@ -548,9 +543,6 @@ def _remove_33(
 
     If ``spinham.convention.multiple_counting`` is ``False``, then this function removes
     the primary version of the given bond.
-
-    For the definition of the primary version see
-    :ref:`user-guide_theory-behind_multiple-counting`.
     """
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)

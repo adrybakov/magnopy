@@ -45,9 +45,7 @@ Three objects are required to create spin Hamiltonian :ref:`user-guide_usage_cel
 Adding and removing parameters
 ==============================
 
-Spin Hamiltonian stores parameters of the
-:ref:`user-guide_theory-behind_spin-hamiltonian_expanded-form`. There are eleven groups
-of parameters. A property that starts with ``p`` (i.e. :py:attr:`.SpinHamiltonian.p1`)
+There are eleven groups of parameters. A property that starts with ``p`` (i.e. :py:attr:`.SpinHamiltonian.p1`)
 provides access to the parameters of each group. Two functions that start with ``add_``
 (i.e. :py:meth:`.SpinHamiltonian.add_1`) or ``remove_`` (i.e.
 :py:meth:`.SpinHamiltonian.remove_1`) add or remove a parameter from the Hamiltonian.
@@ -134,9 +132,6 @@ Property                         Loop variables
     Indices of the atoms within the unit cell (``alpha``, ``beta``, ``gamma``,
     ``epsilon``) are integers starting from ``0``. They correspond to the order of atoms
     in the :py:attr:`.SpinHamiltonian.atoms` dictionary.
-
-    All indices directly correspond to the indices in the mathematical form of the spin
-    Hamiltonian in the :ref:`user-guide_theory-behind_spin-hamiltonian_expanded-form`.
 
 Cell and atoms
 ==============

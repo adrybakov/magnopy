@@ -35,9 +35,6 @@ def _get_primary_p22(alpha, beta, nu, parameter=None):
     r"""
     Return the primary version of the parameter.
 
-    For the definition of the primary version see
-    :ref:`user-guide_theory-behind_multiple-counting`.
-
     Parameters
     ----------
 
@@ -258,9 +255,6 @@ def _add_22(
 
     If ``spinham.convention.multiple_counting`` is ``False``, then only the primary
     version of the bond is added to the Hamiltonian.
-
-    For the definition of the primary version see
-    :ref:`user-guide_theory-behind_multiple-counting`.
     """
 
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
@@ -366,9 +360,6 @@ def _remove_22(spinham, alpha: int, beta: int, nu: tuple) -> None:
 
     If ``spinham.convention.multiple_counting`` is ``False``, then this function removes
     the primary version of the given bond.
-
-    For the definition of the primary version see
-    :ref:`user-guide_theory-behind_multiple-counting`.
 
     For instance, if ``(1, 0, (0, 0, 0))`` is given, then this function attempts to
     remove either both ``(1, 0, (0, 0, 0))`` and ``(0, 1, (0, 0, 0))`` if
