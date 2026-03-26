@@ -335,11 +335,11 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
 
                     new_spinham.add_41(alpha=alpha, parameter=parameter)
 
-                for alpha, beta, nu, parameter in spinham._421:
+                for alpha, beta, nu, parameter in spinham._42:
                     alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
 
-                    new_spinham.add_421(
+                    new_spinham.add_42(
                         alpha=alpha,
                         beta=beta,
                         nu=nu,
@@ -347,11 +347,11 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                         when_present="replace",
                     )
 
-                for alpha, beta, nu, parameter in spinham._422:
+                for alpha, beta, nu, parameter in spinham._43:
                     alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
 
-                    new_spinham.add_422(
+                    new_spinham.add_43(
                         alpha=alpha,
                         beta=beta,
                         nu=nu,
@@ -359,14 +359,14 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                         when_present="replace",
                     )
 
-                for alpha, beta, gamma, nu, _lambda, parameter in spinham._43:
+                for alpha, beta, gamma, nu, _lambda, parameter in spinham._44:
                     alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
                     gamma, _lambda = get_new_indices(
                         alpha=gamma, nu=_lambda, ijk=(i, j, k)
                     )
 
-                    new_spinham.add_43(
+                    new_spinham.add_44(
                         alpha=alpha,
                         beta=beta,
                         gamma=gamma,
@@ -385,14 +385,14 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
                     _lambda,
                     rho,
                     parameter,
-                ) in spinham._44:
+                ) in spinham._45:
                     alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
                     beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
                     gamma, _lambda = get_new_indices(
                         alpha=gamma, nu=_lambda, ijk=(i, j, k)
                     )
                     epsilon, rho = get_new_indices(alpha=epsilon, nu=rho, ijk=(i, j, k))
-                    new_spinham.add_44(
+                    new_spinham.add_45(
                         alpha=alpha,
                         beta=beta,
                         gamma=gamma,

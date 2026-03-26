@@ -64,10 +64,10 @@ def get_spinham(for_supercell=False) -> SpinHamiltonian:
             c32=1,
             c33=1,
             c41=1,
-            c421=1,
-            c422=1,
+            c42=1,
             c43=1,
             c44=1,
+            c45=1,
         ),
     )
 

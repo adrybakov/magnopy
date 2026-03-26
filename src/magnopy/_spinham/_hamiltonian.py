@@ -33,10 +33,10 @@ from magnopy._spinham._c31 import _add_31, _p31, _remove_31
 from magnopy._spinham._c32 import _add_32, _p32, _remove_32
 from magnopy._spinham._c33 import _add_33, _p33, _remove_33
 from magnopy._spinham._c41 import _add_41, _p41, _remove_41
-from magnopy._spinham._c43 import _add_43, _p43, _remove_43
 from magnopy._spinham._c44 import _add_44, _p44, _remove_44
-from magnopy._spinham._c421 import _add_421, _p421, _remove_421
-from magnopy._spinham._c422 import _add_422, _p422, _remove_422
+from magnopy._spinham._c45 import _add_45, _p45, _remove_45
+from magnopy._spinham._c42 import _add_42, _p42, _remove_42
+from magnopy._spinham._c43 import _add_43, _p43, _remove_43
 from magnopy._spinham._convention import Convention
 
 from magnopy._data_validation import _validated_units
@@ -177,16 +177,16 @@ class SpinHamiltonian:
         self._41 = []
 
         # [[alpha, beta, nu, parameter], ...]
-        self._421 = []
+        self._42 = []
 
         # [[alpha, beta, nu, parameter], ...]
-        self._422 = []
-
-        # [[alpha, beta, gamma, nu, lambda, parameter], ...]
         self._43 = []
 
-        # [[alpha, beta, gamma, epsilon, nu, lambda, rho, parameter], ...]
+        # [[alpha, beta, gamma, nu, lambda, parameter], ...]
         self._44 = []
+
+        # [[alpha, beta, gamma, epsilon, nu, lambda, rho, parameter], ...]
+        self._45 = []
 
     ############################################################################
     #                              Cell and Atoms                              #
@@ -355,20 +355,20 @@ class SpinHamiltonian:
         for alpha, _ in self._41:
             indices.add(alpha)
 
-        for alpha, beta, _, _ in self._421:
+        for alpha, beta, _, _ in self._42:
             indices.add(alpha)
             indices.add(beta)
 
-        for alpha, beta, _, _ in self._422:
+        for alpha, beta, _, _ in self._43:
             indices.add(alpha)
             indices.add(beta)
 
-        for alpha, beta, gamma, _, _, _ in self._43:
+        for alpha, beta, gamma, _, _, _ in self._44:
             indices.add(alpha)
             indices.add(beta)
             indices.add(gamma)
 
-        for alpha, beta, gamma, epsilon, _, _, _, _ in self._44:
+        for alpha, beta, gamma, epsilon, _, _, _, _ in self._45:
             indices.add(alpha)
             indices.add(beta)
             indices.add(gamma)
@@ -509,10 +509,10 @@ class SpinHamiltonian:
         self._set_c33(new_convention._c33)
 
         self._set_c41(new_convention._c41)
-        self._set_c421(new_convention._c421)
-        self._set_c422(new_convention._c422)
+        self._set_c42(new_convention._c42)
         self._set_c43(new_convention._c43)
         self._set_c44(new_convention._c44)
+        self._set_c45(new_convention._c45)
 
         self._convention = new_convention
 
@@ -541,12 +541,12 @@ class SpinHamiltonian:
             self._32[index][3] = self._32[index][3] * factor
 
         # For (four spins & two sites (3+1))
-        for index in range(len(self._421)):
-            self._421[index][3] = self._421[index][3] * factor
+        for index in range(len(self._42)):
+            self._42[index][3] = self._42[index][3] * factor
 
         # For (four spins & two sites (2+2))
-        for index in range(len(self._422)):
-            self._422[index][3] = self._422[index][3] * factor
+        for index in range(len(self._43)):
+            self._43[index][3] = self._43[index][3] * factor
 
         # It was absent before
         if multiple_counting:
@@ -560,8 +560,8 @@ class SpinHamiltonian:
             self._33[index][5] = self._33[index][5] * factor
 
         # For (four spins & three sites)
-        for index in range(len(self._43)):
-            self._43[index][5] = self._43[index][5] * factor
+        for index in range(len(self._44)):
+            self._44[index][5] = self._44[index][5] * factor
 
         # It was absent before
         if multiple_counting:
@@ -571,8 +571,8 @@ class SpinHamiltonian:
             factor = 24
 
         # For (four spins & four sites)
-        for index in range(len(self._44)):
-            self._44[index][7] = self._44[index][7] * factor
+        for index in range(len(self._45)):
+            self._45[index][7] = self._45[index][7] * factor
 
     def _set_spin_normalization(self, spin_normalized: bool) -> None:
         if spin_normalized is None or self.convention._spin_normalized is None:
@@ -626,36 +626,36 @@ class SpinHamiltonian:
                 alpha = self._41[index][0]
                 self._41[index][1] = self._41[index][1] * self.atoms.spins[alpha] ** 4
             # For (four spins & two sites (3+1))
-            for index in range(len(self._421)):
-                alpha = self._421[index][0]
-                beta = self._421[index][1]
-                self._421[index][3] = self._421[index][3] * (
+            for index in range(len(self._42)):
+                alpha = self._42[index][0]
+                beta = self._42[index][1]
+                self._42[index][3] = self._42[index][3] * (
                     self.atoms.spins[alpha] ** 3 * self.atoms.spins[beta]
                 )
             # For (four spins & two sites (2+2))
-            for index in range(len(self._422)):
-                alpha = self._422[index][0]
-                beta = self._422[index][1]
-                self._422[index][3] = self._422[index][3] * (
-                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta] ** 2
-                )
-            # For (four spins & three sites)
             for index in range(len(self._43)):
                 alpha = self._43[index][0]
                 beta = self._43[index][1]
-                gamma = self._43[index][2]
-                self._43[index][5] = self._43[index][5] * (
+                self._43[index][3] = self._43[index][3] * (
+                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta] ** 2
+                )
+            # For (four spins & three sites)
+            for index in range(len(self._44)):
+                alpha = self._44[index][0]
+                beta = self._44[index][1]
+                gamma = self._44[index][2]
+                self._44[index][5] = self._44[index][5] * (
                     self.atoms.spins[alpha] ** 2
                     * self.atoms.spins[beta]
                     * self.atoms.spins[gamma]
                 )
             # For (four spins & four sites)
-            for index in range(len(self._44)):
-                alpha = self._44[index][0]
-                beta = self._44[index][1]
-                gamma = self._44[index][2]
-                epsilon = self._44[index][3]
-                self._44[index][7] = self._44[index][7] * (
+            for index in range(len(self._45)):
+                alpha = self._45[index][0]
+                beta = self._45[index][1]
+                gamma = self._45[index][2]
+                epsilon = self._45[index][3]
+                self._45[index][7] = self._45[index][7] * (
                     self.atoms.spins[alpha]
                     * self.atoms.spins[beta]
                     * self.atoms.spins[gamma]
@@ -704,36 +704,36 @@ class SpinHamiltonian:
                 alpha = self._41[index][0]
                 self._41[index][1] = self._41[index][1] / self.atoms.spins[alpha] ** 4
             # For (four spins & two sites (3+1))
-            for index in range(len(self._421)):
-                alpha = self._421[index][0]
-                beta = self._421[index][1]
-                self._421[index][3] = self._421[index][3] / (
+            for index in range(len(self._42)):
+                alpha = self._42[index][0]
+                beta = self._42[index][1]
+                self._42[index][3] = self._42[index][3] / (
                     self.atoms.spins[alpha] ** 3 * self.atoms.spins[beta]
                 )
             # For (four spins & two sites (2+2))
-            for index in range(len(self._422)):
-                alpha = self._422[index][0]
-                beta = self._422[index][1]
-                self._422[index][3] = self._422[index][3] / (
-                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta] ** 2
-                )
-            # For (four spins & three sites)
             for index in range(len(self._43)):
                 alpha = self._43[index][0]
                 beta = self._43[index][1]
-                gamma = self._43[index][2]
-                self._43[index][5] = self._43[index][5] / (
+                self._43[index][3] = self._43[index][3] / (
+                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta] ** 2
+                )
+            # For (four spins & three sites)
+            for index in range(len(self._44)):
+                alpha = self._44[index][0]
+                beta = self._44[index][1]
+                gamma = self._44[index][2]
+                self._44[index][5] = self._44[index][5] / (
                     self.atoms.spins[alpha] ** 2
                     * self.atoms.spins[beta]
                     * self.atoms.spins[gamma]
                 )
             # For (four spins & four sites)
-            for index in range(len(self._44)):
-                alpha = self._44[index][0]
-                beta = self._44[index][1]
-                gamma = self._44[index][2]
-                epsilon = self._44[index][3]
-                self._44[index][7] = self._44[index][7] / (
+            for index in range(len(self._45)):
+                alpha = self._45[index][0]
+                beta = self._45[index][1]
+                gamma = self._45[index][2]
+                epsilon = self._45[index][3]
+                self._45[index][7] = self._45[index][7] / (
                     self.atoms.spins[alpha]
                     * self.atoms.spins[beta]
                     * self.atoms.spins[gamma]
@@ -831,31 +831,18 @@ class SpinHamiltonian:
         for index in range(len(self._41)):
             self._41[index][1] = self._41[index][1] * self.convention.c41 / new_c41
 
-    def _set_c421(self, new_c421: float) -> None:
-        if new_c421 is None or self.convention._c421 is None:
+    def _set_c42(self, new_c42: float) -> None:
+        if new_c42 is None or self.convention._c42 is None:
             return
 
-        new_c421 = float(new_c421)
+        new_c42 = float(new_c42)
 
-        if self.convention.c421 == new_c421:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._421)):
-            self._421[index][3] = self._421[index][3] * self.convention.c421 / new_c421
-
-    def _set_c422(self, new_c422: float) -> None:
-        if new_c422 is None or self.convention._c422 is None:
-            return
-
-        new_c422 = float(new_c422)
-
-        if self.convention.c422 == new_c422:
+        if self.convention.c42 == new_c42:
             return
 
         # If factor is changing one has to scale parameters.
-        for index in range(len(self._422)):
-            self._422[index][3] = self._422[index][3] * self.convention.c422 / new_c422
+        for index in range(len(self._42)):
+            self._42[index][3] = self._42[index][3] * self.convention.c42 / new_c42
 
     def _set_c43(self, new_c43: float) -> None:
         if new_c43 is None or self.convention._c43 is None:
@@ -868,7 +855,7 @@ class SpinHamiltonian:
 
         # If factor is changing one has to scale parameters.
         for index in range(len(self._43)):
-            self._43[index][5] = self._43[index][5] * self.convention.c43 / new_c43
+            self._43[index][3] = self._43[index][3] * self.convention.c43 / new_c43
 
     def _set_c44(self, new_c44: float) -> None:
         if new_c44 is None or self.convention._c44 is None:
@@ -881,7 +868,20 @@ class SpinHamiltonian:
 
         # If factor is changing one has to scale parameters.
         for index in range(len(self._44)):
-            self._44[index][7] = self._44[index][7] * self.convention.c44 / new_c44
+            self._44[index][5] = self._44[index][5] * self.convention.c44 / new_c44
+
+    def _set_c45(self, new_c45: float) -> None:
+        if new_c45 is None or self.convention._c45 is None:
+            return
+
+        new_c45 = float(new_c45)
+
+        if self.convention.c45 == new_c45:
+            return
+
+        # If factor is changing one has to scale parameters.
+        for index in range(len(self._45)):
+            self._45[index][7] = self._45[index][7] * self.convention.c45 / new_c45
 
     ############################################################################
     #                                   Units                                  #
@@ -948,22 +948,22 @@ class SpinHamiltonian:
         for index in range(len(self._32)):
             self._32[index][3] = self._32[index][3] * conversion_factor
 
-        for index in range(len(self._421)):
-            self._421[index][3] = self._421[index][3] * conversion_factor
+        for index in range(len(self._42)):
+            self._42[index][3] = self._42[index][3] * conversion_factor
 
-        for index in range(len(self._422)):
-            self._422[index][3] = self._422[index][3] * conversion_factor
+        for index in range(len(self._43)):
+            self._43[index][3] = self._43[index][3] * conversion_factor
 
         # Three-sites parameters
         for index in range(len(self._33)):
             self._33[index][5] = self._33[index][5] * conversion_factor
 
-        for index in range(len(self._43)):
-            self._43[index][5] = self._43[index][5] * conversion_factor
+        for index in range(len(self._44)):
+            self._44[index][5] = self._44[index][5] * conversion_factor
 
         # Four-sites parameters
-        for index in range(len(self._44)):
-            self._44[index][7] = self._44[index][7] * conversion_factor
+        for index in range(len(self._45)):
+            self._45[index][7] = self._45[index][7] * conversion_factor
 
         self._units = new_units.lower()
 
@@ -1372,17 +1372,17 @@ class SpinHamiltonian:
         for i in range(len(spinham._41)):
             spinham._41[i][1] *= number
 
-        for i in range(len(spinham._421)):
-            spinham._421[i][3] *= number
-
-        for i in range(len(spinham._422)):
-            spinham._422[i][3] *= number
+        for i in range(len(spinham._42)):
+            spinham._42[i][3] *= number
 
         for i in range(len(spinham._43)):
-            spinham._43[i][5] *= number
+            spinham._43[i][3] *= number
 
         for i in range(len(spinham._44)):
-            spinham._44[i][7] *= number
+            spinham._44[i][5] *= number
+
+        for i in range(len(spinham._45)):
+            spinham._45[i][7] *= number
 
         return spinham
 
@@ -1446,10 +1446,10 @@ class SpinHamiltonian:
 
         # Four spin terms
         result._41 = _merge(list1=self._41, list2=other._41)
-        result._421 = _merge(list1=self._421, list2=other._421)
-        result._422 = _merge(list1=self._422, list2=other._422)
+        result._42 = _merge(list1=self._42, list2=other._42)
         result._43 = _merge(list1=self._43, list2=other._43)
         result._44 = _merge(list1=self._44, list2=other._44)
+        result._45 = _merge(list1=self._45, list2=other._45)
 
         # Restore units of other Hamiltonian
         other.units = other_units
@@ -1514,30 +1514,30 @@ class SpinHamiltonian:
     ############################################################################
     #                          Four spins & two sites (3+1)                    #
     ############################################################################
-    p421 = _p421
-    add_421 = _add_421
-    remove_421 = _remove_421
+    p42 = _p42
+    add_42 = _add_42
+    remove_42 = _remove_42
 
     ############################################################################
     #                          Four spins & two sites (2+2)                    #
-    ############################################################################
-    p422 = _p422
-    add_422 = _add_422
-    remove_422 = _remove_422
-
-    ############################################################################
-    #                         Four spins & three sites                         #
     ############################################################################
     p43 = _p43
     add_43 = _add_43
     remove_43 = _remove_43
 
     ############################################################################
-    #                          Four spins & four sites                         #
+    #                         Four spins & three sites                         #
     ############################################################################
     p44 = _p44
     add_44 = _add_44
     remove_44 = _remove_44
+
+    ############################################################################
+    #                          Four spins & four sites                         #
+    ############################################################################
+    p45 = _p45
+    add_45 = _add_45
+    remove_45 = _remove_45
 
 
 # Populate __all__ with objects defined in this file

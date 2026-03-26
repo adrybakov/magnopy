@@ -31,13 +31,12 @@ from magnopy._data_validation import (
 from magnopy._constants._units import _PARAMETER_UNITS
 
 
-def _get_primary_p422(alpha, beta, nu, parameter=None):
+def _get_primary_p42(alpha, beta, nu, parameter=None, S_alpha=None, S_beta=None):
     r"""
     Return the primary version of the parameter.
 
     Parameters
     ----------
-
     alpha : int
         Index of the first atom.
 
@@ -49,6 +48,12 @@ def _get_primary_p422(alpha, beta, nu, parameter=None):
 
     parameter : (3, 3, 3, 3) :numpy:`ndarray`, optional
         Full matrix of the parameter.
+
+    S_alpha : float, optional
+        Spin value of atom ``alpha``
+
+    S_beta : float, optional
+        Spin value of atom ``beta``
 
     Returns
     -------
@@ -71,23 +76,24 @@ def _get_primary_p422(alpha, beta, nu, parameter=None):
         i, j, k = nu
         alpha, beta, nu = beta, alpha, (-i, -j, -k)
         if parameter is not None:
-            parameter = np.transpose(parameter, (2, 3, 0, 1))
+            parameter = np.transpose(parameter, (3, 1, 2, 0)) * (S_alpha / S_beta) ** 2
 
     if parameter is None:
         return alpha, beta, nu
     return alpha, beta, nu, parameter
 
 
-class _P422_iterator:
+class _P42_iterator:
     R"""
-    Iterator over the (four spins & two sites (2+2)) parameters of the spin Hamiltonian.
+    Iterator over the (four spins & two sites (3+1)) parameters of the spin Hamiltonian.
     """
 
     def __init__(self, spinham) -> None:
-        self.container = spinham._422
+        self.container = spinham._42
         self.mc = spinham.convention.multiple_counting
         self.length = len(self.container)
         self.index = 0
+        self.spins = spinham.atoms.spins
 
     def __next__(self):
         if self.index < self.length:
@@ -99,7 +105,13 @@ class _P422_iterator:
             alpha, beta, (i, j, k), parameter = self.container[
                 self.index - 1 - self.length
             ]
-            return [beta, alpha, (-i, -j, -k), np.transpose(parameter, (2, 3, 0, 1))]
+            return [
+                beta,
+                alpha,
+                (-i, -j, -k),
+                np.transpose(parameter, (3, 1, 2, 0))
+                * (self.spins[alpha] / self.spins[beta]) ** 2,
+            ]
 
         raise StopIteration
 
@@ -111,24 +123,24 @@ class _P422_iterator:
 
 
 @property
-def _p422(spinham):
+def _p42(spinham):
     r"""
-    Parameters of (four spins & two sites (2+2)) term of the Hamiltonian.
+    Parameters of (four spins & two sites (3+1)) term of the Hamiltonian.
 
     .. math::
 
-        \boldsymbol{J}_{4,2,2}(\boldsymbol{r}_{\nu,\alpha\beta})
+        \boldsymbol{J}_{4,2,1}(\boldsymbol{r}_{\nu,\alpha\beta})
 
     of the term
 
     .. math::
 
-        C_{4,2,2}
+        C_{4,2,1}
         \sum_{\substack{\mu, \nu, \alpha, \beta,\\ i, j, u, v}}
-        J^{ijuv}_{4,2,2}(\boldsymbol{r}_{\nu,\alpha\beta})
+        J^{ijuv}_{4,2,1}(\boldsymbol{r}_{\nu,\alpha\beta})
         S_{\mu,\alpha}^i
         S_{\mu,\alpha}^j
-        S_{\mu+\nu,\beta}^u
+        S_{\mu,\alpha}^u
         S_{\mu+\nu,\beta}^v
 
     Returns
@@ -155,14 +167,16 @@ def _p422(spinham):
     See Also
     --------
 
-    add_422
-    remove_422
+    add_42
+    remove_42
     """
 
-    return _P422_iterator(spinham)
+    return _P42_iterator(spinham)
 
 
-def _add_422(
+# ARGUMENT "replace" DEPRECATED since 0.4.0
+# Remove in May of 2026
+def _add_42(
     spinham,
     alpha: int,
     beta: int,
@@ -172,7 +186,7 @@ def _add_422(
     when_present="raise error",
 ) -> None:
     r"""
-    Adds a (four spins & two sites (2+2)) parameter to the Hamiltonian.
+    Adds a (four spins & two sites (3+1)) parameter to the Hamiltonian.
 
     Doubles of the bonds are managed automatically (independently of the convention of the
     Hamiltonian).
@@ -236,11 +250,12 @@ def _add_422(
     ValueError
         If ``when_present`` has an unsupported value.
 
+
     See Also
     --------
 
-    p422
-    remove_422
+    p42
+    remove_42
 
     Notes
     -----
@@ -266,32 +281,37 @@ def _add_422(
             parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
         )
 
-    alpha, beta, nu, parameter = _get_primary_p422(
-        alpha=alpha, beta=beta, nu=nu, parameter=parameter
+    alpha, beta, nu, parameter = _get_primary_p42(
+        alpha=alpha,
+        beta=beta,
+        nu=nu,
+        parameter=parameter,
+        S_alpha=spinham.atoms.spins[alpha],
+        S_beta=spinham.atoms.spins[beta],
     )
 
     # TODO BINARY SEARCH
     # Try to find the place for the new one inside the list
     index = 0
-    while index < len(spinham._422):
+    while index < len(spinham._42):
         # If already present in the model
-        if spinham._422[index][:3] == [alpha, beta, nu]:
+        if spinham._42[index][:3] == [alpha, beta, nu]:
             # Either replace
             if when_present.lower() == "replace":
-                spinham._422[index][3] = parameter
+                spinham._42[index][3] = parameter
             # Or add
             elif when_present.lower() == "add":
-                spinham._422[index][3] = spinham._422[index][3] + parameter
+                spinham._42[index][3] = spinham._42[index][3] + parameter
             # Or replace with mean value
             elif when_present.lower() == "mean":
-                spinham._422[index][3] = (spinham._422[index][3] + parameter) / 2.0
+                spinham._42[index][3] = (spinham._42[index][3] + parameter) / 2.0
             # Or do nothing
             elif when_present.lower() == "skip":
                 pass
             # Or raise an error
             elif when_present.lower() == "raise error":
                 raise ValueError(
-                    f"(Four spins & two sites, 2+2) parameter is already set for the pair of atoms {alpha} and {beta} ({nu}). Or for their double bond."
+                    f"(Four spins & two sites, 3+1) parameter is already set for the pair of atoms {alpha} and {beta} ({nu}). Or for their double bond."
                 )
             else:
                 raise ValueError(
@@ -301,19 +321,19 @@ def _add_422(
             return
 
         # If it should be inserted before current element
-        if spinham._422[index][:3] > [alpha, beta, nu]:
-            spinham._422.insert(index, [alpha, beta, nu, parameter])
+        if spinham._42[index][:3] > [alpha, beta, nu]:
+            spinham._42.insert(index, [alpha, beta, nu, parameter])
             return
 
         index += 1
 
     # If it should be inserted at the end or at the beginning of the list
-    spinham._422.append([alpha, beta, nu, parameter])
+    spinham._42.append([alpha, beta, nu, parameter])
 
 
-def _remove_422(spinham, alpha: int, beta: int, nu: tuple) -> None:
+def _remove_42(spinham, alpha: int, beta: int, nu: tuple) -> None:
     r"""
-    Removes a (four spins & two sites (2+2)) parameter from the Hamiltonian.
+    Removes a (four spins & two sites (3+1)) parameter from the Hamiltonian.
 
     Doubles of the bonds are managed automatically (independently of the convention of the
     Hamiltonian).
@@ -344,8 +364,8 @@ def _remove_422(spinham, alpha: int, beta: int, nu: tuple) -> None:
     See Also
     --------
 
-    p422
-    add_422
+    p42
+    add_42
 
     Notes
     -----
@@ -366,17 +386,17 @@ def _remove_422(spinham, alpha: int, beta: int, nu: tuple) -> None:
     _validate_atom_index(index=beta, atoms=spinham.atoms)
     _validate_unit_cell_index(ijk=nu)
 
-    alpha, beta, nu = _get_primary_p422(alpha=alpha, beta=beta, nu=nu)
+    alpha, beta, nu = _get_primary_p42(alpha=alpha, beta=beta, nu=nu)
 
     # TD-BINARY_SEARCH
 
-    for index in range(len(spinham._422)):
+    for index in range(len(spinham._42)):
         # As the list is sorted, there is no point in resuming the search
         # when a larger element is found
-        if spinham._422[index][:3] > [alpha, beta, nu]:
+        if spinham._42[index][:3] > [alpha, beta, nu]:
             return
 
-        if spinham._422[index][:3] == [alpha, beta, nu]:
-            del spinham._422[index]
+        if spinham._42[index][:3] == [alpha, beta, nu]:
+            del spinham._42[index]
             spinham._reset_internals()
             return

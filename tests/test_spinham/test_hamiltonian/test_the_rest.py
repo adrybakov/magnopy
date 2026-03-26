@@ -230,7 +230,7 @@ def get_empty():
     assert len(empty_spinham.p32) == 0
     assert len(empty_spinham.p33) == 0
     assert len(empty_spinham.p41) == 0
-    assert len(empty_spinham.p421) == 0
-    assert len(empty_spinham.p422) == 0
+    assert len(empty_spinham.p42) == 0
     assert len(empty_spinham.p43) == 0
     assert len(empty_spinham.p44) == 0
+    assert len(empty_spinham.p45) == 0

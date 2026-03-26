@@ -31,12 +31,23 @@ from magnopy._data_validation import (
 from magnopy._constants._units import _PARAMETER_UNITS
 
 
-def _get_primary_p44(alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter=None):
+def _get_primary_p44(
+    alpha,
+    beta,
+    gamma,
+    nu,
+    _lambda,
+    parameter=None,
+    S_alpha=None,
+    S_beta=None,
+    S_gamma=None,
+):
     r"""
     Return the primary version of the parameter.
 
     Parameters
     ----------
+
     alpha : int
         Index of the first atom.
 
@@ -46,20 +57,23 @@ def _get_primary_p44(alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter=No
     gamma : int
         Index of the third atom.
 
-    epsilon : int
-        Index of the fourth atom.
-
     nu : tuple of 3 int
         Unit cell for the second atom.
 
     _lambda : tuple of 3 int
         Unit cell for the third atom.
 
-    rho : tuple of 3 int
-        Unit cell for the fourth atom.
-
     parameter : (3, 3, 3, 3) :numpy:`ndarray`, optional
         Full matrix of the parameter.
+
+    S_alpha : float, optional
+        Spin value of atom ``alpha``
+
+    S_beta : float, optional
+        Spin value of atom ``beta``
+
+    S_gamma : float, optional
+        Spin value of atom ``gamma``
 
     Returns
     -------
@@ -73,486 +87,88 @@ def _get_primary_p44(alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter=No
     gamma : int
         Index of the third atom.
 
-    epsilon : int
-        Index of the fourth atom.
-
     nu : tuple of 3 int
         Unit cell for the second atom.
 
     _lambda : tuple of 3 int
         Unit cell for the third atom.
 
-    rho : tuple of 3 int
-        Unit cell for the fourth atom.
-
     parameter : (3, 3, 3, 3) :numpy:`ndarray`, optional
         Full matrix of the parameter. It is returned only if ``parameter is not None``.
     """
 
-    def _ordered(mu1, alpha1, mu2, alpha2, mu3, alpha3, mu4, alpha4):
-        return (
-            _spins_ordered(mu1=mu1, alpha1=alpha1, mu2=mu2, alpha2=alpha2)
-            and _spins_ordered(mu1=mu2, alpha1=alpha2, mu2=mu3, alpha2=alpha3)
-            and _spins_ordered(mu1=mu3, alpha1=alpha3, mu2=mu4, alpha2=alpha4)
-        )
+    def _ordered(mu1, alpha1, mu2, alpha2, mu3, alpha3):
+        return _spins_ordered(
+            mu1=mu1, alpha1=alpha1, mu2=mu2, alpha2=alpha2
+        ) and _spins_ordered(mu1=mu2, alpha1=alpha2, mu2=mu3, alpha2=alpha3)
 
     # Case 1
     if _ordered(
-        mu1=(0, 0, 0),
-        alpha1=alpha,
-        mu2=nu,
-        alpha2=beta,
-        mu3=_lambda,
-        alpha3=gamma,
-        mu4=rho,
-        alpha4=epsilon,
+        mu1=(0, 0, 0), alpha1=alpha, mu2=nu, alpha2=beta, mu3=_lambda, alpha3=gamma
     ):
         pass
     # Case 2
     elif _ordered(
-        mu1=(0, 0, 0),
-        alpha1=alpha,
-        mu2=nu,
-        alpha2=beta,
-        mu3=rho,
-        alpha3=epsilon,
-        mu4=_lambda,
-        alpha4=gamma,
+        mu1=(0, 0, 0), alpha1=alpha, mu2=_lambda, alpha2=gamma, mu3=nu, alpha3=beta
     ):
-        alpha, beta, gamma, epsilon = alpha, beta, epsilon, gamma
-        nu, _lambda, rho = nu, rho, _lambda
+        alpha, beta, gamma = alpha, gamma, beta
+        nu, _lambda = _lambda, nu
         if parameter is not None:
             parameter = np.transpose(parameter, (0, 1, 3, 2))
     # Case 3
     elif _ordered(
-        mu1=(0, 0, 0),
-        alpha1=alpha,
-        mu2=_lambda,
-        alpha2=gamma,
-        mu3=nu,
-        alpha3=beta,
-        mu4=rho,
-        alpha4=epsilon,
+        mu1=nu, alpha1=beta, mu2=(0, 0, 0), alpha2=alpha, mu3=_lambda, alpha3=gamma
     ):
-        alpha, beta, gamma, epsilon = alpha, gamma, beta, epsilon
-        nu, _lambda, rho = _lambda, nu, rho
+        alpha, beta, gamma = beta, alpha, gamma
+        nu1, nu2, nu3 = nu
+        lambda1, lambda2, lambda3 = _lambda
+        nu = (-nu1, -nu2, -nu3)
+        _lambda = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
         if parameter is not None:
-            parameter = np.transpose(parameter, (0, 2, 1, 3))
+            parameter = np.transpose(parameter, (2, 1, 0, 3)) * S_alpha / S_beta
     # Case 4
     elif _ordered(
-        mu1=(0, 0, 0),
-        alpha1=alpha,
-        mu2=_lambda,
-        alpha2=gamma,
-        mu3=rho,
-        alpha3=epsilon,
-        mu4=nu,
-        alpha4=beta,
+        mu1=nu, alpha1=beta, mu2=_lambda, alpha2=gamma, mu3=(0, 0, 0), alpha3=alpha
     ):
-        alpha, beta, gamma, epsilon = alpha, gamma, epsilon, beta
-        nu, _lambda, rho = _lambda, rho, nu
+        alpha, beta, gamma = beta, gamma, alpha
+        nu1, nu2, nu3 = nu
+        lambda1, lambda2, lambda3 = _lambda
+        nu = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
+        _lambda = (-nu1, -nu2, -nu3)
         if parameter is not None:
-            parameter = np.transpose(parameter, (0, 3, 1, 2))
+            parameter = np.transpose(parameter, (3, 1, 0, 2)) * S_alpha / S_beta
     # Case 5
     elif _ordered(
-        mu1=(0, 0, 0),
-        alpha1=alpha,
-        mu2=rho,
-        alpha2=epsilon,
-        mu3=nu,
-        alpha3=beta,
-        mu4=_lambda,
-        alpha4=gamma,
+        mu1=_lambda, alpha1=gamma, mu2=(0, 0, 0), alpha2=alpha, mu3=nu, alpha3=beta
     ):
-        alpha, beta, gamma, epsilon = alpha, epsilon, beta, gamma
-        nu, _lambda, rho = rho, nu, _lambda
+        alpha, beta, gamma = gamma, alpha, beta
+        nu1, nu2, nu3 = nu
+        lambda1, lambda2, lambda3 = _lambda
+        nu = (-lambda1, -lambda2, -lambda3)
+        _lambda = (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3)
         if parameter is not None:
-            parameter = np.transpose(parameter, (0, 2, 3, 1))
+            parameter = np.transpose(parameter, (2, 1, 3, 0)) * S_alpha / S_gamma
     # Case 6
     elif _ordered(
-        mu1=(0, 0, 0),
-        alpha1=alpha,
-        mu2=rho,
-        alpha2=epsilon,
-        mu3=_lambda,
-        alpha3=gamma,
-        mu4=nu,
-        alpha4=beta,
+        mu1=_lambda, alpha1=gamma, mu2=nu, alpha2=beta, mu3=(0, 0, 0), alpha3=alpha
     ):
-        alpha, beta, gamma, epsilon = alpha, epsilon, gamma, beta
-        nu, _lambda, rho = rho, _lambda, nu
-        if parameter is not None:
-            parameter = np.transpose(parameter, (0, 3, 2, 1))
-    # Case 7
-    elif _ordered(
-        mu1=nu,
-        alpha1=beta,
-        mu2=(0, 0, 0),
-        alpha2=alpha,
-        mu3=_lambda,
-        alpha3=gamma,
-        mu4=rho,
-        alpha4=epsilon,
-    ):
-        alpha, beta, gamma, epsilon = beta, alpha, gamma, epsilon
+        alpha, beta, gamma = gamma, beta, alpha
         nu1, nu2, nu3 = nu
         lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (-nu1, -nu2, -nu3)
-        _lambda = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
-        rho = (rho1 - nu1, rho2 - nu2, rho3 - nu3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (1, 0, 2, 3))
-    # Case 8
-    elif _ordered(
-        mu1=nu,
-        alpha1=beta,
-        mu2=(0, 0, 0),
-        alpha2=alpha,
-        mu3=rho,
-        alpha3=epsilon,
-        mu4=_lambda,
-        alpha4=gamma,
-    ):
-        alpha, beta, gamma, epsilon = beta, alpha, epsilon, gamma
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (-nu1, -nu2, -nu3)
-        _lambda = (rho1 - nu1, rho2 - nu2, rho3 - nu3)
-        rho = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (1, 0, 3, 2))
-    # Case 9
-    elif _ordered(
-        mu1=nu,
-        alpha1=beta,
-        mu2=_lambda,
-        alpha2=gamma,
-        mu3=(0, 0, 0),
-        alpha3=alpha,
-        mu4=rho,
-        alpha4=epsilon,
-    ):
-        alpha, beta, gamma, epsilon = beta, gamma, alpha, epsilon
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
-        _lambda = (-nu1, -nu2, -nu3)
-        rho = (rho1 - nu1, rho2 - nu2, rho3 - nu3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (2, 0, 1, 3))
-    # Case 10
-    elif _ordered(
-        mu1=nu,
-        alpha1=beta,
-        mu2=_lambda,
-        alpha2=gamma,
-        mu3=rho,
-        alpha3=epsilon,
-        mu4=(0, 0, 0),
-        alpha4=alpha,
-    ):
-        alpha, beta, gamma, epsilon = beta, gamma, epsilon, alpha
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
-        _lambda = (rho1 - nu1, rho2 - nu2, rho3 - nu3)
-        rho = (-nu1, -nu2, -nu3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (3, 0, 1, 2))
-    # Case 11
-    elif _ordered(
-        mu1=nu,
-        alpha1=beta,
-        mu2=rho,
-        alpha2=epsilon,
-        mu3=(0, 0, 0),
-        alpha3=alpha,
-        mu4=_lambda,
-        alpha4=gamma,
-    ):
-        alpha, beta, gamma, epsilon = beta, epsilon, alpha, gamma
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (rho1 - nu1, rho2 - nu2, rho3 - nu3)
-        _lambda = (-nu1, -nu2, -nu3)
-        rho = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (2, 0, 3, 1))
-    # Case 12
-    elif _ordered(
-        mu1=nu,
-        alpha1=beta,
-        mu2=rho,
-        alpha2=epsilon,
-        mu3=_lambda,
-        alpha3=gamma,
-        mu4=(0, 0, 0),
-        alpha4=alpha,
-    ):
-        alpha, beta, gamma, epsilon = beta, epsilon, gamma, alpha
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (rho1 - nu1, rho2 - nu2, rho3 - nu3)
-        _lambda = (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3)
-        rho = (-nu1, -nu2, -nu3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (3, 0, 2, 1))
-    # Case 13
-    elif _ordered(
-        mu1=_lambda,
-        alpha1=gamma,
-        mu2=(0, 0, 0),
-        alpha2=alpha,
-        mu3=nu,
-        alpha3=beta,
-        mu4=rho,
-        alpha4=epsilon,
-    ):
-        alpha, beta, gamma, epsilon = gamma, alpha, beta, epsilon
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (-lambda1, -lambda2, -lambda3)
-        _lambda = (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3)
-        rho = (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (1, 2, 0, 3))
-    # Case 14
-    elif _ordered(
-        mu1=_lambda,
-        alpha1=gamma,
-        mu2=(0, 0, 0),
-        alpha2=alpha,
-        mu3=rho,
-        alpha3=epsilon,
-        mu4=nu,
-        alpha4=beta,
-    ):
-        alpha, beta, gamma, epsilon = gamma, alpha, epsilon, beta
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (-lambda1, -lambda2, -lambda3)
-        _lambda = (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3)
-        rho = (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (1, 3, 0, 2))
-    # Case 15
-    elif _ordered(
-        mu1=_lambda,
-        alpha1=gamma,
-        mu2=nu,
-        alpha2=beta,
-        mu3=(0, 0, 0),
-        alpha3=alpha,
-        mu4=rho,
-        alpha4=epsilon,
-    ):
-        alpha, beta, gamma, epsilon = gamma, beta, alpha, epsilon
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
         nu = (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3)
         _lambda = (-lambda1, -lambda2, -lambda3)
-        rho = (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3)
         if parameter is not None:
-            parameter = np.transpose(parameter, (2, 1, 0, 3))
-    # Case 16
-    elif _ordered(
-        mu1=_lambda,
-        alpha1=gamma,
-        mu2=nu,
-        alpha2=beta,
-        mu3=rho,
-        alpha3=epsilon,
-        mu4=(0, 0, 0),
-        alpha4=alpha,
-    ):
-        alpha, beta, gamma, epsilon = gamma, beta, epsilon, alpha
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3)
-        _lambda = (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3)
-        rho = (-lambda1, -lambda2, -lambda3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (3, 1, 0, 2))
-    # Case 17
-    elif _ordered(
-        mu1=_lambda,
-        alpha1=gamma,
-        mu2=rho,
-        alpha2=epsilon,
-        mu3=(0, 0, 0),
-        alpha3=alpha,
-        mu4=nu,
-        alpha4=beta,
-    ):
-        alpha, beta, gamma, epsilon = gamma, epsilon, alpha, beta
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3)
-        _lambda = (-lambda1, -lambda2, -lambda3)
-        rho = (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (2, 3, 0, 1))
-    # Case 18
-    elif _ordered(
-        mu1=_lambda,
-        alpha1=gamma,
-        mu2=rho,
-        alpha2=epsilon,
-        mu3=nu,
-        alpha3=beta,
-        mu4=(0, 0, 0),
-        alpha4=alpha,
-    ):
-        alpha, beta, gamma, epsilon = gamma, epsilon, beta, alpha
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3)
-        _lambda = (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3)
-        rho = (-lambda1, -lambda2, -lambda3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (3, 2, 0, 1))
-    # Case 19
-    elif _ordered(
-        mu1=rho,
-        alpha1=epsilon,
-        mu2=(0, 0, 0),
-        alpha2=alpha,
-        mu3=nu,
-        alpha3=beta,
-        mu4=_lambda,
-        alpha4=gamma,
-    ):
-        alpha, beta, gamma, epsilon = epsilon, alpha, beta, gamma
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (-rho1, -rho2, -rho3)
-        _lambda = (nu1 - rho1, nu2 - rho2, nu3 - rho3)
-        rho = (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (1, 2, 3, 0))
-    # Case 20
-    elif _ordered(
-        mu1=rho,
-        alpha1=epsilon,
-        mu2=(0, 0, 0),
-        alpha2=alpha,
-        mu3=_lambda,
-        alpha3=gamma,
-        mu4=nu,
-        alpha4=beta,
-    ):
-        alpha, beta, gamma, epsilon = epsilon, alpha, gamma, beta
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (-rho1, -rho2, -rho3)
-        _lambda = (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3)
-        rho = (nu1 - rho1, nu2 - rho2, nu3 - rho3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (1, 3, 2, 0))
-    # Case 21
-    elif _ordered(
-        mu1=rho,
-        alpha1=epsilon,
-        mu2=nu,
-        alpha2=beta,
-        mu3=(0, 0, 0),
-        alpha3=alpha,
-        mu4=_lambda,
-        alpha4=gamma,
-    ):
-        alpha, beta, gamma, epsilon = epsilon, beta, alpha, gamma
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (nu1 - rho1, nu2 - rho2, nu3 - rho3)
-        _lambda = (-rho1, -rho2, -rho3)
-        rho = (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (2, 1, 3, 0))
-    # Case 22
-    elif _ordered(
-        mu1=rho,
-        alpha1=epsilon,
-        mu2=nu,
-        alpha2=beta,
-        mu3=_lambda,
-        alpha3=gamma,
-        mu4=(0, 0, 0),
-        alpha4=alpha,
-    ):
-        alpha, beta, gamma, epsilon = epsilon, beta, gamma, alpha
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (nu1 - rho1, nu2 - rho2, nu3 - rho3)
-        _lambda = (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3)
-        rho = (-rho1, -rho2, -rho3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (3, 1, 2, 0))
-    # Case 23
-    elif _ordered(
-        mu1=rho,
-        alpha1=epsilon,
-        mu2=_lambda,
-        alpha2=gamma,
-        mu3=(0, 0, 0),
-        alpha3=alpha,
-        mu4=nu,
-        alpha4=beta,
-    ):
-        alpha, beta, gamma, epsilon = epsilon, beta, gamma, alpha
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3)
-        _lambda = (-rho1, -rho2, -rho3)
-        rho = (nu1 - rho1, nu2 - rho2, nu3 - rho3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (2, 3, 1, 0))
-    # Case 24
-    elif _ordered(
-        mu1=rho,
-        alpha1=epsilon,
-        mu2=_lambda,
-        alpha2=gamma,
-        mu3=nu,
-        alpha3=beta,
-        mu4=(0, 0, 0),
-        alpha4=alpha,
-    ):
-        alpha, beta, gamma, epsilon = epsilon, beta, gamma, alpha
-        nu1, nu2, nu3 = nu
-        lambda1, lambda2, lambda3 = _lambda
-        rho1, rho2, rho3 = rho
-        nu = (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3)
-        _lambda = (nu1 - rho1, nu2 - rho2, nu3 - rho3)
-        rho = (-rho1, -rho2, -rho3)
-        if parameter is not None:
-            parameter = np.transpose(parameter, (3, 2, 1, 0))
+            parameter = np.transpose(parameter, (3, 1, 2, 0)) * S_alpha / S_gamma
 
     if parameter is None:
-        return alpha, beta, gamma, epsilon, nu, _lambda, rho
+        return alpha, beta, gamma, nu, _lambda
 
-    return alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter
+    return alpha, beta, gamma, nu, _lambda, parameter
 
 
 class _P44_iterator:
     R"""
-    Iterator over the (four spins & four sites) parameters of the spin Hamiltonian.
+    Iterator over the (four spins & three sites) parameters of the spin Hamiltonian.
     """
 
     def __init__(self, spinham) -> None:
@@ -560,6 +176,7 @@ class _P44_iterator:
         self.mc = spinham.convention.multiple_counting
         self.length = len(self.container)
         self.index = 0
+        self.spins = spinham.atoms.spins
 
     def __next__(self):
         # Case 1
@@ -569,502 +186,106 @@ class _P44_iterator:
         # Case 2
         elif self.mc and self.index < 2 * self.length:
             self.index += 1
-            alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter = self.container[
+            alpha, beta, gamma, nu, _lambda, parameter = self.container[
                 self.index - 1 - self.length
             ]
             return [
                 alpha,
-                beta,
-                epsilon,
                 gamma,
-                nu,
-                rho,
+                beta,
                 _lambda,
+                nu,
                 np.transpose(parameter, (0, 1, 3, 2)),
             ]
         # Case 3
         elif self.mc and self.index < 3 * self.length:
             self.index += 1
-            alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter = self.container[
-                self.index - 1 - 2 * self.length
-            ]
+            (
+                alpha,
+                beta,
+                gamma,
+                (nu1, nu2, nu3),
+                (lambda1, lambda2, lambda3),
+                parameter,
+            ) = self.container[self.index - 1 - 2 * self.length]
             return [
+                beta,
                 alpha,
                 gamma,
-                beta,
-                epsilon,
-                _lambda,
-                nu,
-                rho,
-                np.transpose(parameter, (0, 2, 1, 3)),
+                (-nu1, -nu2, -nu3),
+                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
+                np.transpose(parameter, (2, 1, 0, 3))
+                * self.spins[alpha]
+                / self.spins[beta],
             ]
         # Case 4
         elif self.mc and self.index < 4 * self.length:
             self.index += 1
-            alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter = self.container[
-                self.index - 1 - 3 * self.length
-            ]
-            return [
+            (
                 alpha,
-                gamma,
-                epsilon,
                 beta,
-                _lambda,
-                rho,
-                nu,
-                np.transpose(parameter, (0, 3, 1, 2)),
+                gamma,
+                (nu1, nu2, nu3),
+                (lambda1, lambda2, lambda3),
+                parameter,
+            ) = self.container[self.index - 1 - 3 * self.length]
+            return [
+                beta,
+                gamma,
+                alpha,
+                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
+                (-nu1, -nu2, -nu3),
+                np.transpose(parameter, (3, 1, 0, 2))
+                * self.spins[alpha]
+                / self.spins[beta],
             ]
         # Case 5
         elif self.mc and self.index < 5 * self.length:
             self.index += 1
-            alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter = self.container[
-                self.index - 1 - 4 * self.length
-            ]
-            return [
+            (
                 alpha,
-                epsilon,
                 beta,
                 gamma,
-                rho,
-                nu,
-                _lambda,
-                np.transpose(parameter, (0, 2, 3, 1)),
+                (nu1, nu2, nu3),
+                (lambda1, lambda2, lambda3),
+                parameter,
+            ) = self.container[self.index - 1 - 4 * self.length]
+            return [
+                gamma,
+                alpha,
+                beta,
+                (-lambda1, -lambda2, -lambda3),
+                (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3),
+                np.transpose(parameter, (2, 1, 3, 0))
+                * self.spins[alpha]
+                / self.spins[gamma],
             ]
         # Case 6
         elif self.mc and self.index < 6 * self.length:
             self.index += 1
-            alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter = self.container[
-                self.index - 1 - 5 * self.length
-            ]
-            return [
-                alpha,
-                epsilon,
-                gamma,
-                beta,
-                rho,
-                _lambda,
-                nu,
-                np.transpose(parameter, (0, 3, 2, 1)),
-            ]
-        # Case 7
-        elif self.mc and self.index < 7 * self.length:
-            self.index += 1
             (
                 alpha,
                 beta,
                 gamma,
-                epsilon,
                 (nu1, nu2, nu3),
                 (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
                 parameter,
-            ) = self.container[self.index - 1 - 6 * self.length]
-            return [
-                beta,
-                alpha,
-                gamma,
-                epsilon,
-                (-nu1, -nu2, -nu3),
-                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
-                (rho1 - nu1, rho2 - nu2, rho3 - nu3),
-                np.transpose(parameter, (1, 0, 2, 3)),
-            ]
-        # Case 8
-        elif self.mc and self.index < 8 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 7 * self.length]
-            return [
-                beta,
-                alpha,
-                epsilon,
-                gamma,
-                (-nu1, -nu2, -nu3),
-                (rho1 - nu1, rho2 - nu2, rho3 - nu3),
-                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
-                np.transpose(parameter, (1, 0, 3, 2)),
-            ]
-        # Case 9
-        elif self.mc and self.index < 9 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 8 * self.length]
-            return [
-                beta,
-                gamma,
-                alpha,
-                epsilon,
-                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
-                (-nu1, -nu2, -nu3),
-                (rho1 - nu1, rho2 - nu2, rho3 - nu3),
-                np.transpose(parameter, (2, 0, 1, 3)),
-            ]
-        # Case 10
-        elif self.mc and self.index < 10 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 9 * self.length]
-            return [
-                beta,
-                gamma,
-                epsilon,
-                alpha,
-                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
-                (rho1 - nu1, rho2 - nu2, rho3 - nu3),
-                (-nu1, -nu2, -nu3),
-                np.transpose(parameter, (3, 0, 1, 2)),
-            ]
-        # Case 11
-        elif self.mc and self.index < 11 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 10 * self.length]
-            return [
-                beta,
-                epsilon,
-                alpha,
-                gamma,
-                (rho1 - nu1, rho2 - nu2, rho3 - nu3),
-                (-nu1, -nu2, -nu3),
-                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
-                np.transpose(parameter, (2, 0, 3, 1)),
-            ]
-        # Case 12
-        elif self.mc and self.index < 12 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 11 * self.length]
-            return [
-                beta,
-                epsilon,
-                gamma,
-                alpha,
-                (rho1 - nu1, rho2 - nu2, rho3 - nu3),
-                (lambda1 - nu1, lambda2 - nu2, lambda3 - nu3),
-                (-nu1, -nu2, -nu3),
-                np.transpose(parameter, (3, 0, 2, 1)),
-            ]
-        # Case 13
-        elif self.mc and self.index < 13 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 12 * self.length]
-            return [
-                gamma,
-                alpha,
-                beta,
-                epsilon,
-                (-lambda1, -lambda2, -lambda3),
-                (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3),
-                (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3),
-                np.transpose(parameter, (1, 2, 0, 3)),
-            ]
-        # Case 14
-        elif self.mc and self.index < 14 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 13 * self.length]
-            return [
-                gamma,
-                alpha,
-                epsilon,
-                beta,
-                (-lambda1, -lambda2, -lambda3),
-                (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3),
-                (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3),
-                np.transpose(parameter, (1, 3, 0, 2)),
-            ]
-        # Case 15
-        elif self.mc and self.index < 15 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 14 * self.length]
+            ) = self.container[self.index - 1 - 5 * self.length]
             return [
                 gamma,
                 beta,
                 alpha,
-                epsilon,
                 (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3),
                 (-lambda1, -lambda2, -lambda3),
-                (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3),
-                np.transpose(parameter, (2, 1, 0, 3)),
-            ]
-        # Case 16
-        elif self.mc and self.index < 16 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 15 * self.length]
-            return [
-                gamma,
-                beta,
-                epsilon,
-                alpha,
-                (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3),
-                (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3),
-                (-lambda1, -lambda2, -lambda3),
-                np.transpose(parameter, (3, 1, 0, 2)),
-            ]
-        # Case 17
-        elif self.mc and self.index < 17 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 16 * self.length]
-            return [
-                gamma,
-                epsilon,
-                alpha,
-                beta,
-                (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3),
-                (-lambda1, -lambda2, -lambda3),
-                (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3),
-                np.transpose(parameter, (2, 3, 0, 1)),
-            ]
-        # Case 18
-        elif self.mc and self.index < 18 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 17 * self.length]
-            return [
-                gamma,
-                epsilon,
-                beta,
-                alpha,
-                (rho1 - lambda1, rho2 - lambda2, rho3 - lambda3),
-                (nu1 - lambda1, nu2 - lambda2, nu3 - lambda3),
-                (-lambda1, -lambda2, -lambda3),
-                np.transpose(parameter, (3, 2, 0, 1)),
-            ]
-        # Case 19
-        elif self.mc and self.index < 19 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 18 * self.length]
-            return [
-                epsilon,
-                alpha,
-                beta,
-                gamma,
-                (-rho1, -rho2, -rho3),
-                (nu1 - rho1, nu2 - rho2, nu3 - rho3),
-                (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3),
-                np.transpose(parameter, (1, 2, 3, 0)),
-            ]
-        # Case 20
-        elif self.mc and self.index < 20 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 19 * self.length]
-            return [
-                epsilon,
-                alpha,
-                gamma,
-                beta,
-                (-rho1, -rho2, -rho3),
-                (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3),
-                (nu1 - rho1, nu2 - rho2, nu3 - rho3),
-                np.transpose(parameter, (1, 3, 2, 0)),
-            ]
-        # Case 21
-        elif self.mc and self.index < 21 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 20 * self.length]
-            return [
-                epsilon,
-                beta,
-                alpha,
-                gamma,
-                (nu1 - rho1, nu2 - rho2, nu3 - rho3),
-                (-rho1, -rho2, -rho3),
-                (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3),
-                np.transpose(parameter, (2, 1, 3, 0)),
-            ]
-        # Case 22
-        elif self.mc and self.index < 22 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 21 * self.length]
-            return [
-                epsilon,
-                beta,
-                gamma,
-                alpha,
-                (nu1 - rho1, nu2 - rho2, nu3 - rho3),
-                (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3),
-                (-rho1, -rho2, -rho3),
-                np.transpose(parameter, (3, 1, 2, 0)),
-            ]
-        # Case 23
-        elif self.mc and self.index < 23 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 22 * self.length]
-            return [
-                epsilon,
-                beta,
-                gamma,
-                alpha,
-                (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3),
-                (-rho1, -rho2, -rho3),
-                (nu1 - rho1, nu2 - rho2, nu3 - rho3),
-                np.transpose(parameter, (2, 3, 1, 0)),
-            ]
-        # Case 24
-        elif self.mc and self.index < 24 * self.length:
-            self.index += 1
-            (
-                alpha,
-                beta,
-                gamma,
-                epsilon,
-                (nu1, nu2, nu3),
-                (lambda1, lambda2, lambda3),
-                (rho1, rho2, rho3),
-                parameter,
-            ) = self.container[self.index - 1 - 23 * self.length]
-            return [
-                epsilon,
-                beta,
-                gamma,
-                alpha,
-                (lambda1 - rho1, lambda2 - rho2, lambda3 - rho3),
-                (nu1 - rho1, nu2 - rho2, nu3 - rho3),
-                (-rho1, -rho2, -rho3),
-                np.transpose(parameter, (3, 2, 1, 0)),
+                np.transpose(parameter, (3, 1, 2, 0))
+                * self.spins[alpha]
+                / self.spins[gamma],
             ]
 
         raise StopIteration
 
     def __len__(self):
-        return self.length * (1 + 23 * int(self.mc))
+        return self.length * (1 + 5 * int(self.mc))
 
     def __iter__(self):
         return self
@@ -1073,23 +294,23 @@ class _P44_iterator:
 @property
 def _p44(spinham):
     r"""
-    Parameters of (four spins & four sites) term of the Hamiltonian.
+    Parameters of (four spins & three sites) term of the Hamiltonian.
 
     .. math::
 
-        \boldsymbol{J}_{4,4}(\boldsymbol{r}_{\nu,\alpha\beta}, \boldsymbol{r}_{\lambda,\alpha\gamma}, \boldsymbol{r}_{\rho,\alpha\varepsilon})
+        \boldsymbol{J}_{4,3}(\boldsymbol{r}_{\nu,\alpha\beta}, \boldsymbol{r}_{\lambda,\alpha\gamma})
 
     of the term
 
     .. math::
 
-        C_{4,4}
+        C_{4,3}
         \sum_{\substack{\mu, \nu, \alpha, \beta,\\ i, j, u, v}}
-        J^{ijuv}_{4,4}(\boldsymbol{r}_{\nu,\alpha\beta}, \boldsymbol{r}_{\lambda,\alpha\gamma}, \boldsymbol{r}_{\rho,\alpha\varepsilon})
+        J^{ijuv}_{4,3}(\boldsymbol{r}_{\nu,\alpha\beta}, \boldsymbol{r}_{\lambda,\alpha\gamma})
         S_{\mu,\alpha}^i
-        S_{\mu+\nu,\beta}^j
-        S_{\mu+\lambda, \gamma}^u
-        S_{\mu+\rho, \varepsilon}^v
+        S_{\mu,\alpha}^j
+        S_{\mu+\nu,\beta}^u
+        S_{\mu+\lambda, \gamma}^v
 
     Returns
     -------
@@ -1099,25 +320,20 @@ def _p44(spinham):
 
         .. code-block:: python
 
-            [[alpha, beta, gamma, epsilon, nu, lambda, rho, J], ...]
+            [[alpha, beta, gamma, nu, lambda, J], ...]
 
         where
 
         ``alpha`` is an index of the atom located in the (0,0,0) unit cell.
 
-        ``beta`` is an index of the atom located in the nu unit cell.
+        ``beta`` is an index of the atom located in the  nu unit cell.
 
-        ``gamma`` is an index of the atom located in the lambda unit cell.
-
-        ``epsilon`` is an index of the atom located in the rho unit cell.
+        ``gamma`` is an index of the atom located in the  lambda unit cell.
 
         ``nu`` defines the unit cell of the second atom (beta). It is a tuple of 3
         integers.
 
         ``lambda`` defines the unit cell of the third atom (gamma). It is a tuple of 3
-        integers.
-
-        ``rho`` defines the unit cell of the fourth atom (gamma). It is a tuple of 3
         integers.
 
         ``J`` is a (3, 3, 3, 3) :numpy:`ndarray`.
@@ -1139,16 +355,14 @@ def _add_44(
     alpha: int,
     beta: int,
     gamma: int,
-    epsilon: int,
     nu: tuple,
     _lambda: tuple,
-    rho: tuple,
     parameter,
     units=None,
     when_present="raise error",
 ) -> None:
     r"""
-    Adds a (four spins & four sites) parameter to the Hamiltonian.
+    Adds a (four spins & three sites) parameter to the Hamiltonian.
 
     Doubles of the bonds are managed automatically (independently of the convention of the
     Hamiltonian).
@@ -1171,11 +385,6 @@ def _add_44(
 
         ``0 <= gamma < len(spinham.atoms.names)``.
 
-    epsilon : int
-        Index of an atom from the rho unit cell.
-
-        ``0 <= epsilon < len(spinham.atoms.names)``.
-
     nu : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the second atom.
@@ -1196,16 +405,6 @@ def _add_44(
             =
             (x_{\boldsymbol{a}_1}, x_{\boldsymbol{a}_2}, x_{\boldsymbol{a}_3})
 
-    rho : tuple of 3 int
-        Three relative coordinates with respect to the three lattice vectors, that
-        specify the unit cell for the fourth atom.
-
-        .. math::
-
-            \rho
-            =
-            (x_{\boldsymbol{a}_1}, x_{\boldsymbol{a}_2}, x_{\boldsymbol{a}_3})
-
     parameter : (3, 3, 3, 3) |array-like|_
         Value of the parameter (:math:`3\times3\times3\times3` matrix). Given in the units of ``units``.
 
@@ -1221,10 +420,10 @@ def _add_44(
     when_present : str, default "raise error"
         .. versionadded:: 0.4.0
 
-        Action to take if quartet of atoms already has a parameter associated with it.
+        Action to take if triple of atoms already has a parameter associated with it.
         Case-insensitive. Supported values are:
 
-        - ``"raise error"`` (default): raises an error if quartet of atoms already has a
+        - ``"raise error"`` (default): raises an error if triple of atoms already has a
           parameter associated with it.
         - ``"replace"``: replace existing value of the parameter with the new one.
         - ``"add"``: add the value of the parameter to the existing one.
@@ -1238,7 +437,8 @@ def _add_44(
     ------
 
     ValueError
-        If quartet of atoms already has a parameter associated with it and ``when_present="raise error"``.
+        If triple of atoms already has a parameter associated with it and
+        ``when_present="raise error"``.
 
     ValueError
         If ``when_present`` has an unsupported value.
@@ -1263,10 +463,8 @@ def _add_44(
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     _validate_atom_index(index=beta, atoms=spinham.atoms)
     _validate_atom_index(index=gamma, atoms=spinham.atoms)
-    _validate_atom_index(index=epsilon, atoms=spinham.atoms)
     _validate_unit_cell_index(ijk=nu)
     _validate_unit_cell_index(ijk=_lambda)
-    _validate_unit_cell_index(ijk=rho)
     spinham._reset_internals()
 
     parameter = np.array(parameter)
@@ -1277,15 +475,16 @@ def _add_44(
             parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[spinham._units]
         )
 
-    alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter = _get_primary_p44(
+    alpha, beta, gamma, nu, _lambda, parameter = _get_primary_p44(
         alpha=alpha,
         beta=beta,
         gamma=gamma,
-        epsilon=epsilon,
         nu=nu,
         _lambda=_lambda,
-        rho=rho,
         parameter=parameter,
+        S_alpha=spinham.atoms.spins[alpha],
+        S_beta=spinham.atoms.spins[beta],
+        S_gamma=spinham.atoms.spins[gamma],
     )
 
     # TODO BINARY SEARCH
@@ -1293,23 +492,23 @@ def _add_44(
     index = 0
     while index < len(spinham._44):
         # If already present in the model
-        if spinham._44[index][:7] == [alpha, beta, gamma, epsilon, nu, _lambda, rho]:
+        if spinham._44[index][:5] == [alpha, beta, gamma, nu, _lambda]:
             # Either replace
             if when_present.lower() == "replace":
-                spinham._44[index][7] = parameter
+                spinham._44[index][5] = parameter
             # Or add
             elif when_present.lower() == "add":
-                spinham._44[index][7] = spinham._44[index][7] + parameter
+                spinham._44[index][5] += parameter
             # Or replace with mean value
             elif when_present.lower() == "mean":
-                spinham._44[index][7] = (spinham._44[index][7] + parameter) / 2.0
+                spinham._44[index][5] = (spinham._44[index][5] + parameter) / 2.0
             # Or do nothing
             elif when_present.lower() == "skip":
                 pass
             # Or raise an error
             elif when_present.lower() == "raise error":
                 raise ValueError(
-                    f"(Four spins & four sites) parameter is already set for the quartet of atoms {alpha}, {beta} {nu}, {gamma} {_lambda}, {epsilon} {rho}. Or for their duplicate."
+                    f"(Four spins & three sites) parameter is already set for the triple of atoms {alpha}, {beta} {nu}, {gamma} {_lambda}. Or for their duplicate."
                 )
             else:
                 raise ValueError(
@@ -1319,30 +518,21 @@ def _add_44(
             return
 
         # If it should be inserted before current element
-        if spinham._44[index][:7] > [alpha, beta, gamma, epsilon, nu, _lambda, rho]:
-            spinham._44.insert(
-                index, [alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter]
-            )
+        if spinham._44[index][:5] > [alpha, beta, gamma, nu, _lambda]:
+            spinham._44.insert(index, [alpha, beta, gamma, nu, _lambda, parameter])
             return
 
         index += 1
 
     # If it should be inserted at the end or at the beginning of the list
-    spinham._44.append([alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter])
+    spinham._44.append([alpha, beta, gamma, nu, _lambda, parameter])
 
 
 def _remove_44(
-    spinham,
-    alpha: int,
-    beta: int,
-    gamma: int,
-    epsilon: int,
-    nu: tuple,
-    _lambda: tuple,
-    rho: tuple,
+    spinham, alpha: int, beta: int, gamma: int, nu: tuple, _lambda: tuple
 ) -> None:
     r"""
-    Removes a (four spins & four sites) parameter from the Hamiltonian.
+    Removes a (four spins & three sites) parameter from the Hamiltonian.
 
     Duplicates of the bonds are managed automatically (independently of the convention of
     the Hamiltonian).
@@ -1354,18 +544,17 @@ def _remove_44(
         Index of an atom from the (0, 0, 0) unit cell.
 
         ``0 <= alpha < len(spinham.atoms.names)``.
+
     beta : int
         Index of an atom from the nu unit cell.
 
         ``0 <= beta < len(spinham.atoms.names)``.
+
     gamma : int
         Index of an atom from the _lambda unit cell.
 
         ``0 <= gamma < len(spinham.atoms.names)``.
-    epsilon : int
-        Index of an atom from the rho unit cell.
 
-        ``0 <= epsilon < len(spinham.atoms.names)``.
     nu : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the second atom.
@@ -1375,6 +564,7 @@ def _remove_44(
             \nu
             =
             (x_{\boldsymbol{a}_1}, x_{\boldsymbol{a}_2}, x_{\boldsymbol{a}_3})
+
     _lambda : tuple of 3 int
         Three relative coordinates with respect to the three lattice vectors, that
         specify the unit cell for the third atom.
@@ -1382,15 +572,6 @@ def _remove_44(
         .. math::
 
             \lambda
-            =
-            (x_{\boldsymbol{a}_1}, x_{\boldsymbol{a}_2}, x_{\boldsymbol{a}_3})
-    rho : tuple of 3 int
-        Three relative coordinates with respect to the three lattice vectors, that
-        specify the unit cell for the fourth atom.
-
-        .. math::
-
-            \rho
             =
             (x_{\boldsymbol{a}_1}, x_{\boldsymbol{a}_2}, x_{\boldsymbol{a}_3})
 
@@ -1413,19 +594,11 @@ def _remove_44(
     _validate_atom_index(index=alpha, atoms=spinham.atoms)
     _validate_atom_index(index=beta, atoms=spinham.atoms)
     _validate_atom_index(index=gamma, atoms=spinham.atoms)
-    _validate_atom_index(index=epsilon, atoms=spinham.atoms)
     _validate_unit_cell_index(ijk=nu)
     _validate_unit_cell_index(ijk=_lambda)
-    _validate_unit_cell_index(ijk=rho)
 
-    alpha, beta, gamma, epsilon, nu, _lambda, rho = _get_primary_p44(
-        alpha=alpha,
-        beta=beta,
-        gamma=gamma,
-        epsilon=epsilon,
-        nu=nu,
-        _lambda=_lambda,
-        rho=rho,
+    alpha, beta, gamma, nu, _lambda = _get_primary_p44(
+        alpha=alpha, beta=beta, gamma=gamma, nu=nu, _lambda=_lambda
     )
 
     # TD-BINARY_SEARCH
@@ -1433,10 +606,10 @@ def _remove_44(
     for index in range(len(spinham._44)):
         # As the list is sorted, there is no point in resuming the search
         # when a larger element is found
-        if spinham._44[index][:7] > [alpha, beta, gamma, epsilon, nu, _lambda, rho]:
+        if spinham._44[index][:5] > [alpha, beta, gamma, nu, _lambda]:
             return
 
-        if spinham._44[index][:7] == [alpha, beta, gamma, epsilon, nu, _lambda, rho]:
+        if spinham._44[index][:5] == [alpha, beta, gamma, nu, _lambda]:
             del spinham._44[index]
             spinham._reset_internals()
             return
