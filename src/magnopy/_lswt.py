@@ -197,12 +197,12 @@ class LSWT:
             )
 
         # Four spins & two sites (1+3)
-        for alpha, beta, _, parameter in spinham.p421:
+        for alpha, beta, _, parameter in spinham.p42:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             self._J1[alpha] = self._J1[alpha] + (
                 4
-                * spinham.convention.c421
+                * spinham.convention.c42
                 * np.einsum(
                     "ijuv,j,u,v->i",
                     parameter,
@@ -215,12 +215,12 @@ class LSWT:
             )
 
         # Four spins & two sites (2+2)
-        for alpha, beta, _, parameter in spinham.p422:
+        for alpha, beta, _, parameter in spinham.p43:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             self._J1[alpha] = self._J1[alpha] + (
                 4
-                * spinham.convention.c422
+                * spinham.convention.c43
                 * np.einsum(
                     "ijuv,j,u,v->i",
                     parameter,
@@ -233,13 +233,13 @@ class LSWT:
             )
 
         # Four spins & three sites
-        for alpha, beta, gamma, _, _, parameter in spinham.p43:
+        for alpha, beta, gamma, _, _, parameter in spinham.p44:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             gamma = spinham.map_to_magnetic[gamma]
             self._J1[alpha] = self._J1[alpha] + (
                 4
-                * spinham.convention.c43
+                * spinham.convention.c44
                 * np.einsum(
                     "ijuv,j,u,v->i",
                     parameter,
@@ -253,14 +253,14 @@ class LSWT:
             )
 
         # Four spins & four sites
-        for alpha, beta, gamma, epsilon, _, _, _, parameter in spinham.p44:
+        for alpha, beta, gamma, epsilon, _, _, _, parameter in spinham.p45:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             gamma = spinham.map_to_magnetic[gamma]
             epsilon = spinham.map_to_magnetic[epsilon]
             self._J1[alpha] = self._J1[alpha] + (
                 4
-                * spinham.convention.c44
+                * spinham.convention.c45
                 * np.einsum(
                     "ijuv,j,u,v->i",
                     parameter,
@@ -355,7 +355,7 @@ class LSWT:
             )
 
         # Four spins & two sites (1+3)
-        for alpha, beta, nu, parameter in spinham.p421:
+        for alpha, beta, nu, parameter in spinham.p42:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             if nu not in self._J2:
@@ -363,13 +363,13 @@ class LSWT:
 
             self._J2[nu][alpha, beta] += (
                 6
-                * spinham.convention.c421
+                * spinham.convention.c42
                 * np.einsum("iuvj,u,v->ij", parameter, self.z[alpha], self.z[alpha])
                 * self.spins[alpha] ** 2
             )
 
         # Four spins & two sites (2+2)
-        for alpha, beta, nu, parameter in spinham.p422:
+        for alpha, beta, nu, parameter in spinham.p43:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             if nu not in self._J2:
@@ -377,14 +377,14 @@ class LSWT:
 
             self._J2[nu][alpha, beta] += (
                 6
-                * spinham.convention.c422
+                * spinham.convention.c43
                 * np.einsum("iujv,u,v->ij", parameter, self.z[alpha], self.z[beta])
                 * self.spins[alpha]
                 * self.spins[beta]
             )
 
         # Four spins & three sites
-        for alpha, beta, gamma, nu, _, parameter in spinham.p43:
+        for alpha, beta, gamma, nu, _, parameter in spinham.p44:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             gamma = spinham.map_to_magnetic[gamma]
@@ -393,14 +393,14 @@ class LSWT:
 
             self._J2[nu][alpha, beta] += (
                 6
-                * spinham.convention.c43
+                * spinham.convention.c44
                 * np.einsum("iujv,u->ij", parameter, self.z[alpha], self.z[gamma])
                 * self.spins[alpha]
                 * self.spins[gamma]
             )
 
         # Four spins & four sites
-        for alpha, beta, gamma, epsilon, nu, _, _, parameter in spinham.p44:
+        for alpha, beta, gamma, epsilon, nu, _, _, parameter in spinham.p45:
             alpha = spinham.map_to_magnetic[alpha]
             beta = spinham.map_to_magnetic[beta]
             gamma = spinham.map_to_magnetic[gamma]
@@ -410,7 +410,7 @@ class LSWT:
 
             self._J2[nu][alpha, beta] += (
                 6
-                * spinham.convention.c44
+                * spinham.convention.c45
                 * np.einsum("ijuv,u->ij", parameter, self.z[gamma], self.z[epsilon])
                 * self.spins[gamma]
                 * self.spins[epsilon]

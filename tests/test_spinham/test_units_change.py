@@ -37,10 +37,10 @@ def _get_spinham():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -118,35 +118,35 @@ def _get_spinham():
     spinham.add_41(alpha=0, parameter=parameter)
     spinham.add_41(alpha=1, parameter=parameter)
 
-    spinham.add_421(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
+    spinham.add_42(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
+    spinham.add_42(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
+    spinham.add_42(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
 
-    spinham.add_421(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
+    spinham.add_42(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
+    spinham.add_42(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
+    spinham.add_42(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
+    spinham.add_42(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
 
-    spinham.add_422(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
+    spinham.add_43(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
+    spinham.add_43(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
+    spinham.add_43(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
 
-    spinham.add_422(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
+    spinham.add_43(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
+    spinham.add_43(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
+    spinham.add_43(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
+    spinham.add_43(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
 
-    spinham.add_43(
+    spinham.add_44(
         alpha=0, beta=0, gamma=0, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=parameter
     )
-    spinham.add_43(
+    spinham.add_44(
         alpha=1, beta=1, gamma=1, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=parameter
     )
-    spinham.add_43(
+    spinham.add_44(
         alpha=0, beta=1, gamma=1, nu=(0, 0, 0), _lambda=(-1, 0, 0), parameter=parameter
     )
 
-    spinham.add_44(
+    spinham.add_45(
         alpha=0,
         beta=0,
         gamma=0,
@@ -156,7 +156,7 @@ def _get_spinham():
         rho=(0, 0, 1),
         parameter=parameter,
     )
-    spinham.add_44(
+    spinham.add_45(
         alpha=1,
         beta=1,
         gamma=1,
@@ -167,7 +167,7 @@ def _get_spinham():
         parameter=parameter,
     )
 
-    spinham.add_44(
+    spinham.add_45(
         alpha=0,
         beta=0,
         gamma=1,
@@ -182,7 +182,7 @@ def _get_spinham():
 
 
 @pytest.mark.parametrize("units", list(_PARAMETER_UNITS))
-def test_c44(units):
+def test_c45(units):
     spinham, spin_directions = _get_spinham()
 
     target_energy = Energy(spinham).E_0(spin_directions)
