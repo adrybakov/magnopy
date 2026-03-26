@@ -197,10 +197,10 @@ def full_ham():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
@@ -226,18 +226,18 @@ def full_ham():
     ]:
         spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=-np.eye(3))
         spinham.add_32(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3)))
-        spinham.add_421(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3, 3)))
-        spinham.add_422(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3, 3)))
+        spinham.add_42(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3, 3)))
+        spinham.add_43(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3, 3)))
 
     for alpha, beta in [[0, 1], [1, 2], [2, 3], [3, 1]]:
         spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.eye(3))
         spinham.add_32(
             alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.ones((3, 3, 3))
         )
-        spinham.add_421(
+        spinham.add_42(
             alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.ones((3, 3, 3, 3))
         )
-        spinham.add_422(
+        spinham.add_43(
             alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.ones((3, 3, 3, 3))
         )
 
@@ -253,7 +253,7 @@ def full_ham():
             _lambda=_lambda,
             parameter=0.3 * np.ones((3, 3, 3)),
         )
-        spinham.add_43(
+        spinham.add_44(
             alpha=alpha,
             beta=beta,
             gamma=gamma,
@@ -267,7 +267,7 @@ def full_ham():
     for alpha, beta, gamma, epsilon, nu, _lambda, rho in [
         [0, 1, 2, 3, (0, 0, 0), (0, 0, 0), (0, 0, 0)]
     ]:
-        spinham.add_44(
+        spinham.add_45(
             alpha=alpha,
             beta=beta,
             gamma=gamma,

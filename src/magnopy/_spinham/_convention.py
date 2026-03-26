@@ -387,7 +387,7 @@ class Convention:
             >>> from magnopy import Convention
             >>> n1 = Convention(True, True, c21=1, c22=-0.5)
             >>> n1.summary()
-            custom convention where
+            "custom" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are normalized to 1;
               * Undefined c1 factor;

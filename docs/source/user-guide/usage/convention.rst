@@ -32,10 +32,10 @@ data structure.
       * Undefined c32 factor;
       * Undefined c33 factor;
       * Undefined c41 factor;
-      * Undefined c421 factor;
-      * Undefined c422 factor;
+      * Undefined c42 factor;
       * Undefined c43 factor;
-      * Undefined c44 factor.
+      * Undefined c44 factor;
+      * Undefined c45 factor.
 
 There are two boolean properties (:py:attr:`.Convention.multiple_counting` and
 :py:attr:`.Convention.spin_normalized`) and eleven constants that fully define the
@@ -78,10 +78,10 @@ allows you to change several properties of convention while keeping the other on
       * Undefined c32 factor;
       * c33 = 1.0;
       * Undefined c41 factor;
-      * Undefined c421 factor;
-      * Undefined c422 factor;
+      * Undefined c42 factor;
       * Undefined c43 factor;
-      * Undefined c44 factor.
+      * Undefined c44 factor;
+      * Undefined c45 factor.
 
 
 Pre-defined conventions
@@ -105,10 +105,10 @@ codes
       * Undefined c32 factor;
       * Undefined c33 factor;
       * Undefined c41 factor;
-      * Undefined c421 factor;
-      * Undefined c422 factor;
+      * Undefined c42 factor;
       * Undefined c43 factor;
-      * Undefined c44 factor.
+      * Undefined c44 factor;
+      * Undefined c45 factor.
     >>> print(vampire_convention)
     "vampire" convention where
       * Bonds are counted multiple times in the sum;
@@ -120,9 +120,9 @@ codes
       * Undefined c32 factor;
       * Undefined c33 factor;
       * Undefined c41 factor;
-      * Undefined c421 factor;
-      * Undefined c422 factor;
+      * Undefined c42 factor;
       * Undefined c43 factor;
-      * Undefined c44 factor.
+      * Undefined c44 factor;
+      * Undefined c45 factor.
 
 To see all supported codes see :py:meth:`.Convention.get_predefined`.

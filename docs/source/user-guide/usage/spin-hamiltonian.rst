@@ -118,8 +118,8 @@ Property                         Loop variables
 :py:attr:`.SpinHamiltonian.p32`  ``for alpha, beta, nu, parameter in spinham.p32:``
 :py:attr:`.SpinHamiltonian.p33`  ``for alpha, beta, gamma, nu, _lambda, parameter in spinham.p33:``
 :py:attr:`.SpinHamiltonian.p41`  ``for alpha, parameter in spinham.p41:``
-:py:attr:`.SpinHamiltonian.p421` ``for alpha, beta, nu, parameter in spinham.p421:``
-:py:attr:`.SpinHamiltonian.p422` ``for alpha, beta, nu, parameter in spinham.p422:``
+:py:attr:`.SpinHamiltonian.p42`  ``for alpha, beta, nu, parameter in spinham.p42:``
+:py:attr:`.SpinHamiltonian.p43`  ``for alpha, beta, nu, parameter in spinham.p43:``
 :py:attr:`.SpinHamiltonian.p43`  ``for alpha, beta, gamma, nu, _lambda, parameter in spinham.p43:``
 :py:attr:`.SpinHamiltonian.p44`  ``for alpha, beta, gamma, epsilon, nu, _lambda, rho, parameter in spinham.p44:``
 ================================ ================================================================================
@@ -190,10 +190,10 @@ Convention of the Hamiltonian is stored as its attribute (:py:attr:`.SpinHamilto
       * Undefined c32 factor;
       * Undefined c33 factor;
       * c41 = 1.0;
-      * Undefined c421 factor;
-      * Undefined c422 factor;
+      * Undefined c42 factor;
       * Undefined c43 factor;
-      * Undefined c44 factor.
+      * Undefined c44 factor;
+      * Undefined c45 factor.
 
 The convention of the Hamiltonian can be changed. If the convention is being changed, then
 the parameters will be adjusted accordingly. For example, if we change the numerical

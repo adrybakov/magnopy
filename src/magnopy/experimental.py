@@ -467,13 +467,13 @@ def change_cell(spinham, new_cell, new_atoms_specs):
             if alpha == atom_index:
                 new_spinham.add_41(alpha=new_alpha, parameter=parameter)
 
-        for alpha, beta, nu, parameter in spinham._421:
+        for alpha, beta, nu, parameter in spinham._42:
             if alpha == atom_index:
                 new_beta, new_nu = get_new_indices(
                     atom_index=beta, ijk=np.array(nu) + (i, j, k)
                 )
 
-                new_spinham.add_421(
+                new_spinham.add_42(
                     alpha=new_alpha,
                     beta=new_beta,
                     nu=new_nu,
@@ -481,13 +481,13 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     when_present="replace",
                 )
 
-        for alpha, beta, nu, parameter in spinham._422:
+        for alpha, beta, nu, parameter in spinham._43:
             if alpha == atom_index:
                 new_beta, new_nu = get_new_indices(
                     atom_index=beta, ijk=np.array(nu) + (i, j, k)
                 )
 
-                new_spinham.add_422(
+                new_spinham.add_43(
                     alpha=new_alpha,
                     beta=new_beta,
                     nu=new_nu,
@@ -495,7 +495,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                     when_present="replace",
                 )
 
-        for alpha, beta, gamma, nu, _lambda, parameter in spinham._43:
+        for alpha, beta, gamma, nu, _lambda, parameter in spinham._44:
             new_beta, new_nu = get_new_indices(
                 atom_index=beta, ijk=np.array(nu) + (i, j, k)
             )
@@ -503,7 +503,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                 atom_index=gamma, ijk=np.array(_lambda) + (i, j, k)
             )
 
-            new_spinham.add_43(
+            new_spinham.add_44(
                 alpha=new_alpha,
                 beta=new_beta,
                 gamma=new_gamma,
@@ -522,7 +522,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
             _lambda,
             rho,
             parameter,
-        ) in spinham._44:
+        ) in spinham._45:
             new_beta, new_nu = get_new_indices(
                 atom_index=beta, ijk=np.array(nu) + (i, j, k)
             )
@@ -533,7 +533,7 @@ def change_cell(spinham, new_cell, new_atoms_specs):
                 atom_index=epsilon, ijk=np.array(rho) + (i, j, k)
             )
 
-            new_spinham.add_44(
+            new_spinham.add_45(
                 alpha=new_alpha,
                 beta=new_beta,
                 gamma=new_gamma,
