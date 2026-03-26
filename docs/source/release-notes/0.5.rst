@@ -18,3 +18,19 @@ Removed
 * ``magnopy.io.output_k_resolved()``.
 * ``make_sd_image`` argument in CLI scripts.
 * ``replace`` argument in the ``magnopy.SpinHamiltonian.add_*`` methods.
+
+Breaking changes
+----------------
+
+The convention constants have been renamed to reflect the more rigorous naming
+convention (described in :ref:`user-guide_theory-behind_spin-hamiltonian`).
+Table below summarizes the renaming of the affected methods and attributes.
+
+=========================== ============================
+Pre-0.5.0                   Post-0.5.0
+=========================== ============================
+``magnopy.Convention.C421`` ``magnopy.Convention.C42``
+``magnopy.Convention.C422`` ``magnopy.Convention.C43``
+``magnopy.Convention.C43``  ``magnopy.Convention.C44``
+``magnopy.Convention.C44``  ``magnopy.Convention.C45``
+=========================== ============================

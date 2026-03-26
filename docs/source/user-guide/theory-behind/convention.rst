@@ -47,11 +47,6 @@ group of terms of the Hamiltonian
     C_{4,4} \qquad
     C_{4,5}
 
-.. hint::
-    If you try to specify :math:`C_2`, then both :math:`C_{2,1}` and :math:`C_{2,2}` would
-    be set to the same value. The same is true for :math:`C_3` and :math:`C_4`. However,
-    you can specify each constant individually with separate values as well.
-
 
 Normalization of spins
 ======================

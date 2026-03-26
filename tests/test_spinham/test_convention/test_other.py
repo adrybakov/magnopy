@@ -58,16 +58,16 @@ def tes_raises():
         convention.c41
 
     with pytest.raises(ConventionError):
-        convention.c421
-
-    with pytest.raises(ConventionError):
-        convention.c422
+        convention.c42
 
     with pytest.raises(ConventionError):
         convention.c43
 
     with pytest.raises(ConventionError):
         convention.c44
+
+    with pytest.raises(ConventionError):
+        convention.c45
 
 
 @given(st.text())
