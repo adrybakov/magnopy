@@ -62,10 +62,10 @@ def _get_spinham(p1, p2, p3, p4):
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -120,35 +120,35 @@ def _get_spinham(p1, p2, p3, p4):
     spinham.add_41(alpha=0, parameter=p4)
     spinham.add_41(alpha=1, parameter=p4)
 
-    spinham.add_421(alpha=0, beta=0, nu=(1, 0, 0), parameter=p4)
-    spinham.add_421(alpha=0, beta=0, nu=(0, 1, 0), parameter=p4)
-    spinham.add_421(alpha=0, beta=0, nu=(0, 0, 1), parameter=p4)
+    spinham.add_42(alpha=0, beta=0, nu=(1, 0, 0), parameter=p4)
+    spinham.add_42(alpha=0, beta=0, nu=(0, 1, 0), parameter=p4)
+    spinham.add_42(alpha=0, beta=0, nu=(0, 0, 1), parameter=p4)
 
-    spinham.add_421(alpha=0, beta=1, nu=(0, 0, 0), parameter=p4)
-    spinham.add_421(alpha=0, beta=1, nu=(-1, 0, 0), parameter=p4)
-    spinham.add_421(alpha=0, beta=1, nu=(-1, -1, 0), parameter=p4)
-    spinham.add_421(alpha=0, beta=1, nu=(0, -1, 0), parameter=p4)
+    spinham.add_42(alpha=0, beta=1, nu=(0, 0, 0), parameter=p4)
+    spinham.add_42(alpha=0, beta=1, nu=(-1, 0, 0), parameter=p4)
+    spinham.add_42(alpha=0, beta=1, nu=(-1, -1, 0), parameter=p4)
+    spinham.add_42(alpha=0, beta=1, nu=(0, -1, 0), parameter=p4)
 
-    spinham.add_422(alpha=0, beta=0, nu=(1, 0, 0), parameter=p4)
-    spinham.add_422(alpha=0, beta=0, nu=(0, 1, 0), parameter=p4)
-    spinham.add_422(alpha=0, beta=0, nu=(0, 0, 1), parameter=p4)
+    spinham.add_43(alpha=0, beta=0, nu=(1, 0, 0), parameter=p4)
+    spinham.add_43(alpha=0, beta=0, nu=(0, 1, 0), parameter=p4)
+    spinham.add_43(alpha=0, beta=0, nu=(0, 0, 1), parameter=p4)
 
-    spinham.add_422(alpha=0, beta=1, nu=(0, 0, 0), parameter=p4)
-    spinham.add_422(alpha=0, beta=1, nu=(-1, 0, 0), parameter=p4)
-    spinham.add_422(alpha=0, beta=1, nu=(-1, -1, 0), parameter=p4)
-    spinham.add_422(alpha=0, beta=1, nu=(0, -1, 0), parameter=p4)
+    spinham.add_43(alpha=0, beta=1, nu=(0, 0, 0), parameter=p4)
+    spinham.add_43(alpha=0, beta=1, nu=(-1, 0, 0), parameter=p4)
+    spinham.add_43(alpha=0, beta=1, nu=(-1, -1, 0), parameter=p4)
+    spinham.add_43(alpha=0, beta=1, nu=(0, -1, 0), parameter=p4)
 
-    spinham.add_43(
+    spinham.add_44(
         alpha=0, beta=0, gamma=0, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=p4
     )
-    spinham.add_43(
+    spinham.add_44(
         alpha=1, beta=1, gamma=1, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=p4
     )
-    spinham.add_43(
+    spinham.add_44(
         alpha=0, beta=1, gamma=1, nu=(0, 0, 0), _lambda=(-1, 0, 0), parameter=p4
     )
 
-    spinham.add_44(
+    spinham.add_45(
         alpha=0,
         beta=0,
         gamma=0,
@@ -158,7 +158,7 @@ def _get_spinham(p1, p2, p3, p4):
         rho=(0, 0, 1),
         parameter=p4,
     )
-    spinham.add_44(
+    spinham.add_45(
         alpha=1,
         beta=1,
         gamma=1,
@@ -169,7 +169,7 @@ def _get_spinham(p1, p2, p3, p4):
         parameter=p4,
     )
 
-    spinham.add_44(
+    spinham.add_45(
         alpha=0,
         beta=0,
         gamma=1,
@@ -325,29 +325,13 @@ def test_c41(c41, p1, p2, p3, p4):
     assert abs(energy.E_0(spin_directions) - target_energy.E_0(spin_directions)) < 1e-8
 
 
-@pytest.mark.parametrize("c421", (-1, -0.5, 0.5, 1))
+@pytest.mark.parametrize("c42", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
-def test_c421(c421, p1, p2, p3, p4):
+def test_c42(c42, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
-    assert len(spinham.p421) > 0
+    assert len(spinham.p42) > 0
 
-    modified_convention = convention.get_modified(c421=c421)
-
-    target_energy = Energy(spinham)
-
-    spinham.convention = modified_convention
-    energy = Energy(spinham)
-
-    assert abs(energy.E_0(spin_directions) - target_energy.E_0(spin_directions)) < 1e-8
-
-
-@pytest.mark.parametrize("c422", (-1, -0.5, 0.5, 1))
-@given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
-def test_c422(c422, p1, p2, p3, p4):
-    spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
-    assert len(spinham.p422) > 0
-
-    modified_convention = convention.get_modified(c422=c422)
+    modified_convention = convention.get_modified(c42=c42)
 
     target_energy = Energy(spinham)
 
@@ -380,6 +364,22 @@ def test_c44(c44, p1, p2, p3, p4):
     assert len(spinham.p44) > 0
 
     modified_convention = convention.get_modified(c44=c44)
+
+    target_energy = Energy(spinham)
+
+    spinham.convention = modified_convention
+    energy = Energy(spinham)
+
+    assert abs(energy.E_0(spin_directions) - target_energy.E_0(spin_directions)) < 1e-8
+
+
+@pytest.mark.parametrize("c45", (-1, -0.5, 0.5, 1))
+@given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+def test_c45(c45, p1, p2, p3, p4):
+    spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
+    assert len(spinham.p45) > 0
+
+    modified_convention = convention.get_modified(c45=c45)
 
     target_energy = Energy(spinham)
 

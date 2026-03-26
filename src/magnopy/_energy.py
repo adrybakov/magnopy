@@ -286,55 +286,55 @@ class Energy:
 
             self.J_41[alpha] += spinham.convention.c41 * parameter
 
-        self.J_421 = {}
+        self.J_42 = {}
 
-        for atom1, atom2, _, parameter in spinham.p421:
+        for atom1, atom2, _, parameter in spinham.p42:
             alpha = spinham.map_to_magnetic[atom1]
             beta = spinham.map_to_magnetic[atom2]
 
-            if (alpha, beta) not in self.J_421:
-                self.J_421[(alpha, beta)] = np.zeros((3, 3, 3, 3), dtype=float)
+            if (alpha, beta) not in self.J_42:
+                self.J_42[(alpha, beta)] = np.zeros((3, 3, 3, 3), dtype=float)
 
-            self.J_421[(alpha, beta)] += spinham.convention.c421 * parameter
-
-        self.J_422 = {}
-
-        for atom1, atom2, _, parameter in spinham.p422:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-
-            if (alpha, beta) not in self.J_422:
-                self.J_422[(alpha, beta)] = np.zeros((3, 3, 3, 3), dtype=float)
-
-            self.J_422[(alpha, beta)] += spinham.convention.c422 * parameter
+            self.J_42[(alpha, beta)] += spinham.convention.c42 * parameter
 
         self.J_43 = {}
 
-        for atom1, atom2, atom3, _, _, parameter in spinham.p43:
+        for atom1, atom2, _, parameter in spinham.p43:
+            alpha = spinham.map_to_magnetic[atom1]
+            beta = spinham.map_to_magnetic[atom2]
+
+            if (alpha, beta) not in self.J_43:
+                self.J_43[(alpha, beta)] = np.zeros((3, 3, 3, 3), dtype=float)
+
+            self.J_43[(alpha, beta)] += spinham.convention.c43 * parameter
+
+        self.J_44 = {}
+
+        for atom1, atom2, atom3, _, _, parameter in spinham.p44:
             alpha = spinham.map_to_magnetic[atom1]
             beta = spinham.map_to_magnetic[atom2]
             gamma = spinham.map_to_magnetic[atom3]
 
-            if (alpha, beta, gamma) not in self.J_43:
-                self.J_43[(alpha, beta, gamma)] = np.zeros((3, 3, 3, 3), dtype=float)
+            if (alpha, beta, gamma) not in self.J_44:
+                self.J_44[(alpha, beta, gamma)] = np.zeros((3, 3, 3, 3), dtype=float)
 
-            self.J_43[(alpha, beta, gamma)] += spinham.convention.c43 * parameter
+            self.J_44[(alpha, beta, gamma)] += spinham.convention.c44 * parameter
 
-        self.J_44 = {}
+        self.J_45 = {}
 
-        for atom1, atom2, atom3, atom4, _, _, _, parameter in spinham.p44:
+        for atom1, atom2, atom3, atom4, _, _, _, parameter in spinham.p45:
             alpha = spinham.map_to_magnetic[atom1]
             beta = spinham.map_to_magnetic[atom2]
             gamma = spinham.map_to_magnetic[atom3]
             epsilon = spinham.map_to_magnetic[atom4]
 
-            if (alpha, beta, gamma, epsilon) not in self.J_44:
-                self.J_44[(alpha, beta, gamma, epsilon)] = np.zeros(
+            if (alpha, beta, gamma, epsilon) not in self.J_45:
+                self.J_45[(alpha, beta, gamma, epsilon)] = np.zeros(
                     (3, 3, 3, 3), dtype=float
                 )
 
-            self.J_44[(alpha, beta, gamma, epsilon)] += (
-                spinham.convention.c44 * parameter
+            self.J_45[(alpha, beta, gamma, epsilon)] += (
+                spinham.convention.c45 * parameter
             )
 
         spinham.units = initial_units
@@ -463,20 +463,20 @@ class Energy:
                 spins[beta],
             )
 
-        for alpha, beta in self.J_421:
+        for alpha, beta in self.J_42:
             energy += np.einsum(
                 "ijuv,i,j,u,v",
-                self.J_421[(alpha, beta)],
+                self.J_42[(alpha, beta)],
                 spins[alpha],
                 spins[alpha],
                 spins[alpha],
                 spins[beta],
             )
 
-        for alpha, beta in self.J_422:
+        for alpha, beta in self.J_43:
             energy += np.einsum(
                 "ijuv,i,j,u,v",
-                self.J_422[(alpha, beta)],
+                self.J_43[(alpha, beta)],
                 spins[alpha],
                 spins[alpha],
                 spins[beta],
@@ -492,20 +492,20 @@ class Energy:
                 spins[gamma],
             )
 
-        for alpha, beta, gamma in self.J_43:
+        for alpha, beta, gamma in self.J_44:
             energy += np.einsum(
                 "ijuv,i,j,u,v",
-                self.J_43[(alpha, beta, gamma)],
+                self.J_44[(alpha, beta, gamma)],
                 spins[alpha],
                 spins[alpha],
                 spins[beta],
                 spins[gamma],
             )
 
-        for alpha, beta, gamma, epsilon in self.J_44:
+        for alpha, beta, gamma, epsilon in self.J_45:
             energy += np.einsum(
                 "ijuv,i,j,u,v",
-                self.J_44[(alpha, beta, gamma, epsilon)],
+                self.J_45[(alpha, beta, gamma, epsilon)],
                 spins[alpha],
                 spins[beta],
                 spins[gamma],
@@ -611,11 +611,11 @@ class Energy:
                 * self.spins[beta]
             )
 
-        for alpha, beta in self.J_421:
+        for alpha, beta in self.J_42:
             gradient[alpha] += 4 * (
                 np.einsum(
                     "tjuv,j,u,v->t",
-                    self.J_421[(alpha, beta)],
+                    self.J_42[(alpha, beta)],
                     spin_directions[alpha],
                     spin_directions[alpha],
                     spin_directions[beta],
@@ -624,11 +624,11 @@ class Energy:
                 * self.spins[beta]
             )
 
-        for alpha, beta in self.J_422:
+        for alpha, beta in self.J_43:
             gradient[alpha] += 4 * (
                 np.einsum(
                     "tjuv,j,u,v->t",
-                    self.J_422[(alpha, beta)],
+                    self.J_43[(alpha, beta)],
                     spin_directions[alpha],
                     spin_directions[beta],
                     spin_directions[beta],
@@ -650,11 +650,11 @@ class Energy:
                 * self.spins[gamma]
             )
 
-        for alpha, beta, gamma in self.J_43:
+        for alpha, beta, gamma in self.J_44:
             gradient[alpha] += 4 * (
                 np.einsum(
                     "tjuv,j,u,v->t",
-                    self.J_43[(alpha, beta, gamma)],
+                    self.J_44[(alpha, beta, gamma)],
                     spin_directions[alpha],
                     spin_directions[beta],
                     spin_directions[gamma],
@@ -664,11 +664,11 @@ class Energy:
                 * self.spins[gamma]
             )
 
-        for alpha, beta, gamma, epsilon in self.J_44:
+        for alpha, beta, gamma, epsilon in self.J_45:
             gradient[alpha] += 4 * (
                 np.einsum(
                     "tjuv,j,u,v->t",
-                    self.J_44[(alpha, beta, gamma, epsilon)],
+                    self.J_45[(alpha, beta, gamma, epsilon)],
                     spin_directions[beta],
                     spin_directions[gamma],
                     spin_directions[epsilon],
