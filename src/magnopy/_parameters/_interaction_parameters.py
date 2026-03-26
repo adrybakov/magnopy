@@ -80,27 +80,14 @@ def _get_specs(alphas, nus):
 
         nus = tuple(new_nus)
 
-    return (n, p_n, alphas, nus)
-
-
-def _validate_parameter(n, parameter):
-    if not isinstance(parameter, np.ndarray):
-        raise ValueError("Parameter must be a numpy array.")
-
-    if parameter.ndim != n:
-        raise ValueError(
-            "The number of dimensions of the parameter must be equal to n."
-        )
-
-    if any(dim != 3 for dim in parameter.shape):
-        raise ValueError("All dimensions of the parameter must have size 3.")
+    return (n, p_n, alphas, nus[1:])
 
 
 class _InteractionParameters:
     """
     Interaction parameters of spin Hamiltonian.
 
-    This class guarantees:
+    This class assumes:
 
     * Order of parameters by the specs = [n, p_n, alphas, nus].
     * Only one parameter for each set of alphas & nus.
@@ -110,7 +97,7 @@ class _InteractionParameters:
 
     def __init__(self):
         # Elements of the container are
-        # [(n, p_n, (alpha_1, ..., alpha_n), (nu_1, ..., nu_n)), parameter]
+        # [(n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n)), parameter]
         self._container = []
 
     def _get_index(self, specs):
@@ -145,20 +132,19 @@ class _InteractionParameters:
                 return middle
         return -1
 
-    def add(self, alphas, nus, parameter, when_present="raise error"):
+    def add(self, specs, parameter, when_present="raise error"):
         """
         Add arbitrary interaction parameter to the container.
 
         Parameters
         ----------
-        alphas : tuple of int
-            Tuple of length n with indices of the sites in the unit cell.
+        specs : tuple
+            Tuple with the special structure tha uniquely defines the spin operators
+            associated with the interaction parameter.
 
-        nus : tuple of tuple of int
-            Tuple of length n with tuples of length 3 with indices of the spin components.
-            ``nus[0]`` is always forced to be ``(0, 0, 0)`` due to translation symmetry.
-            If given nus[0] is different then ``nus[i] = nus[i] - nus[0]`` is applied for
-            all i.
+            .. code-block:: python
+
+                (n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n))
 
         parameter : (3, 3, ..., 3) |array-like|_
             Tensor of the interaction parameter. The number of dimensions is n.
@@ -182,13 +168,9 @@ class _InteractionParameters:
             set to ``"raise error"``.
         """
 
-        specs = _get_specs(alphas=alphas, nus=nus)
-
         index = self._get_index(specs=specs)
 
         parameter = np.array(parameter, dtype=float)
-
-        _validate_parameter(n=specs[0], parameter=parameter)
 
         if index == -1:
             self._container.append([specs, parameter])
@@ -209,23 +191,20 @@ class _InteractionParameters:
                     f"Unsupported value for when_present: {when_present}. Supported values are: 'raise error', 'replace', 'sum', 'mean', 'skip'."
                 )
 
-    def remove(self, alphas, nus):
+    def remove(self, specs):
         """
         Remove an interaction parameter from the container.
 
         Parameters
         ----------
-        alphas : tuple of int
-            Tuple of length n with indices of the sites in the unit cell.
+        specs : tuple
+            Tuple with the special structure tha uniquely defines the spin operators
+            associated with the interaction parameter.
 
-        nus : tuple of tuple of int
-            Tuple of length n with tuples of length 3 with indices of the spin components.
-            ``nus[0]`` is always forced to be ``(0, 0, 0)`` due to translation symmetry.
-            If given nus[0] is different then ``nus[i] = nus[i] - nus[0]`` is applied for
-            all i.
+            .. code-block:: python
+
+                (n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n))
         """
-
-        specs = _get_specs(alphas=alphas, nus=nus)
 
         index = self._get_index(specs=specs)
 

@@ -23,7 +23,6 @@ import numpy as np
 
 from magnopy._parameters._interaction_parameters import (
     _get_specs,
-    _validate_parameter,
     _InteractionParameters,
 )
 
@@ -57,76 +56,41 @@ def test_get_specs(n, p_n, alphas, nus):
     assert specs[0] == n
     assert specs[1] == p_n
     assert specs[2] == alphas
-    assert specs[3][0] == (0, 0, 0)
+    assert len(specs[3]) == len(nus) - 1
 
-
-@pytest.mark.parametrize(
-    "n, parameter",
-    [
-        (1, np.zeros((1,))),
-        (2, np.zeros((3, 4))),
-        (3, np.zeros((3, 2, 3))),
-        (4, np.zeros((2, 3, 3, 3))),
-        (1, np.zeros((3, 3))),
-        (2, np.zeros((3))),
-        (3, np.zeros((3, 3, 3, 3))),
-        (4, np.zeros((3, 3, 3))),
-        (1, [1, 2, 3]),
-    ],
-)
-def test_validate_parameter_fails(n, parameter):
-    with pytest.raises(ValueError):
-        _validate_parameter(n=n, parameter=parameter)
-
-
-@pytest.mark.parametrize(
-    "n, parameter",
-    [
-        (1, np.zeros((3,))),
-        (2, np.zeros((3, 3))),
-        (3, np.zeros((3, 3, 3))),
-        (4, np.zeros((3, 3, 3, 3))),
-    ],
-)
-def test_validate_parameter_passes(n, parameter):
-    _validate_parameter(n=n, parameter=parameter)
+    for i in range(len(nus) - 1):
+        assert specs[3][i][0] == nus[i + 1][0] - nus[0][0]
+        assert specs[3][i][1] == nus[i + 1][1] - nus[0][1]
+        assert specs[3][i][2] == nus[i + 1][2] - nus[0][2]
 
 
 def test_interaction_parameters_add():
     parameters = _InteractionParameters()
-    parameters.add(
-        alphas=(0, 1), nus=((1, 0, 0), (0, 0, 2)), parameter=np.zeros((3, 3))
-    )
+    parameters.add(specs=(2, 2, (0, 1), ((-1, 0, 2),)), parameter=np.zeros((3, 3)))
 
     assert len(parameters._container) == 1
-    assert parameters._container[0][0] == (2, 2, (0, 1), ((0, 0, 0), (-1, 0, 2)))
+    assert parameters._container[0][0] == (2, 2, (0, 1), ((-1, 0, 2),))
     assert np.allclose(parameters._container[0][1], np.zeros((3, 3)))
 
 
 def test_interaction_parameters_remove():
     parameters = _InteractionParameters()
-    parameters.add(
-        alphas=(0, 1), nus=((1, 0, 0), (0, 0, 2)), parameter=np.zeros((3, 3))
-    )
+    parameters.add(specs=(2, 2, (0, 1), ((-1, 0, 2),)), parameter=np.zeros((3, 3)))
 
-    parameters.remove(alphas=(1, 0), nus=((1, 0, 0), (0, 0, 2)))
+    parameters.remove(specs=(2, 2, (1, 0), ((0, 0, 2),)))
     assert len(parameters._container) == 1
 
-    parameters.remove(alphas=(0, 1), nus=((0, 0, 0), (-1, 0, 2)))
+    parameters.remove(specs=(2, 2, (0, 1), ((-1, 0, 2),)))
     assert len(parameters._container) == 0
 
 
 def test_interaction_parameters_order():
     parameters = _InteractionParameters()
-    parameters.add(alphas=(0,), nus=((3, 0, 1),), parameter=np.zeros((3,)))
-    parameters.add(
-        alphas=(0, 1), nus=((0, 0, 0), (0, 0, 2)), parameter=np.zeros((3, 3))
-    )
-    parameters.add(
-        alphas=(0, 0), nus=((1, 0, 0), (0, 0, 2)), parameter=np.zeros((3, 3))
-    )
+    parameters.add(specs=(1, 1, (0,), ()), parameter=np.zeros((3,)))
+    parameters.add(specs=(2, 2, (0, 1), ((0, 0, 2),)), parameter=np.zeros((3, 3)))
+    parameters.add(specs=(2, 2, (0, 0), ((-1, 0, 2),)), parameter=np.zeros((3, 3)))
 
     assert len(parameters._container) == 3
-    assert parameters._container[0][0] == (1, 1, (0,), ((0, 0, 0),))
-    assert parameters._container[1][0] == (2, 2, (0, 0), ((0, 0, 0), (-1, 0, 2)))
-    assert parameters._container[2][0] == (2, 2, (0, 1), ((0, 0, 0), (0, 0, 2)))
+    assert parameters._container[0][0] == (1, 1, (0,), ())
+    assert parameters._container[1][0] == (2, 2, (0, 0), ((-1, 0, 2),))
+    assert parameters._container[2][0] == (2, 2, (0, 1), ((0, 0, 2),))
