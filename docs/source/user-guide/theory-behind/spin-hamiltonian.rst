@@ -198,7 +198,7 @@ Hamiltonian for each case.
 ========= ============ =========== =================== =======================================
 :math:`n` partition    :math:`p_n` Hamiltonian's terms Convention constant (:math:`C_{n,p_n}`)
 ========= ============ =========== =================== =======================================
-1         ( 1 )        —           :ref:`ug_tb_sh_1`   :math:`C_1`
+1         ( 1 )        1           :ref:`ug_tb_sh_1-1` :math:`C_{1,1} \equiv C_1`
 2         (2, 0)       1           :ref:`ug_tb_sh_2-1` :math:`C_{2,1}`
 2         (1, 1)       2           :ref:`ug_tb_sh_2-2` :math:`C_{2,2}`
 3         (3, 0, 0)    1           :ref:`ug_tb_sh_3-1` :math:`C_{3,1}`
@@ -215,7 +215,7 @@ Hamiltonian for each case.
     :maxdepth: 1
     :hidden:
 
-    spin-hamiltonian-subterms/1
+    spin-hamiltonian-subterms/1-1
     spin-hamiltonian-subterms/2-1
     spin-hamiltonian-subterms/2-2
     spin-hamiltonian-subterms/3-1
