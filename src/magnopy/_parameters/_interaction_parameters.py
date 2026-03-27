@@ -93,12 +93,28 @@ class _InteractionParameters:
     * Only one parameter for each set of alphas & nus.
     * That shape of the parameter's tensor matches n.
     * That n and/or p_n are correct for corresponding alphas and nus.
+    * Keeps track of positions of parameters with different n and p_n in the container via
+      ``_slices`` attribute.
     """
 
     def __init__(self):
         # Elements of the container are
         # [(n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n)), parameter]
         self._container = []
+        self._slices = {
+            # (n, p_n): [start, length]
+            (1, 1): [0, 0],
+            (2, 1): [0, 0],
+            (2, 2): [0, 0],
+            (3, 1): [0, 0],
+            (3, 2): [0, 0],
+            (3, 3): [0, 0],
+            (4, 1): [0, 0],
+            (4, 2): [0, 0],
+            (4, 3): [0, 0],
+            (4, 4): [0, 0],
+            (4, 5): [0, 0],
+        }
 
     def _get_index(self, specs):
         """
@@ -112,7 +128,7 @@ class _InteractionParameters:
 
             .. code-block:: python
 
-                (n, p_n, (alpha_1, ..., alpha_n), (nu_1, ..., nu_n))
+                (n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n))
 
         Returns
         -------
@@ -131,6 +147,28 @@ class _InteractionParameters:
             else:
                 return middle
         return -1
+
+    def _update_slices(self, n, p_n, delta):
+        """
+        Update tracking of positions of parameters with different n and p_n.
+
+        Parameters
+        ----------
+        n : int
+            n of the parameters to update the tracking for.
+        p_n : int
+            p_n of the parameters to update the tracking for.
+        delta : int
+            How many new parameters were added (positive) or removed (negative) to the
+            (n, p_n) group.
+        """
+        for key in self._slices:
+            # Update the length of the slice for the corresponding n and p_n
+            if (n, p_n) == key:
+                self._slices[key][1] += delta
+            # Update the start for all the following slices
+            elif (n, p_n) < key:
+                self._slices[key][0] += delta
 
     def add(self, specs, parameter, when_present="raise error"):
         """
@@ -175,6 +213,7 @@ class _InteractionParameters:
         if index == -1:
             self._container.append([specs, parameter])
             self._container.sort(key=lambda x: x[0])
+            self._update_slices(n=specs[0], p_n=specs[1], delta=1)
         else:
             if when_present == "raise error":
                 raise ValueError("Parameter with such specs is already present.")
@@ -210,6 +249,7 @@ class _InteractionParameters:
 
         if index != -1:
             del self._container[index]
+            self._update_slices(n=specs[0], p_n=specs[1], delta=-1)
 
     def __add__(self, other):
         """
@@ -243,21 +283,26 @@ class _InteractionParameters:
                     [other._container[i2][0], other._container[i2][1].copy()]
                 )
                 i2 += 1
+                n, p_n = other._container[i2][0][:2]
             if i2 >= L2:
                 result._container.append(
                     [self._container[i1][0], self._container[i1][1].copy()]
                 )
                 i1 += 1
+                n, p_n = self._container[i1][0][:2]
+
             elif self._container[i1][0] < other._container[i2][0]:
                 result._container.append(
                     [self._container[i1][0], self._container[i1][1].copy()]
                 )
                 i1 += 1
+                n, p_n = self._container[i1][0][:2]
             elif self._container[i1][0] > other._container[i2][0]:
                 result._container.append(
                     [other._container[i2][0], other._container[i2][1].copy()]
                 )
                 i2 += 1
+                n, p_n = other._container[i2][0][:2]
             else:
                 result._container.append(
                     [
@@ -267,6 +312,9 @@ class _InteractionParameters:
                 )
                 i1 += 1
                 i2 += 1
+                n, p_n = self._container[i1][0][:2]
+
+            self._update_slices(n=n, p_n=p_n, delta=1)
 
         return result
 
@@ -291,6 +339,7 @@ class _InteractionParameters:
             )
 
         result = _InteractionParameters()
+        result._slices = self._slices.copy()
 
         for specs, parameter in self._container:
             result._container.append([specs, parameter * scalar])
@@ -299,3 +348,6 @@ class _InteractionParameters:
 
     def __rmul__(self, number):
         return self.__mul__(number=number)
+
+    def __len__(self):
+        return len(self._container)
