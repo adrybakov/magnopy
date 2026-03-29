@@ -273,48 +273,37 @@ class _InteractionParameters:
 
         result = _InteractionParameters()
 
-        L1 = len(self._container)
-        L2 = len(other._container)
         i1 = 0
-        i2 = 0
-        while i1 < L1 and i2 < L2:
-            if i1 >= L1:
-                result._container.append(
-                    [other._container[i2][0], other._container[i2][1].copy()]
-                )
-                n, p_n = other._container[i2][0][:2]
-                i2 += 1
-            if i2 >= L2:
-                result._container.append(
-                    [self._container[i1][0], self._container[i1][1].copy()]
-                )
-                n, p_n = self._container[i1][0][:2]
-                i1 += 1
+        L1 = len(self._container)
 
+        i2 = 0
+        L2 = len(other._container)
+
+        while i1 < L1 or i2 < L2:
+            if i1 >= L1:
+                specs = other._container[i2][0]
+                parameter = other._container[i2][1].copy()
+                i2 += 1
+            elif i2 >= L2:
+                specs = self._container[i1][0]
+                parameter = self._container[i1][1].copy()
+                i1 += 1
             elif self._container[i1][0] < other._container[i2][0]:
-                result._container.append(
-                    [self._container[i1][0], self._container[i1][1].copy()]
-                )
-                n, p_n = self._container[i1][0][:2]
+                specs = self._container[i1][0]
+                parameter = self._container[i1][1].copy()
                 i1 += 1
             elif self._container[i1][0] > other._container[i2][0]:
-                result._container.append(
-                    [other._container[i2][0], other._container[i2][1].copy()]
-                )
-                n, p_n = other._container[i2][0][:2]
+                specs = other._container[i2][0]
+                parameter = other._container[i2][1].copy()
                 i2 += 1
             else:
-                result._container.append(
-                    [
-                        self._container[i1][0],
-                        self._container[i1][1] + other._container[i2][1],
-                    ]
-                )
-                n, p_n = self._container[i1][0][:2]
+                specs = self._container[i1][0]
+                parameter = self._container[i1][1] + other._container[i2][1]
                 i1 += 1
                 i2 += 1
 
-            self._update_slices(n=n, p_n=p_n, delta=1)
+            result._container.append([specs, parameter])
+            result._update_slices(n=specs[0], p_n=specs[1], delta=1)
 
         return result
 

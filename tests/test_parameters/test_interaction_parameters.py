@@ -930,3 +930,30 @@ def test_interaction_parameters_slices_random(data):
                 new_slices[(_, 1)][0] == prev_slices[(_, 1)][0] + delta
             )  # Same position
             assert new_slices[(_, 1)][1] == prev_slices[(_, 1)][1]  # Same length
+
+
+def test_add():
+    p1 = _InteractionParameters()
+    p21 = _InteractionParameters()
+
+    p1.add(specs=(1, 1, (), (1,)), parameter=np.zeros((3,)))
+    p21.add(specs=(2, 1, ((0, 0, 0),), (0, 0)), parameter=np.zeros((3, 3)))
+
+    p = p1 + p21
+
+    assert p._slices == {
+        (1, 1): [0, 1],
+        (2, 1): [1, 1],
+        (2, 2): [2, 0],
+        (3, 1): [2, 0],
+        (3, 2): [2, 0],
+        (3, 3): [2, 0],
+        (4, 1): [2, 0],
+        (4, 2): [2, 0],
+        (4, 3): [2, 0],
+        (4, 4): [2, 0],
+        (4, 5): [2, 0],
+    }
+
+    assert p._container[0][0] == (1, 1, (), (1,))
+    assert p._container[1][0] == (2, 1, ((0, 0, 0),), (0, 0))
