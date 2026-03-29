@@ -282,27 +282,27 @@ class _InteractionParameters:
                 result._container.append(
                     [other._container[i2][0], other._container[i2][1].copy()]
                 )
-                i2 += 1
                 n, p_n = other._container[i2][0][:2]
+                i2 += 1
             if i2 >= L2:
                 result._container.append(
                     [self._container[i1][0], self._container[i1][1].copy()]
                 )
-                i1 += 1
                 n, p_n = self._container[i1][0][:2]
+                i1 += 1
 
             elif self._container[i1][0] < other._container[i2][0]:
                 result._container.append(
                     [self._container[i1][0], self._container[i1][1].copy()]
                 )
-                i1 += 1
                 n, p_n = self._container[i1][0][:2]
+                i1 += 1
             elif self._container[i1][0] > other._container[i2][0]:
                 result._container.append(
                     [other._container[i2][0], other._container[i2][1].copy()]
                 )
-                i2 += 1
                 n, p_n = other._container[i2][0][:2]
+                i2 += 1
             else:
                 result._container.append(
                     [
@@ -310,9 +310,9 @@ class _InteractionParameters:
                         self._container[i1][1] + other._container[i2][1],
                     ]
                 )
+                n, p_n = self._container[i1][0][:2]
                 i1 += 1
                 i2 += 1
-                n, p_n = self._container[i1][0][:2]
 
             self._update_slices(n=n, p_n=p_n, delta=1)
 
