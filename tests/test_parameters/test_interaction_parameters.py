@@ -30,10 +30,10 @@ from magnopy._parameters._interaction_parameters import (
 )
 
 ROLL = [
-    ((1,), ()),
-    ((1, 2), ((0, 0, 0),)),
-    ((1, 2, 3), ((0, 0, 0), (0, 0, 0))),
-    ((1, 2, 3, 4), ((0, 0, 0), (0, 0, 0), (0, 0, 0))),
+    ((), (1,)),
+    (((0, 0, 0),), (1, 2)),
+    (((0, 0, 0), (0, 0, 0)), (1, 2, 3)),
+    (((0, 0, 0), (0, 0, 0), (0, 0, 0)), (1, 2, 3, 4)),
 ]
 
 
@@ -61,49 +61,49 @@ ROLL = [
     ],
 )
 def test_get_specs(n, p_n, alphas, nus):
-    specs = _get_specs(alphas=alphas, nus=nus)
+    specs = _get_specs(nus=nus, alphas=alphas)
 
     assert specs[0] == n
     assert specs[1] == p_n
-    assert specs[2] == alphas
-    assert len(specs[3]) == len(nus) - 1
+    assert len(specs[2]) == len(nus) - 1
+    assert specs[3] == alphas
 
     for i in range(len(nus) - 1):
-        assert specs[3][i][0] == nus[i + 1][0] - nus[0][0]
-        assert specs[3][i][1] == nus[i + 1][1] - nus[0][1]
-        assert specs[3][i][2] == nus[i + 1][2] - nus[0][2]
+        assert specs[2][i][0] == nus[i + 1][0] - nus[0][0]
+        assert specs[2][i][1] == nus[i + 1][1] - nus[0][1]
+        assert specs[2][i][2] == nus[i + 1][2] - nus[0][2]
 
 
 def test_interaction_parameters_add():
     parameters = _InteractionParameters()
-    parameters.add(specs=(2, 2, (0, 1), ((-1, 0, 2),)), parameter=np.zeros((3, 3)))
+    parameters.add(specs=(2, 2, ((-1, 0, 2),), (0, 1)), parameter=np.zeros((3, 3)))
 
     assert len(parameters._container) == 1
-    assert parameters._container[0][0] == (2, 2, (0, 1), ((-1, 0, 2),))
+    assert parameters._container[0][0] == (2, 2, ((-1, 0, 2),), (0, 1))
     assert np.allclose(parameters._container[0][1], np.zeros((3, 3)))
 
 
 def test_interaction_parameters_remove():
     parameters = _InteractionParameters()
-    parameters.add(specs=(2, 2, (0, 1), ((-1, 0, 2),)), parameter=np.zeros((3, 3)))
+    parameters.add(specs=(2, 2, ((-1, 0, 2),), (0, 1)), parameter=np.zeros((3, 3)))
 
-    parameters.remove(specs=(2, 2, (1, 0), ((0, 0, 2),)))
+    parameters.remove(specs=(2, 2, ((0, 0, 2),), (1, 0)))
     assert len(parameters._container) == 1
 
-    parameters.remove(specs=(2, 2, (0, 1), ((-1, 0, 2),)))
+    parameters.remove(specs=(2, 2, ((-1, 0, 2),), (0, 1)))
     assert len(parameters._container) == 0
 
 
 def test_interaction_parameters_order():
     parameters = _InteractionParameters()
-    parameters.add(specs=(1, 1, (0,), ()), parameter=np.zeros((3,)))
-    parameters.add(specs=(2, 2, (0, 1), ((0, 0, 2),)), parameter=np.zeros((3, 3)))
-    parameters.add(specs=(2, 2, (0, 0), ((-1, 0, 2),)), parameter=np.zeros((3, 3)))
+    parameters.add(specs=(1, 1, (), (0,)), parameter=np.zeros((3,)))
+    parameters.add(specs=(2, 2, ((0, 0, 2),), (0, 1)), parameter=np.zeros((3, 3)))
+    parameters.add(specs=(2, 2, ((-1, 0, 2),), (0, 0)), parameter=np.zeros((3, 3)))
 
     assert len(parameters._container) == 3
-    assert parameters._container[0][0] == (1, 1, (0,), ())
-    assert parameters._container[1][0] == (2, 2, (0, 0), ((-1, 0, 2),))
-    assert parameters._container[2][0] == (2, 2, (0, 1), ((0, 0, 2),))
+    assert parameters._container[0][0] == (1, 1, (), (0,))
+    assert parameters._container[1][0] == (2, 2, ((-1, 0, 2),), (0, 0))
+    assert parameters._container[2][0] == (2, 2, ((0, 0, 2),), (0, 1))
 
 
 PARAMETERS_SINGLES = _InteractionParameters()
@@ -873,45 +873,60 @@ def test_interaction_parameters_slices_multiples(wtd, n, p_n, slices):
         assert PARAMETERS_MULTIPLES._slices[key] == slices[key]
 
 
-PARAMETERS_RANDOM = _InteractionParameters()
-MULTIPLES_RANDOM = {1: 1, 2: 1, 3: 1, 4: 1}
-
-
 @given(
-    wtd=st.integers(min_value=0, max_value=1),
-    n=st.integers(min_value=1, max_value=4),
+    data=st.lists(
+        elements=st.tuples(
+            st.integers(min_value=0, max_value=1), st.integers(min_value=1, max_value=4)
+        ),
+        min_size=0,
+        max_size=1000,
+    ),
 )
-def test_interaction_parameters_slices_random(wtd, n):
-    prev_slice = deepcopy(PARAMETERS_RANDOM._slices)
+def test_interaction_parameters_slices_random(data):
+    parameters = _InteractionParameters()
 
-    if wtd == 0:
-        alphas = tuple([MULTIPLES_RANDOM[n] * _ for _ in ROLL[n - 1][0]])
-        nus = ROLL[n - 1][1]
-        MULTIPLES_RANDOM[n] += 1
-        PARAMETERS_RANDOM.add(specs=(n, 1, alphas, nus), parameter=np.zeros((3,) * n))
-        delta = 1
-    elif wtd == 1:
-        alphas = tuple([MULTIPLES_RANDOM[n] * _ for _ in ROLL[n - 1][0]])
-        nus = ROLL[n - 1][1]
-        PARAMETERS_RANDOM.remove(specs=(n, 1, alphas, nus))
-        if PARAMETERS_RANDOM._get_index(specs=(n, 1, alphas, nus)) == -1:
-            delta = 0
-        else:
-            delta = -1
-            MULTIPLES_RANDOM[n] = max(1, MULTIPLES_RANDOM[n] - 1)
+    factors = {1: 1, 2: 1, 3: 1, 4: 1}
 
-    tmp = list(PARAMETERS_RANDOM._slices.values())
-    for i in range(1, len(tmp)):
-        assert tmp[i][0] == sum([_[1] for _ in tmp[:i]])
+    for wtd, n in data:
+        prev_slices = deepcopy(parameters._slices)
 
-    new_slice = PARAMETERS_RANDOM._slices
+        nus = tuple([(0, 0, 0)] * (n - 1))
 
-    for _ in range(1, n):
-        assert new_slice[(_, 1)] == prev_slice[(_, 1)]
+        alphas = tuple([factors[n] * (_ + 1) for _ in range(n)])
 
-    assert new_slice[(n, 1)][1] == prev_slice[(n, 1)][1] + delta
-    assert new_slice[(n, 1)][0] == prev_slice[(n, 1)][0]
+        if wtd == 0:
+            parameters.add(specs=(n, 1, alphas, nus), parameter=np.zeros((3,) * n))
+            delta = 1
+            factors[n] += 1
+        elif wtd == 1:
+            prev_len = len(parameters._container)
+            parameters.remove(specs=(n, 1, alphas, nus))
 
-    for _ in range(n + 1, 5):
-        assert new_slice[(_, 1)][0] == prev_slice[(_, 1)][0] + delta
-        assert new_slice[(_, 1)][1] == prev_slice[(_, 1)][1]
+            delta = len(parameters._container) - prev_len
+
+            if delta == -1:
+                factors[n] = max(1, factors[n] - 1)
+
+        # Check that there is no empty space in the slices
+        tmp = list(parameters._slices.values())
+        for i in range(1, len(tmp)):
+            assert tmp[i][0] == sum([_[1] for _ in tmp[:i]])
+
+        new_slices = parameters._slices
+
+        # Check that the slices before (n, 1) are unchanged
+        for _ in range(1, n):
+            assert new_slices[(_, 1)] == prev_slices[(_, 1)]
+
+        # Check that the slices at (n, 1) are updated correctly (amount changes)
+        assert new_slices[(n, 1)][0] == prev_slices[(n, 1)][0]  # Same position
+        assert (
+            new_slices[(n, 1)][1] == prev_slices[(n, 1)][1] + delta
+        )  # Different length
+
+        # Check that the slices after (n, 1) are updated correctly (position changes)
+        for _ in range(n + 1, 5):
+            assert (
+                new_slices[(_, 1)][0] == prev_slices[(_, 1)][0] + delta
+            )  # Same position
+            assert new_slices[(_, 1)][1] == prev_slices[(_, 1)][1]  # Same length

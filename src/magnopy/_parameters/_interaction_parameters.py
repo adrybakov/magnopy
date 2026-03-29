@@ -22,7 +22,7 @@
 import numpy as np
 
 
-def _get_specs(alphas, nus):
+def _get_specs(nus, alphas):
     n = len(alphas)
 
     combined = [(alphas[i], *nus[i]) for i in range(n)]
@@ -80,7 +80,7 @@ def _get_specs(alphas, nus):
 
         nus = tuple(new_nus)
 
-    return (n, p_n, alphas, nus[1:])
+    return (n, p_n, nus[1:], alphas)
 
 
 class _InteractionParameters:
@@ -89,7 +89,7 @@ class _InteractionParameters:
 
     This class assumes:
 
-    * Order of parameters by the specs = [n, p_n, alphas, nus].
+    * Order of parameters by the specs = [n, p_n, nus, alphas].
     * Only one parameter for each set of alphas & nus.
     * That shape of the parameter's tensor matches n.
     * That n and/or p_n are correct for corresponding alphas and nus.
@@ -99,7 +99,7 @@ class _InteractionParameters:
 
     def __init__(self):
         # Elements of the container are
-        # [(n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n)), parameter]
+        # [(n, p_n, (nu_2, ..., nu_n), (alpha_1, ..., alpha_n)), parameter]
         self._container = []
         self._slices = {
             # (n, p_n): [start, length]
@@ -128,7 +128,7 @@ class _InteractionParameters:
 
             .. code-block:: python
 
-                (n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n))
+                (n, p_n, (nu_2, ..., nu_n), (alpha_1, ..., alpha_n))
 
         Returns
         -------
@@ -182,7 +182,7 @@ class _InteractionParameters:
 
             .. code-block:: python
 
-                (n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n))
+                (n, p_n, (nu_2, ..., nu_n), (alpha_1, ..., alpha_n))
 
         parameter : (3, 3, ..., 3) |array-like|_
             Tensor of the interaction parameter. The number of dimensions is n.
@@ -242,7 +242,7 @@ class _InteractionParameters:
 
             .. code-block:: python
 
-                (n, p_n, (alpha_1, ..., alpha_n), (nu_2, ..., nu_n))
+                (n, p_n, (nu_2, ..., nu_n), (alpha_1, ..., alpha_n))
         """
 
         index = self._get_index(specs=specs)
@@ -351,3 +351,6 @@ class _InteractionParameters:
 
     def __len__(self):
         return len(self._container)
+
+    def __contains__(self, specs):
+        return self._get_index(specs=specs) != -1
