@@ -43,22 +43,26 @@ def test_add_remove(h):
         "g_factors": [2 for _ in range(9)],
     }
 
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=Convention())
+    spinham = SpinHamiltonian(
+        cell=np.eye(3), atoms=atoms, convention=Convention(multiple_counting=False)
+    )
 
     for i in range(9):
         spinham.add_21(alpha=i, parameter=np.eye(3))
 
     assert len(spinham.p1) == 0
+    assert len(spinham.p21) == 9
 
     spinham.add_magnetic_field(B=h)
     assert len(spinham.p1) == 9
+    assert len(spinham.p21) == 9
 
     BOHR_MAGNETON = 0.057883818060  # meV / Tesla
     zeeman_parameters = [BOHR_MAGNETON * 2 * h for _ in range(9)]
-    assert np.allclose(zeeman_parameters, [parameter for _, parameter in spinham.p1])
+    assert np.allclose(zeeman_parameters, [parameter for _, _, parameter in spinham.p1])
 
     spinham.add_magnetic_field(B=-h)
-    assert np.allclose(np.zeros((9, 3)), [parameter for _, parameter in spinham.p1])
+    assert np.allclose(np.zeros((9, 3)), [parameter for _, _, parameter in spinham.p1])
 
 
 @given(ARRAY_3)
@@ -69,7 +73,9 @@ def test_double_add(h):
         "g_factors": [2 for _ in range(9)],
     }
 
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=Convention())
+    spinham = SpinHamiltonian(
+        cell=np.eye(3), atoms=atoms, convention=Convention(multiple_counting=False)
+    )
 
     for i in range(9):
         spinham.add_21(alpha=i, parameter=np.eye(3))
@@ -78,11 +84,11 @@ def test_double_add(h):
 
     spinham.add_magnetic_field(B=h)
 
-    params = np.array([parameter for _, parameter in spinham.p1])
+    params = np.array([parameter for _, _, parameter in spinham.p1])
 
     spinham.add_magnetic_field(B=h)
 
-    double_params = np.array([parameter for _, parameter in spinham.p1])
+    double_params = np.array([parameter for _, _, parameter in spinham.p1])
 
     assert np.allclose(2 * params, double_params)
 
@@ -95,7 +101,9 @@ def test_add_nothing(h):
         "g_factors": [2 for _ in range(9)],
     }
 
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=Convention())
+    spinham = SpinHamiltonian(
+        cell=np.eye(3), atoms=atoms, convention=Convention(multiple_counting=False)
+    )
 
     assert len(spinham.p1) == 0
 
@@ -111,7 +119,9 @@ def test_add_with_indices(alpha, h):
         "g_factors": [2 for _ in range(9)],
     }
 
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=Convention())
+    spinham = SpinHamiltonian(
+        cell=np.eye(3), atoms=atoms, convention=Convention(multiple_counting=False)
+    )
 
     assert len(spinham.p1) == 0
 
@@ -119,8 +129,8 @@ def test_add_with_indices(alpha, h):
     assert len(spinham.p1) == 1
 
     BOHR_MAGNETON = 0.057883818060  # meV / Tesla
-    assert spinham.p1[0][0] == alpha
-    assert np.allclose(spinham.p1[0][1], BOHR_MAGNETON * 2 * h)
+    assert spinham.p1[0][1][0] == alpha
+    assert np.allclose(spinham.p1[0][2], BOHR_MAGNETON * 2 * h)
 
 
 @given(st.integers(min_value=0, max_value=8), ARRAY_3)
@@ -131,7 +141,9 @@ def test_check_update_of_magnetic_atoms(alpha, h):
         "g_factors": [2 for _ in range(9)],
     }
 
-    spinham = SpinHamiltonian(cell=np.eye(3), atoms=atoms, convention=Convention())
+    spinham = SpinHamiltonian(
+        cell=np.eye(3), atoms=atoms, convention=Convention(multiple_counting=False)
+    )
 
     assert len(spinham.p1) == 0
     assert spinham.M == 0
@@ -141,5 +153,5 @@ def test_check_update_of_magnetic_atoms(alpha, h):
     assert spinham.M == 1
 
     BOHR_MAGNETON = 0.057883818060  # meV / Tesla
-    assert spinham.p1[0][0] == alpha
-    assert np.allclose(spinham.p1[0][1], BOHR_MAGNETON * 2 * h)
+    assert spinham.p1[0][1][0] == alpha
+    assert np.allclose(spinham.p1[0][2], BOHR_MAGNETON * 2 * h)

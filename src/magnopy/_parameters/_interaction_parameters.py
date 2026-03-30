@@ -25,6 +25,9 @@ import numpy as np
 def _get_specs(nus, alphas):
     n = len(alphas)
 
+    nus = tuple(map(tuple, nus))
+    alphas = tuple(alphas)
+
     combined = [(alphas[i], *nus[i]) for i in range(n)]
 
     if n == 1:
@@ -205,6 +208,17 @@ class _InteractionParameters:
             If the parameter is already present in the container and ``when_present`` is
             set to ``"raise error"``.
         """
+
+        # REMOVE in September 2026
+        if when_present == "add":
+            when_present = "sum"
+            import warnings
+
+            warnings.warn(
+                "Value 'add' for when_present is deprecated in 0.5.0 and will be removed in September 2026. Use 'sum' instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
         index = self._get_index(specs=specs)
 

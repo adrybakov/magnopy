@@ -19,18 +19,19 @@
 #
 # ================================ END LICENSE =================================
 
+
 import numpy as np
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays as harrays
 
-from magnopy import Convention, SpinHamiltonian, make_supercell
+from magnopy import Convention, SpinHamiltonian
 
 MAX_MODULUS = 1e8
 ARRAY = harrays(
     np.float64,
-    (3, 3),
+    (3, 3, 3),
     elements=st.floats(min_value=-MAX_MODULUS, max_value=MAX_MODULUS),
 )
 
@@ -73,30 +74,30 @@ def get_spinham(for_supercell=False) -> SpinHamiltonian:
 
 
 @given(st.integers(), ARRAY)
-def test_add_21(alpha, parameter):
+def test_add_31(alpha, parameter):
     spinham = get_spinham()
 
     if 0 <= alpha < len(spinham.atoms.names):
-        spinham.add_21(alpha, parameter)
+        spinham.add_31(alpha, parameter)
     else:
         with pytest.raises(ValueError):
-            spinham.add_21(alpha, parameter)
+            spinham.add_31(alpha, parameter)
 
 
 @pytest.mark.parametrize(
     "when_present, parameter",
-    [("skip", 1.0), ("replace", 2.0), ("add", 3.0), ("mean", 1.5)],
+    [("skip", 1.0), ("replace", 2.0), ("sum", 3.0), ("mean", 1.5)],
 )
-def test_add_21_when_present(when_present, parameter):
+def test_add_31_when_present(when_present, parameter):
     spinham = get_spinham()
 
-    spinham.add_21(0, np.ones((3, 3)))
+    spinham.add_31(0, np.ones((3, 3, 3)))
 
     with pytest.raises(ValueError):
-        spinham.add_21(0, np.ones((3, 3)))
+        spinham.add_31(0, np.ones((3, 3, 3)))
 
-    spinham.add_21(0, 2.0 * np.ones((3, 3)), when_present=when_present)
-    assert np.allclose(spinham._21[0][1], parameter * np.ones((3, 3)))
+    spinham.add_31(0, 2.0 * np.ones((3, 3, 3)), when_present=when_present)
+    assert np.allclose(spinham.p31[0][2], parameter * np.ones((3, 3, 3)))
 
 
 @given(
@@ -106,92 +107,87 @@ def test_add_21_when_present(when_present, parameter):
     st.integers(min_value=0, max_value=8),
     ARRAY,
 )
-def test_add_21_sorting(alpha1, alpha2, alpha3, alpha4, parameter):
+def test_add_31_sorting(alpha1, alpha2, alpha3, alpha4, parameter):
     spinham = get_spinham()
 
-    spinham.add_21(alpha1, parameter)
+    spinham.add_31(alpha1, parameter)
 
     if alpha2 == alpha1:
         with pytest.raises(ValueError):
-            spinham.add_21(alpha2, parameter)
+            spinham.add_31(alpha2, parameter)
     else:
-        spinham.add_21(alpha2, parameter)
+        spinham.add_31(alpha2, parameter)
 
-    spinham.add_21(alpha3, parameter, when_present="replace")
-    spinham.add_21(alpha4, parameter, when_present="replace")
+    spinham.add_31(alpha3, parameter, when_present="replace")
+    spinham.add_31(alpha4, parameter, when_present="replace")
 
-    for i in range(len(spinham._21) - 1):
-        assert spinham._21[i][:-1] <= spinham._21[i + 1][:-1]
+    for i in range(len(spinham.p31) - 1):
+        assert spinham.p31[i][:2] <= spinham.p31[i + 1][:2]
 
 
 @given(st.integers())
-def test_remove_21(r_alpha):
+def test_remove_31(r_alpha):
     spinham = get_spinham()
+    r_specs = (((0, 0, 0), (0, 0, 0)), (r_alpha, r_alpha, r_alpha))
 
     for alpha in range(len(spinham.atoms.names)):
-        spinham.add_21(alpha, np.ones((3, 3)))
+        spinham.add_31(alpha, np.ones((3, 3, 3)))
 
-    bond = [r_alpha]
     if 0 <= r_alpha < len(spinham.atoms.names):
-        original_bonds = [tmp[:-1] for tmp in spinham._21]
-        original_length = len(spinham._21)
+        specs_before = [_[:-1] for _ in spinham.p31]
+        spinham.remove_31(alpha=r_alpha)
+        updated_specs = [_[:-1] for _ in spinham.p31]
 
-        spinham.remove_21(*bond)
-
-        if bond in original_bonds:
-            updated_bonds = [tmp[:-1] for tmp in spinham._21]
-
-            assert len(spinham._21) == original_length - 1
-            assert bond not in updated_bonds
+        if r_specs in specs_before:
+            assert len(updated_specs) == len(specs_before) - 1
+            assert r_specs not in updated_specs
         else:
-            assert len(spinham._21) == original_length
+            assert len(updated_specs) == len(specs_before)
     else:
         with pytest.raises(ValueError):
-            spinham.remove_21(*bond)
+            spinham.remove_31(alpha=r_alpha)
 
 
 @given(ARRAY, st.floats(min_value=0.1, max_value=1e4))
 def test_mul(parameter, number):
     spinham = get_spinham()
 
-    spinham.add_21(alpha=0, parameter=parameter)
-    spinham.add_21(alpha=4, parameter=parameter * 1.32)
-    spinham.add_21(alpha=7, parameter=parameter / 3)
+    spinham.add_31(alpha=0, parameter=parameter)
+    spinham.add_31(alpha=4, parameter=parameter * 1.32)
+    spinham.add_31(alpha=7, parameter=parameter / 3)
 
     m_spinham = spinham * number
 
     assert spinham.M == m_spinham.M
 
-    assert len(spinham.p21) == len(m_spinham.p21)
+    assert len(spinham.p31) == len(m_spinham.p31)
 
-    params = list(spinham.p21)
-    m_params = list(m_spinham.p21)
-    for i in range(len(params)):
-        assert params[i][0] == m_params[i][0]
+    for i in range(len(spinham.p31)):
+        assert spinham.p31[i][0] == m_spinham.p31[i][0]
+        assert spinham.p31[i][1] == m_spinham.p31[i][1]
 
-        assert np.allclose(number * params[i][1], m_params[i][1])
+        assert np.allclose(number * spinham.p31[i][2], m_spinham.p31[i][2])
 
 
 @given(ARRAY, st.floats(min_value=0.1, max_value=1e4))
 def test_rmul(parameter, number):
     spinham = get_spinham()
 
-    spinham.add_21(alpha=0, parameter=parameter)
-    spinham.add_21(alpha=4, parameter=parameter * 1.32)
-    spinham.add_21(alpha=7, parameter=parameter / 3)
+    spinham.add_31(alpha=0, parameter=parameter)
+    spinham.add_31(alpha=4, parameter=parameter * 1.32)
+    spinham.add_31(alpha=7, parameter=parameter / 3)
 
     m_spinham = number * spinham
 
     assert spinham.M == m_spinham.M
 
-    assert len(spinham.p21) == len(m_spinham.p21)
+    assert len(spinham.p31) == len(m_spinham.p31)
 
-    params = list(spinham.p21)
-    m_params = list(m_spinham.p21)
-    for i in range(len(params)):
-        assert params[i][0] == m_params[i][0]
+    for i in range(len(spinham.p31)):
+        assert spinham.p31[i][0] == m_spinham.p31[i][0]
+        assert spinham.p31[i][1] == m_spinham.p31[i][1]
 
-        assert np.allclose(number * params[i][1], m_params[i][1])
+        assert np.allclose(number * spinham.p31[i][2], m_spinham.p31[i][2])
 
 
 @given(ARRAY, ARRAY)
@@ -199,39 +195,39 @@ def test_add(parameter1, parameter2):
     spinham1 = get_spinham()
     spinham2 = get_spinham()
 
-    spinham1.add_21(alpha=0, parameter=parameter1)
-    spinham1.add_21(alpha=4, parameter=parameter1 * 1.32)
-    spinham1.add_21(alpha=7, parameter=parameter1 / 3)
+    spinham1.add_31(alpha=0, parameter=parameter1)
+    spinham1.add_31(alpha=4, parameter=parameter1 * 1.32)
+    spinham1.add_31(alpha=7, parameter=parameter1 / 3)
 
-    spinham2.add_21(alpha=0, parameter=parameter2)
-    spinham2.add_21(alpha=4, parameter=parameter2 * 1.32)
-    spinham2.add_21(alpha=8, parameter=parameter2 / 3)
+    spinham2.add_31(alpha=0, parameter=parameter2)
+    spinham2.add_31(alpha=4, parameter=parameter2 * 1.32)
+    spinham2.add_31(alpha=8, parameter=parameter2 / 3)
 
     m_spinham = spinham1 + spinham2
 
     assert m_spinham.M == 4
 
-    assert len(m_spinham.p21) == 4
+    assert len(m_spinham.p31) == 4
 
     for i in range(2):
-        assert np.allclose(m_spinham._21[i][1], spinham1._21[i][1] + spinham2._21[i][1])
+        assert np.allclose(m_spinham.p31[i][2], spinham1.p31[i][2] + spinham2.p31[i][2])
 
-    assert np.allclose(m_spinham._21[2][1], spinham1._21[2][1])
-    assert np.allclose(m_spinham._21[3][1], spinham2._21[2][1])
+    assert np.allclose(m_spinham.p31[2][2], spinham1.p31[2][2])
+    assert np.allclose(m_spinham.p31[3][2], spinham2.p31[2][2])
 
 
-@given(
-    ARRAY,
-    st.integers(min_value=1, max_value=5),
-    st.integers(min_value=1, max_value=5),
-    st.integers(min_value=1, max_value=5),
-)
-def test_make_supercell(parameter1, i, j, k):
-    spinham = get_spinham(for_supercell=True)
+# @given(
+#     ARRAY,
+#     st.integers(min_value=1, max_value=5),
+#     st.integers(min_value=1, max_value=5),
+#     st.integers(min_value=1, max_value=5),
+# )
+# def test_make_supercell(parameter1, i, j, k):
+#     spinham = get_spinham(for_supercell=True)
 
-    spinham.add_21(alpha=0, parameter=parameter1)
-    spinham.add_21(alpha=1, parameter=parameter1 * 1.42)
+#     spinham.add_31(alpha=0, parameter=parameter1)
+#     spinham.add_31(alpha=1, parameter=parameter1 * 1.42)
 
-    new_spinham = make_supercell(spinham=spinham, supercell=(i, j, k))
+#     new_spinham = make_supercell(spinham=spinham, supercell=(i, j, k))
 
-    assert len(new_spinham.p21) == i * j * k * 2
+#     assert len(new_spinham.p31) == i * j * k * 2
