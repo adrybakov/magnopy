@@ -39,6 +39,7 @@ from magnopy._cli._arguments_library import (
     _add_supercell,
     _add_energy_tolerance,
     _add_torque_tolerance,
+    _add_quantum_correction,
 )
 from magnopy._constants._icons import ICON_IN_FILE
 
@@ -61,6 +62,7 @@ def manager():
     _add_spin_values(parser=parser)
     _add_no_html(parser=parser)
     _add_hide_personal_data(parser=parser)
+    _add_quantum_correction(parser=parser)
 
     # Parse arguments
     args = parser.parse_args()
@@ -109,4 +111,5 @@ def manager():
         comment=comment,
         no_html=args.no_html,
         hide_personal_data=args.hide_personal_data,
+        quantum_correction=args.quantum_correction,
     )

@@ -241,10 +241,18 @@ class Energy:
         spinham.units = initial_units
         spinham.convention = initial_convention
 
-    def __call__(self, spin_directions, units="meV", _normalize=True) -> float:
-        return self.E_0(
+    def __call__(
+        self, spin_directions, units="meV", _normalize=True, quantum_correction=False
+    ) -> float:
+        result = self.E_0(
             spin_directions=spin_directions, units=units, _normalize=_normalize
         )
+
+        if quantum_correction:
+            result += self.E_corr(
+                spin_directions=spin_directions, units=units, _normalize=_normalize
+            )
+        return result
 
     def E_0(self, spin_directions, units="meV", _normalize=True) -> float:
         r"""
@@ -376,7 +384,7 @@ class Energy:
 
         return float(energy)
 
-    def E_corr(self, spin_directions, units="mev") -> float:
+    def E_corr(self, spin_directions, units="mev", _normalize=True) -> float:
         r"""
         Computes quantum correction to the classical energy of the spin Hamiltonian.
 
@@ -397,10 +405,10 @@ class Energy:
             Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
             list of supported units.
         """
-
-        x, y, z = span_local_rfs(directional_vectors=spin_directions, hybridize=False)
+        x, y, z = span_local_rfs(
+            directional_vectors=spin_directions, hybridize=False, _normalize=_normalize
+        )
         p = x + 1j * y
-
         result = 0
 
         renormalized_parameters = _renormalized_parameters(
@@ -501,9 +509,11 @@ class Energy:
             units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
             result = result * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
 
-        return float(result)
+        return float(result.real)
 
-    def gradient(self, spin_directions, units="meV", _normalize=True):
+    def gradient(
+        self, spin_directions, units="meV", _normalize=True, quantum_correction=False
+    ):
         r"""
         Computes first derivatives of energy (:math:`E^{(0)}`) with respect to the
         components of the spin directional vectors.
@@ -527,6 +537,15 @@ class Energy:
         _normalize : bool, default True
             Whether to normalize the spin_directions or use the provided vectors as is.
             This parameter is technical and we do not recommend to use it at all.
+
+        quantum_correction : bool, default False
+            Whether to include quantum correction to the energy in the optimization. If
+            ``True``, then it optimizes :py:func:`.Energy.E_0` + :py:func:`.Energy.E_corr`.
+            If ``False``, then it optimizes :py:func:`.Energy.E_0` only.
+
+            .. warning::
+                This option is experimental. Will be improved and tested in future
+                releases. Use with caution.
 
         Returns
         -------
@@ -564,6 +583,19 @@ class Energy:
         ):
             gradient[alphas[0]] = parameter * self.spins[alphas[0]]
 
+        if quantum_correction:
+            sd = spin_directions.copy()
+            h = 1e-6
+            for alpha in range(self.M):
+                for i in range(3):
+                    sd[alpha][i] += h
+                    energy_plus = self.E_corr(spin_directions=sd, _normalize=False)
+                    sd[alpha][i] -= 2 * h
+                    energy_minus = self.E_corr(spin_directions=sd, _normalize=False)
+                    sd[alpha][i] += h
+
+                    gradient[alpha][i] += (energy_plus - energy_minus) / 2 / h
+
         # Convert units if necessary
         if units != "meV":
             units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
@@ -571,7 +603,9 @@ class Energy:
 
         return gradient
 
-    def torque(self, spin_directions, units="meV", _normalize=True):
+    def torque(
+        self, spin_directions, units="meV", _normalize=True, quantum_correction=False
+    ):
         r"""
         Computes torque on each spin.
 
@@ -594,6 +628,15 @@ class Energy:
             Whether to normalize the spin_directions or use the provided vectors as is.
             This parameter is technical and we do not recommend to use it at all.
 
+        quantum_correction : bool, default False
+            Whether to include quantum correction to the energy in the optimization. If
+            ``True``, then it optimizes :py:func:`.Energy.E_0` + :py:func:`.Energy.E_corr`.
+            If ``False``, then it optimizes :py:func:`.Energy.E_0` only.
+
+            .. warning::
+                This option is experimental. Will be improved and tested in future
+                releases. Use with caution.
+
         Returns
         -------
 
@@ -606,7 +649,10 @@ class Energy:
         return np.cross(
             spin_directions,
             self.gradient(
-                spin_directions=spin_directions, units=units, _normalize=_normalize
+                spin_directions=spin_directions,
+                units=units,
+                _normalize=_normalize,
+                quantum_correction=quantum_correction,
             ),
         )
 
@@ -620,6 +666,7 @@ class Energy:
         alpha_hi,
         c1=_C1,
         c2=_C2,
+        quantum_correction=False,
     ):
         sd_lo = _rotate_sd(
             reference_sd=reference_sd, rotation=alpha_lo * search_direction
@@ -628,11 +675,21 @@ class Energy:
             reference_sd=reference_sd, rotation=alpha_hi * search_direction
         )
 
-        phi_lo = self.E_0(spin_directions=sd_lo)
-        phi_hi = self.E_0(spin_directions=sd_hi)
+        phi_lo = self(spin_directions=sd_lo, quantum_correction=quantum_correction)
+        phi_hi = self(spin_directions=sd_hi, quantum_correction=quantum_correction)
 
-        der_lo = self.torque(spin_directions=sd_lo).flatten() @ search_direction
-        der_hi = self.torque(spin_directions=sd_hi).flatten() @ search_direction
+        der_lo = (
+            self.torque(
+                spin_directions=sd_lo, quantum_correction=quantum_correction
+            ).flatten()
+            @ search_direction
+        )
+        der_hi = (
+            self.torque(
+                spin_directions=sd_hi, quantum_correction=quantum_correction
+            ).flatten()
+            @ search_direction
+        )
 
         trial_steps = 0
         phi_min = None
@@ -650,7 +707,7 @@ class Energy:
             sd_j = _rotate_sd(
                 reference_sd=reference_sd, rotation=alpha_j * search_direction
             )
-            phi_j = self.E_0(spin_directions=sd_j)
+            phi_j = self(spin_directions=sd_j, quantum_correction=quantum_correction)
 
             # Safeguard
             if phi_min is None:
@@ -664,7 +721,12 @@ class Energy:
                 return alpha_j
 
             # Evaluate \phi^{\prime}(\alpha_i)
-            der_j = self.torque(spin_directions=sd_j).flatten() @ search_direction
+            der_j = (
+                self.torque(
+                    spin_directions=sd_j, quantum_correction=quantum_correction
+                ).flatten()
+                @ search_direction
+            )
 
             if phi_j > phi_0 + c1 * alpha_j * der_0 or phi_j >= phi_lo:
                 alpha_hi = alpha_j
@@ -691,11 +753,17 @@ class Energy:
         c2=_C2,
         alpha_max=2.0,
         max_iterations=10000,
+        quantum_correction=False,
     ):
         # First check if step alpha=1 is good to go:
         sd_1 = _rotate_sd(reference_sd=reference_sd, rotation=search_direction)
-        phi_1 = self.E_0(spin_directions=sd_1)
-        der_1 = self.torque(spin_directions=sd_1).flatten() @ search_direction
+        phi_1 = self(spin_directions=sd_1, quantum_correction=quantum_correction)
+        der_1 = (
+            self.torque(
+                spin_directions=sd_1, quantum_correction=quantum_correction
+            ).flatten()
+            @ search_direction
+        )
 
         if phi_1 <= phi_0 + c1 * der_0 and abs(der_1) <= c2 * abs(der_0):
             return 1.0
@@ -709,8 +777,13 @@ class Energy:
         sd_max = _rotate_sd(
             reference_sd=reference_sd, rotation=alpha_max * search_direction
         )
-        phi_max = self.E_0(spin_directions=sd_max)
-        der_max = self.torque(spin_directions=sd_max).flatten() @ search_direction
+        phi_max = self(spin_directions=sd_max, quantum_correction=quantum_correction)
+        der_max = (
+            self.torque(
+                spin_directions=sd_max, quantum_correction=quantum_correction
+            ).flatten()
+            @ search_direction
+        )
 
         alpha_i = _cubic_interpolation(
             alpha_l=alpha_prev,
@@ -726,7 +799,7 @@ class Energy:
             sd_i = _rotate_sd(
                 reference_sd=reference_sd, rotation=alpha_i * search_direction
             )
-            phi_i = self.E_0(spin_directions=sd_i)
+            phi_i = self(spin_directions=sd_i, quantum_correction=quantum_correction)
 
             if phi_i > phi_0 + c1 * alpha_i * der_0 or (i > 1 and phi_i >= phi_prev):
                 return self._zoom(
@@ -736,10 +809,16 @@ class Energy:
                     der_0=der_0,
                     alpha_lo=alpha_prev,
                     alpha_hi=alpha_i,
+                    quantum_correction=quantum_correction,
                 )
 
             # Evaluate \phi^{\prime}(\alpha_i)
-            der_i = self.torque(spin_directions=sd_i).flatten() @ search_direction
+            der_i = (
+                self.torque(
+                    spin_directions=sd_i, quantum_correction=quantum_correction
+                ).flatten()
+                @ search_direction
+            )
 
             if abs(der_i) <= -c2 * der_0:
                 return alpha_i
@@ -752,6 +831,7 @@ class Energy:
                     der_0=der_0,
                     alpha_lo=alpha_i,
                     alpha_hi=alpha_prev,
+                    quantum_correction=quantum_correction,
                 )
 
             # Choose alpha_{i+1}
@@ -781,6 +861,7 @@ class Energy:
         energy_tolerance=1e-5,
         torque_tolerance=1e-5,
         quiet=False,
+        quantum_correction=False,
     ):
         r"""
         Optimizes classical energy by varying the directions of spins in the unit cell.
@@ -800,6 +881,15 @@ class Energy:
         quiet : bool, default False
             Whether to suppress the output of the progress.
 
+        quantum_correction : bool, default False
+            Whether to include quantum correction to the energy in the optimization. If
+            ``True``, then it optimizes :py:func:`.Energy.E_0` + :py:func:`.Energy.E_corr`.
+            If ``False``, then it optimizes :py:func:`.Energy.E_0` only.
+
+            .. warning::
+                This option is experimental. Will be improved and tested in future
+                releases. Use with caution.
+
         Returns
         -------
 
@@ -818,7 +908,7 @@ class Energy:
         sd_k = initial_guess / np.linalg.norm(initial_guess, axis=1)[:, np.newaxis]
 
         if not quiet:
-            n_energy = max(-(int(log10(energy_tolerance)) - 2), 6)
+            n_energy = max(-(int(log10(energy_tolerance)) - 2), 12)
             n_torque = max(-(int(log10(torque_tolerance)) - 2), 6)
             print(
                 "─" * 5
@@ -831,8 +921,8 @@ class Energy:
             )
             print(
                 f"{'step':^4} │ "
-                f"{'E_0':^11} │ "
-                f"{'delta E_0':^{n_energy + 4}} │ "
+                f"{'Energy':^11} │ "
+                f"{'delta Energy':^{n_energy + 4}} │ "
                 f"{'max torque':^{n_torque + 4}}"
             )
             print(
@@ -851,8 +941,10 @@ class Energy:
 
         hessinv_k = np.eye(3 * self.M, dtype=float)
 
-        energy_k = self.E_0(spin_directions=sd_k)
-        gradient_k = self.torque(spin_directions=sd_k).flatten()
+        energy_k = self(spin_directions=sd_k, quantum_correction=quantum_correction)
+        gradient_k = self.torque(
+            spin_directions=sd_k, quantum_correction=quantum_correction
+        ).flatten()
 
         first_iteration = True
         step_counter = 1
@@ -868,14 +960,19 @@ class Energy:
                 search_direction=search_direction,
                 phi_0=energy_k,
                 der_0=gradient_k @ search_direction,
+                quantum_correction=quantum_correction,
             )
 
             s_k = alpha_k * search_direction
 
             sd_next = _rotate_sd(reference_sd=sd_k, rotation=s_k)
 
-            energy_next = self.E_0(spin_directions=sd_next)
-            gradient_next = self.torque(spin_directions=sd_next).flatten()
+            energy_next = self(
+                spin_directions=sd_next, quantum_correction=quantum_correction
+            )
+            gradient_next = self.torque(
+                spin_directions=sd_next, quantum_correction=quantum_correction
+            ).flatten()
 
             delta = np.array(
                 [
@@ -945,151 +1042,6 @@ class Energy:
 
         if not quiet:
             print("─" * (33 + n_energy + n_torque))
-        return sd_next
-
-    def optimize_generator(
-        self,
-        initial_guess=None,
-        energy_tolerance=1e-5,
-        torque_tolerance=1e-5,
-    ):
-        r"""
-        Optimizes classical energy by varying the directions of spins in the unit cell.
-
-        .. versionadded:: 0.2.0
-
-        .. warning::
-            This method is experimental, use at your own risk. Use
-            :py:meth:`.Energy.optimize` as a stable alternative.
-
-        Parameters
-        ----------
-
-        initial_guess : (M, 3) or (3,) |array-like|_, optional
-            Initial guess for the direction of the spin vectors.
-
-        energy_tolerance : float, default 1e-5
-            Energy tolerance for the two consecutive steps of the optimization.
-
-        torque_tolerance : float, default 1e-5
-            Torque tolerance for the two consecutive steps of the optimization.
-
-        Yields
-        ------
-
-        energy : float
-            Classical energy of the iteration step
-
-        gradient : (M, 3) :numpy:`ndarray`
-            Gradient vectors for each spin of the iteration step.
-
-        spin_directions : (M, 3) :numpy:`ndarray`
-            Directions of the spin vectors of the iteration step.
-
-        See Also
-        --------
-
-        optimize
-        """
-
-        if initial_guess is None:
-            initial_guess = np.random.uniform(low=-1, high=1, size=(self.M, 3))
-
-        sd_k = initial_guess / np.linalg.norm(initial_guess, axis=1)[:, np.newaxis]
-
-        tolerance = np.array([energy_tolerance, torque_tolerance], dtype=float)
-
-        delta = 2 * tolerance
-
-        hessinv_k = np.eye(3 * self.M, dtype=float)
-
-        energy_k = self.E_0(spin_directions=sd_k)
-        gradient_k = self.torque(spin_directions=sd_k).flatten()
-
-        first_iteration = True
-        step_counter = 1
-        # Curvature failure guard to avoid silent looping in degenerate manifolds
-        curv_fail_run = 0
-        max_curv_fails = 10
-
-        yield (energy_k, gradient_k, sd_k)
-
-        while (delta >= tolerance).any():
-            search_direction = -hessinv_k @ gradient_k
-
-            alpha_k = self._line_search(
-                reference_sd=sd_k,
-                search_direction=search_direction,
-                phi_0=energy_k,
-                der_0=gradient_k @ search_direction,
-            )
-
-            s_k = alpha_k * search_direction
-
-            sd_next = _rotate_sd(reference_sd=sd_k, rotation=s_k)
-
-            energy_next = self.E_0(spin_directions=sd_next)
-            gradient_next = self.torque(spin_directions=sd_next).flatten()
-
-            yield (energy_next, gradient_next, sd_next)
-
-            delta = np.array(
-                [
-                    abs(energy_next - energy_k),
-                    # Pay attention to the np.reshape keywords
-                    np.linalg.norm(
-                        np.reshape(gradient_next, (self.M, 3)), axis=1
-                    ).max(),
-                ]
-            )
-
-            if (delta < tolerance).all():
-                break
-
-            y_k = gradient_next - gradient_k
-            # Curvature safeguard: avoid divide-by-zero / non-finite ys
-            ys = float(y_k @ s_k)
-            EYE = np.eye(hessinv_k.shape[0], dtype=float)
-
-            if (not np.isfinite(ys)) or (abs(ys) < 1e-12):
-                # Degenerate case: skip the inverse-BFGS update (or reset H if preferred)
-                curv_fail_run += 1
-                if curv_fail_run > max_curv_fails:
-                    raise RuntimeError(
-                        f"BFGS curvature failure repeated {curv_fail_run} times: "
-                        f"s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. "
-                        "Try a different initial guess (i.e. re-run magnopy-optimize-sd or energy.optimize())."
-                    )
-                # Reset hessian:
-                hessinv_k = EYE
-                warnings.warn(
-                    f"BFGS curvature failure repeated {curv_fail_run} times: s^T y={ys}, ||s||={np.linalg.norm(s_k)}, ||y||={np.linalg.norm(y_k)}. Hessian was reset.",
-                    RuntimeWarning,
-                    stacklevel=2,
-                )
-            else:
-                curv_fail_run = 0
-                rho_k = 1.0 / ys
-                OUTER = np.outer(y_k, s_k)
-
-                # Safe initial scaling of H^{-1}
-                if first_iteration:
-                    first_iteration = False
-                    denom = float(y_k @ y_k)
-                    if np.isfinite(denom) and denom > 0.0:
-                        hessinv_k = (ys / denom) * hessinv_k
-
-                # Stable inverse-BFGS update
-                hessinv_k = (EYE - rho_k * OUTER.T) @ hessinv_k @ (
-                    EYE - rho_k * OUTER
-                ) + rho_k * np.outer(s_k, s_k)
-
-            sd_k = sd_next
-            energy_k = energy_next
-            gradient_k = gradient_next
-
-            step_counter += 1
-
         return sd_next
 
 

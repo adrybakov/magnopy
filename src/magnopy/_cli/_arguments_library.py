@@ -269,3 +269,15 @@ def _add_spglib_types(parser):
         "just magnetic, but all).  If not given, then guesses automatically by wulfric "
         "(see wulfric.get_spglib_types() at wulfric.org types for more details).",
     )
+
+
+def _add_quantum_correction(parser):
+    parser.add_argument(
+        "-qc",
+        "--quantum-correction",
+        default=False,
+        action="store_true",
+        help="Whether to include quantum correction to the classical energy for the "
+        "optimization of spin directions. This parameter is experimental. It will be "
+        "improved and tested in future versions. Use with caution.",
+    )
