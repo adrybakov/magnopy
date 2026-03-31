@@ -52,23 +52,8 @@ where
   level of LSWT;
 
 In addition to the LSWT Hamiltonian, Magnopy is capable of computing full quantum
-correction to the classical energy of the vacuum state, :math:`E^{corr}`, while LSWT
-only gives a part of it. In other words,
-
-.. math::
-
-  E^{corr}
-  =
-  E^{(2)}
-  +
-  \dfrac{1}{2}
-  \sum_{\beta}
-  \sum_{\boldsymbol{k}}
-  \omega_{\beta}(\boldsymbol{k})
-  +
-  \ldots
-
-and Magnopy can independently compute the left and right hand sides of this equation.
+correction to the classical energy of the vacuum state, :math:`E^{corr}`, that is not
+limited to the LSWT level and is exact.
 
 
 What can it do?
