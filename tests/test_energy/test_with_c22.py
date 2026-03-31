@@ -56,6 +56,7 @@ def test_energy_p22(parameter):
     for i1, sd1 in enumerate([[1, 0, 0], [0, 1, 0], [0, 0, 1]]):
         for i2, sd2 in enumerate([[1, 0, 0], [0, 1, 0], [0, 0, 1]]):
             assert abs(energy.E_0([sd1, sd2]) - 2 * parameter[i1][i2]) < 1e-8
+            assert abs(energy.E_corr([sd1, sd2])) < 1e-8
 
 
 @given(ARRAY)

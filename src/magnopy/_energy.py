@@ -33,6 +33,7 @@ from magnopy._parameters._interaction_parameters import (
 )
 from magnopy._spinham._convention import Convention
 from magnopy._parameters._renormalization import _renormalized_parameters
+from magnopy._local_rf import span_local_rfs
 
 
 # Save local scope at this moment
@@ -374,6 +375,133 @@ class Energy:
             energy = energy * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
 
         return float(energy)
+
+    def E_corr(self, spin_directions, units="mev") -> float:
+        r"""
+        Computes quantum correction to the classical energy of the spin Hamiltonian.
+
+        See eq. S.26 in supplementary material of |paper-2026|_.
+
+        Parameters
+        ----------
+
+        spin_directions : (M, 3) |array-like|_
+            Directions of spin vectors. Only directions of vectors are used,
+            modulus is ignored. ``M`` is the amount of magnetic atoms in the
+            Hamiltonian. The order of spin directions is the same as the order
+            of magnetic atoms in ``spinham.magnetic_atoms.spins``.
+
+        units : str, default "meV"
+            .. versionadded:: 0.3.0
+
+            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            list of supported units.
+        """
+
+        x, y, z = span_local_rfs(directional_vectors=spin_directions, hybridize=False)
+        p = x + 1j * y
+
+        result = 0
+
+        renormalized_parameters = _renormalized_parameters(
+            parameters=self._parameters,
+            convention=self.convention,
+            spin_directions=z,
+            spin_values=self.spins,
+        )
+
+        # S.36b
+        for _, alphas, parameter in _InteractionParametersIterator(
+            renormalized_parameters, n=2, p_n=1
+        ):
+            alpha_1 = alphas[0]
+            result += (
+                0.5
+                * self.spins[alpha_1]
+                * np.conjugate(p[alpha_1])
+                @ parameter
+                @ p[alpha_1]
+            )
+
+        # S.36c
+        for _, alphas, parameter in _InteractionParametersIterator(
+            renormalized_parameters, n=3, p_n=1
+        ):
+            alpha_1 = alphas[0]
+            result -= (
+                0.5
+                * self.spins[alpha_1]
+                * np.einsum(
+                    "ijk,i,j,k",
+                    parameter,
+                    np.conjugate(p[alpha_1]),
+                    z[alphas[1]],
+                    p[alphas[2]],
+                )
+            )
+
+        # S.36d (first term)
+        for _, alphas, parameter in _InteractionParametersIterator(
+            renormalized_parameters, n=4, p_n=1
+        ):
+            alpha_1 = alphas[0]
+
+            middle_matrix = np.zeros((3, 3), dtype=complex)
+            middle_matrix += np.einsum("i,j->ij", z[alpha_1], z[alpha_1])
+            if round(2 * self.spins[alpha_1]) > 1:
+                middle_matrix += (self.spins[alpha_1] - 0.5) * np.einsum(
+                    "i,j->ij", np.conjugate(p[alpha_1]), p[alpha_1]
+                )
+            middle_matrix += (
+                0.5
+                * self.spins[alpha_1]
+                * np.einsum("i,j->ij", p[alpha_1], np.conjugate(p[alpha_1]))
+            )
+
+            result += (
+                0.5
+                * self.spins[alpha_1]
+                * np.einsum(
+                    "ijkl,i,jk,l",
+                    parameter,
+                    np.conjugate(p[alpha_1]),
+                    middle_matrix,
+                    p[alpha_1],
+                )
+            )
+
+        # S.36d (second term)
+        for nus, alphas, parameter in _InteractionParametersIterator(
+            renormalized_parameters, n=4, p_n=3
+        ):
+            # Symmetrization is used in the analytical formula,
+            # so need to skip equivalent terms
+            if nus[0] != (0, 0, 0):
+                continue
+
+            alpha_1 = alphas[0]
+            alpha_2 = alphas[2]
+
+            result += (
+                0.75
+                * self.spins[alpha_1]
+                * self.spins[alpha_2]
+                * np.einsum(
+                    "ijkl,i,j,k,l",
+                    parameter,
+                    np.conjugate(p[alpha_1]),
+                    p[alpha_1],
+                    np.conjugate(p[alpha_2]),
+                    p[alpha_2],
+                )
+            )
+
+        # Convert units if necessary
+        if units != "meV":
+            units = _validated_units(units=units, supported_units=_ENERGY_UNITS)
+            result = result * _ENERGY_UNITS["mev"] / _ENERGY_UNITS[units]
+
+        return float(result)
 
     def gradient(self, spin_directions, units="meV", _normalize=True):
         r"""

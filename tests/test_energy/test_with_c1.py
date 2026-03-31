@@ -60,6 +60,7 @@ def test_energy_p1(parameter1, parameter2):
                 abs(energy.E_0([sd1, sd2]) - 0.5 * parameter1[i1] - 2 * parameter2[i2])
                 < 1e-8
             )
+            assert abs(energy.E_corr([sd1, sd2])) < 1e-8
 
 
 @given(ARRAY)
