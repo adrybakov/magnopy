@@ -48,6 +48,7 @@ from magnopy._data_validation import (
 )
 from magnopy._parameters._interaction_parameters import (
     _InteractionParameters,
+    _InteractionParametersIterator,
     _get_specs,
 )
 from magnopy._parameters._symmetrization import get_equivalent
@@ -1293,7 +1294,7 @@ class SpinHamiltonian:
               ``1 <= i < len(alphas)``
         """
 
-        return _SpinHamiltonianIterator(spinham=self, n=n, p_n=p_n)
+        return _InteractionParametersIterator(parameters=self._parameters, n=n, p_n=p_n)
 
     def symmetrize(self):
         r"""
@@ -1623,84 +1624,6 @@ class SpinHamiltonian:
 
     add_41 = _add_41
     remove_41 = _remove_41
-
-
-INTEGER_PARTITION = {0: 0, 1: 1, 2: 2, 3: 3, 4: 5}
-
-
-class _SpinHamiltonianIterator:
-    def __init__(self, spinham: SpinHamiltonian, n: int = None, p_n: int = None):
-        self.parameters = spinham._parameters
-
-        if n is None:
-            n = 0
-
-        if p_n is None:
-            p_n = 0
-
-        if not 0 <= n <= 4:
-            raise NotImplementedError(f"Parameters with {n} spins are not supported.")
-
-        if not 0 <= p_n <= INTEGER_PARTITION[n]:
-            raise ValueError(
-                f"p_n for n={n} shall be between 0 and {INTEGER_PARTITION[n]}, got {p_n}."
-            )
-
-        self.n = n
-        self.p_n = p_n
-
-        if self.n == 0:
-            self.start = 0
-            self.length = len(self.parameters)
-        elif self.p_n == 0:
-            self.start = self.parameters._slices[(self.n, 1)][0]
-            self.length = sum(
-                [
-                    self.parameters._slices[(n, p_n)][1]
-                    for n, p_n in self.parameters._slices
-                    if n == self.n
-                ]
-            )
-        else:
-            self.start, self.length = self.parameters._slices[(self.n, self.p_n)]
-
-        self.index = 0
-
-    def __next__(self):
-        if self.index < self.length:
-            self.index += 1
-            (_, _, nus, alphas), parameter = self.parameters._container[
-                self.start + self.index - 1
-            ]
-            return nus, alphas, parameter
-        raise StopIteration
-
-    def __getitem__(self, index: int):
-        if index < 0 or index >= self.length:
-            raise IndexError("index is out of range.")
-        (_, _, nus, alphas), parameter = self.parameters._container[self.start + index]
-        return nus, alphas, parameter
-
-    # It is enough to provide the parameter as value, since the sites do not change
-    def __setitem__(self, index: int, value):
-        if index < 0 or index >= self.length:
-            raise IndexError("index is out of range.")
-
-        value = np.array(value)
-        n = self.parameters._container[self.start + index][0][0]
-
-        if len(value.shape) != n or any(_ != 3 for _ in value.shape):
-            raise ValueError(
-                f"Expected parameter to be a tensor with {n} components of size 3, got {value.shape}."
-            )
-
-        self.parameters._container[self.start + index][1] = np.array(value)
-
-    def __len__(self):
-        return self.length
-
-    def __iter__(self):
-        return self
 
 
 # Populate __all__ with objects defined in this file

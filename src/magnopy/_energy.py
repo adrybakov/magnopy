@@ -27,6 +27,12 @@ import numpy as np
 
 from magnopy._data_validation import _validated_units
 from magnopy._constants._units import _ENERGY_UNITS
+from magnopy._parameters._interaction_parameters import (
+    _InteractionParameters,
+    _InteractionParametersIterator,
+)
+from magnopy._spinham._convention import Convention
+from magnopy._parameters._renormalization import _renormalized_parameters
 
 
 # Save local scope at this moment
@@ -198,143 +204,37 @@ class Energy:
         initial_units = spinham.units
         initial_convention = spinham.convention
 
-        magnopy_convention = initial_convention.get_modified(
-            spin_normalized=False, multiple_counting=True
+        self.convention = Convention(
+            spin_normalized=False,
+            multiple_counting=True,
+            c1=1,
+            c21=1,
+            c22=1,
+            c31=1,
+            c32=1,
+            c33=1,
+            c41=1,
+            c42=1,
+            c43=1,
+            c44=1,
+            c45=1,
         )
 
         spinham.units = "meV"
-        spinham.convention = magnopy_convention
+        spinham.convention = self.convention
 
         self.spins = np.array(spinham.magnetic_atoms.spins, dtype=float)
         self.M = spinham.M
 
-        ########################################################################
-        #                               One spin                               #
-        ########################################################################
+        self._parameters = _InteractionParameters()
 
-        self.J_1 = np.zeros((spinham.M, 3), dtype=float)
-
-        for atom, parameter in spinham.p1:
-            alpha = spinham.map_to_magnetic[atom]
-
-            self.J_1[alpha] += spinham.convention.c1 * parameter
-
-        ########################################################################
-        #                               Two spins                              #
-        ########################################################################
-
-        self.J_21 = np.zeros((spinham.M, 3, 3), dtype=float)
-
-        for atom, parameter in spinham.p21:
-            alpha = spinham.map_to_magnetic[atom]
-
-            self.J_21[alpha] += spinham.convention.c21 * parameter
-
-        self.J_22 = {}
-
-        for atom1, atom2, _, parameter in spinham.p22:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-
-            if (alpha, beta) not in self.J_22:
-                self.J_22[(alpha, beta)] = np.zeros((3, 3), dtype=float)
-
-            self.J_22[(alpha, beta)] += spinham.convention.c22 * parameter
-
-        ########################################################################
-        #                              Three spins                             #
-        ########################################################################
-
-        self.J_31 = np.zeros((spinham.M, 3, 3, 3), dtype=float)
-
-        for atom, parameter in spinham.p31:
-            alpha = spinham.map_to_magnetic[atom]
-
-            self.J_31[alpha] += spinham.convention.c31 * parameter
-
-        self.J_32 = {}
-
-        for atom1, atom2, _, parameter in spinham.p32:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-
-            if (alpha, beta) not in self.J_32:
-                self.J_32[(alpha, beta)] = np.zeros((3, 3, 3), dtype=float)
-
-            self.J_32[(alpha, beta)] += spinham.convention.c32 * parameter
-
-        self.J_33 = {}
-
-        for atom1, atom2, atom3, _, _, parameter in spinham.p33:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-            gamma = spinham.map_to_magnetic[atom3]
-
-            if (alpha, beta, gamma) not in self.J_33:
-                self.J_33[(alpha, beta, gamma)] = np.zeros((3, 3, 3), dtype=float)
-
-            self.J_33[(alpha, beta, gamma)] += spinham.convention.c33 * parameter
-
-        ########################################################################
-        #                              Four spins                              #
-        ########################################################################
-
-        self.J_41 = np.zeros((spinham.M, 3, 3, 3, 3), dtype=float)
-
-        for atom, parameter in spinham.p41:
-            alpha = spinham.map_to_magnetic[atom]
-
-            self.J_41[alpha] += spinham.convention.c41 * parameter
-
-        self.J_42 = {}
-
-        for atom1, atom2, _, parameter in spinham.p42:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-
-            if (alpha, beta) not in self.J_42:
-                self.J_42[(alpha, beta)] = np.zeros((3, 3, 3, 3), dtype=float)
-
-            self.J_42[(alpha, beta)] += spinham.convention.c42 * parameter
-
-        self.J_43 = {}
-
-        for atom1, atom2, _, parameter in spinham.p43:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-
-            if (alpha, beta) not in self.J_43:
-                self.J_43[(alpha, beta)] = np.zeros((3, 3, 3, 3), dtype=float)
-
-            self.J_43[(alpha, beta)] += spinham.convention.c43 * parameter
-
-        self.J_44 = {}
-
-        for atom1, atom2, atom3, _, _, parameter in spinham.p44:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-            gamma = spinham.map_to_magnetic[atom3]
-
-            if (alpha, beta, gamma) not in self.J_44:
-                self.J_44[(alpha, beta, gamma)] = np.zeros((3, 3, 3, 3), dtype=float)
-
-            self.J_44[(alpha, beta, gamma)] += spinham.convention.c44 * parameter
-
-        self.J_45 = {}
-
-        for atom1, atom2, atom3, atom4, _, _, _, parameter in spinham.p45:
-            alpha = spinham.map_to_magnetic[atom1]
-            beta = spinham.map_to_magnetic[atom2]
-            gamma = spinham.map_to_magnetic[atom3]
-            epsilon = spinham.map_to_magnetic[atom4]
-
-            if (alpha, beta, gamma, epsilon) not in self.J_45:
-                self.J_45[(alpha, beta, gamma, epsilon)] = np.zeros(
-                    (3, 3, 3, 3), dtype=float
-                )
-
-            self.J_45[(alpha, beta, gamma, epsilon)] += (
-                spinham.convention.c45 * parameter
+        for (n, p_n, _, alphas), parameter in spinham._parameters._container:
+            n = len(alphas)
+            alphas = tuple([spinham.map_to_magnetic[alpha] for alpha in alphas])
+            self._parameters.add(
+                specs=(n, p_n, tuple([(0, 0, 0)] * (n - 1)), alphas),
+                parameter=parameter,
+                when_present="sum",
             )
 
         spinham.units = initial_units
@@ -441,76 +341,32 @@ class Energy:
 
         energy = 0
 
-        energy += np.diag(self.J_1 @ spins.T).sum()
+        for specs, parameter in self._parameters._container:
+            n, _, _, alphas = specs
 
-        energy += np.einsum("mij,mi,mj->m", self.J_21, spins, spins).sum()
-
-        energy += np.einsum("miju,mi,mj,mu->m", self.J_31, spins, spins, spins).sum()
-
-        energy += np.einsum(
-            "mijuv,mi,mj,mu,mv->m", self.J_41, spins, spins, spins, spins
-        ).sum()
-
-        for alpha, beta in self.J_22:
-            energy += spins[alpha] @ self.J_22[(alpha, beta)] @ spins[beta]
-
-        for alpha, beta in self.J_32:
-            energy += np.einsum(
-                "iju,i,j,u",
-                self.J_32[(alpha, beta)],
-                spins[alpha],
-                spins[alpha],
-                spins[beta],
-            )
-
-        for alpha, beta in self.J_42:
-            energy += np.einsum(
-                "ijuv,i,j,u,v",
-                self.J_42[(alpha, beta)],
-                spins[alpha],
-                spins[alpha],
-                spins[alpha],
-                spins[beta],
-            )
-
-        for alpha, beta in self.J_43:
-            energy += np.einsum(
-                "ijuv,i,j,u,v",
-                self.J_43[(alpha, beta)],
-                spins[alpha],
-                spins[alpha],
-                spins[beta],
-                spins[beta],
-            )
-
-        for alpha, beta, gamma in self.J_33:
-            energy += np.einsum(
-                "iju,i,j,u",
-                self.J_33[(alpha, beta, gamma)],
-                spins[alpha],
-                spins[beta],
-                spins[gamma],
-            )
-
-        for alpha, beta, gamma in self.J_44:
-            energy += np.einsum(
-                "ijuv,i,j,u,v",
-                self.J_44[(alpha, beta, gamma)],
-                spins[alpha],
-                spins[alpha],
-                spins[beta],
-                spins[gamma],
-            )
-
-        for alpha, beta, gamma, epsilon in self.J_45:
-            energy += np.einsum(
-                "ijuv,i,j,u,v",
-                self.J_45[(alpha, beta, gamma, epsilon)],
-                spins[alpha],
-                spins[beta],
-                spins[gamma],
-                spins[epsilon],
-            )
+            if n == 1:
+                energy += parameter @ spins[alphas[0]]
+            elif n == 2:
+                energy += spins[alphas[0]] @ parameter @ spins[alphas[1]]
+            elif n == 3:
+                energy += np.einsum(
+                    "iju,i,j,u",
+                    parameter,
+                    spins[alphas[0]],
+                    spins[alphas[1]],
+                    spins[alphas[2]],
+                )
+            elif n == 4:
+                energy += np.einsum(
+                    "ijuv,i,j,u,v",
+                    parameter,
+                    spins[alphas[0]],
+                    spins[alphas[1]],
+                    spins[alphas[2]],
+                    spins[alphas[3]],
+                )
+            else:
+                raise ValueError(f"Unsupported n={n} in energy calculation.")
 
         # Convert units if necessary
         if units != "meV":
@@ -568,116 +424,17 @@ class Energy:
 
         gradient = np.zeros((self.M, 3), dtype=float)
 
-        gradient += self.J_1 * self.spins[:, np.newaxis]
-
-        gradient += 2 * np.einsum(
-            "mtj,mj,m->mt", self.J_21, spin_directions, self.spins**2
-        )
-
-        gradient += 3 * np.einsum(
-            "mtju,mj,mu,m->mt",
-            self.J_31,
-            spin_directions,
-            spin_directions,
-            self.spins**3,
-        )
-
-        gradient += 4 * np.einsum(
-            "mtjuv,mj,mu,mv,m->mt",
-            self.J_41,
-            spin_directions,
-            spin_directions,
-            spin_directions,
-            self.spins**4,
-        )
-
-        for alpha, beta in self.J_22:
-            gradient[alpha] += 2 * (
-                self.J_22[(alpha, beta)]
-                @ spin_directions[beta]
-                * self.spins[alpha]
-                * self.spins[beta]
-            )
-
-        for alpha, beta in self.J_32:
-            gradient[alpha] += 3 * (
-                np.einsum(
-                    "tju,j,u->t",
-                    self.J_32[(alpha, beta)],
-                    spin_directions[alpha],
-                    spin_directions[beta],
-                )
-                * self.spins[alpha] ** 2
-                * self.spins[beta]
-            )
-
-        for alpha, beta in self.J_42:
-            gradient[alpha] += 4 * (
-                np.einsum(
-                    "tjuv,j,u,v->t",
-                    self.J_42[(alpha, beta)],
-                    spin_directions[alpha],
-                    spin_directions[alpha],
-                    spin_directions[beta],
-                )
-                * self.spins[alpha] ** 3
-                * self.spins[beta]
-            )
-
-        for alpha, beta in self.J_43:
-            gradient[alpha] += 4 * (
-                np.einsum(
-                    "tjuv,j,u,v->t",
-                    self.J_43[(alpha, beta)],
-                    spin_directions[alpha],
-                    spin_directions[beta],
-                    spin_directions[beta],
-                )
-                * self.spins[alpha] ** 2
-                * self.spins[beta] ** 2
-            )
-
-        for alpha, beta, gamma in self.J_33:
-            gradient[alpha] += 3 * (
-                np.einsum(
-                    "tju,j,u->t",
-                    self.J_33[(alpha, beta, gamma)],
-                    spin_directions[beta],
-                    spin_directions[gamma],
-                )
-                * self.spins[alpha]
-                * self.spins[beta]
-                * self.spins[gamma]
-            )
-
-        for alpha, beta, gamma in self.J_44:
-            gradient[alpha] += 4 * (
-                np.einsum(
-                    "tjuv,j,u,v->t",
-                    self.J_44[(alpha, beta, gamma)],
-                    spin_directions[alpha],
-                    spin_directions[beta],
-                    spin_directions[gamma],
-                )
-                * self.spins[alpha] ** 2
-                * self.spins[beta]
-                * self.spins[gamma]
-            )
-
-        for alpha, beta, gamma, epsilon in self.J_45:
-            gradient[alpha] += 4 * (
-                np.einsum(
-                    "tjuv,j,u,v->t",
-                    self.J_45[(alpha, beta, gamma, epsilon)],
-                    spin_directions[beta],
-                    spin_directions[gamma],
-                    spin_directions[epsilon],
-                )
-                * self.spins[alpha]
-                * self.spins[beta]
-                * self.spins[gamma]
-                * self.spins[epsilon]
-            )
+        for _, alphas, parameter in _InteractionParametersIterator(
+            _renormalized_parameters(
+                parameters=self._parameters,
+                convention=self.convention,
+                spin_directions=spin_directions,
+                spin_values=self.spins,
+            ),
+            n=1,
+            p_n=1,
+        ):
+            gradient[alphas[0]] = parameter * self.spins[alphas[0]]
 
         # Convert units if necessary
         if units != "meV":
