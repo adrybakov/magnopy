@@ -20,6 +20,7 @@
 # ================================ END LICENSE =================================
 
 import numpy as np
+from copy import deepcopy
 
 
 def _get_specs(nus, alphas):
@@ -264,6 +265,9 @@ class _InteractionParameters:
         if index != -1:
             del self._container[index]
             self._update_slices(n=specs[0], p_n=specs[1], delta=-1)
+
+    def copy(self):
+        return deepcopy(self)
 
     def __add__(self, other):
         """
