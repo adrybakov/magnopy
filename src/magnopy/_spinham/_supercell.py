@@ -130,14 +130,14 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
         >>> # The parameters are updated as well
         >>> len(spinham.p21)
         2
-        >>> for alpha, _ in spinham.p21:
-        ...     print(alpha)
+        >>> for _, alphas, _ in spinham.p21:
+        ...     print(alphas[0])
         0
         1
         >>> len(new_spinham.p21)
         16
-        >>> for alpha, _ in new_spinham.p21:
-        ...     print(alpha)
+        >>> for _, alphas, _ in new_spinham.p21:
+        ...     print(alphas[0])
         0
         1
         2
@@ -192,28 +192,28 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
         Fe_0_1_1 [0.0, 0.5, 0.5] 1
         Fe_1_1_1 [0.5, 0.5, 0.5] 1
         >>> # The bonds were recalculated automatically
-        >>> for alpha, beta, nu, _ in spinham.p22:
-        ...     print(alpha, beta, nu)
-        0 0 (1, 0, 0)
+        >>> for nus, alphas, _ in spinham.p22:
+        ...     print(alphas[0], alphas[1], nus[0])
         0 0 (-1, 0, 0)
-        >>> for alpha, beta, nu, _ in new_spinham.p22:
-        ...     print(alpha, beta, nu)
-        0 1 (0, 0, 0)
-        1 0 (1, 0, 0)
-        2 3 (0, 0, 0)
-        3 2 (1, 0, 0)
-        4 5 (0, 0, 0)
-        5 4 (1, 0, 0)
-        6 7 (0, 0, 0)
-        7 6 (1, 0, 0)
-        1 0 (0, 0, 0)
+        0 0 (1, 0, 0)
+        >>> for nus, alphas, _ in new_spinham.p22:
+        ...     print(alphas[0], alphas[1], nus[0])
         0 1 (-1, 0, 0)
-        3 2 (0, 0, 0)
         2 3 (-1, 0, 0)
-        5 4 (0, 0, 0)
         4 5 (-1, 0, 0)
-        7 6 (0, 0, 0)
         6 7 (-1, 0, 0)
+        0 1 (0, 0, 0)
+        1 0 (0, 0, 0)
+        2 3 (0, 0, 0)
+        3 2 (0, 0, 0)
+        4 5 (0, 0, 0)
+        5 4 (0, 0, 0)
+        6 7 (0, 0, 0)
+        7 6 (0, 0, 0)
+        1 0 (1, 0, 0)
+        3 2 (1, 0, 0)
+        5 4 (1, 0, 0)
+        7 6 (1, 0, 0)
 
 
     """
