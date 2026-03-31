@@ -50,6 +50,7 @@ Functions
   logo
   multiprocess_over_k
   make_supercell
+  is_eigenstate
 
 Parameter converters
 ====================
