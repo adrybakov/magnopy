@@ -50,6 +50,7 @@ Functions
   logo
   multiprocess_over_k
   make_supercell
+  is_eigenstate
 
 Parameter converters
 ====================
@@ -58,7 +59,7 @@ Parameter converters
   :toctree: generated/
 
   converter22
-  converter422
+  converter43
 
 Exceptions
 ==========

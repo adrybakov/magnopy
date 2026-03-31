@@ -27,6 +27,8 @@ Convention of spin Hamiltonian
 from magnopy._constants._conventions import _SPINHAM_CONVENTIONS
 from magnopy._exceptions import ConventionError
 
+ATTRIBUTE_ERROR_MESSAGE = "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
+
 # Save local scope at this moment
 old_dir = set(dir())
 old_dir.add("old_dir")
@@ -37,7 +39,8 @@ class Convention:
     Convention of the spin Hamiltonian.
 
     For the detailed description of the convention problem see
-    :ref:`user-guide_theory-behind_convention-problem`.
+    :ref:`user-guide_theory-behind_convention` and
+    :ref:`user-guide_theory-behind_spin-hamiltonian`.
 
     Parameters
     ----------
@@ -50,37 +53,37 @@ class Convention:
         vectors/operators are normalized.
 
     c1 : float, optional
-        Numerical factor before the (one spin & one site) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c21 : float, optional
-        Numerical factor before the (two spins & one site) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c22 : float, optional
-        Numerical factor before the (two spins & two sites) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c31 : float, optional
-        Numerical factor before the (three spins & one site) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c32 : float, optional
-        Numerical factor before the (three spins & two sites) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c33 : float, optional
-        Numerical factor before the (three spins & three sites) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c41 : float, optional
-        Numerical factor before the (four spins & one site) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
-    c421 : float, optional
-        Numerical factor before the (four spins & two sites & 1+3) term of the Hamiltonian.
-
-    c422 : float, optional
-        Numerical factor before the (four spins & two sites & 2+2) term of the Hamiltonian.
+    c42 : float, optional
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c43 : float, optional
-        Numerical factor before the (four spins & three sites) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     c44 : float, optional
-        Numerical factor before the (four spins & four sites) term of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian.
+
+    c45 : float, optional
+        Numerical factor before sum over sites in the spin Hamiltonian.
 
     name : str, default "custom"
         A label for the convention. Any string, case-insensitive.
@@ -105,10 +108,10 @@ class Convention:
           * Undefined c32 factor;
           * Undefined c33 factor;
           * Undefined c41 factor;
-          * Undefined c421 factor;
-          * Undefined c422 factor;
+          * Undefined c42 factor;
           * Undefined c43 factor;
-          * Undefined c44 factor.
+          * Undefined c44 factor;
+          * Undefined c45 factor.
         >>> n1.multiple_counting
         True
         >>> n1 == n2
@@ -127,10 +130,10 @@ class Convention:
           * Undefined c32 factor;
           * Undefined c33 factor;
           * Undefined c41 factor;
-          * Undefined c421 factor;
-          * Undefined c422 factor;
+          * Undefined c42 factor;
           * Undefined c43 factor;
-          * Undefined c44 factor.
+          * Undefined c44 factor;
+          * Undefined c45 factor.
         >>> n3.name
         'conv #3'
 
@@ -146,10 +149,10 @@ class Convention:
         "_c32",
         "_c33",
         "_c41",
-        "_c421",
-        "_c422",
+        "_c42",
         "_c43",
         "_c44",
+        "_c45",
         "_name",
     )
 
@@ -163,10 +166,10 @@ class Convention:
         "_c32",
         "_c33",
         "_c41",
-        "_c421",
-        "_c422",
+        "_c42",
         "_c43",
         "_c44",
+        "_c45",
     )
 
     def __init__(
@@ -180,10 +183,10 @@ class Convention:
         c32: float = None,
         c33: float = None,
         c41: float = None,
-        c421: float = None,
-        c422: float = None,
+        c42: float = None,
         c43: float = None,
         c44: float = None,
+        c45: float = None,
         name: str = "custom",
     ) -> None:
         if multiple_counting is not None:
@@ -231,15 +234,10 @@ class Convention:
         else:
             self._c41 = None
 
-        if c421 is not None:
-            self._c421 = float(c421)
+        if c42 is not None:
+            self._c42 = float(c42)
         else:
-            self._c421 = None
-
-        if c422 is not None:
-            self._c422 = float(c422)
-        else:
-            self._c422 = None
+            self._c42 = None
 
         if c43 is not None:
             self._c43 = float(c43)
@@ -250,6 +248,11 @@ class Convention:
             self._c44 = float(c44)
         else:
             self._c44 = None
+
+        if c45 is not None:
+            self._c45 = float(c45)
+        else:
+            self._c45 = None
 
         self._name = str(name).lower()
 
@@ -271,10 +274,10 @@ class Convention:
                     f"c32 = {self._c32},",
                     f"c33 = {self._c33},",
                     f"c41 = {self._c41},",
-                    f"c421 = {self._c421},",
-                    f"c422 = {self._c422},",
+                    f"c42 = {self._c42},",
                     f"c43 = {self._c43},",
                     f"c44 = {self._c44},",
+                    f"c45 = {self._c45},",
                     f'name = "{self.name}"',
                 ]
             )
@@ -337,15 +340,10 @@ class Convention:
         else:
             summary.append(f"  * c41 = {self._c41};")
 
-        if self._c421 is None:
-            summary.append("  * Undefined c421 factor;")
+        if self._c42 is None:
+            summary.append("  * Undefined c42 factor;")
         else:
-            summary.append(f"  * c421 = {self._c421};")
-
-        if self._c422 is None:
-            summary.append("  * Undefined c422 factor;")
-        else:
-            summary.append(f"  * c422 = {self._c422};")
+            summary.append(f"  * c42 = {self._c42};")
 
         if self._c43 is None:
             summary.append("  * Undefined c43 factor;")
@@ -353,9 +351,14 @@ class Convention:
             summary.append(f"  * c43 = {self._c43};")
 
         if self._c44 is None:
-            summary.append("  * Undefined c44 factor.")
+            summary.append("  * Undefined c44 factor;")
         else:
-            summary.append(f"  * c44 = {self._c44}.")
+            summary.append(f"  * c44 = {self._c44};")
+
+        if self._c45 is None:
+            summary.append("  * Undefined c45 factor.")
+        else:
+            summary.append(f"  * c45 = {self._c45}.")
 
         summary = ("\n").join(summary)
 
@@ -384,7 +387,7 @@ class Convention:
             >>> from magnopy import Convention
             >>> n1 = Convention(True, True, c21=1, c22=-0.5)
             >>> n1.summary()
-            custom convention where
+            "custom" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are normalized to 1;
               * Undefined c1 factor;
@@ -394,10 +397,10 @@ class Convention:
               * Undefined c32 factor;
               * Undefined c33 factor;
               * Undefined c41 factor;
-              * Undefined c421 factor;
-              * Undefined c422 factor;
+              * Undefined c42 factor;
               * Undefined c43 factor;
-              * Undefined c44 factor.
+              * Undefined c44 factor;
+              * Undefined c45 factor.
         """
 
         import warnings
@@ -408,82 +411,7 @@ class Convention:
             stacklevel=2,
         )
 
-        summary = [f"{self.name} convention where"]
-
-        if self._multiple_counting is None:
-            summary.append("  * Undefined multiple counting;")
-        elif self._multiple_counting:
-            summary.append("  * Bonds are counted multiple times in the sum;")
-        else:
-            summary.append("  * Bonds are counted once in the sum;")
-
-        if self._spin_normalized is None:
-            summary.append("  * Undefined spin normalization;")
-        elif self._spin_normalized:
-            summary.append("  * Spin vectors are normalized to 1;")
-        else:
-            summary.append("  * Spin vectors are not normalized;")
-
-        # One spin
-        if self._c1 is None:
-            summary.append("  * Undefined c1 factor;")
-        else:
-            summary.append(f"  * c1 = {self._c1};")
-
-        # Two spins
-        if self._c21 is None:
-            summary.append("  * Undefined c21 factor;")
-        else:
-            summary.append(f"  * c21 = {self._c21};")
-
-        if self._c22 is None:
-            summary.append("  * Undefined c22 factor;")
-        else:
-            summary.append(f"  * c22 = {self._c22};")
-
-        # Three spins
-        if self._c31 is None:
-            summary.append("  * Undefined c31 factor;")
-        else:
-            summary.append(f"  * c31 = {self._c31};")
-
-        if self._c32 is None:
-            summary.append("  * Undefined c32 factor;")
-        else:
-            summary.append(f"  * c32 = {self._c32};")
-
-        if self._c33 is None:
-            summary.append("  * Undefined c33 factor;")
-        else:
-            summary.append(f"  * c33 = {self._c33};")
-
-        # Four spins
-        if self._c41 is None:
-            summary.append("  * Undefined c41 factor;")
-        else:
-            summary.append(f"  * c41 = {self._c41};")
-
-        if self._c421 is None:
-            summary.append("  * Undefined c421 factor;")
-        else:
-            summary.append(f"  * c421 = {self._c421};")
-
-        if self._c422 is None:
-            summary.append("  * Undefined c422 factor;")
-        else:
-            summary.append(f"  * c422 = {self._c422};")
-
-        if self._c43 is None:
-            summary.append("  * Undefined c43 factor;")
-        else:
-            summary.append(f"  * c43 = {self._c43};")
-
-        if self._c44 is None:
-            summary.append("  * Undefined c44 factor.")
-        else:
-            summary.append(f"  * c44 = {self._c44}.")
-
-        summary = ("\n").join(summary)
+        summary = self.__str__()
 
         if return_as_string:
             return summary
@@ -528,9 +456,7 @@ class Convention:
 
     @multiple_counting.setter
     def multiple_counting(self, new_value: bool):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     ################################################################################
     #                            Normalization of spins                            #
@@ -553,9 +479,7 @@ class Convention:
 
     @spin_normalized.setter
     def spin_normalized(self, new_value: bool):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     ################################################################################
     #                                   One spin                                   #
@@ -563,7 +487,9 @@ class Convention:
     @property
     def c1(self) -> float:
         r"""
-        Numerical factor before the (one spin & one site) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -576,9 +502,7 @@ class Convention:
 
     @c1.setter
     def c1(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     ################################################################################
     #                                   Two spins                                  #
@@ -586,7 +510,9 @@ class Convention:
     @property
     def c21(self) -> float:
         r"""
-        Numerical factor before the (two spins & one site) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -599,14 +525,14 @@ class Convention:
 
     @c21.setter
     def c21(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     @property
     def c22(self) -> float:
         r"""
-        Numerical factor before the (two spins & two sites) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -619,9 +545,7 @@ class Convention:
 
     @c22.setter
     def c22(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     ################################################################################
     #                                  Three spins                                 #
@@ -629,7 +553,9 @@ class Convention:
     @property
     def c31(self) -> float:
         r"""
-        Numerical factor before the (three spins & one site) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -642,14 +568,14 @@ class Convention:
 
     @c31.setter
     def c31(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     @property
     def c32(self) -> float:
         r"""
-        Numerical factor before the (three spins & two sites) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -662,14 +588,14 @@ class Convention:
 
     @c32.setter
     def c32(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     @property
     def c33(self) -> float:
         r"""
-        Numerical factor before the (three spins & three sites) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -682,9 +608,7 @@ class Convention:
 
     @c33.setter
     def c33(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     ################################################################################
     #                                  Four spins                                  #
@@ -692,7 +616,9 @@ class Convention:
     @property
     def c41(self) -> float:
         r"""
-        Numerical factor before the (four spins & one site) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -705,54 +631,34 @@ class Convention:
 
     @c41.setter
     def c41(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     @property
-    def c421(self) -> float:
+    def c42(self) -> float:
         r"""
-        Numerical factor before the (four spins & two sites (1+3)) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
 
-        c421 : float
+        c42 : float
         """
-        if self._c421 is None:
-            raise ConventionError(convention=self, property="c421")
-        return self._c421
+        if self._c42 is None:
+            raise ConventionError(convention=self, property="c42")
+        return self._c42
 
-    @c421.setter
-    def c421(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
-
-    @property
-    def c422(self) -> float:
-        r"""
-        Numerical factor before the (four spins & two sites (2+2)) sum of the Hamiltonian.
-
-        Returns
-        -------
-
-        c422 : float
-        """
-        if self._c422 is None:
-            raise ConventionError(convention=self, property="c422")
-        return self._c422
-
-    @c422.setter
-    def c422(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+    @c42.setter
+    def c42(self, new_value: float):
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     @property
     def c43(self) -> float:
         r"""
-        Numerical factor before the (four spins & three sites) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -765,14 +671,14 @@ class Convention:
 
     @c43.setter
     def c43(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     @property
     def c44(self) -> float:
         r"""
-        Numerical factor before the (four spins & four sites) sum of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
 
         Returns
         -------
@@ -785,9 +691,27 @@ class Convention:
 
     @c44.setter
     def c44(self, new_value: float):
-        raise AttributeError(
-            "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
-        )
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
+
+    @property
+    def c45(self) -> float:
+        r"""
+        Numerical factor before sum over sites in the spin Hamiltonian. See
+        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
+        terms of the Hamiltonian.
+
+        Returns
+        -------
+
+        c45 : float
+        """
+        if self._c45 is None:
+            raise ConventionError(convention=self, property="c45")
+        return self._c45
+
+    @c45.setter
+    def c45(self, new_value: float):
+        raise AttributeError(ATTRIBUTE_ERROR_MESSAGE)
 
     ################################################################################
     #                              Comparison and has                              #
@@ -861,10 +785,10 @@ class Convention:
               * Undefined c32 factor;
               * Undefined c33 factor;
               * Undefined c41 factor;
-              * Undefined c421 factor;
-              * Undefined c422 factor;
+              * Undefined c42 factor;
               * Undefined c43 factor;
-              * Undefined c44 factor.
+              * Undefined c44 factor;
+              * Undefined c45 factor.
             >>> grogu = magnopy.Convention.get_predefined("GROGU")
             >>> print(grogu)
             "grogu" convention where
@@ -877,10 +801,10 @@ class Convention:
               * Undefined c32 factor;
               * Undefined c33 factor;
               * Undefined c41 factor;
-              * Undefined c421 factor;
-              * Undefined c422 factor;
+              * Undefined c42 factor;
               * Undefined c43 factor;
-              * Undefined c44 factor.
+              * Undefined c44 factor;
+              * Undefined c45 factor.
             >>> vampire = magnopy.Convention.get_predefined("Vampire")
             >>> print(vampire)
             "vampire" convention where
@@ -893,10 +817,10 @@ class Convention:
               * Undefined c32 factor;
               * Undefined c33 factor;
               * Undefined c41 factor;
-              * Undefined c421 factor;
-              * Undefined c422 factor;
+              * Undefined c42 factor;
               * Undefined c43 factor;
-              * Undefined c44 factor.
+              * Undefined c44 factor;
+              * Undefined c45 factor.
             >>> spinW = magnopy.Convention.get_predefined("spinW")
             >>> print(spinW)
             "spinw" convention where
@@ -909,10 +833,10 @@ class Convention:
               * Undefined c32 factor;
               * Undefined c33 factor;
               * Undefined c41 factor;
-              * Undefined c421 factor;
-              * Undefined c422 factor;
+              * Undefined c42 factor;
               * Undefined c43 factor;
-              * Undefined c44 factor.
+              * Undefined c44 factor;
+              * Undefined c45 factor.
         """
 
         name = name.lower()
@@ -936,10 +860,10 @@ class Convention:
         c32: float = None,
         c33: float = None,
         c41: float = None,
-        c421: float = None,
-        c422: float = None,
+        c42: float = None,
         c43: float = None,
         c44: float = None,
+        c45: float = None,
         name: str = None,
     ):
         r"""
@@ -955,55 +879,68 @@ class Convention:
         spin_normalized : bool, optional
             Whether spin vectors/operators are normalized to 1. If ``True``, then spin
             vectors/operators are normalized.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c1 : float, optional
-            Numerical factor before the (one spin & one site) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c21 : float, optional
-            Numerical factor before the (two spins & one site) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c22 : float, optional
-            Numerical factor before the (two spins & two sites) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c31 : float, optional
-            Numerical factor before the (three spins & one site) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c32 : float, optional
-            Numerical factor before the (three spins & two sites) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c33 : float, optional
-            Numerical factor before the (three spins & three sites) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c41 : float, optional
-            Numerical factor before the (four spins & one site) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
-        c421 : float, optional
-            Numerical factor before the (four spins & two sites & 1+3) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
-
-        c422 : float, optional
-            Numerical factor before the (four spins & two sites & 2+2) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+        c42 : float, optional
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c43 : float, optional
-            Numerical factor before the (four spins & three sites) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         c44 : float, optional
-            Numerical factor before the (four spins & four sites) term of the Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
+
+        c45 : float, optional
+            Numerical factor before sum over sites in the spin Hamiltonian.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         name : str, optional
             A label for the convention. Any string, case-insensitive.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Modified to the given value, if None, then kept the same as in the original
+            convention.
 
         Examples
         --------
@@ -1030,10 +967,10 @@ class Convention:
               * Undefined c32 factor;
               * Undefined c33 factor;
               * Undefined c41 factor;
-              * Undefined c421 factor;
-              * Undefined c422 factor;
+              * Undefined c42 factor;
               * Undefined c43 factor;
-              * Undefined c44 factor.
+              * Undefined c44 factor;
+              * Undefined c45 factor.
             >>> mod_conv = conv.get_modified(name="modified", c22=1, c33=-3)
             >>> print(mod_conv)
             "modified" convention where
@@ -1046,10 +983,10 @@ class Convention:
               * Undefined c32 factor;
               * c33 = -3.0;
               * Undefined c41 factor;
-              * Undefined c421 factor;
-              * Undefined c422 factor;
+              * Undefined c42 factor;
               * Undefined c43 factor;
-              * Undefined c44 factor.
+              * Undefined c44 factor;
+              * Undefined c45 factor.
         """
 
         if multiple_counting is None:
@@ -1079,17 +1016,17 @@ class Convention:
         if c41 is None:
             c41 = self._c41
 
-        if c421 is None:
-            c421 = self._c421
-
-        if c422 is None:
-            c422 = self._c422
+        if c42 is None:
+            c42 = self._c42
 
         if c43 is None:
             c43 = self._c43
 
         if c44 is None:
             c44 = self._c44
+
+        if c45 is None:
+            c45 = self._c45
 
         if name is None:
             name = self.name
@@ -1104,10 +1041,10 @@ class Convention:
             c32=c32,
             c33=c33,
             c41=c41,
-            c421=c421,
-            c422=c422,
+            c42=c42,
             c43=c43,
             c44=c44,
+            c45=c45,
             name=name,
         )
 

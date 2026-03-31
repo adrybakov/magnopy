@@ -21,8 +21,8 @@ above for more details.
 
     cli/how-to-execute
 
-We do not want to limit magnopy to users who are familiar with python. For that purpose we
-prepared a number of the scripts to perform calculation with magnopy, that can be executed
+We do not want to limit Magnopy to users who are familiar with python. For that purpose we
+prepared a number of the scripts to perform calculation with Magnopy, that can be executed
 as any other command line tool. Read the gide by the link above to learn how to execute a
 script and then visit one of the guides below to read more about each script.
 
@@ -39,12 +39,12 @@ script and then visit one of the guides below to read more about each script.
 
     how-to/index
 
-Full tutorials about magnopy are hosted on a separate web-site |magnopy-tutorials|_. Visit
-it and work through the "Master tutorial" if you wish to learn magnopy. Each tutorial
-offers a small set of exercises, that help to get comfortable in using magnopy.
+Full tutorials about Magnopy are hosted on a separate web-site |magnopy-tutorials|_. Visit
+it and work through the "Master tutorial" if you wish to learn Magnopy. Each tutorial
+offers a small set of exercises, that help to get comfortable in using Magnopy.
 
 In the pages above we provide simple guides on how to achieve a small well-define task
-within magnopy. Those "How to ..." guides are written based on the questions that users
+within Magnopy. Those "How to ..." guides are written based on the questions that users
 are asking about the code. If you do not see the how-to guide that answers your question,
 please do not hesitate to ask it via our :ref:`support` channels.
 
@@ -55,8 +55,8 @@ please do not hesitate to ask it via our :ref:`support` channels.
 
     usage/data-structures
 
-For deeper understanding of magnopy you can read the page from above, that graphically
-summarizes data structures of magnopy. Then you can read materials below where we explain
+For deeper understanding of Magnopy you can read the page from above, that graphically
+summarizes data structures of Magnopy. Then you can read materials below where we explain
 each concept and give code examples.
 
 .. toctree::
@@ -77,9 +77,8 @@ each concept and give code examples.
     :maxdepth: 1
 
     theory-behind/spin-hamiltonian
-    theory-behind/convention-problem
-    theory-behind/multiple-counting
+    theory-behind/convention
     theory-behind/energy-minimization
 
 It is important to understand how any tool operates and what it does exactly. In the pages
-above we prepared some explanatory material about theory behind magnopy.
+above we prepared some explanatory material about theory behind Magnopy.

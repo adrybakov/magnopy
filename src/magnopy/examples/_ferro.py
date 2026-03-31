@@ -116,15 +116,27 @@ def cubic_ferro_nn(
         [0.5]
         >>> spinham.atoms.positions
         [[0, 0, 0]]
-        >>> for alpha, parameter in spinham.p21:
-        ...     print(alpha, parameter, sep="\n")
+        >>> for _, alphas, parameter in spinham.p21:
+        ...     print(alphas[0], parameter, sep="\n")
         0
         [[0. 0. 0.]
          [0. 0. 0.]
          [0. 0. 0.]]
-        >>> for alpha, beta, nu, parameter in spinham.p22:
-        ...     print(alpha, beta, nu)
+        >>> for nus, alphas, parameter in spinham.p22:
+        ...     print(alphas[0], alphas[1], nus[0])
         ...     print(parameter)
+        0 0 (-1, 0, 0)
+        [[-1. -0. -0.]
+         [-0. -1. -0.]
+         [-0. -0. -1.]]
+        0 0 (0, -1, 0)
+        [[-1. -0. -0.]
+         [-0. -1. -0.]
+         [-0. -0. -1.]]
+        0 0 (0, 0, -1)
+        [[-1. -0. -0.]
+         [-0. -1. -0.]
+         [-0. -0. -1.]]
         0 0 (0, 0, 1)
         [[-1. -0. -0.]
          [-0. -1. -0.]
@@ -134,18 +146,6 @@ def cubic_ferro_nn(
          [-0. -1. -0.]
          [-0. -0. -1.]]
         0 0 (1, 0, 0)
-        [[-1. -0. -0.]
-         [-0. -1. -0.]
-         [-0. -0. -1.]]
-        0 0 (0, 0, -1)
-        [[-1. -0. -0.]
-         [-0. -1. -0.]
-         [-0. -0. -1.]]
-        0 0 (0, -1, 0)
-        [[-1. -0. -0.]
-         [-0. -1. -0.]
-         [-0. -0. -1.]]
-        0 0 (-1, 0, 0)
         [[-1. -0. -0.]
          [-0. -1. -0.]
          [-0. -0. -1.]]
@@ -179,9 +179,21 @@ def cubic_ferro_nn(
 
             >>> import magnopy
             >>> spinham = magnopy.examples.cubic_ferro_nn(J_iso=2)
-            >>> for alpha, beta, nu, parameter in spinham.p22:
-            ...     print(alpha, beta, nu)
+            >>> for nus, alphas, parameter in spinham.p22:
+            ...     print(alphas[0], alphas[1], nus[0])
             ...     print(parameter)
+            0 0 (-1, 0, 0)
+            [[-2. -0. -0.]
+             [-0. -2. -0.]
+             [-0. -0. -2.]]
+            0 0 (0, -1, 0)
+            [[-2. -0. -0.]
+             [-0. -2. -0.]
+             [-0. -0. -2.]]
+            0 0 (0, 0, -1)
+            [[-2. -0. -0.]
+             [-0. -2. -0.]
+             [-0. -0. -2.]]
             0 0 (0, 0, 1)
             [[-2. -0. -0.]
              [-0. -2. -0.]
@@ -194,18 +206,6 @@ def cubic_ferro_nn(
             [[-2. -0. -0.]
              [-0. -2. -0.]
              [-0. -0. -2.]]
-            0 0 (0, 0, -1)
-            [[-2. -0. -0.]
-             [-0. -2. -0.]
-             [-0. -0. -2.]]
-            0 0 (0, -1, 0)
-            [[-2. -0. -0.]
-             [-0. -2. -0.]
-             [-0. -0. -2.]]
-            0 0 (-1, 0, 0)
-            [[-2. -0. -0.]
-             [-0. -2. -0.]
-             [-0. -0. -2.]]
 
     *   Diagonal of the on-site quadratic anisotropy
 
@@ -213,8 +213,8 @@ def cubic_ferro_nn(
 
             >>> import magnopy
             >>> spinham = magnopy.examples.cubic_ferro_nn(J_21=(1, 2, -1))
-            >>> for alpha, parameter in spinham.p21:
-            ...     print(alpha, parameter, sep="\n")
+            >>> for _, alphas, parameter in spinham.p21:
+            ...     print(alphas[0], parameter, sep="\n")
             0
             [[ 1.  0.  0.]
              [ 0.  2.  0.]
@@ -226,26 +226,22 @@ def cubic_ferro_nn(
 
             >>> import magnopy
             >>> spinham = magnopy.examples.cubic_ferro_nn(dimensions=1)
-            >>> for alpha, beta, nu, parameter in spinham.p22:
-            ...     print(alpha, beta, nu)
+            >>> for nus, alphas, parameter in spinham.p22:
+            ...     print(alphas[0], alphas[1], nus[0])
             ...     print(parameter)
-            0 0 (1, 0, 0)
-            [[-1. -0. -0.]
-             [-0. -1. -0.]
-             [-0. -0. -1.]]
             0 0 (-1, 0, 0)
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]
-            >>> spinham = magnopy.examples.cubic_ferro_nn(dimensions=2)
-            >>> for alpha, beta, nu, parameter in spinham.p22:
-            ...     print(alpha, beta, nu)
-            ...     print(parameter)
-            0 0 (0, 1, 0)
+            0 0 (1, 0, 0)
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]
-            0 0 (1, 0, 0)
+            >>> spinham = magnopy.examples.cubic_ferro_nn(dimensions=2)
+            >>> for nus, alphas, parameter in spinham.p22:
+            ...     print(alphas[0], alphas[1], nus[0])
+            ...     print(parameter)
+            0 0 (-1, 0, 0)
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]
@@ -253,7 +249,11 @@ def cubic_ferro_nn(
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]
-            0 0 (-1, 0, 0)
+            0 0 (0, 1, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (1, 0, 0)
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]

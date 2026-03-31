@@ -27,7 +27,7 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
-def span_local_rf(direction_vector, hybridize=False):
+def span_local_rf(direction_vector, hybridize=False, _normalize=True):
     r"""
     Spans local right-handed reference frame from the direction vector.
 
@@ -117,26 +117,27 @@ def span_local_rf(direction_vector, hybridize=False):
 
     """
 
-    direction_vector = np.array(direction_vector, dtype=float)
+    dv = np.array(direction_vector, dtype=float)
 
-    if np.allclose(direction_vector, np.zeros(3)):
+    if np.allclose(dv, np.zeros(3)):
         raise ValueError("Zero vector.")
 
-    direction_vector /= np.linalg.norm(direction_vector)
+    scale = np.linalg.norm(dv)
+    dv /= scale
 
-    if np.allclose(direction_vector, [0, 0, 1]):
+    if np.allclose(dv, [0, 0, 1]):
         x_alpha = np.array([1, 0, 0], dtype=float)
         y_alpha = np.array([0, 1, 0], dtype=float)
-    elif np.allclose(direction_vector, [0, 0, -1]):
+    elif np.allclose(dv, [0, 0, -1]):
         x_alpha = np.array([0, -1, 0], dtype=float)
         y_alpha = np.array([-1, 0, 0], dtype=float)
     else:
         z_dir = [0, 0, 1]
 
-        sin_rot_angle = np.linalg.norm(np.cross(z_dir, direction_vector))
-        cos_rot_angle = np.dot(z_dir, direction_vector)
+        sin_rot_angle = np.linalg.norm(np.cross(z_dir, dv))
+        cos_rot_angle = np.dot(z_dir, dv)
         # direction_vector and z_dir are unit vectors
-        ux, uy, uz = np.cross(z_dir, direction_vector) / sin_rot_angle
+        ux, uy, uz = np.cross(z_dir, dv) / sin_rot_angle
 
         x_alpha = np.array(
             [
@@ -154,12 +155,17 @@ def span_local_rf(direction_vector, hybridize=False):
             ]
         )
 
+    if not _normalize:
+        x_alpha *= scale
+        y_alpha *= scale
+        dv *= scale
+
     if hybridize:
-        return x_alpha + 1j * y_alpha, direction_vector
-    return x_alpha, y_alpha, direction_vector
+        return x_alpha + 1j * y_alpha, dv
+    return x_alpha, y_alpha, dv
 
 
-def span_local_rfs(directional_vectors, hybridize=False):
+def span_local_rfs(directional_vectors, hybridize=False, _normalize=True):
     r"""
     Spans a set of local right-handed reference frames from a set of the direction
     vectors.
@@ -217,7 +223,11 @@ def span_local_rfs(directional_vectors, hybridize=False):
 
     for directional_vector in directional_vectors:
         results.append(
-            span_local_rf(direction_vector=directional_vector, hybridize=hybridize)
+            span_local_rf(
+                direction_vector=directional_vector,
+                hybridize=hybridize,
+                _normalize=_normalize,
+            )
         )
 
     results = np.array(results)

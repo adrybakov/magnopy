@@ -18,7 +18,7 @@ with the most common command for communication between them is
 Origin repository
 =================
 
-**Origin** is a magnopy repository under **your** personal account.
+**Origin** is a Magnopy repository under **your** personal account.
 
 During the development you push the changes to **Origin**. Once the feature you're working
 on is ready, you will create a pull request from **Origin** to **Upstream**.

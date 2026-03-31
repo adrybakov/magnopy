@@ -1,10 +1,10 @@
 .. _user-guide_installation:
 
 **********************
-How to install magnopy
+How to install Magnopy
 **********************
 
-Requirement for magnopy installation are
+Requirement for Magnopy installation are
 
 * |Python|_ (>=3.9)
 
@@ -46,7 +46,7 @@ you may need to use ``python3`` instead (and ``pip3`` instead of ``pip``).
 .. _user-guide_installation_pip:
 
 .. hint::
-    On linux and OSX systems one can create a virtual environment for the magnopy's installation with
+    On linux and OSX systems one can create a virtual environment for the Magnopy's installation with
     (use your version of python instead of ``python3.13`` if needed)
 
     .. code-block:: bash
@@ -80,13 +80,13 @@ Magnopy is published and distributed via |PYPI|_. To install it use the command
 
     .. literalinclude:: memo.inc
 
-    then the installation worked and magnopy is ready to use.
+    then the installation worked and Magnopy is ready to use.
 
 If there are any bugs with the installation, please drop a message to the developers
 through one of our :ref:`support <support>` channels and we would be happy to help.
 
-Optionally, if you want magnopy to be able to produce .png and .html files you can
-install |plotly|_ and |matplotlib|_ manually or install them as magnopy's dependencies
+Optionally, if you want Magnopy to be able to produce .png and .html files you can
+install |plotly|_ and |matplotlib|_ manually or install them as Magnopy's dependencies
 
 .. code-block:: bash
 
@@ -107,7 +107,7 @@ install |plotly|_ and |matplotlib|_ manually or install them as magnopy's depend
         pip install "magnopy[visual]"
 
 .. hint::
-    If you are using |jupyter|_, then magnopy can be installed as
+    If you are using |jupyter|_, then Magnopy can be installed as
 
     .. code-block::
 
@@ -126,8 +126,8 @@ install |plotly|_ and |matplotlib|_ manually or install them as magnopy's depend
 Installation from source
 ========================
 
-Source code of magnopy is publicly available (see |repository|_),
-therefore magnopy can be installed from source.
+Source code of Magnopy is publicly available (see |repository|_),
+therefore Magnopy can be installed from source.
 
 *   Clone the project (in other words, download the source code)
 
@@ -147,7 +147,7 @@ therefore magnopy can be installed from source.
 
         pip install -r requirements.txt
 
-*   To install magnopy, run (you may need to use ``pip3``)
+*   To install Magnopy, run (you may need to use ``pip3``)
 
     .. code-block:: bash
 
@@ -162,10 +162,10 @@ therefore magnopy can be installed from source.
 Update
 ======
 
-New versions of magnopy are often published. We recommend to update from time to time to
+New versions of Magnopy are often published. We recommend to update from time to time to
 get the new features and bug fixes.
 
-To update magnopy to the latest available version (|version|) use the command (you may
+To update Magnopy to the latest available version (|version|) use the command (you may
 need to use ``pip3``)
 
 .. code-block:: bash

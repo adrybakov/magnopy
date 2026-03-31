@@ -4,8 +4,8 @@
 Testing
 *******
 
-In magnopy we rely on |pytest|_, |hypothesis|_ and |doctest|_ for testing. Ideally, all
-functions in magnopy should be covered by unit tests and every code snippet in the
+In Magnopy we rely on |pytest|_, |hypothesis|_ and |doctest|_ for testing. Ideally, all
+functions in Magnopy should be covered by unit tests and every code snippet in the
 documentations should be a doctest.
 
 Unit tests
@@ -34,7 +34,7 @@ named "test_rotate()" to the file "tests/test_magnons/test_dispersion.py".
 Doctests
 ========
 
-Across the documentation there are many examples of how to use magnopy with code
+Across the documentation there are many examples of how to use Magnopy with code
 snippets. These code snippets are tested using |doctest|_, which ensure that the
 documentation correctly reflects an actual behavior of the code. In order to run
 doctests you need to build the :ref:`documentation <development_documentation>` and then

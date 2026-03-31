@@ -26,20 +26,33 @@ from math import ceil
 import numpy as np
 from wulfric import add_sugar
 
-from magnopy._spinham._c1 import _add_1, _p1, _remove_1
-from magnopy._spinham._c21 import _add_21, _p21, _remove_21
-from magnopy._spinham._c22 import _add_22, _get_primary_p22, _p22, _remove_22
-from magnopy._spinham._c31 import _add_31, _p31, _remove_31
-from magnopy._spinham._c32 import _add_32, _p32, _remove_32
-from magnopy._spinham._c33 import _add_33, _p33, _remove_33
-from magnopy._spinham._c41 import _add_41, _p41, _remove_41
-from magnopy._spinham._c43 import _add_43, _p43, _remove_43
-from magnopy._spinham._c44 import _add_44, _p44, _remove_44
-from magnopy._spinham._c421 import _add_421, _p421, _remove_421
-from magnopy._spinham._c422 import _add_422, _p422, _remove_422
-from magnopy._spinham._convention import Convention
+from magnopy._spinham._legacy_code import (
+    _add_1,
+    _add_21,
+    _add_22,
+    _add_31,
+    _add_41,
+    _remove_1,
+    _remove_21,
+    _remove_22,
+    _remove_31,
+    _remove_41,
+)
 
-from magnopy._data_validation import _validated_units
+
+from magnopy._spinham._convention import Convention
+from magnopy._data_validation import (
+    _validate_atom_index,
+    _validate_unit_cell_index,
+    _validated_units,
+)
+from magnopy._parameters._interaction_parameters import (
+    _InteractionParameters,
+    _InteractionParametersIterator,
+    _get_specs,
+)
+from magnopy._parameters._symmetrization import get_equivalent
+
 
 from magnopy._constants._units import _PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP
 from magnopy._constants._si import BOHR_MAGNETON, ANGSTROM, VACUUM_MAGNETIC_PERMEABILITY
@@ -155,38 +168,7 @@ class SpinHamiltonian:
 
         self._units = units.lower()
 
-        # [[alpha, parameter], ...]
-        self._1 = []
-
-        # [[alpha, parameter], ...]
-        self._21 = []
-
-        # [[alpha, beta, nu, parameter], ...]
-        self._22 = []
-
-        # [[alpha, parameter], ...]
-        self._31 = []
-
-        # [[alpha, beta, nu, parameter], ...]
-        self._32 = []
-
-        # [[alpha, beta, gamma, nu, lambda, parameter], ...]
-        self._33 = []
-
-        # [[alpha, parameter], ...]
-        self._41 = []
-
-        # [[alpha, beta, nu, parameter], ...]
-        self._421 = []
-
-        # [[alpha, beta, nu, parameter], ...]
-        self._422 = []
-
-        # [[alpha, beta, gamma, nu, lambda, parameter], ...]
-        self._43 = []
-
-        # [[alpha, beta, gamma, epsilon, nu, lambda, rho, parameter], ...]
-        self._44 = []
+        self._parameters = _InteractionParameters()
 
     ############################################################################
     #                              Cell and Atoms                              #
@@ -247,8 +229,8 @@ class SpinHamiltonian:
                    [0., 0., 2.]])
 
 
-        In the latter case correct behavior of magnopy **is not** guaranteed. Use only
-        if you have a deep understanding of the magnopy source code.
+        In the latter case correct behavior of Magnopy **is not** guaranteed. Use only
+        if you have a deep understanding of the Magnopy source code.
         """
 
         return self._cell
@@ -309,8 +291,8 @@ class SpinHamiltonian:
             >>> spinham.atoms
             {'names': ['Cr']}
 
-        In the latter case correct behavior of magnopy **is not** guaranteed. Use only
-        if you have a deep understanding of the magnopy source code.
+        In the latter case correct behavior of Magnopy **is not** guaranteed. Use only
+        if you have a deep understanding of the Magnopy source code.
         """
 
         return self._atoms
@@ -330,49 +312,9 @@ class SpinHamiltonian:
         # Identify magnetic sites
         indices = set()
 
-        for alpha, _ in self._1:
-            indices.add(alpha)
-
-        for alpha, _ in self._21:
-            indices.add(alpha)
-
-        for alpha, beta, _, _ in self._22:
-            indices.add(alpha)
-            indices.add(beta)
-
-        for alpha, _ in self._31:
-            indices.add(alpha)
-
-        for alpha, beta, _, _ in self._32:
-            indices.add(alpha)
-            indices.add(beta)
-
-        for alpha, beta, gamma, _, _, _ in self._33:
-            indices.add(alpha)
-            indices.add(beta)
-            indices.add(gamma)
-
-        for alpha, _ in self._41:
-            indices.add(alpha)
-
-        for alpha, beta, _, _ in self._421:
-            indices.add(alpha)
-            indices.add(beta)
-
-        for alpha, beta, _, _ in self._422:
-            indices.add(alpha)
-            indices.add(beta)
-
-        for alpha, beta, gamma, _, _, _ in self._43:
-            indices.add(alpha)
-            indices.add(beta)
-            indices.add(gamma)
-
-        for alpha, beta, gamma, epsilon, _, _, _, _ in self._44:
-            indices.add(alpha)
-            indices.add(beta)
-            indices.add(gamma)
-            indices.add(epsilon)
+        for specs, _ in self._parameters._container:
+            for alpha in specs[3]:
+                indices.add(alpha)
 
         indices = sorted(list(indices))
 
@@ -499,20 +441,39 @@ class SpinHamiltonian:
 
         self._set_spin_normalization(new_convention._spin_normalized)
 
-        self._set_c1(new_convention._c1)
-
-        self._set_c21(new_convention._c21)
-        self._set_c22(new_convention._c22)
-
-        self._set_c31(new_convention._c31)
-        self._set_c32(new_convention._c32)
-        self._set_c33(new_convention._c33)
-
-        self._set_c41(new_convention._c41)
-        self._set_c421(new_convention._c421)
-        self._set_c422(new_convention._c422)
-        self._set_c43(new_convention._c43)
-        self._set_c44(new_convention._c44)
+        self._set_convention_constant(
+            old_value=self.convention._c1, new_value=new_convention._c1, n=1, p_n=1
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c21, new_value=new_convention._c21, n=2, p_n=1
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c22, new_value=new_convention._c22, n=2, p_n=2
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c31, new_value=new_convention._c31, n=3, p_n=1
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c32, new_value=new_convention._c32, n=3, p_n=2
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c33, new_value=new_convention._c33, n=3, p_n=3
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c41, new_value=new_convention._c41, n=4, p_n=1
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c42, new_value=new_convention._c42, n=4, p_n=2
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c43, new_value=new_convention._c43, n=4, p_n=3
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c44, new_value=new_convention._c44, n=4, p_n=4
+        )
+        self._set_convention_constant(
+            old_value=self.convention._c45, new_value=new_convention._c45, n=4, p_n=5
+        )
 
         self._convention = new_convention
 
@@ -525,54 +486,30 @@ class SpinHamiltonian:
         if self.convention.multiple_counting == multiple_counting:
             return
 
-        # It was absent before
-        if multiple_counting:
-            factor = 0.5
-        # It was present before
-        else:
-            factor = 2.0
+        new_parameters = _InteractionParameters()
+        for (n, p_n, nus, alphas), parameter in self._parameters._container:
+            equivalent_parameters = get_equivalent(
+                n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+            )
 
-        # For (two spins & two sites)
-        for index in range(len(self._22)):
-            self._22[index][3] = self._22[index][3] * factor
+            degeneracy = len(equivalent_parameters)
 
-        # For (three spins & two sites)
-        for index in range(len(self._32)):
-            self._32[index][3] = self._32[index][3] * factor
+            # It was absent before
+            if multiple_counting:
+                for nus, alphas, parameter in equivalent_parameters:
+                    new_parameters.add(
+                        specs=(n, p_n, nus, alphas), parameter=parameter / degeneracy
+                    )
+            # It was present before
+            else:
+                nus, alphas, parameter = equivalent_parameters[0]
+                new_parameters.add(
+                    specs=(n, p_n, nus, alphas),
+                    parameter=parameter * degeneracy,
+                    when_present="skip",
+                )
 
-        # For (four spins & two sites (3+1))
-        for index in range(len(self._421)):
-            self._421[index][3] = self._421[index][3] * factor
-
-        # For (four spins & two sites (2+2))
-        for index in range(len(self._422)):
-            self._422[index][3] = self._422[index][3] * factor
-
-        # It was absent before
-        if multiple_counting:
-            factor = 1 / 6
-        # It was present before
-        else:
-            factor = 6
-
-        # For (three spins & three sites)
-        for index in range(len(self._33)):
-            self._33[index][5] = self._33[index][5] * factor
-
-        # For (four spins & three sites)
-        for index in range(len(self._43)):
-            self._43[index][5] = self._43[index][5] * factor
-
-        # It was absent before
-        if multiple_counting:
-            factor = 1 / 24
-        # It was present before
-        else:
-            factor = 24
-
-        # For (four spins & four sites)
-        for index in range(len(self._44)):
-            self._44[index][7] = self._44[index][7] * factor
+        self._parameters = new_parameters
 
     def _set_spin_normalization(self, spin_normalized: bool) -> None:
         if spin_normalized is None or self.convention._spin_normalized is None:
@@ -583,305 +520,32 @@ class SpinHamiltonian:
         if self.convention.spin_normalized == spin_normalized:
             return
 
-        # Before it was not normalized
-        if spin_normalized:
-            # For (one spin & one site)
-            for index in range(len(self._1)):
-                alpha = self._1[index][0]
-                self._1[index][1] = self._1[index][1] * self.atoms.spins[alpha]
-            # For (two spins & one site)
-            for index in range(len(self._21)):
-                alpha = self._21[index][0]
-                self._21[index][1] = self._21[index][1] * self.atoms.spins[alpha] ** 2
-            # For (two spins & two sites)
-            for index in range(len(self._22)):
-                alpha = self._22[index][0]
-                beta = self._22[index][1]
-                self._22[index][3] = self._22[index][3] * (
-                    self.atoms.spins[alpha] * self.atoms.spins[beta]
-                )
-            # For (three spins & one site)
-            for index in range(len(self._31)):
-                alpha = self._31[index][0]
-                self._31[index][1] = self._31[index][1] * self.atoms.spins[alpha] ** 3
-            # For (three spins & two sites)
-            for index in range(len(self._32)):
-                alpha = self._32[index][0]
-                beta = self._32[index][1]
-                self._32[index][3] = self._32[index][3] * (
-                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta]
-                )
-            # For (three spins & three sites)
-            for index in range(len(self._33)):
-                alpha = self._33[index][0]
-                beta = self._33[index][1]
-                gamma = self._33[index][2]
-                self._33[index][5] = self._33[index][5] * (
-                    self.atoms.spins[alpha]
-                    * self.atoms.spins[beta]
-                    * self.atoms.spins[gamma]
-                )
-            # For (four spins & one site)
-            for index in range(len(self._41)):
-                alpha = self._41[index][0]
-                self._41[index][1] = self._41[index][1] * self.atoms.spins[alpha] ** 4
-            # For (four spins & two sites (3+1))
-            for index in range(len(self._421)):
-                alpha = self._421[index][0]
-                beta = self._421[index][1]
-                self._421[index][3] = self._421[index][3] * (
-                    self.atoms.spins[alpha] ** 3 * self.atoms.spins[beta]
-                )
-            # For (four spins & two sites (2+2))
-            for index in range(len(self._422)):
-                alpha = self._422[index][0]
-                beta = self._422[index][1]
-                self._422[index][3] = self._422[index][3] * (
-                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta] ** 2
-                )
-            # For (four spins & three sites)
-            for index in range(len(self._43)):
-                alpha = self._43[index][0]
-                beta = self._43[index][1]
-                gamma = self._43[index][2]
-                self._43[index][5] = self._43[index][5] * (
-                    self.atoms.spins[alpha] ** 2
-                    * self.atoms.spins[beta]
-                    * self.atoms.spins[gamma]
-                )
-            # For (four spins & four sites)
-            for index in range(len(self._44)):
-                alpha = self._44[index][0]
-                beta = self._44[index][1]
-                gamma = self._44[index][2]
-                epsilon = self._44[index][3]
-                self._44[index][7] = self._44[index][7] * (
-                    self.atoms.spins[alpha]
-                    * self.atoms.spins[beta]
-                    * self.atoms.spins[gamma]
-                    * self.atoms.spins[epsilon]
-                )
-        # Before it was normalized
-        else:
-            # For (one spin & one site)
-            for index in range(len(self._1)):
-                alpha = self._1[index][0]
-                self._1[index][1] = self._1[index][1] / self.atoms.spins[alpha]
-            # For (two spins & one site)
-            for index in range(len(self._21)):
-                alpha = self._21[index][0]
-                self._21[index][1] = self._21[index][1] / self.atoms.spins[alpha] ** 2
-            # For (two spins & two sites)
-            for index in range(len(self._22)):
-                alpha = self._22[index][0]
-                beta = self._22[index][1]
-                self._22[index][3] = self._22[index][3] / (
-                    self.atoms.spins[alpha] * self.atoms.spins[beta]
-                )
-            # For (three spins & one site)
-            for index in range(len(self._31)):
-                alpha = self._31[index][0]
-                self._31[index][1] = self._31[index][1] / self.atoms.spins[alpha] ** 3
-            # For (three spins & two sites)
-            for index in range(len(self._32)):
-                alpha = self._32[index][0]
-                beta = self._32[index][1]
-                self._32[index][3] = self._32[index][3] / (
-                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta]
-                )
-            # For (three spins & three sites)
-            for index in range(len(self._33)):
-                alpha = self._33[index][0]
-                beta = self._33[index][1]
-                gamma = self._33[index][2]
-                self._33[index][5] = self._33[index][5] / (
-                    self.atoms.spins[alpha]
-                    * self.atoms.spins[beta]
-                    * self.atoms.spins[gamma]
-                )
-            # For (four spins & one site)
-            for index in range(len(self._41)):
-                alpha = self._41[index][0]
-                self._41[index][1] = self._41[index][1] / self.atoms.spins[alpha] ** 4
-            # For (four spins & two sites (3+1))
-            for index in range(len(self._421)):
-                alpha = self._421[index][0]
-                beta = self._421[index][1]
-                self._421[index][3] = self._421[index][3] / (
-                    self.atoms.spins[alpha] ** 3 * self.atoms.spins[beta]
-                )
-            # For (four spins & two sites (2+2))
-            for index in range(len(self._422)):
-                alpha = self._422[index][0]
-                beta = self._422[index][1]
-                self._422[index][3] = self._422[index][3] / (
-                    self.atoms.spins[alpha] ** 2 * self.atoms.spins[beta] ** 2
-                )
-            # For (four spins & three sites)
-            for index in range(len(self._43)):
-                alpha = self._43[index][0]
-                beta = self._43[index][1]
-                gamma = self._43[index][2]
-                self._43[index][5] = self._43[index][5] / (
-                    self.atoms.spins[alpha] ** 2
-                    * self.atoms.spins[beta]
-                    * self.atoms.spins[gamma]
-                )
-            # For (four spins & four sites)
-            for index in range(len(self._44)):
-                alpha = self._44[index][0]
-                beta = self._44[index][1]
-                gamma = self._44[index][2]
-                epsilon = self._44[index][3]
-                self._44[index][7] = self._44[index][7] / (
-                    self.atoms.spins[alpha]
-                    * self.atoms.spins[beta]
-                    * self.atoms.spins[gamma]
-                    * self.atoms.spins[epsilon]
-                )
+        for i, (specs, _) in enumerate(self._parameters._container):
+            factor = 1.0
+            for alpha in specs[3]:
+                factor = factor * self.atoms.spins[alpha]
+            # Before it was not normalized
+            if spin_normalized:
+                self._parameters._container[i][1] *= factor
+            # Before it was normalized
+            else:
+                self._parameters._container[i][1] /= factor
 
-    def _set_c1(self, new_c1: float) -> None:
-        if new_c1 is None or self.convention._c1 is None:
+    def _set_convention_constant(self, old_value, new_value, n, p_n) -> None:
+        if new_value is None or old_value is None:
             return
 
-        new_c1 = float(new_c1)
+        new_value = float(new_value)
 
-        if self.convention.c1 == new_c1:
+        if old_value == new_value:
             return
 
         # If factor is changing one has to scale parameters.
-        for index in range(len(self._1)):
-            self._1[index][1] = self._1[index][1] * self.convention.c1 / new_c1
-
-    def _set_c21(self, new_c21: float) -> None:
-        if new_c21 is None or self.convention._c21 is None:
-            return
-
-        new_c21 = float(new_c21)
-
-        if self.convention.c21 == new_c21:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._21)):
-            self._21[index][1] = self._21[index][1] * self.convention.c21 / new_c21
-
-    def _set_c22(self, new_c22: float) -> None:
-        if new_c22 is None or self.convention._c22 is None:
-            return
-
-        new_c22 = float(new_c22)
-
-        if self.convention.c22 == new_c22:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._22)):
-            self._22[index][3] = self._22[index][3] * self.convention.c22 / new_c22
-
-    def _set_c31(self, new_c31: float) -> None:
-        if new_c31 is None or self.convention._c31 is None:
-            return
-
-        new_c31 = float(new_c31)
-
-        if self.convention.c31 == new_c31:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._31)):
-            self._31[index][1] = self._31[index][1] * self.convention.c31 / new_c31
-
-    def _set_c32(self, new_c32: float) -> None:
-        if new_c32 is None or self.convention._c32 is None:
-            return
-
-        new_c32 = float(new_c32)
-
-        if self.convention.c32 == new_c32:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._32)):
-            self._32[index][3] = self._32[index][3] * self.convention.c32 / new_c32
-
-    def _set_c33(self, new_c33: float) -> None:
-        if new_c33 is None or self.convention._c33 is None:
-            return
-
-        new_c33 = float(new_c33)
-
-        if self.convention.c33 == new_c33:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._33)):
-            self._33[index][5] = self._33[index][5] * self.convention.c33 / new_c33
-
-    def _set_c41(self, new_c41: float) -> None:
-        if new_c41 is None or self.convention._c41 is None:
-            return
-
-        new_c41 = float(new_c41)
-
-        if self.convention.c41 == new_c41:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._41)):
-            self._41[index][1] = self._41[index][1] * self.convention.c41 / new_c41
-
-    def _set_c421(self, new_c421: float) -> None:
-        if new_c421 is None or self.convention._c421 is None:
-            return
-
-        new_c421 = float(new_c421)
-
-        if self.convention.c421 == new_c421:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._421)):
-            self._421[index][3] = self._421[index][3] * self.convention.c421 / new_c421
-
-    def _set_c422(self, new_c422: float) -> None:
-        if new_c422 is None or self.convention._c422 is None:
-            return
-
-        new_c422 = float(new_c422)
-
-        if self.convention.c422 == new_c422:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._422)):
-            self._422[index][3] = self._422[index][3] * self.convention.c422 / new_c422
-
-    def _set_c43(self, new_c43: float) -> None:
-        if new_c43 is None or self.convention._c43 is None:
-            return
-
-        new_c43 = float(new_c43)
-
-        if self.convention.c43 == new_c43:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._43)):
-            self._43[index][5] = self._43[index][5] * self.convention.c43 / new_c43
-
-    def _set_c44(self, new_c44: float) -> None:
-        if new_c44 is None or self.convention._c44 is None:
-            return
-
-        new_c44 = float(new_c44)
-
-        if self.convention.c44 == new_c44:
-            return
-
-        # If factor is changing one has to scale parameters.
-        for index in range(len(self._44)):
-            self._44[index][7] = self._44[index][7] * self.convention.c44 / new_c44
+        for i, (specs, _) in enumerate(self._parameters._container):
+            if specs[:2] == (n, p_n):
+                self._parameters._container[i][1] *= old_value / new_value
+            elif specs[:2] > (n, p_n):
+                break
 
     ############################################################################
     #                                   Units                                  #
@@ -928,42 +592,8 @@ class SpinHamiltonian:
 
         conversion_factor = _PARAMETER_UNITS[self._units] / _PARAMETER_UNITS[new_units]
 
-        # One-site parameters
-        for index in range(len(self._1)):
-            self._1[index][1] = self._1[index][1] * conversion_factor
-
-        for index in range(len(self._21)):
-            self._21[index][1] = self._21[index][1] * conversion_factor
-
-        for index in range(len(self._31)):
-            self._31[index][1] = self._31[index][1] * conversion_factor
-
-        for index in range(len(self._41)):
-            self._41[index][1] = self._41[index][1] * conversion_factor
-
-        # Two-sites parameters
-        for index in range(len(self._22)):
-            self._22[index][3] = self._22[index][3] * conversion_factor
-
-        for index in range(len(self._32)):
-            self._32[index][3] = self._32[index][3] * conversion_factor
-
-        for index in range(len(self._421)):
-            self._421[index][3] = self._421[index][3] * conversion_factor
-
-        for index in range(len(self._422)):
-            self._422[index][3] = self._422[index][3] * conversion_factor
-
-        # Three-sites parameters
-        for index in range(len(self._33)):
-            self._33[index][5] = self._33[index][5] * conversion_factor
-
-        for index in range(len(self._43)):
-            self._43[index][5] = self._43[index][5] * conversion_factor
-
-        # Four-sites parameters
-        for index in range(len(self._44)):
-            self._44[index][7] = self._44[index][7] * conversion_factor
+        for i in range(len(self._parameters._container)):
+            self._parameters._container[i][1] *= conversion_factor
 
         self._units = new_units.lower()
 
@@ -1055,27 +685,13 @@ class SpinHamiltonian:
             for alpha in alphas
         ]
 
-        i = 0
-        j = 0
-        new_p1 = []
-        while i < len(alphas) or j < len(self._1):
-            if i >= len(alphas) or (j < len(self._1) and alphas[i] > self._1[j][0]):
-                new_p1.append(self._1[j])
-                j += 1
-            elif j >= len(self._1) or (i < len(alphas) and alphas[i] < self._1[j][0]):
-                new_p1.append([alphas[i], zeeman_parameters[i]])
-                i += 1
-            elif alphas[i] == self._1[j][0]:
-                new_p1.append(
-                    [
-                        alphas[i],
-                        zeeman_parameters[i] + self._1[j][1],
-                    ]
-                )
-                i += 1
-                j += 1
+        zeeman_term = _InteractionParameters()
 
-        self._1 = new_p1
+        for alpha, parameter in zip(alphas, zeeman_parameters):
+            zeeman_term.add(specs=(1, 1, (), (alpha,)), parameter=parameter)
+
+        self._parameters = self._parameters + zeeman_term
+
         self._reset_internals()
 
     ############################################################################
@@ -1131,7 +747,8 @@ class SpinHamiltonian:
 
         E_cut : float, optional
             Cut off value for the maximum value of the parameter.
-            :math:`E_{cut} > 0`.
+            :math:`E_{cut} > 0`. Expected in the same units as
+            :py:attr:`.SpinHamiltonian.units`.
 
         alphas : list of int, optional
             Indices of atoms, to which the magnetic field effect should be added.
@@ -1198,6 +815,7 @@ class SpinHamiltonian:
           to the atoms with the provided indices (based on the order in
           :py:attr:`.SpinHamiltonian.atoms`)
         """
+
         # Constants
         MU_0_MU_B = (
             VACUUM_MAGNETIC_PERMEABILITY
@@ -1245,7 +863,7 @@ class SpinHamiltonian:
 
         # Run over all pairs of atoms between (0, 0, 0) and all unit cells of
         # interest
-        tmp_parameters = []
+        dd_parameters = _InteractionParameters()
 
         if alphas is None:
             alphas = self.map_to_all
@@ -1255,12 +873,7 @@ class SpinHamiltonian:
                 for j in range(-m_2_max, m_2_max + 1):
                     for i in range(-m_1_max, m_1_max + 1):
                         for beta in alphas:
-                            if k == 0 and j == 0 and i == 0 and alpha == beta:
-                                continue
-
-                            if _get_primary_p22(
-                                alpha=alpha, beta=beta, nu=(i, j, k)
-                            ) != (alpha, beta, (i, j, k)):
+                            if ((i, j, k), beta) == ((0, 0, 0), alpha):
                                 continue
 
                             vector = (
@@ -1287,14 +900,27 @@ class SpinHamiltonian:
                                     parameter = parameter / 2
 
                                 if E_cut is None or (np.abs(parameter) >= E_cut).any():
-                                    tmp_parameters.append(
-                                        [alpha, beta, (i, j, k), parameter]
+                                    if not self.convention.multiple_counting:
+                                        equivalent_parameters = get_equivalent(
+                                            n=2,
+                                            p_n=2,
+                                            nus=((i, j, k),),
+                                            alphas=(alpha, beta),
+                                            parameter=parameter,
+                                        )
+
+                                        nu, alphas, parameter = equivalent_parameters[0]
+                                    else:
+                                        nu = (i, j, k)
+                                        alphas = (alpha, beta)
+
+                                    dd_parameters.add(
+                                        specs=(2, 2, (nu,), alphas),
+                                        parameter=parameter,
+                                        when_present="skip",
                                     )
 
-        if len(tmp_parameters) > 0:
-            tmp_parameters.sort(key=lambda x: x[:-1])
-
-            self._22 = _merge(list1=self._22, list2=tmp_parameters)
+        self._parameters = self._parameters + dd_parameters
 
     ############################################################################
     #                                Copy getter                               #
@@ -1347,42 +973,7 @@ class SpinHamiltonian:
 
         spinham = self.copy()
 
-        # One spin
-        for i in range(len(spinham._1)):
-            spinham._1[i][1] *= number
-
-        # Two spins
-        for i in range(len(spinham._21)):
-            spinham._21[i][1] *= number
-
-        for i in range(len(spinham._22)):
-            spinham._22[i][3] *= number
-
-        # Three spins
-        for i in range(len(spinham._31)):
-            spinham._31[i][1] *= number
-
-        for i in range(len(spinham._32)):
-            spinham._32[i][3] *= number
-
-        for i in range(len(spinham._33)):
-            spinham._33[i][5] *= number
-
-        # Four spins
-        for i in range(len(spinham._41)):
-            spinham._41[i][1] *= number
-
-        for i in range(len(spinham._421)):
-            spinham._421[i][3] *= number
-
-        for i in range(len(spinham._422)):
-            spinham._422[i][3] *= number
-
-        for i in range(len(spinham._43)):
-            spinham._43[i][5] *= number
-
-        for i in range(len(spinham._44)):
-            spinham._44[i][7] *= number
+        spinham._parameters = spinham._parameters * number
 
         return spinham
 
@@ -1396,8 +987,7 @@ class SpinHamiltonian:
         # Check that unit cells are the same
         if not np.allclose(self.cell, other.cell):
             raise ValueError(
-                "Unit cells of two Hamiltonians are different, "
-                "summation is not supported"
+                "Unit cells of two Hamiltonians are different, summation is not supported"
             )
 
         # Check that atoms are the same
@@ -1418,8 +1008,7 @@ class SpinHamiltonian:
 
         if not same_atoms:
             raise ValueError(
-                "Atoms of two spin Hamiltonians are different, "
-                "summation is not supported."
+                "Atoms of two spin Hamiltonians are different, summation is not supported."
             )
 
         # Make sure that units are the same
@@ -1431,25 +1020,7 @@ class SpinHamiltonian:
         other.convention = self.convention
 
         result = self.get_empty()
-
-        # One spin terms
-        result._1 = _merge(list1=self._1, list2=other._1)
-
-        # Two spin terms
-        result._21 = _merge(list1=self._21, list2=other._21)
-        result._22 = _merge(list1=self._22, list2=other._22)
-
-        # Three spin terms
-        result._31 = _merge(list1=self._31, list2=other._31)
-        result._32 = _merge(list1=self._32, list2=other._32)
-        result._33 = _merge(list1=self._33, list2=other._33)
-
-        # Four spin terms
-        result._41 = _merge(list1=self._41, list2=other._41)
-        result._421 = _merge(list1=self._421, list2=other._421)
-        result._422 = _merge(list1=self._422, list2=other._422)
-        result._43 = _merge(list1=self._43, list2=other._43)
-        result._44 = _merge(list1=self._44, list2=other._44)
+        result._parameters = self._parameters + other._parameters
 
         # Restore units of other Hamiltonian
         other.units = other_units
@@ -1463,81 +1034,596 @@ class SpinHamiltonian:
         return self + (-1) * other
 
     ############################################################################
-    #                            One spin & one site                           #
+    #                          Interaction parameters                          #
     ############################################################################
-    p1 = _p1
+    # TODO: check that the implementation is reasonable
+    def add(
+        self,
+        nus,
+        alphas,
+        parameter,
+        units=None,
+        populate_equivalent=False,
+        when_present="raise error",
+    ):
+        r"""
+        Add any parameter with at most four components of spin operator to the
+        Hamiltonian.
+
+        .. versionadded:: 0.5.0
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the definition of the
+        Hamiltonian.
+
+        Parameters
+        ----------
+        nus : (n, 3) or (n-1, 3) list/tuple of tuple of int
+            List of unit cell indices associated with the parameter. Each unit cell index
+            is a tuple of three integers (i, j, k) corresponding to the translation by
+            :math:`i\boldsymbol{a}_1 + j\boldsymbol{a}_2 + k\boldsymbol{a}_3`.
+
+        alphas : (n,) list/tuple of int
+            List of indices of atoms associated with the parameter. Based on the order in
+            :py:attr:`.SpinHamiltonian.atoms`.
+
+        units : str, optional
+            Units in which the  ``parameter``  is given.  Parameters have the the units of
+            energy. By default assumes :py:attr:`.SpinHamiltonian.units`.  For the list of
+            the  supported  units  see  :ref:`user-guide_usage_units_parameter-units`.  If
+            given  ``units``  are different from  :py:attr:`.SpinHamiltonian.units`,  then
+            the  parameter's  value  will be  converted  automatically from  ``units``  to
+            :py:attr:`.SpinHamiltonian.units`.
+
+        populate_equivalent : bool, default False
+            Whether to automatically populate all equivalent parameters related by the
+            symmetrization procedure. Ignored if ``convention.multiple_counting`` is
+            ``False``.
+
+        when_present : str, default "raise error"
+            Action to take if an atom already has a parameter associated with it.
+            Case-insensitive. Supported values are:
+
+            - ``"raise error"`` (default): raises an error.
+            - ``"replace"``: replace existing value of the parameter with the new one.
+            - ``"sum"``: add the value of the parameter to the existing one.
+            - ``"mean"``: replace the value of the parameter with the arithmetic mean of
+              existing and new parameters.
+            - ``"skip"``: Leave existing parameter unchanged and continue without raising
+              an error.
+
+        Notes
+        -----
+
+        If ``len(nus) == len(alphas) -1``, the correspondence between the ``alphas`` and
+        ``nus`` is as follows
+
+        * ``alphas[0]`` always located in the unit cell (0, 0, 0).
+        * ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for ``i >= 1``.
+
+        If ``len(nus) == len(alphas)``, then the ``i``-th atom is located in the unit cell
+        ``nus[i]`` for all ``i``. Note that the translational symmetry is always
+        enforced, so the ``nus`` are updated as ``nus[i] = nus[i] - nus[0]`` for all
+        ``i`` before the parameter is added to the Hamiltonian.
+
+        """
+
+        self._reset_internals()
+
+        for alpha in alphas:
+            _validate_atom_index(index=alpha, atoms=self.atoms)
+
+        for nu in nus:
+            _validate_unit_cell_index(ijk=nu)
+
+        if not (len(alphas) - 1 == len(nus) or len(alphas) == len(nus)):
+            raise ValueError(
+                f"Expected number of unit cell indices to be equal to or one less than the number of atom indices, got {len(alphas)} atom indices and {len(nus)} unit cell indices."
+            )
+
+        if len(nus) == len(alphas) - 1:
+            nus = tuple([(0, 0, 0)] + list(nus))
+
+        parameter = np.array(parameter)
+
+        if not len(parameter.shape) == len(alphas) or any(
+            _ != 3 for _ in parameter.shape
+        ):
+            raise ValueError(
+                f"Expected parameter to be a tensor with {len(alphas)} components of size 3, got {parameter.shape}."
+            )
+
+        if units is not None:
+            units = _validated_units(units=units, supported_units=_PARAMETER_UNITS)
+            parameter = (
+                parameter * _PARAMETER_UNITS[units] / _PARAMETER_UNITS[self._units]
+            )
+
+        specs = _get_specs(nus=nus, alphas=alphas)
+
+        if self.convention.multiple_counting:
+            if populate_equivalent:
+                equivalent_parameters = get_equivalent(
+                    n=specs[0],
+                    p_n=specs[1],
+                    nus=specs[2],
+                    alphas=specs[3],
+                    parameter=parameter,
+                )
+
+                for nus, alphas, parameter in equivalent_parameters:
+                    self._parameters.add(
+                        specs=(specs[0], specs[1], nus, alphas),
+                        parameter=parameter,
+                        when_present=when_present,
+                    )
+            else:
+                self._parameters.add(
+                    specs=specs, parameter=parameter, when_present=when_present
+                )
+        else:
+            equivalent_parameters = get_equivalent(
+                n=specs[0],
+                p_n=specs[1],
+                nus=specs[2],
+                alphas=specs[3],
+                parameter=parameter,
+            )
+            nus, alphas, parameter = equivalent_parameters[0]
+
+            self._parameters.add(
+                specs=(specs[0], specs[1], nus, alphas),
+                parameter=parameter,
+                when_present=when_present,
+            )
+
+    # TODO: check that the implementation is reasonable
+    def remove(self, nus, alphas, remove_equivalent=False):
+        r"""
+        Removes any parameter with at most four components of spin operator to the
+        Hamiltonian.
+
+        .. versionadded:: 0.5.0
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the definition of the
+        Hamiltonian.
+
+        Parameters
+        ----------
+        nus : (n, 3) or (n-1, 3) list/tuple of tuple of int
+            List of unit cell indices associated with the parameter. Each unit cell index
+            is a tuple of three integers (i, j, k) corresponding to the translation by
+            :math:`i\boldsymbol{a}_1 + j\boldsymbol{a}_2 + k\boldsymbol{a}_3`.
+
+        alphas : (n,) list/tuple of int
+            List of indices of atoms associated with the parameter. Based on the order in
+            :py:attr:`.SpinHamiltonian.atoms`.
+
+        remove_equivalent : bool, default False
+            Whether to automatically remove all equivalent parameters related by the
+            symmetrization procedure. Ignored if ``convention.multiple_counting`` is
+            ``False``.
+
+
+        Notes
+        -----
+
+        If ``len(nus) == len(alphas) -1``, the correspondence between the ``alphas`` and
+        ``nus`` is as follows
+
+        * ``alphas[0]`` always located in the unit cell (0, 0, 0).
+        * ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for ``i >= 1``.
+
+        If ``len(nus) == len(alphas)``, then the ``i``-th atom is located in the unit cell
+        ``nus[i]`` for all ``i``. Note that the translational symmetry is always
+        enforced, so the ``nus`` are updated as ``nus[i] = nus[i] - nus[0]`` for all
+        ``i`` before the parameter is added to the Hamiltonian.
+
+        """
+
+        for alpha in alphas:
+            _validate_atom_index(index=alpha, atoms=self.atoms)
+
+        for nu in nus:
+            _validate_unit_cell_index(ijk=nu)
+
+        if not (len(alphas) - 1 == len(nus) or len(alphas) == len(nus)):
+            raise ValueError(
+                f"Expected number of unit cell indices to be equal to or one less than the number of atom indices, got {len(alphas)} atom indices and {len(nus)} unit cell indices."
+            )
+
+        if len(nus) == len(alphas) - 1:
+            nus = tuple([(0, 0, 0)] + list(nus))
+
+        specs = _get_specs(nus=nus, alphas=alphas)
+
+        if self.convention.multiple_counting:
+            if remove_equivalent:
+                equivalent_parameters = get_equivalent(
+                    n=specs[0],
+                    p_n=specs[1],
+                    nus=specs[2],
+                    alphas=specs[3],
+                    parameter=None,
+                )
+
+                for nus, alphas, _ in equivalent_parameters:
+                    self._parameters.remove(specs=(specs[0], specs[1], nus, alphas))
+            else:
+                self._parameters.remove(specs=specs)
+        else:
+            equivalent_parameters = get_equivalent(
+                n=specs[0], p_n=specs[1], nus=specs[2], alphas=specs[3]
+            )
+            nus, alphas, _ = equivalent_parameters[0]
+
+            self._parameters.remove(specs=(specs[0], specs[1], nus, alphas))
+
+    def parameters(self, n=None, p_n=None):
+        r"""
+        Returns an iterator over parameters of the Hamiltonian.
+
+        .. versionadded:: 0.5.0
+
+        Parameters
+        ----------
+        n : int, optional
+            Number of spins of the respective spin Hamiltonian term.
+            Expected to be between 1 and 4. If not given, then all parameters are returned
+            and ``p_n`` is ignored.
+        p_n : int, optional
+            Index of integer partition of ``n``. Expected to be between 1 and maximal
+            number of integer partitions for the given ``n``. If not given, then
+            parameters of all respective terms of the spin Hamiltonian with ``n`` spins
+            are returned. Ignored if ``n`` is not given.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. The form of the element
+            is defined by the given ``n`` and ``p_n``. See notes for details. Each element
+            of the iterator is a tuple ``(nus, alphas, parameter)`` where ``nus`` is a
+            tuple of unit cell indices, ``alphas`` is a tuple of atom indices, and
+            ``parameter`` is a tensor of the parameter's value.
+
+            - ``len(alphas) = n``
+            - ``len(nus) == len(alphas) - 1``
+            - ``len(parameter.shape) == len(alphas)``
+            - ``parameter.shape[i] == 3`` for all ``0 <= i < len(alphas)``
+            - ``alphas[0]`` is always located in the unit cell (0, 0, 0)
+            - ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for
+              ``1 <= i < len(alphas)``
+        """
+
+        return _InteractionParametersIterator(parameters=self._parameters, n=n, p_n=p_n)
+
+    def symmetrize(self):
+        r"""
+        Symmetrize interaction parameters as specified in the SI note 3 of |paper-2026|_.
+        """
+
+        if self.convention.multiple_counting:
+            new_parameters = _InteractionParameters()
+            for (n, p_n, nus, alphas), parameter in self._parameters._container:
+                equivalent_parameters = get_equivalent(
+                    n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+                )
+
+                degeneracy = len(equivalent_parameters)
+
+                for nus, alphas, parameter in equivalent_parameters:
+                    new_parameters.add(
+                        specs=(n, p_n, nus, alphas),
+                        parameter=parameter / degeneracy,
+                        when_present="sum",
+                    )
+
+    ############################################################################
+    #                          One spin & one site (1)                         #
+    ############################################################################
+    @property
+    def p1(self):
+        r"""
+        Parameters of one spin & one site term of the Hamiltonian (partition 1).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=1, p_n=1)
+
+    ############################################################################
+    #                       Two spins & one site (2 + 0)                       #
+    ############################################################################
+
+    @property
+    def p21(self):
+        r"""
+        Parameters of two spins & one site term of the Hamiltonian (partition 2+0).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=2, p_n=1)
+
+    ############################################################################
+    #                        Two spins & two sites (1+1)                       #
+    ############################################################################
+
+    @property
+    def p22(self):
+        r"""
+        Parameters of two spins & two sites term of the Hamiltonian (partition 1+1).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=2, p_n=2)
+
+    ############################################################################
+    #                      Three spins & one site (3+0+0)                      #
+    ############################################################################
+
+    @property
+    def p31(self):
+        r"""
+        Parameters of three spins & one site term of the Hamiltonian (partition 3+0+0).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=3, p_n=1)
+
+    ############################################################################
+    #                      Three spins & two sites (2+1+0)                     #
+    ############################################################################
+    @property
+    def p32(self):
+        r"""
+        Parameters of three spins & two sites term of the Hamiltonian (partition 2+1+0).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=3, p_n=2)
+
+    ############################################################################
+    #                     Three spins & three sites (1+1+1)                    #
+    ############################################################################
+    @property
+    def p33(self):
+        r"""
+        Parameters of three spins & three sites term of the Hamiltonian (partition 1+1+1).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=3, p_n=3)
+
+    ############################################################################
+    #                     Four spins & one site (4+0+0+0)                      #
+    ############################################################################
+    @property
+    def p41(self):
+        r"""
+        Parameters of four spins & one site term of the Hamiltonian (partition 4+0+0+0).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=4, p_n=1)
+
+    ############################################################################
+    #                     Four spins & two sites (3+1+0+0)                     #
+    ############################################################################
+    @property
+    def p42(self):
+        r"""
+        Parameters of four spins & two sites term of the Hamiltonian (partition 3+1+0+0).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=4, p_n=2)
+
+    ############################################################################
+    #                     Four spins & two sites (2+2+0+0)                     #
+    ############################################################################
+    @property
+    def p43(self):
+        r"""
+        Parameters of four spins & two sites term of the Hamiltonian (partition 2+2+0+0).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=4, p_n=3)
+
+    ############################################################################
+    #                    Four spins & three sites (2+1+1+0)                    #
+    ############################################################################
+    @property
+    def p44(self):
+        r"""
+        Parameters of four spins & three sites term of the Hamiltonian (partition 2+1+1+0).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=4, p_n=4)
+
+    ############################################################################
+    #                    Four spins & four sites (1+1+1+1)                     #
+    ############################################################################
+    @property
+    def p45(self):
+        r"""
+        Parameters of four spins & four sites term of the Hamiltonian (partition 1+1+1+1).
+
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
+        definition of the relevant term of the Hamiltonian.
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian. See notes of
+            :py:meth:`.SpinHamiltonian.parameters` for more details.
+
+        See Also
+        --------
+        add
+        remove
+        parameters
+        """
+
+        return self.parameters(n=4, p_n=5)
+
+    ############################################################################
+    #                              Legacy methods                              #
+    ############################################################################
+
     add_1 = _add_1
     remove_1 = _remove_1
 
-    ############################################################################
-    #                           Two spins & one site                           #
-    ############################################################################
-    p21 = _p21
     add_21 = _add_21
     remove_21 = _remove_21
 
-    ############################################################################
-    #                           Two spins & two sites                          #
-    ############################################################################
-    p22 = _p22
     add_22 = _add_22
     remove_22 = _remove_22
 
-    ############################################################################
-    #                          Three spins & one site                          #
-    ############################################################################
-    p31 = _p31
     add_31 = _add_31
     remove_31 = _remove_31
 
-    ############################################################################
-    #                          Three spins & two sites                         #
-    ############################################################################
-    p32 = _p32
-    add_32 = _add_32
-    remove_32 = _remove_32
-
-    ############################################################################
-    #                         Three spins & three sites                        #
-    ############################################################################
-    p33 = _p33
-    add_33 = _add_33
-    remove_33 = _remove_33
-
-    ############################################################################
-    #                           Four spins & one site                          #
-    ############################################################################
-    p41 = _p41
     add_41 = _add_41
     remove_41 = _remove_41
-
-    ############################################################################
-    #                          Four spins & two sites (3+1)                    #
-    ############################################################################
-    p421 = _p421
-    add_421 = _add_421
-    remove_421 = _remove_421
-
-    ############################################################################
-    #                          Four spins & two sites (2+2)                    #
-    ############################################################################
-    p422 = _p422
-    add_422 = _add_422
-    remove_422 = _remove_422
-
-    ############################################################################
-    #                         Four spins & three sites                         #
-    ############################################################################
-    p43 = _p43
-    add_43 = _add_43
-    remove_43 = _remove_43
-
-    ############################################################################
-    #                          Four spins & four sites                         #
-    ############################################################################
-    p44 = _p44
-    add_44 = _add_44
-    remove_44 = _remove_44
 
 
 # Populate __all__ with objects defined in this file

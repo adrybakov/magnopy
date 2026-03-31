@@ -49,8 +49,8 @@ def test_energy_p21(parameter1, parameter2):
 
     spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
 
-    spinham.add_21(alpha=0, parameter=parameter1)
-    spinham.add_21(alpha=1, parameter=parameter2)
+    spinham.add_21(alpha=0, parameter=(parameter1 + parameter1.T) / 2)
+    spinham.add_21(alpha=1, parameter=(parameter2 + parameter2.T) / 2)
 
     energy = Energy(spinham=spinham)
 
@@ -61,6 +61,33 @@ def test_energy_p21(parameter1, parameter2):
                     energy.E_0([sd1, sd2])
                     - 0.25 * parameter1[i1][i1]
                     - 4 * parameter2[i2][i2]
+                )
+                < 1e-8
+            )
+            if i1 == 0:
+                x1 = [0, 0, -1]
+                y1 = [0, 1, 0]
+            elif i1 == 1:
+                x1 = [1, 0, 0]
+                y1 = [0, 0, -1]
+            elif i1 == 2:
+                x1 = [1, 0, 0]
+                y1 = [0, 1, 0]
+
+            if i2 == 0:
+                x2 = [0, 0, -1]
+                y2 = [0, 1, 0]
+            elif i2 == 1:
+                x2 = [1, 0, 0]
+                y2 = [0, 0, -1]
+            elif i2 == 2:
+                x2 = [1, 0, 0]
+                y2 = [0, 1, 0]
+            assert (
+                abs(
+                    energy.E_corr([sd1, sd2])
+                    - 0.25 * (x1 @ parameter1 @ x1 + y1 @ parameter1 @ y1)
+                    - (x2 @ parameter2 @ x2 + y2 @ parameter2 @ y2)
                 )
                 < 1e-8
             )

@@ -36,10 +36,10 @@ def _get_spinham():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     cell = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -54,48 +54,48 @@ def _get_spinham():
 
     spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=basic_convention)
 
-    spinham.add_1(alpha=0, parameter=[1, 1, 1])
-    spinham.add_1(alpha=1, parameter=[1, 1, 1])
+    # (1)
+    spinham.add(nus=(), alphas=(0,), parameter=[1, 1, 1])
+    spinham.add(nus=(), alphas=(1,), parameter=[1, 1, 1])
 
     parameter = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-    spinham.add_21(alpha=0, parameter=parameter)
-    spinham.add_21(alpha=1, parameter=parameter)
+    # (2+0)
+    spinham.add(nus=((0, 0, 0),), alphas=(0, 0), parameter=parameter)
+    spinham.add(nus=((0, 0, 0),), alphas=(1, 1), parameter=parameter)
 
-    spinham.add_22(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
-    spinham.add_22(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
-    spinham.add_22(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
+    # (1+1)
+    spinham.add(nus=((1, 0, 0),), alphas=(0, 0), parameter=parameter)
+    spinham.add(nus=((0, 1, 0),), alphas=(0, 0), parameter=parameter)
+    spinham.add(nus=((0, 0, 1),), alphas=(0, 0), parameter=parameter)
 
-    spinham.add_22(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
-    spinham.add_22(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
-    spinham.add_22(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
-    spinham.add_22(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
+    spinham.add(nus=((0, 0, 0),), alphas=(0, 1), parameter=parameter)
+    spinham.add(nus=((-1, 0, 0),), alphas=(0, 1), parameter=parameter)
+    spinham.add(nus=((-1, -1, 0),), alphas=(0, 1), parameter=parameter)
+    spinham.add(nus=((0, -1, 0),), alphas=(0, 1), parameter=parameter)
 
     parameter = [
         [[1, 0, 0], [0, 0, 0], [0, 0, 0]],
         [[0, 0, 0], [0, 1, 0], [0, 0, 0]],
         [[0, 0, 0], [0, 0, 0], [0, 0, 1]],
     ]
-    spinham.add_31(alpha=0, parameter=parameter)
-    spinham.add_31(alpha=1, parameter=parameter)
+    # (3+0+0)
+    spinham.add(nus=((0, 0, 0), (0, 0, 0)), alphas=(0, 0, 0), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (0, 0, 0)), alphas=(1, 1, 1), parameter=parameter)
 
-    spinham.add_32(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
-    spinham.add_32(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
-    spinham.add_32(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
+    # (2+1+0)
+    spinham.add(nus=((0, 0, 0), (1, 0, 0)), alphas=(0, 0, 0), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (0, 1, 0)), alphas=(0, 0, 0), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (0, 0, 1)), alphas=(0, 0, 0), parameter=parameter)
 
-    spinham.add_32(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
-    spinham.add_32(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
-    spinham.add_32(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
-    spinham.add_32(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (0, 0, 0)), alphas=(0, 0, 1), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (-1, 0, 0)), alphas=(0, 0, 1), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (-1, -1, 0)), alphas=(0, 0, 1), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (0, -1, 0)), alphas=(0, 0, 1), parameter=parameter)
 
-    spinham.add_33(
-        alpha=0, beta=0, gamma=0, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=parameter
-    )
-    spinham.add_33(
-        alpha=1, beta=1, gamma=1, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=parameter
-    )
-    spinham.add_33(
-        alpha=0, beta=1, gamma=1, nu=(0, 0, 0), _lambda=(-1, 0, 0), parameter=parameter
-    )
+    # (1+1+1)
+    spinham.add(nus=((1, 0, 0), (0, 1, 0)), alphas=(0, 0, 0), parameter=parameter)
+    spinham.add(nus=((1, 0, 0), (0, 1, 0)), alphas=(1, 1, 1), parameter=parameter)
+    spinham.add(nus=((0, 0, 0), (-1, 0, 0)), alphas=(0, 1, 1), parameter=parameter)
 
     parameter = [
         [
@@ -114,67 +114,91 @@ def _get_spinham():
             [[0, 0, 0], [0, 0, 0], [0, 0, 1]],
         ],
     ]
-    spinham.add_41(alpha=0, parameter=parameter)
-    spinham.add_41(alpha=1, parameter=parameter)
-
-    spinham.add_421(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
-
-    spinham.add_421(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
-    spinham.add_421(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
-
-    spinham.add_422(alpha=0, beta=0, nu=(1, 0, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=0, nu=(0, 1, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=0, nu=(0, 0, 1), parameter=parameter)
-
-    spinham.add_422(alpha=0, beta=1, nu=(0, 0, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=1, nu=(-1, 0, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=1, nu=(-1, -1, 0), parameter=parameter)
-    spinham.add_422(alpha=0, beta=1, nu=(0, -1, 0), parameter=parameter)
-
-    spinham.add_43(
-        alpha=0, beta=0, gamma=0, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=parameter
+    # (4+0+0+0)
+    spinham.add(
+        alphas=(0, 0, 0, 0), nus=((0, 0, 0), (0, 0, 0), (0, 0, 0)), parameter=parameter
     )
-    spinham.add_43(
-        alpha=1, beta=1, gamma=1, nu=(1, 0, 0), _lambda=(0, 1, 0), parameter=parameter
-    )
-    spinham.add_43(
-        alpha=0, beta=1, gamma=1, nu=(0, 0, 0), _lambda=(-1, 0, 0), parameter=parameter
+    spinham.add(
+        alphas=(1, 1, 1, 1), nus=((0, 0, 0), (0, 0, 0), (0, 0, 0)), parameter=parameter
     )
 
-    spinham.add_44(
-        alpha=0,
-        beta=0,
-        gamma=0,
-        epsilon=0,
-        nu=(1, 0, 0),
-        _lambda=(0, 1, 0),
-        rho=(0, 0, 1),
+    # (3+1+0+0)
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (1, 0, 0)), alphas=(0, 0, 0, 0), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (0, 1, 0)), alphas=(0, 0, 0, 0), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (0, 0, 1)), alphas=(0, 0, 0, 0), parameter=parameter
+    )
+
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (0, 0, 0)), alphas=(0, 0, 0, 1), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (-1, 0, 0)), alphas=(0, 0, 0, 1), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (-1, -1, 0)),
+        alphas=(0, 0, 0, 1),
         parameter=parameter,
     )
-    spinham.add_44(
-        alpha=1,
-        beta=1,
-        gamma=1,
-        epsilon=1,
-        nu=(1, 0, 0),
-        _lambda=(0, 1, 0),
-        rho=(0, 0, 1),
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (0, -1, 0)), alphas=(0, 0, 0, 1), parameter=parameter
+    )
+
+    # (2+2+0+0)
+    spinham.add(
+        nus=((0, 0, 0), (1, 0, 0), (1, 0, 0)), alphas=(0, 0, 0, 0), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, 1, 0), (0, 1, 0)), alphas=(0, 0, 0, 0), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 1), (0, 0, 1)), alphas=(0, 0, 0, 0), parameter=parameter
+    )
+
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (0, 0, 0)), alphas=(0, 0, 1, 1), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (-1, 0, 0), (-1, 0, 0)),
+        alphas=(0, 0, 1, 1),
+        parameter=parameter,
+    )
+    spinham.add(
+        nus=((0, 0, 0), (-1, -1, 0), (-1, -1, 0)),
+        alphas=(0, 0, 1, 1),
+        parameter=parameter,
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, -1, 0), (0, -1, 0)),
+        alphas=(0, 0, 1, 1),
         parameter=parameter,
     )
 
-    spinham.add_44(
-        alpha=0,
-        beta=0,
-        gamma=1,
-        epsilon=1,
-        nu=(1, 0, 0),
-        _lambda=(0, 0, 0),
-        rho=(1, 0, 0),
-        parameter=parameter,
+    # (2+1+1+0)
+    spinham.add(
+        nus=((0, 0, 0), (1, 0, 0), (0, 1, 0)), alphas=(0, 0, 0, 0), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (1, 0, 0), (0, 1, 0)), alphas=(1, 1, 1, 1), parameter=parameter
+    )
+    spinham.add(
+        nus=((0, 0, 0), (0, 0, 0), (-1, 0, 0)), alphas=(0, 0, 1, 1), parameter=parameter
+    )
+
+    # (1+1+1+1)
+    spinham.add(
+        alphas=(0, 0, 0, 0), nus=((1, 0, 0), (0, 1, 0), (0, 0, 1)), parameter=parameter
+    )
+    spinham.add(
+        alphas=(1, 1, 1, 1), nus=((1, 0, 0), (0, 1, 0), (0, 0, 1)), parameter=parameter
+    )
+
+    spinham.add(
+        alphas=(0, 0, 1, 1), nus=((1, 0, 0), (0, 0, 0), (1, 0, 0)), parameter=parameter
     )
 
     return spinham, basic_convention, spin_directions
@@ -313,27 +337,12 @@ def test_c41(c41):
     assert abs(energy.E_0(spin_directions) - target_energy.E_0(spin_directions)) < 1e-8
 
 
-@pytest.mark.parametrize("c421", (-1, -0.5, 0.5, 1))
-def test_c421(c421):
+@pytest.mark.parametrize("c42", (-1, -0.5, 0.5, 1))
+def test_c42(c42):
     spinham, convention, spin_directions = _get_spinham()
-    assert len(spinham.p421) > 0
+    assert len(spinham.p42) > 0
 
-    modified_convention = convention.get_modified(c421=c421)
-
-    target_energy = Energy(spinham)
-
-    spinham.convention = modified_convention
-    energy = Energy(spinham)
-
-    assert abs(energy.E_0(spin_directions) - target_energy.E_0(spin_directions)) < 1e-8
-
-
-@pytest.mark.parametrize("c422", (-1, -0.5, 0.5, 1))
-def test_c422(c422):
-    spinham, convention, spin_directions = _get_spinham()
-    assert len(spinham.p422) > 0
-
-    modified_convention = convention.get_modified(c422=c422)
+    modified_convention = convention.get_modified(c42=c42)
 
     target_energy = Energy(spinham)
 
@@ -373,6 +382,21 @@ def test_c44(c44):
     assert abs(energy.E_0(spin_directions) - target_energy.E_0(spin_directions)) < 1e-8
 
 
+@pytest.mark.parametrize("c45", (-1, -0.5, 0.5, 1))
+def test_c45(c45):
+    spinham, convention, spin_directions = _get_spinham()
+    assert len(spinham.p45) > 0
+
+    modified_convention = convention.get_modified(c45=c45)
+
+    target_energy = Energy(spinham)
+
+    spinham.convention = modified_convention
+    energy = Energy(spinham)
+
+    assert abs(energy.E_0(spin_directions) - target_energy.E_0(spin_directions)) < 1e-8
+
+
 def test_altogether():
     spinham, convention, spin_directions = _get_spinham()
     assert len(spinham.p1) > 0
@@ -382,10 +406,10 @@ def test_altogether():
     assert len(spinham.p32) > 0
     assert len(spinham.p33) > 0
     assert len(spinham.p41) > 0
-    assert len(spinham.p421) > 0
-    assert len(spinham.p422) > 0
+    assert len(spinham.p42) > 0
     assert len(spinham.p43) > 0
     assert len(spinham.p44) > 0
+    assert len(spinham.p45) > 0
 
     target_energy = Energy(spinham)
 
@@ -398,10 +422,10 @@ def test_altogether():
                             for c32 in [-1, 0.5]:
                                 for c33 in [-1, 0.5]:
                                     for c41 in [-1, 0.5]:
-                                        for c421 in [-1, 0.5]:
-                                            for c422 in [-1, 0.5]:
-                                                for c43 in [-1, 0.5]:
-                                                    for c44 in [-1, 0.5]:
+                                        for c42 in [-1, 0.5]:
+                                            for c43 in [-1, 0.5]:
+                                                for c44 in [-1, 0.5]:
+                                                    for c45 in [-1, 0.5]:
                                                         spinham.convention = Convention(
                                                             spin_normalized=spin_normalized,
                                                             multiple_counting=multiple_counting,
@@ -412,10 +436,10 @@ def test_altogether():
                                                             c32=c32,
                                                             c33=c33,
                                                             c41=c41,
-                                                            c421=c421,
-                                                            c422=c422,
+                                                            c42=c42,
                                                             c43=c43,
                                                             c44=c44,
+                                                            c45=c45,
                                                         )
 
                                                         energy = Energy(spinham)

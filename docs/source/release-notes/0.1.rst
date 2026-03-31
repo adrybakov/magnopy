@@ -5,10 +5,10 @@ Version 0.1
 ***********
 
 .. warning::
-    We recommend to update from this version of magnopy.
+    We recommend to update from this version of Magnopy.
 
     We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
-    this version of magnopy.
+    this version of Magnopy.
 
 
 0.1.9
@@ -143,4 +143,4 @@ Change colors in the plots.
 
 **Date**: 19 May 2025
 
-First release of magnopy.
+First release of Magnopy.

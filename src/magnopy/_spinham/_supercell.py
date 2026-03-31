@@ -130,14 +130,14 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
         >>> # The parameters are updated as well
         >>> len(spinham.p21)
         2
-        >>> for alpha, _ in spinham.p21:
-        ...     print(alpha)
+        >>> for _, alphas, _ in spinham.p21:
+        ...     print(alphas[0])
         0
         1
         >>> len(new_spinham.p21)
         16
-        >>> for alpha, _ in new_spinham.p21:
-        ...     print(alpha)
+        >>> for _, alphas, _ in new_spinham.p21:
+        ...     print(alphas[0])
         0
         1
         2
@@ -192,28 +192,28 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
         Fe_0_1_1 [0.0, 0.5, 0.5] 1
         Fe_1_1_1 [0.5, 0.5, 0.5] 1
         >>> # The bonds were recalculated automatically
-        >>> for alpha, beta, nu, _ in spinham.p22:
-        ...     print(alpha, beta, nu)
-        0 0 (1, 0, 0)
+        >>> for nus, alphas, _ in spinham.p22:
+        ...     print(alphas[0], alphas[1], nus[0])
         0 0 (-1, 0, 0)
-        >>> for alpha, beta, nu, _ in new_spinham.p22:
-        ...     print(alpha, beta, nu)
-        0 1 (0, 0, 0)
-        1 0 (1, 0, 0)
-        2 3 (0, 0, 0)
-        3 2 (1, 0, 0)
-        4 5 (0, 0, 0)
-        5 4 (1, 0, 0)
-        6 7 (0, 0, 0)
-        7 6 (1, 0, 0)
-        1 0 (0, 0, 0)
+        0 0 (1, 0, 0)
+        >>> for nus, alphas, _ in new_spinham.p22:
+        ...     print(alphas[0], alphas[1], nus[0])
         0 1 (-1, 0, 0)
-        3 2 (0, 0, 0)
         2 3 (-1, 0, 0)
-        5 4 (0, 0, 0)
         4 5 (-1, 0, 0)
-        7 6 (0, 0, 0)
         6 7 (-1, 0, 0)
+        0 1 (0, 0, 0)
+        1 0 (0, 0, 0)
+        2 3 (0, 0, 0)
+        3 2 (0, 0, 0)
+        4 5 (0, 0, 0)
+        5 4 (0, 0, 0)
+        6 7 (0, 0, 0)
+        7 6 (0, 0, 0)
+        1 0 (1, 0, 0)
+        3 2 (1, 0, 0)
+        5 4 (1, 0, 0)
+        7 6 (1, 0, 0)
 
 
     """
@@ -270,136 +270,22 @@ def make_supercell(spinham: SpinHamiltonian, supercell):
     for k in range(supercell[2]):
         for j in range(supercell[1]):
             for i in range(supercell[0]):
-                # One spin
-                for alpha, parameter in spinham._1:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
+                for (n, p_n, nus, alphas), parameter in spinham._parameters._container:
+                    new_alphas, new_nus = [], []
+                    for _ in range(len(alphas)):
+                        if _ == 0:
+                            alpha, _ = get_new_indices(
+                                alpha=alphas[0], nu=(0, 0, 0), ijk=(i, j, k)
+                            )
+                        else:
+                            alpha, nu = get_new_indices(
+                                alpha=alphas[_], nu=nus[_ - 1], ijk=(i, j, k)
+                            )
+                            new_nus.append(nu)
+                        new_alphas.append(alpha)
 
-                    new_spinham.add_1(alpha=alpha, parameter=parameter)
-
-                # Two spins
-                for alpha, parameter in spinham._21:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-
-                    new_spinham.add_21(alpha=alpha, parameter=parameter)
-
-                for alpha, beta, nu, parameter in spinham._22:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-                    beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
-
-                    new_spinham.add_22(
-                        alpha=alpha,
-                        beta=beta,
-                        nu=nu,
-                        parameter=parameter,
-                        when_present="replace",
-                    )
-
-                # Three spins
-                for alpha, parameter in spinham._31:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-
-                    new_spinham.add_31(alpha=alpha, parameter=parameter)
-
-                for alpha, beta, nu, parameter in spinham._32:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-                    beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
-
-                    new_spinham.add_32(
-                        alpha=alpha,
-                        beta=beta,
-                        nu=nu,
-                        parameter=parameter,
-                        when_present="replace",
-                    )
-
-                for alpha, beta, gamma, nu, _lambda, parameter in spinham._33:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-                    beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
-                    gamma, _lambda = get_new_indices(
-                        alpha=gamma, nu=_lambda, ijk=(i, j, k)
-                    )
-
-                    new_spinham.add_33(
-                        alpha=alpha,
-                        beta=beta,
-                        gamma=gamma,
-                        nu=nu,
-                        _lambda=_lambda,
-                        parameter=parameter,
-                        when_present="replace",
-                    )
-
-                # Four spins
-                for alpha, parameter in spinham._41:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-
-                    new_spinham.add_41(alpha=alpha, parameter=parameter)
-
-                for alpha, beta, nu, parameter in spinham._421:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-                    beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
-
-                    new_spinham.add_421(
-                        alpha=alpha,
-                        beta=beta,
-                        nu=nu,
-                        parameter=parameter,
-                        when_present="replace",
-                    )
-
-                for alpha, beta, nu, parameter in spinham._422:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-                    beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
-
-                    new_spinham.add_422(
-                        alpha=alpha,
-                        beta=beta,
-                        nu=nu,
-                        parameter=parameter,
-                        when_present="replace",
-                    )
-
-                for alpha, beta, gamma, nu, _lambda, parameter in spinham._43:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-                    beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
-                    gamma, _lambda = get_new_indices(
-                        alpha=gamma, nu=_lambda, ijk=(i, j, k)
-                    )
-
-                    new_spinham.add_43(
-                        alpha=alpha,
-                        beta=beta,
-                        gamma=gamma,
-                        nu=nu,
-                        _lambda=_lambda,
-                        parameter=parameter,
-                        when_present="replace",
-                    )
-
-                for (
-                    alpha,
-                    beta,
-                    gamma,
-                    epsilon,
-                    nu,
-                    _lambda,
-                    rho,
-                    parameter,
-                ) in spinham._44:
-                    alpha, _ = get_new_indices(alpha=alpha, nu=(0, 0, 0), ijk=(i, j, k))
-                    beta, nu = get_new_indices(alpha=beta, nu=nu, ijk=(i, j, k))
-                    gamma, _lambda = get_new_indices(
-                        alpha=gamma, nu=_lambda, ijk=(i, j, k)
-                    )
-                    epsilon, rho = get_new_indices(alpha=epsilon, nu=rho, ijk=(i, j, k))
-                    new_spinham.add_44(
-                        alpha=alpha,
-                        beta=beta,
-                        gamma=gamma,
-                        epsilon=epsilon,
-                        nu=nu,
-                        _lambda=_lambda,
-                        rho=rho,
+                    new_spinham._parameters.add(
+                        specs=(n, p_n, tuple(new_nus), tuple(new_alphas)),
                         parameter=parameter,
                         when_present="replace",
                     )

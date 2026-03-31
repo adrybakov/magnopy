@@ -13,11 +13,11 @@ describe what units are supported and in which context.
 Units of energy
 ===============
 
-Magnopy outputs a number of properties that have units of energy. By default magnopy
+Magnopy outputs a number of properties that have units of energy. By default Magnopy
 outputs energy in the units of "meV", but the user can ask for other supported units.
 
 .. hint::
-    To check what units are hardcoded in magnopy's source code one can use the trick:
+    To check what units are hardcoded in Magnopy's source code one can use the trick:
 
     .. doctest::
 
@@ -139,7 +139,7 @@ energy-like units.
     :math:`E = k_B\cdot T`.
 
 .. hint::
-    To check what units are hardcoded in magnopy's source code one can use the trick:
+    To check what units are hardcoded in Magnopy's source code one can use the trick:
 
     .. doctest::
 
@@ -147,7 +147,7 @@ energy-like units.
         >>> print(list(_PARAMETER_UNITS))
         ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'k', 'kelvin']
 
-For the parameters of the spin Hamiltonian magnopy supports all
+For the parameters of the spin Hamiltonian Magnopy supports all
 :ref:`user-guide_usage_units_energy-units` from above and
 
 ====== =====================
@@ -212,7 +212,7 @@ list of supported units is extended by the frequency units.
     :math:`E = h\cdot f`.
 
 .. hint::
-    To check what units are hardcoded in magnopy's source code one can use the trick:
+    To check what units are hardcoded in Magnopy's source code one can use the trick:
 
     .. doctest::
 
@@ -221,7 +221,7 @@ list of supported units is extended by the frequency units.
         ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'hertz', 'hz', 'gigahertz', 'ghz', 'terahertz', 'thz']
 
 
-For the magnon energies magnopy supports all :ref:`user-guide_usage_units_energy-units`
+For the magnon energies Magnopy supports all :ref:`user-guide_usage_units_energy-units`
 and some extra units
 
 ========= ==========================

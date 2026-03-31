@@ -49,9 +49,7 @@ def test_ferromagnet_one_spin_cubic():
 
     assert disp.M == 1
 
-    assert len(disp._J2) == 1
-    assert len(disp._J1) == 1
-
+    assert len(disp.A1) == 1
     assert len(disp.A2) == 1
     assert len(disp.B2) == 1
 

@@ -10,11 +10,11 @@ Deprecation policy (for beta stage)
 
 **Author**: Andrey Rybakov (`adrybakov <https://github.com/adrybakov>`_)
 
-All versions of magnopy code that fit ``0.*`` are considered as beta stage of magnopy's
+All versions of Magnopy code that fit ``0.*`` are considered as beta stage of Magnopy's
 lifecycle. This stage allows for more dynamic evolution of the code with frequent
 changes and supply of new features.
 
-Once the release ``v1.0.0`` is published the magnopy will be considered stable and new,
+Once the release ``v1.0.0`` is published the Magnopy will be considered stable and new,
 more restrictive deprecation police will be published.
 
 
@@ -26,7 +26,7 @@ Removal of public features shall be done in two stages. At the beta stage
 Stage 1: Deprecation (desired, but optional)
 --------------------------------------------
 
-This first stage is optional for the beta stage of magnopy's development.
+This first stage is optional for the beta stage of Magnopy's development.
 
 *   Shall be skipped **only** if its realization is incompatible with the new code.
 *   Shall be mentioned in the release notes of the version when deprecation was

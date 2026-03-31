@@ -23,7 +23,6 @@
 import os
 import sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
-import warnings
 
 from magnopy._package_info import logo
 from magnopy.io._grogu import load_grogu
@@ -37,10 +36,10 @@ from magnopy._cli._arguments_library import (
     _add_output_folder,
     _add_no_html,
     _add_hide_personal_data,
-    _add_make_sd_image,
     _add_supercell,
     _add_energy_tolerance,
     _add_torque_tolerance,
+    _add_quantum_correction,
 )
 from magnopy._constants._icons import ICON_IN_FILE
 
@@ -63,10 +62,7 @@ def manager():
     _add_spin_values(parser=parser)
     _add_no_html(parser=parser)
     _add_hide_personal_data(parser=parser)
-
-    # DEPRECATED in v0.2.0
-    # Remove in March 2026
-    _add_make_sd_image(parser=parser)
+    _add_quantum_correction(parser=parser)
 
     # Parse arguments
     args = parser.parse_args()
@@ -78,15 +74,6 @@ def manager():
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
-
-    # DEPRECATED in v0.2.0
-    # Remove in March 2026
-    if args.make_sd_image is not None:
-        warnings.warn(
-            "This argument was deprecated in the release v0.2.0. The spin direction image is now plotted by default, please use --no-html if you want to disable it. This argument will be removed from magnopy in March of 2026.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
     # Process spin values
     if args.spin_values is not None:
@@ -124,4 +111,5 @@ def manager():
         comment=comment,
         no_html=args.no_html,
         hide_personal_data=args.hide_personal_data,
+        quantum_correction=args.quantum_correction,
     )

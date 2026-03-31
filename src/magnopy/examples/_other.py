@@ -197,10 +197,10 @@ def full_ham():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
@@ -209,10 +209,20 @@ def full_ham():
     #                                 One site                                 #
     ############################################################################
     for alpha in range(4):
-        spinham.add_1(alpha=alpha, parameter=[0, 0, 1])
-        spinham.add_21(alpha=alpha, parameter=[0.5, 1, 1.5])
-        spinham.add_31(alpha=alpha, parameter=[-0.4, 0.1, 1])
-        spinham.add_41(alpha=alpha, parameter=[0.1, 0.2, 1])
+        spinham.add(nus=(), alphas=(alpha,), parameter=[0, 0, 1])
+        spinham.add(
+            nus=((0, 0, 0),), alphas=(alpha, alpha), parameter=np.diag([0.5, 1, 1.5])
+        )
+        spinham.add(
+            nus=((0, 0, 0), (0, 0, 0)),
+            alphas=(alpha, alpha, alpha),
+            parameter=np.ones((3, 3, 3)),
+        )
+        spinham.add(
+            nus=((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+            alphas=(alpha, alpha, alpha, alpha),
+            parameter=0.56 * np.ones((3, 3, 3, 3)),
+        )
 
     ############################################################################
     #                                Two sites                                 #
@@ -224,41 +234,53 @@ def full_ham():
         [2, 2, (1, 0, 0)],
         [3, 3, (1, 0, 0)],
     ]:
-        spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=-np.eye(3))
-        spinham.add_32(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3)))
-        spinham.add_421(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3, 3)))
-        spinham.add_422(alpha=alpha, beta=beta, nu=nu, parameter=-np.ones((3, 3, 3, 3)))
+        spinham.add(nus=(nu,), alphas=(alpha, beta), parameter=-np.eye(3))
+        spinham.add(
+            nus=((0, 0, 0), nu),
+            alphas=(alpha, alpha, beta),
+            parameter=-np.ones((3, 3, 3)),
+        )
+        spinham.add(
+            nus=((0, 0, 0), (0, 0, 0), nu),
+            alphas=(alpha, alpha, alpha, beta),
+            parameter=-np.ones((3, 3, 3, 3)),
+        )
+        spinham.add(
+            nus=((0, 0, 0), nu, nu),
+            alphas=(alpha, alpha, beta, beta),
+            parameter=-np.ones((3, 3, 3, 3)),
+        )
 
     for alpha, beta in [[0, 1], [1, 2], [2, 3], [3, 1]]:
-        spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.eye(3))
-        spinham.add_32(
-            alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.ones((3, 3, 3))
+        spinham.add(nus=(nu,), alphas=(alpha, beta), parameter=0.5 * np.eye(3))
+        spinham.add(
+            nus=((0, 0, 0), nu),
+            alphas=(alpha, alpha, beta),
+            parameter=0.5 * np.ones((3, 3, 3)),
         )
-        spinham.add_421(
-            alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.ones((3, 3, 3, 3))
+        spinham.add(
+            nus=((0, 0, 0), (0, 0, 0), nu),
+            alphas=(alpha, alpha, alpha, beta),
+            parameter=0.5 * np.ones((3, 3, 3, 3)),
         )
-        spinham.add_422(
-            alpha=alpha, beta=beta, nu=nu, parameter=0.5 * np.ones((3, 3, 3, 3))
+        spinham.add(
+            nus=((0, 0, 0), nu, nu),
+            alphas=(alpha, alpha, beta, beta),
+            parameter=0.5 * np.ones((3, 3, 3, 3)),
         )
 
     ############################################################################
     #                                Three sites                               #
     ############################################################################
     for alpha, beta, gamma, nu, _lambda in [[0, 1, 2, (0, 0, 0), (0, 0, 0)]]:
-        spinham.add_33(
-            alpha=alpha,
-            beta=beta,
-            gamma=gamma,
-            nu=nu,
-            _lambda=_lambda,
+        spinham.add(
+            nus=(nu, _lambda),
+            alphas=(alpha, beta, gamma),
             parameter=0.3 * np.ones((3, 3, 3)),
         )
-        spinham.add_43(
-            alpha=alpha,
-            beta=beta,
-            gamma=gamma,
-            nu=nu,
-            _lambda=_lambda,
+        spinham.add(
+            nus=((0, 0, 0), nu, _lambda),
+            alphas=(alpha, alpha, beta, gamma),
             parameter=0.3 * np.ones((3, 3, 3, 3)),
         )
     ############################################################################
@@ -267,14 +289,9 @@ def full_ham():
     for alpha, beta, gamma, epsilon, nu, _lambda, rho in [
         [0, 1, 2, 3, (0, 0, 0), (0, 0, 0), (0, 0, 0)]
     ]:
-        spinham.add_44(
-            alpha=alpha,
-            beta=beta,
-            gamma=gamma,
-            epsilon=epsilon,
-            nu=nu,
-            _lambda=_lambda,
-            rho=rho,
+        spinham.add(
+            alphas=(alpha, beta, gamma, epsilon),
+            nus=(nu, _lambda, rho),
             parameter=-0.1 * np.ones((3, 3, 3, 3)),
         )
 

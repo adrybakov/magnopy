@@ -46,13 +46,13 @@ def main():
         "-v",
         "--version",
         action="store_true",
-        help="print version of magnopy",
+        help="print version of Magnopy",
     )
 
     args = parser.parse_args()
 
     if args.version:
-        print(f"magnopy v{__version__}")
+        print(f"Magnopy v{__version__}")
 
     if len(args.commands) == 0:
         parser.print_help()

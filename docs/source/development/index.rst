@@ -39,14 +39,14 @@ Topical guides
 Development process
 ===================
 
-Here we summarize main steps for contributing code to magnopy. We assume that you have an
+Here we summarize main steps for contributing code to Magnopy. We assume that you have an
 account on `<https://github.com>`_, and familiar with |Git|_.
 
 Fork and clone
 --------------
 
 *   Go to the |repository|_ (:ref:`upstream <development_origin-upstream_upstream>`) and
-    click on the "Fork" button. Now you have your own copy of the magnopy repository
+    click on the "Fork" button. Now you have your own copy of the Magnopy repository
     under your GitHub account (:ref:`origin <development_origin-upstream_origin>`).
 *   Clone your fork to your local machine:
 
@@ -78,7 +78,7 @@ Fork and clone
 
         git remote add upstream https://github.com/magnopy/magnopy.git
 
-*   Pull the latest changes from the magnopy repository if necessary
+*   Pull the latest changes from the Magnopy repository if necessary
 
     .. code-block:: bash
 

@@ -1,0 +1,17 @@
+.. _ug_tb_sh_2-1:
+
+*************
+(2,  0) terms
+*************
+
+TODO: add links to the relevant API
+
+First case of the bilinear terms where both spin operators are associated with the same
+site.
+
+.. math::
+    C_{2,1}
+    \sum_{\substack{\mu, \\ \alpha_1, \\ i_1, i_2}}
+    J^{i_1, i_2}_{0; \alpha_1, \alpha_1}
+    S_{\mu, \alpha_1}^{i_1}
+    S_{\mu, \alpha_1}^{i_2}

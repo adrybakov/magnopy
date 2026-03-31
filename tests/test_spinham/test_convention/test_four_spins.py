@@ -63,10 +63,10 @@ def test_get_modified_c41():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     mod_convention = convention.get_modified(c41=2)
@@ -80,27 +80,27 @@ def test_get_modified_c41():
     assert mod_convention.c32 == 1
     assert mod_convention.c33 == 1
     assert mod_convention.c41 == 2
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 1
     assert mod_convention.c43 == 1
     assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 1
 
 
 @given(st.floats(allow_nan=False), st.floats(allow_nan=False))
-def test_c421(value, new_value):
-    convention = Convention(c421=value)
+def test_c42(value, new_value):
+    convention = Convention(c42=value)
 
-    assert convention.c421 == value
+    assert convention.c42 == value
 
     with pytest.raises(AttributeError):
-        convention.c421 = new_value
+        convention.c42 = new_value
 
 
 @given(st.floats(allow_nan=False))
-def test_eq_c421(c421):
-    convention1 = Convention(c421=c421)
-    convention2 = Convention(c421=c421)
-    convention3 = Convention(c421=3 if c421 != 3 else 4)
+def test_eq_c42(c42):
+    convention1 = Convention(c42=c42)
+    convention2 = Convention(c42=c42)
+    convention3 = Convention(c42=3 if c42 != 3 else 4)
     convention4 = Convention()
 
     assert convention1 == convention2
@@ -111,7 +111,7 @@ def test_eq_c421(c421):
     assert convention3 != convention4
 
 
-def test_get_modified_c421():
+def test_get_modified_c42():
     convention = Convention(
         spin_normalized=True,
         multiple_counting=True,
@@ -122,13 +122,13 @@ def test_get_modified_c421():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
-    mod_convention = convention.get_modified(c421=2)
+    mod_convention = convention.get_modified(c42=2)
 
     assert mod_convention.spin_normalized
     assert mod_convention.multiple_counting
@@ -139,69 +139,10 @@ def test_get_modified_c421():
     assert mod_convention.c32 == 1
     assert mod_convention.c33 == 1
     assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 2
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 2
     assert mod_convention.c43 == 1
     assert mod_convention.c44 == 1
-
-
-@given(st.floats(allow_nan=False), st.floats(allow_nan=False))
-def test_c422(value, new_value):
-    convention = Convention(c422=value)
-
-    assert convention.c422 == value
-
-    with pytest.raises(AttributeError):
-        convention.c422 = new_value
-
-
-@given(st.floats(allow_nan=False))
-def test_eq_c422(c422):
-    convention1 = Convention(c422=c422)
-    convention2 = Convention(c422=c422)
-    convention3 = Convention(c422=3 if c422 != 3 else 4)
-    convention4 = Convention()
-
-    assert convention1 == convention2
-    assert convention1 != convention3
-    assert convention1 != convention4
-    assert convention2 != convention3
-    assert convention2 != convention4
-    assert convention3 != convention4
-
-
-def test_get_modified_c422():
-    convention = Convention(
-        spin_normalized=True,
-        multiple_counting=True,
-        c1=1,
-        c21=1,
-        c22=1,
-        c31=1,
-        c32=1,
-        c33=1,
-        c41=1,
-        c421=1,
-        c422=1,
-        c43=1,
-        c44=1,
-    )
-
-    mod_convention = convention.get_modified(c422=2)
-
-    assert mod_convention.spin_normalized
-    assert mod_convention.multiple_counting
-    assert mod_convention.c1 == 1
-    assert mod_convention.c21 == 1
-    assert mod_convention.c22 == 1
-    assert mod_convention.c31 == 1
-    assert mod_convention.c32 == 1
-    assert mod_convention.c33 == 1
-    assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 2
-    assert mod_convention.c43 == 1
-    assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 1
 
 
 @given(st.floats(allow_nan=False), st.floats(allow_nan=False))
@@ -240,10 +181,10 @@ def test_get_modified_c43():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     mod_convention = convention.get_modified(c43=2)
@@ -257,10 +198,10 @@ def test_get_modified_c43():
     assert mod_convention.c32 == 1
     assert mod_convention.c33 == 1
     assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 1
     assert mod_convention.c43 == 2
     assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 1
 
 
 @given(st.floats(allow_nan=False), st.floats(allow_nan=False))
@@ -299,10 +240,10 @@ def test_get_modified_c44():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     mod_convention = convention.get_modified(c44=2)
@@ -316,7 +257,66 @@ def test_get_modified_c44():
     assert mod_convention.c32 == 1
     assert mod_convention.c33 == 1
     assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 1
     assert mod_convention.c43 == 1
     assert mod_convention.c44 == 2
+    assert mod_convention.c45 == 1
+
+
+@given(st.floats(allow_nan=False), st.floats(allow_nan=False))
+def test_c45(value, new_value):
+    convention = Convention(c45=value)
+
+    assert convention.c45 == value
+
+    with pytest.raises(AttributeError):
+        convention.c45 = new_value
+
+
+@given(st.floats(allow_nan=False))
+def test_eq_c45(c45):
+    convention1 = Convention(c45=c45)
+    convention2 = Convention(c45=c45)
+    convention3 = Convention(c45=3 if c45 != 3 else 4)
+    convention4 = Convention()
+
+    assert convention1 == convention2
+    assert convention1 != convention3
+    assert convention1 != convention4
+    assert convention2 != convention3
+    assert convention2 != convention4
+    assert convention3 != convention4
+
+
+def test_get_modified_c45():
+    convention = Convention(
+        spin_normalized=True,
+        multiple_counting=True,
+        c1=1,
+        c21=1,
+        c22=1,
+        c31=1,
+        c32=1,
+        c33=1,
+        c41=1,
+        c42=1,
+        c43=1,
+        c44=1,
+        c45=1,
+    )
+
+    mod_convention = convention.get_modified(c45=2)
+
+    assert mod_convention.spin_normalized
+    assert mod_convention.multiple_counting
+    assert mod_convention.c1 == 1
+    assert mod_convention.c21 == 1
+    assert mod_convention.c22 == 1
+    assert mod_convention.c31 == 1
+    assert mod_convention.c32 == 1
+    assert mod_convention.c33 == 1
+    assert mod_convention.c41 == 1
+    assert mod_convention.c42 == 1
+    assert mod_convention.c43 == 1
+    assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 2

@@ -98,9 +98,6 @@ def _spins_ordered(mu1, alpha1, mu2, alpha2) -> bool:
     r"""
     Compare two spins based on their positions.
 
-    For the definition of comparison see
-    :ref:`user-guide_theory-behind_multiple-counting`.
-
     Parameters
     ----------
     mu1 : tuple of 3 int

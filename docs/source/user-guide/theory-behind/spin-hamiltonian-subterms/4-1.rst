@@ -1,0 +1,19 @@
+.. _ug_tb_sh_4-1:
+
+******************
+(4, 0, 0, 0) terms
+******************
+
+TODO: add links to the relevant API
+
+First case of the quadlinear terms, where all four spin operators are associated with
+the same site.
+
+.. math::
+    C_4
+    \sum_{\substack{\mu, \\ \alpha_1, \\ i_1, i_2, i_3, i_4}}
+    J^{i_1, i_2, i_3, i_4}_{0, 0, 0; \alpha_1, \alpha_1, \alpha_1, \alpha_1}
+    S_{\mu, \alpha_1}^{i_1}
+    S_{\mu, \alpha_1}^{i_2}
+    S_{\mu, \alpha_1}^{i_3}
+    S_{\mu, \alpha_1}^{i_4}

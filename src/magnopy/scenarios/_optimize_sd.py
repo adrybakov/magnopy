@@ -46,6 +46,7 @@ def optimize_sd(
     comment=None,
     no_html=False,
     hide_personal_data=False,
+    quantum_correction=False,
 ) -> None:
     r"""
     Optimizes classical energy of spin Hamiltonian and finds a set of spin directions
@@ -83,7 +84,7 @@ def optimize_sd(
         does not exist.
 
     comment : str, optional
-        Any comment, that will be shown in the standard output right after the magnopy's
+        Any comment, that will be shown in the standard output right after the Magnopy's
         logo.
 
     no_html : bool, default False
@@ -97,6 +98,15 @@ def optimize_sd(
 
         If ``False``, then ``os.path.abspath(pathname)`` is used to show full paths to the output
         and input files. If ``True``, then only ``pathname`` is used.
+
+    quantum_correction : bool, default False
+        Whether to include quantum correction to the energy in the optimization. If
+        ``True``, then it optimizes :py:func:`.Energy.E_0` + :py:func:`.Energy.E_corr`.
+        If ``False``, then it optimizes :py:func:`.Energy.E_0` only.
+
+        .. warning::
+            This option is experimental. Will be improved and tested in future
+            releases. Use with caution.
 
     Raises
     ------
@@ -130,6 +140,7 @@ def optimize_sd(
         os.path.join(output_folder, "SPIN_DIRECTIONS.html")
     )
     E_0_TXT = envelope_path(os.path.join(output_folder, "E_0.txt"))
+    E_CORR_TXT = envelope_path(os.path.join(output_folder, "E_corr.txt"))
 
     ################################################################################
     ##                           Input data verification                          ##
@@ -158,8 +169,13 @@ def optimize_sd(
     print(f"\n{' Optimization parameters ':=^80}\n")
 
     # Tolerance parameters
-    print(f"Energy tolerance      : {energy_tolerance:.5e} meV")
-    print(f"Torque tolerance      : {torque_tolerance:.5e}")
+    print(f"Energy tolerance       : {energy_tolerance:.5e} meV")
+    print(f"Torque tolerance       : {torque_tolerance:.5e}")
+
+    # Target energy function
+    print(
+        f"Target energy function : {'E^{(0)}' if not quantum_correction else 'E^{(0)} + E^{corr}'}"
+    )
 
     # Magnetic field
     if magnetic_field is not None:
@@ -203,6 +219,7 @@ def optimize_sd(
         energy_tolerance=energy_tolerance,
         torque_tolerance=torque_tolerance,
         quiet=False,
+        quantum_correction=quantum_correction,
     )
     print("Optimization is done.")
 
@@ -217,6 +234,14 @@ def optimize_sd(
         f.write(f"{E_0:.8f} meV\n")
     print(
         f"Classic energy of optimized state (E_0 = {E_0:.3f} meV) is saved in file\n{ICON_OUT_FILE} {E_0_TXT}"
+    )
+
+    # Correction to classical energy
+    E_corr = energy.E_corr(spin_directions=spin_directions)
+    with open(E_CORR_TXT, "w", encoding="utf-8") as f:
+        f.write(f"{E_corr:.8f} meV\n")
+    print(
+        f"Correction to the classic energy of optimized state (E_corr = {E_corr:.3f} meV) is saved in file\n{ICON_OUT_FILE} {E_CORR_TXT}"
     )
 
     # Optimized spin directions

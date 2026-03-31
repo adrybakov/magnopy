@@ -20,40 +20,41 @@
 
 .. hint::
 
-    We recommend to install magnopy with optional dependencies (|plotly|_ and |matplotlib|_)
+    We recommend to install Magnopy with optional dependencies (|plotly|_ and |matplotlib|_)
     whether possible.
 
     .. code-block:: bash
 
         pip install "magnopy[visual]"
 
-    Then, magnopy will produce graphical output (.html and .png) files in addition to the
-    .txt output with the actual data.
+    as then Magnopy produces graphical output (.html and .png files) in addition to the
+    .txt files with the source data.
 
-    Note that if you can not install either |plotly|_ or |matplotlib|_, then all functions
-    of magnopy are still available to you. The only missing part would be the
-    visualization.
+    However, if you can not install either |plotly|_ or |matplotlib|_, then all functions
+    of Magnopy are still available. Visualization would be the only missing part.
 
-What is magnopy?
+What is Magnopy?
 ================
 
 Magnopy is a python code that, given
 :ref:`spin Hamiltonian<user-guide_theory-behind_spin-hamiltonian>` in **any**
-:ref:`convention <user-guide_theory-behind_convention-problem>`, computes bosonic (magnon)
+:ref:`convention <user-guide_theory-behind_convention>`, computes bosonic (magnon)
 Hamiltonian of the form
 
 .. include:: core-formulas/bosonic-hamiltonian.inc
 
 where
 
-* :math:`E^{(0)}` is a classical energy of the ground state;
+* :math:`E^{(0)}` is a classical energy of the vacuum state;
+* :math:`E^{(2)}` is a quantum correction to the energy of the vacuum state that arises at
+  the level of linear spin wave theory (LSWT);
+* :math:`\omega_{\alpha}(\boldsymbol{k})` is magnon dispersion relation derived at the
+  level of LSWT;
 
-Next three terms are derived within the Linear Spin Wave Theory (LSWT):
+In addition to the LSWT Hamiltonian, Magnopy is capable of computing full quantum
+correction to the classical energy of the vacuum state, :math:`E^{corr}`, that is not
+limited to the LSWT level and is exact.
 
-* :math:`E^{(2)}` is a quantum correction to the ground state energy;
-* :math:`\omega_{\alpha}(\boldsymbol{k})` is magnon dispersion at the level of LSWT;
-* :math:`\sum_{\boldsymbol{k}}\Delta(\boldsymbol{k})` is an energy measure of
-  :math:`\pm \boldsymbol{k}` asymmetry.
 
 What can it do?
 ===============
@@ -61,18 +62,18 @@ What can it do?
 * Computes :ref:`all terms of the magnon Hamiltonian <user-guide_cli_magnopy-lswt>` from
   above.
 * Supports :ref:`spin Hamiltonian <user-guide_theory-behind_spin-hamiltonian>` in any
-  :ref:`convention <user-guide_theory-behind_convention-problem>`.
+  :ref:`convention <user-guide_theory-behind_convention>`.
 * Supports a number of :ref:`physical units <user-guide_usage_units>` both for
   Hamiltonian's parameters and for the output quantities.
 * :ref:`Minimizes classical energy <user-guide_cli_optimize-sd>` as a function of the spin
   directions.
 * Visualizes spin Hamiltonian (experimental)
 
-How to support magnopy?
+How to support Magnopy?
 =======================
 
 Magnopy is a relatively young code and we would highly appreciate your support.
 
-* If you use and like magnopy, please give it a star on `GitHub <https://github.com/magnopy/magnopy>`_.
-* Please give feedback on your experience with magnopy (see :ref:`support` page).
-* If you use magnopy in your research, please cite it (see :ref:`cite` page).
+* If you use and like Magnopy, please give it a star on `GitHub <https://github.com/magnopy/magnopy>`_.
+* Please give feedback on your experience with Magnopy (see :ref:`support` page).
+* If you use Magnopy in your research, cite it (see :ref:`cite` page).

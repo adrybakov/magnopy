@@ -90,7 +90,7 @@ def solve_lswt(
 
     spin_directions : (M, 3) |array-like|_, optional.
         Directions of the local quantization axis for each spin. Magnitude of the vector
-        is ignored, only the direction is considered. If ``None``, then magnopy attempts
+        is ignored, only the direction is considered. If ``None``, then Magnopy attempts
         to optimize classical energy of spin Hamiltonian to determine spin directions.
 
     k_path : str, optional
@@ -115,11 +115,11 @@ def solve_lswt(
         does not exist.
 
     number_processors : int, optional
-        Number of processors to be used in computation. By default magnopy uses all
+        Number of processors to be used in computation. By default Magnopy uses all
         available processes. Use ``number_processors=1`` to run in serial mode.
 
     comment : str, optional
-        Any comment, that will be shown in the standard output right after the magnopy's
+        Any comment, that will be shown in the standard output right after the Magnopy's
         logo.
 
     no_html : bool, default False
@@ -144,7 +144,7 @@ def solve_lswt(
     Notes
     -----
 
-    When using this function of magnopy in your Python scripts make sure to safeguard
+    When using this function of Magnopy in your Python scripts make sure to safeguard
     your script with the
 
     .. code-block:: python
@@ -193,6 +193,7 @@ def solve_lswt(
     DELTAS_PNG = envelope_path(os.path.join(output_folder, "DELTAS.png"))
     E_0_TXT = envelope_path(os.path.join(output_folder, "E_0.txt"))
     E_2_TXT = envelope_path(os.path.join(output_folder, "E_2.txt"))
+    E_CORR_TXT = envelope_path(os.path.join(output_folder, "E_corr.txt"))
     ONE_OPERATOR_TERMS_TXT = envelope_path(
         os.path.join(output_folder, "ONE_OPERATOR_TERMS.txt")
     )
@@ -279,8 +280,10 @@ def solve_lswt(
         )
 
         # Tolerance parameters
-        print(f"Energy tolerance      : {1e-5:.5e} meV")
-        print(f"Torque tolerance      : {1e-5:.5e}")
+        print(f"Energy tolerance       : {1e-5:.5e} meV")
+        print(f"Torque tolerance       : {1e-5:.5e}")
+        print(R"Target energy function : E^{(0)}")
+
         print(
             "Supercell             : 1 x 1 x 1 (original unit cell of the Hamiltonian)"
         )
@@ -358,6 +361,14 @@ def solve_lswt(
         f.write(f"{E_0:.8f} meV\n")
     print(
         f"\nClassic energy of optimized state (E_0 = {E_0:.3f} meV) is saved in file\n{ICON_OUT_FILE} {E_0_TXT}"
+    )
+
+    # Correction to classical energy
+    E_corr = energy.E_corr(spin_directions=spin_directions)
+    with open(E_CORR_TXT, "w", encoding="utf-8") as f:
+        f.write(f"{E_corr:.8f} meV\n")
+    print(
+        f"Correction to the classic energy of optimized state (E_corr = {E_corr:.3f} meV) is saved in file\n{ICON_OUT_FILE} {E_CORR_TXT}"
     )
 
     ################################################################################

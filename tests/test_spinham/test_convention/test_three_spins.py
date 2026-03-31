@@ -63,10 +63,10 @@ def test_get_modified_c31():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     mod_convention = convention.get_modified(c31=2)
@@ -80,10 +80,10 @@ def test_get_modified_c31():
     assert mod_convention.c32 == 1
     assert mod_convention.c33 == 1
     assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 1
     assert mod_convention.c43 == 1
     assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 1
 
 
 @given(st.floats(allow_nan=False), st.floats(allow_nan=False))
@@ -122,10 +122,10 @@ def test_get_modified_c32():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     mod_convention = convention.get_modified(c32=2)
@@ -139,10 +139,10 @@ def test_get_modified_c32():
     assert mod_convention.c32 == 2
     assert mod_convention.c33 == 1
     assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 1
     assert mod_convention.c43 == 1
     assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 1
 
 
 @given(st.floats(allow_nan=False), st.floats(allow_nan=False))
@@ -181,10 +181,10 @@ def test_get_modified_c33():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     mod_convention = convention.get_modified(c33=2)
@@ -198,7 +198,7 @@ def test_get_modified_c33():
     assert mod_convention.c32 == 1
     assert mod_convention.c33 == 2
     assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 1
     assert mod_convention.c43 == 1
     assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 1

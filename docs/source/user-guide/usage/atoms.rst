@@ -60,7 +60,7 @@ Magnopy recognizes the following keys
 *   "g_factors" :
     ``list`` of ``float``. g-factors for each atom.
 
-We specify keys of the ``atoms`` dictionary that are expected by magnopy in the docstrings
+We specify keys of the ``atoms`` dictionary that are expected by Magnopy in the docstrings
 of the relevant functions and classes.
 
 .. hint::

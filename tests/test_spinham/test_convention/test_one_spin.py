@@ -63,10 +63,10 @@ def test_get_modified_c1():
         c32=1,
         c33=1,
         c41=1,
-        c421=1,
-        c422=1,
+        c42=1,
         c43=1,
         c44=1,
+        c45=1,
     )
 
     mod_convention = convention.get_modified(c1=2)
@@ -80,7 +80,7 @@ def test_get_modified_c1():
     assert mod_convention.c32 == 1
     assert mod_convention.c33 == 1
     assert mod_convention.c41 == 1
-    assert mod_convention.c421 == 1
-    assert mod_convention.c422 == 1
+    assert mod_convention.c42 == 1
     assert mod_convention.c43 == 1
     assert mod_convention.c44 == 1
+    assert mod_convention.c45 == 1
