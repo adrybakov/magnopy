@@ -25,7 +25,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays as harrays
 
-from magnopy import Convention, SpinHamiltonian
+from magnopy import Convention, SpinHamiltonian, make_supercell
 
 MAX_MODULUS = 1e8
 ARRAY = harrays(
@@ -215,18 +215,18 @@ def test_add(parameter1, parameter2):
     assert np.allclose(m_spinham.p21[3][2], spinham2.p21[2][2])
 
 
-# @given(
-#     ARRAY,
-#     st.integers(min_value=1, max_value=5),
-#     st.integers(min_value=1, max_value=5),
-#     st.integers(min_value=1, max_value=5),
-# )
-# def test_make_supercell(parameter1, i, j, k):
-#     spinham = get_spinham(for_supercell=True)
+@given(
+    ARRAY,
+    st.integers(min_value=1, max_value=5),
+    st.integers(min_value=1, max_value=5),
+    st.integers(min_value=1, max_value=5),
+)
+def test_make_supercell(parameter1, i, j, k):
+    spinham = get_spinham(for_supercell=True)
 
-#     spinham.add_21(alpha=0, parameter=parameter1)
-#     spinham.add_21(alpha=1, parameter=parameter1 * 1.42)
+    spinham.add_21(alpha=0, parameter=parameter1)
+    spinham.add_21(alpha=1, parameter=parameter1 * 1.42)
 
-#     new_spinham = make_supercell(spinham=spinham, supercell=(i, j, k))
+    new_spinham = make_supercell(spinham=spinham, supercell=(i, j, k))
 
-#     assert len(new_spinham.p21) == i * j * k * 2
+    assert len(new_spinham.p21) == i * j * k * 2

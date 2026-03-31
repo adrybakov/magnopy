@@ -24,7 +24,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays as harrays
 
-from magnopy import Convention, SpinHamiltonian
+from magnopy import Convention, SpinHamiltonian, make_supercell
 
 
 MAX_MODULUS = 1e8
@@ -732,3 +732,33 @@ def test_lists_not_tuples(n, p_n, data, amount):
             parameter=np.ones(tuple([3] * n)),
             when_present="skip",
         )
+
+
+@pytest.mark.parametrize("n, p_n", CASES)
+@given(
+    data=st.data(),
+    i=st.integers(min_value=1, max_value=5),
+    j=st.integers(min_value=1, max_value=5),
+    k=st.integers(min_value=1, max_value=5),
+)
+def test_make_supercell(n, p_n, data, i, j, k):
+    natoms = 2
+    spinham = get_spinham(natoms=natoms)
+
+    for i in range(2):
+        nus, alphas = data.draw(
+            position_strategy(n=n, p_n=p_n, alpha_max=natoms - 1),
+            label=f"(v{i}) nus, alphas",
+        )
+        spinham.add(
+            nus=list(nus),
+            alphas=list(alphas),
+            parameter=np.ones(tuple([3] * n)),
+            when_present="skip",
+        )
+
+    new_spinham = make_supercell(spinham=spinham, supercell=(i, j, k))
+
+    assert len(new_spinham.parameters(n=n, p_n=p_n)) == i * j * k * len(
+        spinham.parameters(n=n, p_n=p_n)
+    )
