@@ -1,67 +1,32 @@
 .. _user-guide:
 
-******************
-Magnopy user guide
-******************
+********************
+Magnopy's user guide
+********************
 
 
 .. toctree::
     :caption: Installation
     :maxdepth: 1
+    :hidden:
 
     installation
 
-Magnopy is a python library and can be installed as any other python library. See the page
-above for more details.
-
-
 .. toctree::
-    :caption: Magnopy as a black box
+    :caption: Theory behind
     :maxdepth: 1
+    :hidden:
 
-    cli/how-to-execute
-
-We do not want to limit Magnopy to users who are familiar with python. For that purpose we
-prepared a number of the scripts to perform calculation with Magnopy, that can be executed
-as any other command line tool. Read the gide by the link above to learn how to execute a
-script and then visit one of the guides below to read more about each script.
+    theory-behind/spin-hamiltonian
+    theory-behind/convention
+    theory-behind/energy-minimization
 
 .. toctree::
+    :caption: Magnopy as a Python library
     :maxdepth: 1
+    :hidden:
 
-    cli/magnopy-optimize-sd/index
-    cli/magnopy-lswt/index
-
-
-.. toctree::
-    :caption: How-to guides
-    :maxdepth: 2
-
-    how-to/index
-
-Full tutorials about Magnopy are hosted on a separate web-site |magnopy-tutorials|_. Visit
-it and work through the "Master tutorial" if you wish to learn Magnopy. Each tutorial
-offers a small set of exercises, that help to get comfortable in using Magnopy.
-
-In the pages above we provide simple guides on how to achieve a small well-define task
-within Magnopy. Those "How to ..." guides are written based on the questions that users
-are asking about the code. If you do not see the how-to guide that answers your question,
-please do not hesitate to ask it via our :ref:`support` channels.
-
-
-.. toctree::
-    :caption: Fundamentals and usage
-    :maxdepth: 1
-
-    usage/data-structures
-
-For deeper understanding of Magnopy you can read the page from above, that graphically
-summarizes data structures of Magnopy. Then you can read materials below where we explain
-each concept and give code examples.
-
-.. toctree::
-    :maxdepth: 1
-
+    usage/overview
     usage/cell
     usage/atoms
     usage/convention
@@ -71,14 +36,128 @@ each concept and give code examples.
     usage/energy
     usage/lswt
 
+.. toctree::
+    :caption: Magnopy as a black box
+    :maxdepth: 1
+    :hidden:
+
+    cli/how-to-execute
+    cli/magnopy-optimize-sd/index
+    cli/magnopy-lswt/index
 
 .. toctree::
-    :caption: Theory behind
+    :caption: How-to guides
     :maxdepth: 1
+    :hidden:
 
-    theory-behind/spin-hamiltonian
-    theory-behind/convention
-    theory-behind/energy-minimization
+    how-to/index
 
-It is important to understand how any tool operates and what it does exactly. In the pages
-above we prepared some explanatory material about theory behind Magnopy.
+
+Installation
+============
+
+Magnopy is a python library that is distributed via |PYPI|_ and can be installed as any
+other python library.
+
+:doc:`installation`
+    Details on how install Magnopy with ``pip`` or from source code.
+
+Theory behind
+=============
+
+As with any tool, it is important to understand how Magnopy operates and what can it do.
+In addition to the |paper-2026|_ that describes the method in details, we prepared a few
+pages with brief summaries of the key concepts needed to understand the code.
+
+:doc:`theory-behind/spin-hamiltonian`
+    What is the spin Hamiltonian and how is it defined in Magnopy.
+
+:doc:`theory-behind/convention`
+    What is a convention of the spin Hamiltonian and how is it treated in Magnopy.
+
+:doc:`theory-behind/energy-minimization`
+    Technical details of the energy minimization procedure implemented in Magnopy.
+
+.. _user-guide_magnopy-as-a-python-library:
+
+Magnopy as a Python library
+===========================
+
+The first way to use magnopy is to use it within python scripts.
+
+For deeper understanding of Magnopy you can read the page from above, that graphically
+summarizes data structures of Magnopy. Then you can read materials below where we explain
+each concept and give code examples.
+
+:doc:`usage/overview`
+    An overview of the core objects in Magnopy. A good place to start.
+
+:doc:`usage/cell`
+    Cell that defines a lattice. Same as
+    :math:`(\boldsymbol{a}_1, \boldsymbol{a}_2, \boldsymbol{a}_3)` in the |paper-2026|_.
+
+:doc:`usage/atoms`
+    Magnetic sites that are placed in the cell. They are called "atoms" due to the
+    historical reasons, however in the |paper-2026|_ we refer to them as "magnetic sites".
+
+:doc:`usage/convention`
+    Convention of the spin Hamiltonian. Also discussed in
+    :ref:`user-guide_theory-behind_convention`.
+
+:doc:`usage/units`
+    Physical units of the Hamiltonian's interaction parameters and other quantities.
+
+:doc:`usage/spin-hamiltonian`
+    Spin Hamiltonian that is defined based on the cell, atoms and convention.
+
+:doc:`usage/spin-directions`
+    Spin directions that define the state of the system (in particular, the vacuum state).
+    Same as :math:`\boldsymbol{z}_{\alpha}` in the |paper-2026|_.
+
+:doc:`usage/energy`
+    Energy of the Hamiltonian in a particular state defined by the spin directions.
+
+:doc:`usage/lswt`
+    Main entry point for the linear spin wave theory calculations, defined on some
+    spin Hamiltonian and some spin directions.
+
+
+
+Magnopy as a black box
+======================
+
+The second way to use magnopy is via a command line interface.
+
+There are a number of scripts that takes some files as an input and produce some other
+files as an output. You can use those scripts without any knowledge of python, but you
+will need to run a command in a terminal.
+
+:doc:`cli/how-to-execute`
+    A guide on how to execute a script from the command line.
+
+Below is the list of the scripts that are available in Magnopy today.
+
+:doc:`cli/magnopy-optimize-sd/index`
+    A script that minimization of classical energy with respect to spin directions.
+
+:doc:`cli/magnopy-lswt/index`
+    A script that computes all terms of the magnon Hamiltonian at the level of linear
+    spin wave theory.
+
+Please reach out to the developer of Magnopy if there is a common calculation that can be
+performed with it, but there is no dedicated script.
+
+
+How-to guides
+=============
+
+How to guides are a collection of small code examples that demonstrate how to achieve
+a small task with Magnopy. They are less verbose than the tutorials (|magnopy-tutorials|_)
+and assume that your can read the materials from the
+:ref:`user-guide_magnopy-as-a-python-library` and :ref:`api` for details.
+
+:doc:`how-to/index`
+    A list of how-to guides that are available in Magnopy today.
+
+If you do not see the how-to guide that answers your question, please do not hesitate to
+ask it via our :ref:`support` channels.

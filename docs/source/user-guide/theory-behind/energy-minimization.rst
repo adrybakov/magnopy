@@ -130,7 +130,8 @@ Formula for the inverse Hessian update:
 	\rho_k = \dfrac{1}{\sum_i y^i_k s^i_k}
 
 Given :ref:`user-guide_theory-behind_energy-minimization_initial-guess`
-:math:`\boldsymbol{x}_0` and :ref:`user-guide_theory-behind_energy-minimization_initial-hessian`
+:math:`\boldsymbol{x}_0` and
+:ref:`user-guide_theory-behind_energy-minimization_initial-hessian`
 :math:`\boldsymbol{H}_0`,
 
 
@@ -178,7 +179,7 @@ scale it as
 .. math::
     \boldsymbol{H}_0
     =
-    \dfrac{\boldsymbol{y}^T_k\boldsymbol{s}_k}{\boldsymbol{y}^T_k\boldsymbol{y}_k} \boldsymbol{I}
+    \dfrac{\boldsymbol{y}^T_k\boldsymbol{s}_k}{\boldsymbol{y}^T_k\boldsymbol{y}_k}\boldsymbol{I}
 
 before the first update [1]_.
 
@@ -205,95 +206,12 @@ The gradient of the energy is computed analytically
 
 .. math::
 
-	\dfrac{\partial E^{(0)}}{\partial z^t_{\alpha}}
-	=&
-    \,C_1
-    J_1^t(\boldsymbol{r}_{\alpha})
-    	S_{\alpha}
-    +\\&+
-    2C_{2,1}
-    \sum_{j}
-    J_{2,1}^{tj}(\boldsymbol{r}_{\alpha})
-        z^j_{\alpha}
-        (S_{\alpha})^2
-    +\\&+
-    2C_{2,2}
-    \sum_{\beta, \nu, j}
-    J_{2,2}^{tj}(\boldsymbol{r}_{\nu,\alpha\beta})
-        z^j_{\beta}
-        S_{\alpha}
-        S_{\beta}
-    +\\&+
-    3C_{3, 1}
-    \sum_{j, u}
-    J^{tju}_{3, 1}(\boldsymbol{r}_{\alpha})
-        z^j_{\alpha}
-        z^u_{\alpha}
-        (S_{\alpha})^3
-    +\\&+
-    3C_{3, 2}
-    \sum_{\beta, \nu, j, u}
-    J^{tju}_{3, 2}(\boldsymbol{r}_{\nu,\alpha\beta})
-        z^j_{\alpha}
-        z^u_{\beta}
-        (S_{\alpha})^2
-        S_{\beta}
-    +\\&+
-    3C_{3, 3}
-    \sum_{\substack{\beta, \gamma, \\ \nu, \lambda, j, u}}
-    J^{tju}_{3, 3}(\boldsymbol{r}_{\nu,\alpha\beta}, \boldsymbol{r}_{\lambda,\alpha\gamma})
-        z^j_{\beta}
-        z^u_{\gamma}
-        S_{\alpha}
-        S_{\beta}
-        S_{\gamma}
-    +\\&+
-    4C_{4, 1}
-    \sum_{\alpha, j, u, v}
-    J_{4, 1}^{tjuv}(\boldsymbol{r}_{\alpha})
-        z^j_{\alpha}
-        z^u_{\alpha}
-        z^v_{\alpha}
-        (S_{\alpha})^4
-    +\\&+
-    4C_{4, 2, 1}
-    \sum_{\substack{\beta, \nu, \\ j, u, v}}
-    J_{4, 2, 1}^{tjuv}(\boldsymbol{r}_{\nu,\alpha\beta})
-        z^j_{\alpha}
-        z^u_{\alpha}
-        z^v_{\beta}
-        (S_{\alpha})^3
-        S_{\beta}
-    +\\&+
-    4C_{4, 2, 2}
-    \sum_{\substack{\beta, \nu, \\ j, u, v}}
-    J_{4, 2, 2}^{tjuv}(\boldsymbol{r}_{\nu,\alpha\beta})
-        z^j_{\alpha}
-        z^u_{\beta}
-        z^v_{\beta}
-        (S_{\alpha})^2
-        (S_{\beta})^2
-    +\\&+
-    4C_{4, 3}
-    \sum_{\substack{\beta, \gamma, \\ \nu, \lambda, \\ j, u, v}}
-    J_{4, 3}^{tjuv}(\boldsymbol{r}_{\nu,\alpha\beta}, \boldsymbol{r}_{\lambda,\alpha\gamma})
-        z^j_{\alpha}
-        z^u_{\beta}
-        z^v_{\gamma}
-        (S_{\alpha})^2
-        S_{\beta}
-        S_{\gamma}
-    +\\&+
-    4C_{4, 4}
-    \sum_{\substack{\beta, \gamma, \varepsilon, \nu, \lambda, \rho, \\ \\ j, u, v}}
-    J_{4, 4}^{tjuv}(\boldsymbol{r}_{\nu,\alpha\beta}, \boldsymbol{r}_{\lambda,\alpha\gamma}, \boldsymbol{r}_{\rho,\alpha\varepsilon})
-        z^j_{\beta}
-        z^u_{\gamma}
-        z^v_{\varepsilon}
-        S_{\alpha}
-        S_{\beta}
-        S_{\gamma}
-        S_{\varepsilon}
+	\dfrac{\partial E^{(0)}}{\partial z^i_{\alpha}}
+	=
+    S_{\alpha}\tilde{J}_{\alpha}^i
+
+where :math:`\tilde{J}_{\alpha}^i` is a single-spin renormalized parameter defined by
+equation S.68 of |paper-2026-SI|_.
 
 
 

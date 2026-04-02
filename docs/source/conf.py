@@ -276,6 +276,10 @@ custom_links = {
         "paper about Magnopy",
         "https://docs.magnopy.org/en/latest/cite.html",
     ),
+    "paper-2026-SI": (
+        "Supplementary material of paper about Magnopy",
+        "https://docs.magnopy.org/en/latest/cite.html",
+    ),
 }
 rst_epilog += "\n".join(
     map(
