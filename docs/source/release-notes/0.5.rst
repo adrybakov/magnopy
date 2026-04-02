@@ -130,6 +130,16 @@ contact us via :ref:`support`.
                 print(spinham.atoms.names[alpha], spinham.atoms.names[beta], nu)
                 print(parameter)
 
+0.5.1
+=====
+
+**Date**: 2 April 2026
+
+Bugfix
+------
+
+* Fix a bug in ``magnopy.experimental.plot_spinham``, that was introduced in 0.5.0 and
+  prevented the function from working.
 
 0.5.0
 =====
