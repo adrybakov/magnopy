@@ -204,7 +204,7 @@ custom_links = {
     "pre-commit": ("pre-commit", "https://pre-commit.com"),
     "TB2J": ("TB2J", "https://tb2j.readthedocs.io/en/latest/"),
     "Vampire": ("Vampire", "https://vampire.york.ac.uk/"),
-    "wulfric": ("wulfric", "https://docs.wulfric.org/en/latest/"),
+    "wulfric": ("Wulfric", "https://docs.wulfric.org/en/latest/"),
     "wulfric-key-concepts": (
         "key concepts of wulfric",
         "https://docs.wulfric.org/en/latest/user-guide/usage/key-concepts.html",
@@ -274,6 +274,10 @@ custom_links = {
     "scipy": ("scipy", "https://scipy.org/"),
     "paper-2026": (
         "paper about Magnopy",
+        "https://docs.magnopy.org/en/latest/cite.html",
+    ),
+    "paper-2026-SI": (
+        "Supplementary material of paper about Magnopy",
         "https://docs.magnopy.org/en/latest/cite.html",
     ),
 }

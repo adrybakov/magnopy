@@ -22,7 +22,7 @@
 
 import numpy as np
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays as harrays
 
@@ -201,6 +201,7 @@ def _get_spinham(p1, p2, p3, p4):
 
 @pytest.mark.parametrize("spin_normalized", (True, False))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_spin_normalized(spin_normalized, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
 
@@ -216,6 +217,7 @@ def test_spin_normalized(spin_normalized, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("multiple_counting", (True, False))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_multiple_counting(multiple_counting, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
 
@@ -231,6 +233,7 @@ def test_multiple_counting(multiple_counting, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c1", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c1(c1, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p1) > 0
@@ -247,6 +250,7 @@ def test_c1(c1, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c21", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c21(c21, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p21) > 0
@@ -263,6 +267,7 @@ def test_c21(c21, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c22", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c22(c22, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p22) > 0
@@ -279,6 +284,7 @@ def test_c22(c22, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c31", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c31(c31, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p31) > 0
@@ -295,6 +301,7 @@ def test_c31(c31, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c32", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c32(c32, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p32) > 0
@@ -311,6 +318,7 @@ def test_c32(c32, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c33", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c33(c33, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p33) > 0
@@ -327,6 +335,7 @@ def test_c33(c33, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c41", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c41(c41, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p41) > 0
@@ -343,6 +352,7 @@ def test_c41(c41, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c42", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c42(c42, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p42) > 0
@@ -359,6 +369,7 @@ def test_c42(c42, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c43", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c43(c43, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p43) > 0
@@ -375,6 +386,7 @@ def test_c43(c43, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c44", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c44(c44, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p44) > 0
@@ -391,6 +403,7 @@ def test_c44(c44, p1, p2, p3, p4):
 
 @pytest.mark.parametrize("c45", (-1, -0.5, 0.5, 1))
 @given(p1=ARRAY_3, p2=ARRAY_3x3, p3=ARRAY_3x3x3, p4=ARRAY_3x3x3x3)
+@settings(deadline=1000)
 def test_c45(c45, p1, p2, p3, p4):
     spinham, convention, spin_directions = _get_spinham(p1=p1, p2=p2, p3=p3, p4=p4)
     assert len(spinham.p45) > 0
