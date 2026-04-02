@@ -94,8 +94,8 @@ def plot_spinham(
         )
     ]
 
-    for alpha, parameter in spinham.p1:
-        alpha = spinham.map_to_magnetic[alpha]
+    for _, alphas, parameter in spinham.p1:
+        alpha = spinham.map_to_magnetic[alphas[0]]
 
         hoverinfo[alpha] += "<br>".join(
             [
@@ -106,8 +106,8 @@ def plot_spinham(
             ]
         )
 
-    for alpha, parameter in spinham.p21:
-        alpha = spinham.map_to_magnetic[alpha]
+    for _, alphas, parameter in spinham.p21:
+        alpha = spinham.map_to_magnetic[alphas[0]]
 
         hoverinfo[alpha] += "<br>".join(
             [
@@ -187,11 +187,19 @@ def plot_spinham(
     nus = []
 
     cells_to_plot = []
-    for alpha, beta, nu, parameter in spinham.p22:
+    for nus_, alphas_, parameter in spinham.p22:
+        alpha = spinham.map_to_magnetic[alphas_[0]]
+        beta = spinham.map_to_magnetic[alphas_[1]]
+        nu = nus_[0]
+
         vector = get_vector(
-            cell=spinham.cell, atoms=spinham.atoms, atom1=alpha, atom2=beta, R=nu
+            cell=spinham.cell,
+            atoms=spinham.magnetic_atoms,
+            atom1=alpha,
+            atom2=beta,
+            R=nu,
         )
-        start_points.append(spinham.atoms.positions[alpha] @ spinham.cell)
+        start_points.append(spinham.magnetic_atoms.positions[alpha] @ spinham.cell)
         end_points.append(start_points[-1] + vector)
         distances.append(round(np.linalg.norm(vector), ndigits=distance_digits))
         parameters.append(parameter)
