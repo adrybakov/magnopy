@@ -52,13 +52,12 @@ Here is an example of the ``atoms`` dictionary with six atoms in it
 
 .. doctest::
 
-    >>> decorate = lambda x: f'"{x}"'
     >>> for name, position, spin, g_factor, spglib_type in zip(*atoms.values()):
-    ...     print(f"Atom {decorate(name):<5}")
-    ...     print(f"  position is {pos}")
+    ...     print(f'Atom "{name}"')
+    ...     print(f"  position is {position}")
     ...     print(f"  S = {spin}")
     ...     print(f"  g = {g_factor}")
-    ...     print(f"  spglib type is {spglib_type})
+    ...     print(f"  spglib type is {spglib_type}")
     Atom "Cr1"
       position is [0.5, 0.0, 0.882382]
       S = 1.5
