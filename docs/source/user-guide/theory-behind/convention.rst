@@ -60,7 +60,7 @@ written by assuming the spin vectors to be normalized to unit length. Magnopy su
 the parameters that enter that classical version of the Hamiltonian.
 
 If by convention the spins are considered to be "normalized" (``spin_normalized = True``),
-then the parameters that user enters are interpreted as
+then the parameters that user inputs are interpreted as
 
 .. math::
 
@@ -69,7 +69,7 @@ then the parameters that user enters are interpreted as
     S_{\alpha_2}
 
 If by convention the spins are considered to be "not normalized"
-(``spin_normalized = False``), then the parameters that user enters are interpreted as
+(``spin_normalized = False``), then the parameters that user inputs are interpreted as
 
 .. math::
     J^{i_1, i_2}_{\nu_2; \alpha_1, \alpha_2}

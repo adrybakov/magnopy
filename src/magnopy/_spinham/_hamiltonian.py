@@ -1179,7 +1179,7 @@ class SpinHamiltonian:
     # TODO: check that the implementation is reasonable
     def remove(self, nus, alphas, remove_equivalent=False):
         r"""
-        Removes any parameter with at most four components of spin operator to the
+        Removes any parameter with at most four components of spin operator from the
         Hamiltonian.
 
         .. versionadded:: 0.5.0
@@ -1207,16 +1207,8 @@ class SpinHamiltonian:
         Notes
         -----
 
-        If ``len(nus) == len(alphas) -1``, the correspondence between the ``alphas`` and
-        ``nus`` is as follows
-
-        * ``alphas[0]`` always located in the unit cell (0, 0, 0).
-        * ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for ``i >= 1``.
-
-        If ``len(nus) == len(alphas)``, then the ``i``-th atom is located in the unit cell
-        ``nus[i]`` for all ``i``. Note that the translational symmetry is always
-        enforced, so the ``nus`` are updated as ``nus[i] = nus[i] - nus[0]`` for all
-        ``i`` before the parameter is added to the Hamiltonian.
+        See notes of :py:meth:`.SpinHamiltonian.add` for the details on ``nus`` and
+        ``alphas``.
 
         """
 
@@ -1279,9 +1271,8 @@ class SpinHamiltonian:
         Returns
         -------
         parameters : iterator
-            Iterator over parameters of the Hamiltonian. The form of the element
-            is defined by the given ``n`` and ``p_n``. See notes for details. Each element
-            of the iterator is a tuple ``(nus, alphas, parameter)`` where ``nus`` is a
+            Iterator over parameters of the Hamiltonian. Each element of the iterator is
+            a tuple ``(nus, alphas, parameter)`` where ``nus`` is a
             tuple of unit cell indices, ``alphas`` is a tuple of atom indices, and
             ``parameter`` is a tensor of the parameter's value.
 
@@ -1292,6 +1283,22 @@ class SpinHamiltonian:
             - ``alphas[0]`` is always located in the unit cell (0, 0, 0)
             - ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for
               ``1 <= i < len(alphas)``
+
+        See Also
+        --------
+        add
+        remove
+        p1
+        p21
+        p22
+        p31
+        p32
+        p33
+        p41
+        p42
+        p43
+        p44
+        p45
         """
 
         return _InteractionParametersIterator(parameters=self._parameters, n=n, p_n=p_n)
@@ -1323,10 +1330,9 @@ class SpinHamiltonian:
     @property
     def p1(self):
         r"""
-        Parameters of one spin & one site term of the Hamiltonian (partition 1).
+        Parameters of one spin & one site term of the Hamiltonian (:ref:`ug_tb_sh_1-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1350,10 +1356,9 @@ class SpinHamiltonian:
     @property
     def p21(self):
         r"""
-        Parameters of two spins & one site term of the Hamiltonian (partition 2+0).
+        Parameters of two spins & one site term of the Hamiltonian (:ref:`ug_tb_sh_2-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1377,10 +1382,9 @@ class SpinHamiltonian:
     @property
     def p22(self):
         r"""
-        Parameters of two spins & two sites term of the Hamiltonian (partition 1+1).
+        Parameters of two spins & two sites term of the Hamiltonian (:ref:`ug_tb_sh_2-2`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1404,10 +1408,10 @@ class SpinHamiltonian:
     @property
     def p31(self):
         r"""
-        Parameters of three spins & one site term of the Hamiltonian (partition 3+0+0).
+        Parameters of three spins & one site term of the Hamiltonian
+        (:ref:`ug_tb_sh_3-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1430,10 +1434,10 @@ class SpinHamiltonian:
     @property
     def p32(self):
         r"""
-        Parameters of three spins & two sites term of the Hamiltonian (partition 2+1+0).
+        Parameters of three spins & two sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_3-2`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1456,10 +1460,10 @@ class SpinHamiltonian:
     @property
     def p33(self):
         r"""
-        Parameters of three spins & three sites term of the Hamiltonian (partition 1+1+1).
+        Parameters of three spins & three sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_3-3`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1482,10 +1486,9 @@ class SpinHamiltonian:
     @property
     def p41(self):
         r"""
-        Parameters of four spins & one site term of the Hamiltonian (partition 4+0+0+0).
+        Parameters of four spins & one site term of the Hamiltonian (:ref:`ug_tb_sh_4-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1508,10 +1511,10 @@ class SpinHamiltonian:
     @property
     def p42(self):
         r"""
-        Parameters of four spins & two sites term of the Hamiltonian (partition 3+1+0+0).
+        Parameters of four spins & two sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-2`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1534,10 +1537,10 @@ class SpinHamiltonian:
     @property
     def p43(self):
         r"""
-        Parameters of four spins & two sites term of the Hamiltonian (partition 2+2+0+0).
+        Parameters of four spins & two sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-3`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1560,10 +1563,10 @@ class SpinHamiltonian:
     @property
     def p44(self):
         r"""
-        Parameters of four spins & three sites term of the Hamiltonian (partition 2+1+1+0).
+        Parameters of four spins & three sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-4`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1586,10 +1589,10 @@ class SpinHamiltonian:
     @property
     def p45(self):
         r"""
-        Parameters of four spins & four sites term of the Hamiltonian (partition 1+1+1+1).
+        Parameters of four spins & four sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-5`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------

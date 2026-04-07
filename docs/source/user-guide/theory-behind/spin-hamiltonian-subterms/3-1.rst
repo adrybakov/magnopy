@@ -1,13 +1,11 @@
 .. _ug_tb_sh_3-1:
 
-***************
-(3, 0, 0) terms
-***************
+************
+(3, 1) terms
+************
 
-TODO: add links to the relevant API
-
-First case of the trilinear terms, where all three spin operators are associated with the
-same site.
+First type of the trilinear terms, in which all three spin operators are associated with
+the same site.
 
 .. math::
     C_{3,1}
@@ -16,3 +14,22 @@ same site.
     S_{\mu, \alpha_1}^{i_1}
     S_{\mu, \alpha_1}^{i_2}
     S_{\mu, \alpha_1}^{i_3}
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c31`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p31`
+
+    An iterator over the parameters already added to the Hamiltonian.

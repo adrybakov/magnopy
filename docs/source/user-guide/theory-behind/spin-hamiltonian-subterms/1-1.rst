@@ -4,12 +4,29 @@
 ( 1 ) terms
 ***********
 
-TODO: add links to the relevant API
-
-Linear terms of the Hamiltonian are trivial and do not split in extra cases.
+Linear terms of the Hamiltonian are trivial and do not split into extra types.
 
 .. math::
-    C_{1,1}
+    C_1
     \sum_{\substack{\mu, \\ \alpha_1, \\ i_1}}
     J^{i_1}_{\alpha_1}
     S_{\mu, \alpha_1}^{i_1}
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c1`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p1`
+
+    An iterator over the parameters already added to the Hamiltonian.

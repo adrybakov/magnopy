@@ -1,19 +1,37 @@
 .. _ug_tb_sh_4-1:
 
-******************
-(4, 0, 0, 0) terms
-******************
+************
+(4, 1) terms
+************
 
-TODO: add links to the relevant API
-
-First case of the quadlinear terms, where all four spin operators are associated with
+First type of the quadlinear terms, in which all four spin operators are associated with
 the same site.
 
 .. math::
-    C_4
+    C_{4, 1}
     \sum_{\substack{\mu, \\ \alpha_1, \\ i_1, i_2, i_3, i_4}}
     J^{i_1, i_2, i_3, i_4}_{0, 0, 0; \alpha_1, \alpha_1, \alpha_1, \alpha_1}
     S_{\mu, \alpha_1}^{i_1}
     S_{\mu, \alpha_1}^{i_2}
     S_{\mu, \alpha_1}^{i_3}
     S_{\mu, \alpha_1}^{i_4}
+
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c41`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p41`
+
+    An iterator over the parameters already added to the Hamiltonian.

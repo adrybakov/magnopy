@@ -53,37 +53,48 @@ class Convention:
         vectors/operators are normalized.
 
     c1 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_1-1`).
 
     c21 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-1`).
 
     c22 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-2`).
 
     c31 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-1`).
 
     c32 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-2`).
 
     c33 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-3`).
 
     c41 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-1`).
 
     c42 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-2`).
 
     c43 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-3`).
 
     c44 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-4`).
 
     c45 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-5`).
 
     name : str, default "custom"
         A label for the convention. Any string, case-insensitive.
@@ -487,9 +498,9 @@ class Convention:
     @property
     def c1(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_1-1`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -510,9 +521,9 @@ class Convention:
     @property
     def c21(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-1`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -530,9 +541,9 @@ class Convention:
     @property
     def c22(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-2`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -553,9 +564,9 @@ class Convention:
     @property
     def c31(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-1`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -573,9 +584,9 @@ class Convention:
     @property
     def c32(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-2`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -593,9 +604,9 @@ class Convention:
     @property
     def c33(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-3`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -616,9 +627,9 @@ class Convention:
     @property
     def c41(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-1`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -636,9 +647,9 @@ class Convention:
     @property
     def c42(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-2`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -656,9 +667,9 @@ class Convention:
     @property
     def c43(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-3`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -676,9 +687,9 @@ class Convention:
     @property
     def c44(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-4`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -696,9 +707,9 @@ class Convention:
     @property
     def c45(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-5`). See :ref:`user-guide_theory-behind_spin-hamiltonian` for
+        more details.
 
         Returns
         -------
@@ -872,75 +883,74 @@ class Convention:
 
         Parameters
         ----------
+
         multiple_counting : bool, optional
-            Whether the pairs of spins are counted multiple times in the Hamiltonian's sums.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Whether the pairs of spins are counted multiple times in the Hamiltonian's
+            sums. If ``None``, then kept the same as in the original convention.
 
         spin_normalized : bool, optional
             Whether spin vectors/operators are normalized to 1. If ``True``, then spin
-            vectors/operators are normalized.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            vectors/operators are normalized. If ``None``, then kept the same as in the
+            original convention.
 
         c1 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_1-1`). If ``None``, then kept the same as in the original
             convention.
 
         c21 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_2-1`). If ``None``, then kept the same as in the original
             convention.
 
         c22 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_2-2`). If ``None``, then kept the same as in the original
             convention.
 
         c31 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_3-1`). If ``None``, then kept the same as in the original
             convention.
 
         c32 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_3-2`). If ``None``, then kept the same as in the original
             convention.
 
         c33 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_3-3`). If ``None``, then kept the same as in the original
             convention.
 
         c41 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-1`). If ``None``, then kept the same as in the original
             convention.
 
         c42 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-2`). If ``None``, then kept the same as in the original
             convention.
 
         c43 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-3`). If ``None``, then kept the same as in the original
             convention.
 
         c44 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-4`). If ``None``, then kept the same as in the original
             convention.
 
         c45 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
+            Numerical factor before sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-5`). If ``None``, then kept the same as in the original
             convention.
 
         name : str, optional
-            A label for the convention. Any string, case-insensitive.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            A label for the convention. Any string, case-insensitive. If ``None``, then
+            kept the same as in the original convention.
 
         Examples
         --------
