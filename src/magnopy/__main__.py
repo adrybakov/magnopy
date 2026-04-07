@@ -63,7 +63,7 @@ def main():
         elif command == "warranty":
             print("\n" + _warranty() + "\n")
         else:
-            raise ValueError(f"Sub-command {args.command} is not recognized.")
+            raise ValueError(f'Sub-command "{command}" is not recognized.')
 
 
 if __name__ == "__main__":
