@@ -252,7 +252,7 @@ Units
 =====
 
 Spin Hamiltonian supports a number of units for its parameters. See
-:ref:`user-guide_usage_units_parameter-units` for the full list of supported units.
+:ref:`user-guide_usage_units_parameters` for the full list of supported units.
 
 By default the units are set to ``meV``. You can consult or change the units of the
 parameters at any moment using :py:attr:`.SpinHamiltonian.units`

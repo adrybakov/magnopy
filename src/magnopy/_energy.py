@@ -269,7 +269,7 @@ class Energy:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
 
@@ -401,7 +401,7 @@ class Energy:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
         """
         x, y, z = span_local_rfs(
@@ -529,7 +529,7 @@ class Energy:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
 
@@ -620,7 +620,7 @@ class Energy:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
         _normalize : bool, default True

@@ -565,7 +565,7 @@ class SpinHamiltonian:
 
         By default the Hamiltonian stores and expects parameters in "meV", but the user
         can choose out of the list of the supported units. See
-        :ref:`user-guide_usage_units_parameter-units` for the full list of supported units.
+        :ref:`user-guide_usage_units_parameters` for the full list of supported units.
 
         When Hamiltonian already has some parameters in it, then the change of
         :py:attr:`.SpinHamiltonian.units` will convert all parameter to the new units.
@@ -1068,7 +1068,7 @@ class SpinHamiltonian:
         units : str, optional
             Units in which the  ``parameter``  is given.  Parameters have the the units of
             energy. By default assumes :py:attr:`.SpinHamiltonian.units`.  For the list of
-            the  supported  units  see  :ref:`user-guide_usage_units_parameter-units`.  If
+            the  supported  units  see  :ref:`user-guide_usage_units_parameters`.  If
             given  ``units``  are different from  :py:attr:`.SpinHamiltonian.units`,  then
             the  parameter's  value  will be  converted  automatically from  ``units``  to
             :py:attr:`.SpinHamiltonian.units`.

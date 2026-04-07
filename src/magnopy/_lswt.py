@@ -185,7 +185,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
         Returns
@@ -225,7 +225,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
 
@@ -308,7 +308,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
 
@@ -409,7 +409,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
 
@@ -508,7 +508,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_energy-units` for the full
+            Units of energy. See :ref:`user-guide_usage_units_energy` for the full
             list of supported units.
 
 
@@ -613,7 +613,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
+            Units of energy. See :ref:`user-guide_usage_units_magnon-energy` for the
             full list of supported units.
 
         Returns
@@ -728,7 +728,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
+            Units of energy. See :ref:`user-guide_usage_units_magnon-energy` for the
             full list of supported units.
 
 
@@ -780,7 +780,7 @@ class LSWT:
         units : str, default "meV"
             .. versionadded:: 0.3.0
 
-            Units of energy. See :ref:`user-guide_usage_units_magnon-energy-units` for the
+            Units of energy. See :ref:`user-guide_usage_units_magnon-energy` for the
             full list of supported units.
 
 
