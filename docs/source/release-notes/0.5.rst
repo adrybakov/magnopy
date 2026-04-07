@@ -130,6 +130,13 @@ contact us via :ref:`support`.
                 print(spinham.atoms.names[alpha], spinham.atoms.names[beta], nu)
                 print(parameter)
 
+0.5.2
+=====
+
+**Date**: Undefined
+
+TODO
+
 0.5.1
 =====
 
