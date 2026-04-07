@@ -18,13 +18,13 @@ References
 	Computer Physics Communications, 260, p.107749.
 
 
-On this page we recall the approach and main formulas from [1]_ and [2]_. The
-minimization of the magnetic ground state in Magnopy is implemented with the
-method described in [2]_.
+On this page we recall the approach and main formulas from [1]_ and [2]_. The minimization
+of the magnetic ground state in Magnopy is an implementation of the method described in
+[2]_.
 
-Minimization of the energy function can be formulated as a problem of minimizing the
-function over the :math:`M` vectors of the spin directions
-:math:`\boldsymbol{z}_{\alpha}, \alpha = 1, ..., M`
+Minimization of the energy function (:math:`E^{(0)}` or :math:`E^{(0)} + E^{corr}`) can be
+formulated as a problem of minimizing that function over the :math:`M` vectors of the spin
+directions :math:`\boldsymbol{z}_{\alpha}, \alpha = 1, ..., M`
 
 .. math::
 
@@ -32,8 +32,8 @@ function over the :math:`M` vectors of the spin directions
 
 Directional vectors are unitary vectors and vary on the sphere. This fact introduces
 complications in the minimization procedure as the optimization space is not a vector
-space and the typical (|BFGS|_, for instance) algorithms for linear optimizations can
-not be applied directly. This problem is elegantly solved via parametrization of those
+space and the typical (|BFGS|_, for instance) algorithms for linear optimizations can not
+be applied directly. This problem is elegantly solved via parametrization of directional
 vectors with the exponents of skew-symmetric matrices [2]_. Given an initial guess
 :math:`\boldsymbol{z}_{\alpha}^{(0)}`, any other set of directional vectors
 can be obtained by the following formulae:
@@ -44,48 +44,14 @@ can be obtained by the following formulae:
     =
     e^{\boldsymbol{A}_{\alpha}} \boldsymbol{z}_{\alpha}^{(0)}
     =
-    \cos(\theta) \boldsymbol{z}_{\alpha}^{(0)}
+    \cos(\theta_{\alpha}) \,\boldsymbol{z}_{\alpha}^{(0)}
     +
-    \sin(\theta) (\boldsymbol{r}\times\boldsymbol{z}_{\alpha}^{(0)})
+    \sin(\theta_{\alpha}) \,(\boldsymbol{r}_{\alpha}\times\boldsymbol{z}_{\alpha}^{(0)})
     +
-    (1 - \cos(\theta))\boldsymbol{r} (\boldsymbol{r}\cdot\boldsymbol{z}_{\alpha}^{(0)})
+    (1 - \cos(\theta_{\alpha})) (\boldsymbol{r}_{\alpha} \cdot \boldsymbol{z}_{\alpha}^{(0)})\, \boldsymbol{r}_{\alpha}
 
-where :math:`\boldsymbol{E}_{\alpha}` are skew-symmetric
-matrices and
-
-.. math::
-
-    \theta
-    =
-    \sqrt{\left(a_{\alpha}^x\right)^2
-    +
-    \left(a_{\alpha}^y\right)^2
-    +
-    \left(a_{\alpha}^z\right)^2}
-
-.. math::
-
-    \boldsymbol{r}
-    =
-    \dfrac{(a_{\alpha}^x,
-    a_{\alpha}^y,
-    a_{\alpha}^z)}{\theta}
-
-
-
-The energy function can be rewritten as:
-
-.. math::
-
-	E
-	=
-	F(
-		e^{\boldsymbol{A}_1} \boldsymbol{z}_{1}^{(0)},
-		...,
-		e^{\boldsymbol{A}_I} \boldsymbol{z}_{I}^{(0)}
-	)
-
-Skew-symmetric matrices are parametrized by three numbers as
+where :math:`\boldsymbol{A}_{\alpha}` are skew-symmetric matrices parametrized by three
+real numbers as
 
 .. math::
 
@@ -97,8 +63,41 @@ Skew-symmetric matrices are parametrized by three numbers as
 		-a_{\alpha}^y & a_{\alpha}^x & 0
 	\end{pmatrix}
 
-Finally the energy can be written as a function of vector :math:`\boldsymbol{x}` from
-the vector space :math:`\mathbb{R}^{3I}`:
+and
+
+.. math::
+
+    \theta_{\alpha}
+    =
+    \sqrt{\left(a_{\alpha}^x\right)^2
+    +
+    \left(a_{\alpha}^y\right)^2
+    +
+    \left(a_{\alpha}^z\right)^2}
+
+.. math::
+
+    \boldsymbol{r}_{\alpha}
+    =
+    \dfrac{(a_{\alpha}^x,
+    a_{\alpha}^y,
+    a_{\alpha}^z)}{\theta_{\alpha}}
+
+
+Then energy function can be rewritten as
+
+.. math::
+
+	E
+	=
+	F(
+		e^{\boldsymbol{A}_1} \boldsymbol{z}_{1}^{(0)},
+		...,
+		e^{\boldsymbol{A}_I} \boldsymbol{z}_{I}^{(0)}
+	)
+
+In other words, as a function of vector :math:`\boldsymbol{x}` from the vector space
+:math:`\mathbb{R}^{3I}`:
 
 .. math::
 
@@ -111,7 +110,7 @@ the vector space :math:`\mathbb{R}^{3I}`:
 		a_{I}^x, a_{I}^y, a_{I}^z
 	)
 
-Then energy of the system is minimized with the BFGS algorithm [1]_.
+Then, energy of the system is minimized with the BFGS algorithm [1]_.
 
 
 Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm
@@ -164,9 +163,8 @@ Given :ref:`user-guide_theory-behind_energy-minimization_initial-guess`
 Initial guess
 =============
 
-Initial guess is provided by the user  or randomly generated.
-User provides three components for each direction vector
-:math:`(z_{\alpha}^x, z_{\alpha}^y, z_{\alpha}^z)`.
+Initial guess is provided by the user or randomly generated. User provides three
+components of each directional vector :math:`(z_{\alpha}^x, z_{\alpha}^y, z_{\alpha}^z)`.
 
 .. _user-guide_theory-behind_energy-minimization_initial-hessian:
 
@@ -190,7 +188,7 @@ Gradient of the function F(x)
 =============================
 
 As we choose to update the direction vectors at each step of the BFGS algorithm, then
-the gradient with respect to these variables can be computed as
+the gradient with respect to these variables can be computed as [2]_
 
 .. math::
     \dfrac{\partial F}{\partial\boldsymbol{a}_{\alpha}}
@@ -202,7 +200,7 @@ the gradient with respect to these variables can be computed as
 where :math:`\boldsymbol{t}_{\alpha}` is a torque vector and
 :math:`\boldsymbol{a}_{\alpha} = (a_{\alpha}^x, a_{\alpha}^y, a_{\alpha}^z)`.
 
-The gradient of the energy is computed analytically
+The gradient of the classical energy is computed analytically
 
 .. math::
 
@@ -213,14 +211,15 @@ The gradient of the energy is computed analytically
 where :math:`\tilde{J}_{\alpha}^i` is a single-spin renormalized parameter defined by
 equation S.68 of |paper-2026-SI|_.
 
-
+The gradient of the correction energy :math:`E^{corr}` is computed numerically by the two
+point formula.
 
 .. _user-guide_theory-behind_energy-minimization_line-search:
 
 Line search
 ===========
 
-Line search algorithm find an optimal step length (:math:`\alpha`) for the search
+Line search algorithm defines an optimal step length (:math:`\alpha`) for the search
 direction :math:`\boldsymbol{p}_k`. It is obtained by minimizing the function
 
 .. math::
