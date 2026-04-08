@@ -77,7 +77,7 @@ the existing instance can not be changed, for example
     >>> convention.multiple_counting = False
     Traceback (most recent call last):
     ...
-    AttributeError: It is intentionally forbidden to set properties of convention. Use Convention.get_modified(...) and/or spinham.convention = spinham.convention.get_modified(...)
+    AttributeError: It is intentionally forbidden to set properties of convention. Use convention.get_modified(...) and/or spinham.convention = spinham.convention.get_modified(...)
 
 Thus, Magnopy forces you to create a new instance of the convention class, even if you
 need to change only one property of the convention.

@@ -26,7 +26,7 @@ Convention of spin Hamiltonian
 from magnopy._constants._conventions import _SPINHAM_CONVENTIONS
 from magnopy._exceptions import ConventionError
 
-ATTRIBUTE_ERROR_MESSAGE = "It is intentionally forbidden to change individual properties of convention. Use Convention.get_modified(...) and/or spinham.convention = spinham.convention.get_modified(...)"
+ATTRIBUTE_ERROR_MESSAGE = "It is intentionally forbidden to change individual properties of convention. Use convention.get_modified(...) and/or spinham.convention = spinham.convention.get_modified(...)"
 
 # Save local scope at this moment
 old_dir = set(dir())
