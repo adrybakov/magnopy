@@ -41,13 +41,40 @@ Magnopy is a python code that, given
 :ref:`convention <user-guide_theory-behind_convention>`, computes bosonic (magnon)
 Hamiltonian of the form
 
-.. include:: core-formulas/bosonic-hamiltonian.inc
+.. math::
+    \mathcal{H}
+    &=
+    E^{(0)}
+    +
+    E^{(2)}
+    +
+    \sum_{\beta}
+    \sum_{\boldsymbol{k}}
+    \omega_{\beta}(\boldsymbol{k})
+    \Biggl(
+    b^{\dagger}_{\beta}(\boldsymbol{k})b_{\beta}(\boldsymbol{k})
+    +
+    \dfrac{1}{2}
+    \Biggr)
+    +
+    \dots
+    =\\
+    &=
+    E^{(0)}
+    +
+    \sum_{\boldsymbol{k}}
+    \boldsymbol{\mathcal{B}}^{\dagger}(\boldsymbol{k})
+    \boldsymbol{\mathcal{E}}(\boldsymbol{k})
+    \boldsymbol{\mathcal{B}}(\boldsymbol{k})
+    +
+    \dots
+
 
 where
 
 *   :math:`E^{(0)}` is a classical energy of the vacuum state;
-*   :math:`E^{(2)}` is a quantum correction to the energy of the vacuum state that arises
-    at the level of linear spin wave theory (LSWT);
+*   :math:`E^{(2)}` is a part of the quantum correction to the energy of the vacuum state
+    that arises at the level of linear spin wave theory (LSWT);
 *   :math:`\omega_{\alpha}(\boldsymbol{k})` is magnon dispersion relation derived at the
     level of LSWT;
 
