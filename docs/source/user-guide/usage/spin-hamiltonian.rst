@@ -1229,7 +1229,9 @@ Then, increase the magnetic field from 0 to 1 Tesla in steps of 0.1 Tesla
 
     >>> for i in range(10):
     ...     if i == 0: print("-"*40)
+    ...
     ...     spinham.add_magnetic_field(B = [0.1, 0, 0], alphas=[0, 1])
+    ...
     ...     print(f"B = {np.round(spinham.magnetic_field, decimals=1)} Tesla")
     ...     for nus, alphas, parameter in spinham.p1:
     ...         print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
@@ -1275,3 +1277,180 @@ Then, increase the magnetic field from 0 to 1 Tesla in steps of 0.1 Tesla
     Fe1   [0.11576764 0.         0.        ]
     Fe2   [0.11576764 0.         0.        ]
     ----------------------------------------
+
+The same can be achieved with :py:attr:`.SpinHamiltonian.magnetic_field` or
+:py:meth:`.SpinHamiltonian.set_magnetic_field` as well, see the dropdown below.
+
+.. dropdown:: Alternative styles
+
+    .. doctest::
+
+        >>> spinham = spinham.get_empty()
+
+    .. doctest::
+
+        >>> fields = np.linspace([0.1, 0, 0], [1, 0, 0], 10)
+        >>> for field in fields:
+        ...
+        ...     spinham.set_magnetic_field(B = field, alphas=[0, 1])
+        ...
+        ...     print(f"B = {np.round(spinham.magnetic_field, decimals=1)} Tesla")
+        ...     for nus, alphas, parameter in spinham.p1:
+        ...         print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+        ...     print("-"*40)
+        B = [0.1 0.  0. ] Tesla
+        Fe1   [0.01157676 0.         0.        ]
+        Fe2   [0.01157676 0.         0.        ]
+        ----------------------------------------
+        B = [0.2 0.  0. ] Tesla
+        Fe1   [0.02315353 0.         0.        ]
+        Fe2   [0.02315353 0.         0.        ]
+        ----------------------------------------
+        B = [0.3 0.  0. ] Tesla
+        Fe1   [0.03473029 0.         0.        ]
+        Fe2   [0.03473029 0.         0.        ]
+        ----------------------------------------
+        B = [0.4 0.  0. ] Tesla
+        Fe1   [0.04630705 0.         0.        ]
+        Fe2   [0.04630705 0.         0.        ]
+        ----------------------------------------
+        B = [0.5 0.  0. ] Tesla
+        Fe1   [0.05788382 0.         0.        ]
+        Fe2   [0.05788382 0.         0.        ]
+        ----------------------------------------
+        B = [0.6 0.  0. ] Tesla
+        Fe1   [0.06946058 0.         0.        ]
+        Fe2   [0.06946058 0.         0.        ]
+        ----------------------------------------
+        B = [0.7 0.  0. ] Tesla
+        Fe1   [0.08103735 0.         0.        ]
+        Fe2   [0.08103735 0.         0.        ]
+        ----------------------------------------
+        B = [0.8 0.  0. ] Tesla
+        Fe1   [0.09261411 0.         0.        ]
+        Fe2   [0.09261411 0.         0.        ]
+        ----------------------------------------
+        B = [0.9 0.  0. ] Tesla
+        Fe1   [0.10419087 0.         0.        ]
+        Fe2   [0.10419087 0.         0.        ]
+        ----------------------------------------
+        B = [1. 0. 0.] Tesla
+        Fe1   [0.11576764 0.         0.        ]
+        Fe2   [0.11576764 0.         0.        ]
+        ----------------------------------------
+
+    .. note::
+        Two following examples only work because both atoms are already magnetic. If they
+        are not, then one can promote them to be magnetic with, for example,
+
+        .. doctest::
+
+            >>> spinham.set_magnetic_field(B = [0, 0, 0], alphas=[0, 1])
+
+
+    .. doctest::
+
+        >>> for i in range(10):
+        ...     if i == 0: print("-"*40)
+        ...
+        ...     spinham.magnetic_field += [0.1, 0, 0]
+        ...
+        ...     print(f"B = {np.round(spinham.magnetic_field, decimals=1)} Tesla")
+        ...     for nus, alphas, parameter in spinham.p1:
+        ...         print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+        ...     print("-"*40)
+        ----------------------------------------
+        B = [0.1 0.  0. ] Tesla
+        Fe1   [0.01157676 0.         0.        ]
+        Fe2   [0.01157676 0.         0.        ]
+        ----------------------------------------
+        B = [0.2 0.  0. ] Tesla
+        Fe1   [0.02315353 0.         0.        ]
+        Fe2   [0.02315353 0.         0.        ]
+        ----------------------------------------
+        B = [0.3 0.  0. ] Tesla
+        Fe1   [0.03473029 0.         0.        ]
+        Fe2   [0.03473029 0.         0.        ]
+        ----------------------------------------
+        B = [0.4 0.  0. ] Tesla
+        Fe1   [0.04630705 0.         0.        ]
+        Fe2   [0.04630705 0.         0.        ]
+        ----------------------------------------
+        B = [0.5 0.  0. ] Tesla
+        Fe1   [0.05788382 0.         0.        ]
+        Fe2   [0.05788382 0.         0.        ]
+        ----------------------------------------
+        B = [0.6 0.  0. ] Tesla
+        Fe1   [0.06946058 0.         0.        ]
+        Fe2   [0.06946058 0.         0.        ]
+        ----------------------------------------
+        B = [0.7 0.  0. ] Tesla
+        Fe1   [0.08103735 0.         0.        ]
+        Fe2   [0.08103735 0.         0.        ]
+        ----------------------------------------
+        B = [0.8 0.  0. ] Tesla
+        Fe1   [0.09261411 0.         0.        ]
+        Fe2   [0.09261411 0.         0.        ]
+        ----------------------------------------
+        B = [0.9 0.  0. ] Tesla
+        Fe1   [0.10419087 0.         0.        ]
+        Fe2   [0.10419087 0.         0.        ]
+        ----------------------------------------
+        B = [1. 0. 0.] Tesla
+        Fe1   [0.11576764 0.         0.        ]
+        Fe2   [0.11576764 0.         0.        ]
+        ----------------------------------------
+
+
+
+    .. doctest::
+
+        >>> fields = np.linspace([0.1, 0, 0], [1, 0, 0], 10)
+        >>> for field in fields:
+        ...
+        ...     spinham.magnetic_field = field
+        ...
+        ...     print(f"B = {np.round(spinham.magnetic_field, decimals=1)} Tesla")
+        ...     for nus, alphas, parameter in spinham.p1:
+        ...         print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+        ...     print("-"*40)
+        B = [0.1 0.  0. ] Tesla
+        Fe1   [0.01157676 0.         0.        ]
+        Fe2   [0.01157676 0.         0.        ]
+        ----------------------------------------
+        B = [0.2 0.  0. ] Tesla
+        Fe1   [0.02315353 0.         0.        ]
+        Fe2   [0.02315353 0.         0.        ]
+        ----------------------------------------
+        B = [0.3 0.  0. ] Tesla
+        Fe1   [0.03473029 0.         0.        ]
+        Fe2   [0.03473029 0.         0.        ]
+        ----------------------------------------
+        B = [0.4 0.  0. ] Tesla
+        Fe1   [0.04630705 0.         0.        ]
+        Fe2   [0.04630705 0.         0.        ]
+        ----------------------------------------
+        B = [0.5 0.  0. ] Tesla
+        Fe1   [0.05788382 0.         0.        ]
+        Fe2   [0.05788382 0.         0.        ]
+        ----------------------------------------
+        B = [0.6 0.  0. ] Tesla
+        Fe1   [0.06946058 0.         0.        ]
+        Fe2   [0.06946058 0.         0.        ]
+        ----------------------------------------
+        B = [0.7 0.  0. ] Tesla
+        Fe1   [0.08103735 0.         0.        ]
+        Fe2   [0.08103735 0.         0.        ]
+        ----------------------------------------
+        B = [0.8 0.  0. ] Tesla
+        Fe1   [0.09261411 0.         0.        ]
+        Fe2   [0.09261411 0.         0.        ]
+        ----------------------------------------
+        B = [0.9 0.  0. ] Tesla
+        Fe1   [0.10419087 0.         0.        ]
+        Fe2   [0.10419087 0.         0.        ]
+        ----------------------------------------
+        B = [1. 0. 0.] Tesla
+        Fe1   [0.11576764 0.         0.        ]
+        Fe2   [0.11576764 0.         0.        ]
+        ----------------------------------------
