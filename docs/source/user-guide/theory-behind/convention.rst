@@ -149,6 +149,8 @@ of parameters for each case of bilinear, trilinear and quadlinear terms, discuss
     :py:meth:`magnopy.SpinHamiltonian.add` method to automatically populate the equivalent
     parameters and avoid the manual input of each of them.
 
+.. _user-guide_theory-behind_convention_symmetrization:
+
 Symmetrization of parameters
 ============================
 

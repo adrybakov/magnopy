@@ -299,7 +299,7 @@ class SpinHamiltonian:
     @atoms.setter
     def atoms(self, new_value):
         raise AttributeError(
-            "Change of the atoms dictionary is not supported after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable."
+            "Change of the atoms dictionary is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable."
         )
 
     def _reset_internals(self):

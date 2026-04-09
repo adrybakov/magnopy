@@ -4,24 +4,20 @@
 Spin Hamiltonian
 ****************
 
+.. hint::
+
+    To visualize the one- and two-spin interaction of the Hamiltonian you can use the
+    experimental function of Magnopy :py:func:`.experimental.plot_spinham`.
+
+
+
 For the theoretical background on the spin Hamiltonian see
 :ref:`user-guide_theory-behind_spin-hamiltonian`.
 
-:py:class:`.SpinHamiltonian` class is at the heart of Magnopy. Every calculation starts
-with the definition of some spin Hamiltonian. This class stores the crystal structure,
-convention and all parameters in it.
+Spin Hamiltonian in Magnopy is an instance of the :py:class:`.SpinHamiltonian` class.
 
-.. note::
-    It stores values of spins, but not the spin direction. The motivation behind is that
-    for any spin Hamiltonian the direction of spin vectors would be defined by its
-    parameters (it can be done by finding the ground state of the Hamiltonian).
-    Nevertheless, a calculation is possible for an arbitrary set of spin directions, that
-    are not necessary describe the ground state of the Hamiltonian, therefore, we decided
-    not to include them in this class to avoid confusion and unnecessary bookkeeping.
-
-
-Three objects are required to create spin Hamiltonian :ref:`user-guide_usage_cell`,
-:ref:`user-guide_usage_atoms` and :ref:`user-guide_usage_convention`.
+Three objects are required to create it: :ref:`user-guide_usage_cell`,
+:ref:`user-guide_usage_atoms`, and :ref:`user-guide_usage_convention`.
 
 .. doctest::
 
@@ -30,129 +26,22 @@ Three objects are required to create spin Hamiltonian :ref:`user-guide_usage_cel
     >>> cell = np.eye(3)
     >>> atoms = {
     ...     "names" : ["Fe1", "Fe2"],
-    ...     "species" : ["Fe", "Fe"],
-    ...     "spglib_types" : [1, 1],
     ...     "positions" : [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]],
     ...     "spins" : [5/2, 5/2],
-    ...     "g_factors" : [2, 2]
+    ...     "g_factors" : [2, 2],
+    ...     "spglib_types" : [1, 1],
     ... }
     >>> convention = magnopy.Convention(
-    ...     multiple_counting=True, spin_normalized=False, c1=1, c21=1, c22=1 / 2, c31=1, c41=1
+    ...     multiple_counting=True, spin_normalized=False, c1=1, c21=1, c22=1, c33=1, c45=1,
     ... )
+
+Once those three objects are defined, the spin Hamiltonian can be created as
+
+.. doctest::
+
     >>> spinham = magnopy.SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
 
-
-Adding and removing parameters
-==============================
-
-There are eleven groups of parameters that are defined in
-:ref:`user-guide_theory-behind_spin-hamiltonian`. A property that starts with ``p``
-(i.e. :py:attr:`.SpinHamiltonian.p1`) provides access to the parameters of each group.
-
-To add any parameter to the Hamiltonian use :py:meth:`.SpinHamiltonian.add`) method
-
-.. doctest::
-
-    >>> import numpy as np
-    >>> # Add on-site anisotropy (two spins & one site)
-    >>> # Atoms are identified by their index in the spinham.atoms: 0 for Fe1
-    >>> spinham.add(nus = [(0, 0, 0), (0, 0, 0)], alphas=(0, 0), parameter=np.diag([2, -1, -1]))
-    >>> # Add nearest-neighbor bilinear exchange (two spins & two sites)
-    >>> spinham.add(nus = [(0, 0, 0), (1,0,0)],alphas = (0,0), parameter = np.eye(3), populate_equivalent=True)
-    >>> spinham.add(nus = [(0, 0, 0), (0,1,0)],alphas = (0,0), parameter = np.eye(3), populate_equivalent=True)
-    >>> spinham.add(nus = [(0, 0, 0), (0,0,1)],alphas = (0,0), parameter = np.eye(3), populate_equivalent=True)
-
-The method :py:meth:`.SpinHamiltonian.add`` expects three mandatory arguments.
-
-* ``nus`` - list or tuple of unit cell indices.
-* ``alphas`` - list or tuple of atom indices.
-* ``parameter`` - value of the parameter that is being added.
-
-If you are adding the parameter of the Hamiltonian that involves ``n`` spin operators,
-then the following is expected
-
-* ``len(nus) == n``
-* ``len(alphas) == n``
-* ``len(parameter.shape) == n``
-* ``parameter.shape[i] = 3`` for all ``0 <= i < n``
-
-.. hint::
-    Translational invariance is always enforced by magnopy internally, thus one can skip
-    ``nus[0]`` as it always expected to be ``(0, 0, 0)``. Therefore, the method
-    :py:meth:`.SpinHamiltonian.add` can be called with ``nus`` of length ``n-1`` as well.
-
-Properties that give access to the parameters behave as lists
-
-.. doctest::
-
-    >>> for nus, alphas, parameter in spinham.p21:
-    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="\n")
-    ...
-    Fe1
-    [[ 2.  0.  0.]
-     [ 0. -1.  0.]
-     [ 0.  0. -1.]]
-
-an iterator always returns three elements (for any type of parameter):
-``nus, alphas, parameter`` with the following properties
-
-* ``len(alphas) == len(nus) + 1``
-* ``len(nus[i]) == 3`` for all ``0 <= i < len(nus)``
-* ``len(parameter.shape) == len(alphas)``
-* ``parameter.shape[i] == 3`` for all ``0 <= i < len(alphas)``
-* ``type(nus) == tuple``
-* ``type(nus[i]) == tuple`` for all ``0 <= i < len(nus)``
-* ``type(alphas) == tuple``
-* ``type(alphas[i]) == int`` for all ``0 <= i < len(alphas)``
-* ``type(parameter) == np.ndarray``
-
-The magnetic sites that are associated with the ``parameter`` are identified as
-
-* ``alphas[0]`` located in the ``(0,0,0)`` unit cell
-* ``alphas[i]`` located in the ``nus[i-1]`` unit cell for all ``1 <= i < len(alphas)``
-
-Note that there are 6 parameters in the ``p22``, as ``multiple_counting`` is ``True`` and
-we used ``populate_equivalent=True`` in :py:meth:`.SpinHamiltonian.add`.
-
-.. doctest::
-
-    >>> for nus, alphas, parameter in spinham.p22:
-    ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
-    ...     print(parameter)
-    ...
-    Fe1 Fe1 (-1, 0, 0)
-    [[1. 0. 0.]
-     [0. 1. 0.]
-     [0. 0. 1.]]
-    Fe1 Fe1 (0, -1, 0)
-    [[1. 0. 0.]
-     [0. 1. 0.]
-     [0. 0. 1.]]
-    Fe1 Fe1 (0, 0, -1)
-    [[1. 0. 0.]
-     [0. 1. 0.]
-     [0. 0. 1.]]
-    Fe1 Fe1 (0, 0, 1)
-    [[1. 0. 0.]
-     [0. 1. 0.]
-     [0. 0. 1.]]
-    Fe1 Fe1 (0, 1, 0)
-    [[1. 0. 0.]
-     [0. 1. 0.]
-     [0. 0. 1.]]
-    Fe1 Fe1 (1, 0, 0)
-    [[1. 0. 0.]
-     [0. 1. 0.]
-     [0. 0. 1.]]
-
-To remove a parameter from the Hamiltonian use :py:meth:`.SpinHamiltonian.remove` method
-that expects only ``nus`` and ``alphas`` as arguments.
-
-Cell and atoms
-==============
-
-Spin Hamiltonian class stores cell :py:attr:`.SpinHamiltonian.cell` and atoms
-:py:attr:`.SpinHamiltonian.atoms` as attributes
+The cell and atoms of the Hamiltonian can be viewed at any time as
 
 .. doctest::
 
@@ -161,36 +50,619 @@ Spin Hamiltonian class stores cell :py:attr:`.SpinHamiltonian.cell` and atoms
            [0., 1., 0.],
            [0., 0., 1.]])
     >>> spinham.atoms
-    {'names': ['Fe1', 'Fe2'], 'species': ['Fe', 'Fe'], 'spglib_types': [1, 1], 'positions': [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]], 'spins': [2.5, 2.5], 'g_factors': [2, 2]}
-    >>> # Magnopy adds syntactic sugar to the atoms dictionary inside the SpinHamiltonian class:
-    >>> # a command
-    >>> spinham.atoms.names
-    ['Fe1', 'Fe2']
-    >>> # is equivalent to
-    >>> spinham.atoms["names"]
-    ['Fe1', 'Fe2']
-    >>> # It works with any key of atoms dictionary
-    >>> spinham.atoms.spins
-    [2.5, 2.5]
+    {'names': ['Fe1', 'Fe2'], 'positions': [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]], 'spins': [2.5, 2.5], 'g_factors': [2, 2], 'spglib_types': [1, 1]}
 
-Cell and atoms are not meant to be changed once the Hamiltonian is created
+However, they can not be changed, to avoid inconsistencies later on
 
 .. doctest::
 
     >>> spinham.cell = 2 * np.eye(3)
     Traceback (most recent call last):
     ...
-    AttributeError: Change of the cell attribute is not supported after the creation of SpinHamiltonian instance. If you need to modify cell, then use pre-defined methods of SpinHamiltonian or create a new one.
+    AttributeError: Change of the cell attribute is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.cell is immutable.
     >>> spinham.atoms = {}
     Traceback (most recent call last):
     ...
-    AttributeError: Change of the atoms dictionary is not supported after the creation of SpinHamiltonian instance. If you need to modify atoms, then use pre-defined methods of SpinHamiltonian or create a new one.
+    AttributeError: Change of the atoms dictionary is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable.
+
+.. hint::
+
+    .. doctest::
+
+        >>> spinham.atoms.names
+        ['Fe1', 'Fe2']
+
+    is equivalent to
+
+    .. doctest::
+
+        >>> spinham.atoms["names"]
+        ['Fe1', 'Fe2']
+
+Accessing the parameters
+========================
+
+First of all, one need to be able to access the parameters of the Hamiltonian. The main
+method for that task is :py:meth:`.SpinHamiltonian.parameters`. It returns an iterator
+over the parameters of the Hamiltonian:
+
+.. doctest::
+
+    # For the explanation of nus, alphas, and parameter see next sections
+    >>> for nus, alphas, parameter in spinham.parameters():
+    ...     print(nus, alphas, parameter)
+
+Each element of the iterator is a tuple ``(nus, alphas, parameter)`` with the following
+properties
+
+* ``len(alphas) == n``
+* ``len(nus) == n - 1``
+* atom ``alphas[0]`` is located in the ``(0, 0, 0)`` unit cell.
+* atom ``alphas[i]`` is located in the ``nus[i-1]`` unit cell for all ``1 <= i < n``
+
+``nus`` is a tuple of indices :math:`(\nu_2, ..., \nu_n)`, ``alphas`` is a tuple of
+indices :math:`(\alpha_1, ..., \alpha_n)`, ``parameter`` is the vector/matrix/tensor of
+the interaction parameter
+:math:`J^{i_1, ..., i_n}_{\nu_2, ..., \nu_n; \alpha_1, ..., \alpha_n}`, where ``n`` is the
+amount of spin operators involved in the term. More on the meaning of ``nus``, ``alphas``,
+and ``parameter`` can be found in the next sections.
+
+:py:meth:`.SpinHamiltonian.parameters` can take two optional arguments ``n`` and ``p_n``
+that filter the parameters by eleven types as described in
+:ref:`user-guide_theory-behind_spin-hamiltonian` page.
+
+*   ``n`` selects the number of spin operators in the term of the Hamiltonian.
+*   ``p_n`` for each ``n`` selects one of the sub-types of parameters. For example, for
+    ``n=2`` there are two sub-types of parameters: ``p_n = 1`` and ``p_n = 2``. The first
+    one filters interaction where both spin operators reside at the exact same spot in the
+    real space. The second one filters interactions where spin operators are located at
+    different positions in the real space.
+
+.. hint::
+    There are eleven properties of :py:class:`.SpinHamiltonian` that are equivalent to
+    the call of :py:meth:`.SpinHamiltonian.parameters` with the right values of ``n`` and
+    ``p_n`` as summarized in the table below.
+
+    =============================== ==========================================
+    property                        same as
+    =============================== ==========================================
+    :py:attr:`.SpinHamiltonian.p1`  ``SpinHamiltonian.parameters(n=1, p_n=1)``
+    :py:attr:`.SpinHamiltonian.p21` ``SpinHamiltonian.parameters(n=2, p_n=1)``
+    :py:attr:`.SpinHamiltonian.p22` ``SpinHamiltonian.parameters(n=2, p_n=2)``
+    :py:attr:`.SpinHamiltonian.p31` ``SpinHamiltonian.parameters(n=3, p_n=1)``
+    :py:attr:`.SpinHamiltonian.p32` ``SpinHamiltonian.parameters(n=3, p_n=2)``
+    :py:attr:`.SpinHamiltonian.p33` ``SpinHamiltonian.parameters(n=3, p_n=3)``
+    :py:attr:`.SpinHamiltonian.p41` ``SpinHamiltonian.parameters(n=4, p_n=1)``
+    :py:attr:`.SpinHamiltonian.p42` ``SpinHamiltonian.parameters(n=4, p_n=2)``
+    :py:attr:`.SpinHamiltonian.p43` ``SpinHamiltonian.parameters(n=4, p_n=3)``
+    :py:attr:`.SpinHamiltonian.p44` ``SpinHamiltonian.parameters(n=4, p_n=4)``
+    :py:attr:`.SpinHamiltonian.p45` ``SpinHamiltonian.parameters(n=4, p_n=5)``
+    =============================== ==========================================
+
+So far the spin Hamiltonian that we created does not have any parameters in it
+
+.. doctest::
+
+    >>> len(spinham.parameters())
+    0
+
+.. _user-guide_usage_spin-hamiltonian_adding-parameters:
+
+Adding parameters
+=================
+
+The method :py:meth:`.SpinHamiltonian.add` can be used to add any interaction parameter to
+the spin Hamiltonian.
+
+This method follows the notation of the algebraic form of the Hamiltonian described in
+the :ref:`user-guide_theory-behind_spin-hamiltonian` page and expects two bits of
+information
+
+* Positions of all spin operators involved in a term:
+
+  - ``nus``, that are expected to be either :math:`(\mu, \mu+\nu_2, ..., \mu+\nu_n)` or
+    :math:`(\nu_2, ..., \nu_n)`. More on those two options in the
+    :ref:`user-guide_usage_spin-hamiltonian_translational-symmetry` section.
+
+  - ``alphas``, that are expected to be :math:`(\alpha_1, ..., \alpha_n)`.
+
+* Vector/matrix/tensor of the interaction parameter: ``parameter``.
+
+
+
+Let us give examples for every value of ``1 <= n <= 4``.
+
+:math:`n = 1`
+-------------
+
+The algebraic form of a single term (omitting the convention constant) is
+
+.. math::
+
+    J^{i_1}_{\alpha_1}
+    S_{\mu, \alpha_1}^{i_1}
+
+Let us pick some values for the indices and parameters
+
+.. doctest::
+
+    >>> alpha_1 = 0
+    >>> mu = (0, 0, 0)
+    >>> parameter = np.array([1, 2, 3])
+
+Then the term can be added to the Hamiltonian in two equivalent ways
+
+.. doctest::
+
+    >>> spinham.add(nus = [mu], alphas = [alpha_1], parameter = parameter)
+
+.. doctest::
+    :hide:
+
+    >>> spinham.remove(nus = [mu], alphas = [alpha_1])
+
+or
+
+.. doctest::
+
+    >>> spinham.add(nus = [], alphas = [alpha_1], parameter = parameter)
+
+:math:`n = 2`
+-------------
+
+The algebraic form of a single term (omitting the convention constant) is
+
+.. math::
+
+    J^{i_1, i_2}_{\nu_2; \alpha_1, \alpha_2}
+    S_{\mu, \alpha_1}^{i_1}
+    S_{\mu + \nu_2, \alpha_2}^{i_2}
+
+Let us pick some values for the indices and parameters
+
+.. doctest::
+
+    >>> alpha_1 = 0
+    >>> alpha_2 = 1
+    >>> mu = (0, 0, 0)
+    >>> nu_2 = (-1, -1, -1)
+    >>> parameter = np.eye(3)
+
+Then the term can be added to the Hamiltonian in two equivalent ways
+
+.. doctest::
+
+    >>> mu_plus_nu_2 = tuple([mu[i] + nu_2[i] for i in range(3)])
+    >>> spinham.add(
+    ...     nus = [mu, mu_plus_nu_2],
+    ...     alphas = [alpha_1, alpha_2],
+    ...     parameter = parameter,
+    ... )
+
+.. doctest::
+    :hide:
+
+    >>> spinham.remove(nus = [mu, mu_plus_nu_2], alphas = [alpha_1, alpha_2])
+
+or
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus = [nu_2],
+    ...     alphas = [alpha_1, alpha_2],
+    ...     parameter = parameter,
+    ... )
+
+:math:`n = 3`
+-------------
+
+The algebraic form of a single term (omitting the convention constant) is
+
+.. math::
+
+    J^{i_1, i_2, i_3}_{\nu_2, \nu_3; \alpha_1, \alpha_2, \alpha_3}
+    S_{\mu, \alpha_1}^{i_1}
+    S_{\mu + \nu_2, \alpha_1}^{i_2}
+    S_{\mu + \nu_3, \alpha_3}^{i_3}
+
+Let us pick some values for the indices and parameters
+
+.. doctest::
+
+    >>> alpha_1 = 0
+    >>> alpha_2 = 1
+    >>> alpha_3 = 0
+    >>> mu = (0, 0, 0)
+    >>> nu_2 = (-1, -1, -1)
+    >>> nu_3 = (1, 0, 0)
+    >>> parameter = np.ones((3, 3, 3))
+
+Then the term can be added to the Hamiltonian in two equivalent ways
+
+.. doctest::
+
+    >>> mu_plus_nu_2 = tuple([mu[i] + nu_2[i] for i in range(3)])
+    >>> mu_plus_nu_3 = tuple([mu[i] + nu_3[i] for i in range(3)])
+    >>> spinham.add(
+    ...     nus = [mu, mu_plus_nu_2, mu_plus_nu_3],
+    ...     alphas = [alpha_1, alpha_2, alpha_3],
+    ...     parameter = parameter
+    ... )
+
+.. doctest::
+    :hide:
+
+    >>> spinham.remove(
+    ...     nus = [mu, mu_plus_nu_2, mu_plus_nu_3],
+    ...     alphas = [alpha_1, alpha_2, alpha_3]
+    ... )
+
+or
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus = [nu_2, nu_3],
+    ...     alphas = [alpha_1, alpha_2, alpha_3],
+    ...     parameter = parameter
+    ... )
+
+:math:`n = 4`
+-------------
+
+The algebraic form of a single term (omitting the convention constant) is
+
+.. math::
+
+    J^{i_1, i_2, i_3, i_4}_{\nu_2, \nu_3, \nu_4; \alpha_1, \alpha_2, \alpha_3, \alpha_4}
+    S_{\mu, \alpha_1}^{i_1}
+    S_{\mu + \nu_2, \alpha_2}^{i_2}
+    S_{\mu + \nu_3, \alpha_3}^{i_3}
+    S_{\mu + \nu_4, \alpha_4}^{i_4}
+
+Let us pick some values for the indices and parameters
+
+.. doctest::
+
+    >>> alpha_1 = 0
+    >>> alpha_2 = 1
+    >>> alpha_3 = 0
+    >>> alpha_4 = 1
+    >>> mu = (0, 0, 0)
+    >>> nu_2 = (-1, -1, -1)
+    >>> nu_3 = (1, 0, 0)
+    >>> nu_4 = (0, 1, 0)
+    >>> parameter = np.ones((3, 3, 3, 3))
+
+Then the term can be added to the Hamiltonian in two equivalent ways
+
+.. doctest::
+
+    >>> mu_plus_nu_2 = tuple([mu[i] + nu_2[i] for i in range(3)])
+    >>> mu_plus_nu_3 = tuple([mu[i] + nu_3[i] for i in range(3)])
+    >>> mu_plus_nu_4 = tuple([mu[i] + nu_4[i] for i in range(3)])
+    >>> spinham.add(
+    ...     nus = [mu, mu_plus_nu_2, mu_plus_nu_3, mu_plus_nu_4],
+    ...     alphas = [alpha_1, alpha_2, alpha_3, alpha_4],
+    ...     parameter = parameter
+    ... )
+
+.. doctest::
+    :hide:
+
+    >>> spinham.remove(
+    ...     nus = [mu, mu_plus_nu_2, mu_plus_nu_3, mu_plus_nu_4],
+    ...     alphas = [alpha_1, alpha_2, alpha_3, alpha_4]
+    ... )
+
+or
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus = [nu_2, nu_3, nu_4],
+    ...     alphas = [alpha_1, alpha_2, alpha_3, alpha_4],
+    ...     parameter = parameter
+    ... )
+
+
+
+
+.. _user-guide_usage_spin-hamiltonian_translational-symmetry:
+
+Translational symmetry
+======================
+
+As you can see in the :ref:`user-guide_usage_spin-hamiltonian_adding-parameters` section,
+there are two equivalent methods to add a parameter to the Hamiltonian due to the
+translational symmetry of the underlying lattice.
+
+Note that the interaction parameters do not depend on the unit cell index :math:`\mu`.
+Therefore, it is enough to store only the parameters with a single fixed
+value of the unit cell index :math:`\mu`. We choose that value to be :math:`(0, 0, 0)`.
+
+Therefore, when the user provides ``nus`` with the length of ``n - 1``, Magnopy interprets
+``nus`` as :math:`(\nu_2, ..., \nu_n)` and :math:`\mu = (0, 0, 0)` is implied.
+
+However, when the user provides ``nus`` with the length of ``n``, Magnopy interprets
+``nus`` as :math:`(\mu, \mu+\nu_2, ..., \mu+\nu_n)`. In this case the user is free
+to use any value for :math:`\mu`. Magnopy, will automatically shift all elements of
+``nus`` to enforce :math:`\mu = (0, 0, 0)` (i. e. ``nus[0] == (0, 0, 0)``).
+
+Let us demonstrate the latter with an example. First, we create two copies of the spin
+Hamiltonian with no parameters in it
+
+.. doctest::
+
+    >>> spinham_v1 = spinham.get_empty()
+    >>> spinham_v2 = spinham.get_empty()
+
+Then we add single interaction to the first Hamiltonian
+
+.. doctest::
+
+    >>> spinham_v1.add(nus=[(0,0,0), (1,0,0)], alphas = [0,1], parameter = np.eye(3))
+
+and add transitionally equivalent interaction to the second Hamiltonian
+
+.. doctest::
+
+    >>> spinham_v2.add(nus=[(-3, 34, 21), (-2, 34, 21)], alphas = [0,1], parameter = np.eye(3))
+
+Now both Hamiltonians have the same parameter stored, with :math:`\mu` forced to be
+:math:`(0, 0, 0)`.
+
+.. doctest::
+
+    >>> for nus, alphas, parameter in spinham_v1.p22:
+    ...     print(nus, alphas, parameter, sep="\n")
+    ((1, 0, 0),)
+    (0, 1)
+    [[1. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+    >>> for nus, alphas, parameter in spinham_v2.p22:
+    ...     print(nus, alphas, parameter, sep="\n")
+    ((1, 0, 0),)
+    (0, 1)
+    [[1. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+
+
+Equivalent parameters
+=====================
+
+Symmetrization of parameters that is describe in
+:ref:`user-guide_theory-behind_convention_symmetrization` page is linked to the concept of
+sets of equivalent parameters.
+
+We use the term with two spin operators that are located at different positions in real
+space as an example in this section. Similar logic applies to other terms of the
+Hamiltonian.
+
+First, we create an empty copy of the Hamiltonian
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+
+There are two equivalent parameter in each set in the case of the term with two spin
+operators located at different positions. Consider the interaction from the "Fe1" atom in
+the unit cell :math:`(0, 0, 0)` to the "Fe2" atom in the unit cell :math:`(-1, -1, -1)`
+with the matrix of the interaction parameter
+
+.. doctest::
+
+    >>> parameter1 = [
+    ...     [1, 0.5, 0],
+    ...     [-0.5, 1, 0],
+    ...     [0, 0, 1],
+    ... ]
+
+Its equivalent interaction is the one from the "Fe2" atom in the unit cell
+:math:`(0, 0, 0)` to the "Fe1" atom in the unit cell :math:`(1, 1, 1)` with the matrix of
+the interaction parameter
+
+.. doctest::
+
+    >>> # Note that parameter2 == parameter1.T
+    >>> parameter2 = [
+    ...     [1, -0.5, 0],
+    ...     [0.5, 1, 0],
+    ...     [0, 0, 1],
+    ... ]
+
+The behavior of Magnopy depends on the value of ``multiple_counting`` property of the
+Hamiltonian's convention.
+
+multiple_counting = True
+------------------------
+
+.. doctest::
+
+    >>> spinham.convention.multiple_counting
+    True
+
+In this case the user is expected to add both parameters to the Hamiltonian by hand
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus = [(-1, -1, -1)],
+    ...     alphas = [0, 1],
+    ...     parameter = parameter1
+    ... )
+    >>> spinham.add(
+    ...     nus = [(1, 1, 1)],
+    ...     alphas = [1, 0],
+    ...     parameter = parameter2
+    ... )
+
+The amount of equivalent parameters in the set grows with the increasing amount of
+involved spin operators. For example, sets of the :ref:`ug_tb_sh_4-5` contain 24
+interactions. To avoid the necessity of adding all of them by hand you can pass the
+keyword argument ``populate_equivalent=True`` to the :py:meth:`.SpinHamiltonian.add`
+method.
+
+.. doctest::
+
+    >>> spinham_pe = spinham.get_empty()
+    >>> spinham_pe.add(
+    ...     nus = [(-1, -1, -1)],
+    ...     alphas = [0, 1],
+    ...     parameter = parameter1,
+    ...     populate_equivalent=True
+    ... )
+
+The results are equivalent
+
+.. doctest::
+
+    >>> for nus, alphas, parameter in spinham.p22:
+    ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+    ...     print(nus, alphas, parameter, sep="\n")
+    Fe1 Fe2 (-1, -1, -1)
+    ((-1, -1, -1),)
+    (0, 1)
+    [[ 1.   0.5  0. ]
+     [-0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+    Fe2 Fe1 (1, 1, 1)
+    ((1, 1, 1),)
+    (1, 0)
+    [[ 1.  -0.5  0. ]
+     [ 0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+
+.. doctest::
+
+    >>> for nus, alphas, parameter in spinham_pe.p22:
+    ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+    ...     print(nus, alphas, parameter, sep="\n")
+    Fe1 Fe2 (-1, -1, -1)
+    ((-1, -1, -1),)
+    (0, 1)
+    [[ 1.   0.5  0. ]
+     [-0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+    Fe2 Fe1 (1, 1, 1)
+    ((1, 1, 1),)
+    (1, 0)
+    [[ 1.  -0.5  0. ]
+     [ 0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+
+multiple_counting = False
+-------------------------
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+    >>> spinham.convention = spinham.convention.get_modified(multiple_counting=False)
+    >>> spinham.convention.multiple_counting
+    False
+
+In this case the sum of equivalent parameters is attributed to one of the parameters of
+the set, that is called the representative parameter. Therefore, the user is expected to
+add only one parameter from the set to the Hamiltonian (any parameter from the set will
+work).
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus = [(-1, -1, -1)],
+    ...     alphas = [0, 1],
+    ...     parameter = np.array(parameter1) + np.array(parameter2).T
+    ... )
+
+Then, if you try to add the second parameter from the set, Magnopy will raise an error
+as the representative parameter of the set is already added to the Hamiltonian
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus = [(1, 1, 1)],
+    ...     alphas = [1, 0],
+    ...     parameter = np.array(parameter2) + np.array(parameter1).T
+    ... )
+    Traceback (most recent call last):
+    ...
+    ValueError: Parameter with such specs is already present.
+
+Note that if you change the convention back to ``multiple_counting=True``, the parameters
+are the same as before
+
+.. doctest::
+
+    >>> spinham.convention = spinham.convention.get_modified(multiple_counting=True)
+    >>> for nus, alphas, parameter in spinham.p22:
+    ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+    ...     print(nus, alphas, parameter, sep="\n")
+    Fe1 Fe2 (-1, -1, -1)
+    ((-1, -1, -1),)
+    (0, 1)
+    [[ 1.   0.5  0. ]
+     [-0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+    Fe2 Fe1 (1, 1, 1)
+    ((1, 1, 1),)
+    (1, 0)
+    [[ 1.  -0.5  0. ]
+     [ 0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+
+
+
+
+Removing a parameter
+====================
+
+To remove a parameter from the Hamiltonian use :py:meth:`.SpinHamiltonian.remove` method
+that expects ``nus`` and ``alphas`` as arguments.
+
+First, we add a single parameter to the Hamiltonian
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+    >>> spinham.add(
+    ...     nus = [],
+    ...     alphas = [0],
+    ...     parameter = [1,2,3]
+    ... )
+
+There is one parameter in the Hamiltonian now
+
+.. doctest::
+
+    >>> len(spinham.parameters())
+    1
+
+Now we can remove it
+
+.. doctest::
+
+    >>> spinham.remove(
+    ...     nus = [],
+    ...     alphas = [0],
+    ... )
+
+And there is no parameters in the Hamiltonian anymore
+
+.. doctest::
+
+    >>> len(spinham.parameters())
+    0
+
 
 
 Convention
 ==========
 
-Convention of the Hamiltonian is stored as its attribute (:py:attr:`.SpinHamiltonian.convention`).
+Convention of the Hamiltonian is stored as its attribute
+(:py:attr:`.SpinHamiltonian.convention`).
 
 .. doctest::
 
@@ -200,195 +672,336 @@ Convention of the Hamiltonian is stored as its attribute (:py:attr:`.SpinHamilto
       * Spin vectors are not normalized;
       * c1 = 1.0;
       * c21 = 1.0;
-      * c22 = 0.5;
-      * c31 = 1.0;
+      * c22 = 1.0;
+      * Undefined c31 factor;
       * Undefined c32 factor;
-      * Undefined c33 factor;
-      * c41 = 1.0;
+      * c33 = 1.0;
+      * Undefined c41 factor;
       * Undefined c42 factor;
       * Undefined c43 factor;
       * Undefined c44 factor;
-      * Undefined c45 factor.
+      * c45 = 1.0.
 
-The convention of the Hamiltonian can be changed. If the convention is being changed, then
-the parameters will be adjusted accordingly. For example, if we change the numerical
-factor before the two spins & one site term or remove multiple counting
+The convention of the Hamiltonian can be changed. When the convention is being changed,
+the parameters adjust accordingly.
+
+First, we add some parameters to the Hamiltonian
 
 .. doctest::
 
-    >>> new_convention = spinham.convention.get_modified(multiple_counting=False)
-    >>> spinham.convention = new_convention
+    >>> spinham = spinham.get_empty()
+    >>> # On-site anisotropy
+    >>> spinham.add(nus=[(0,0,0)], alphas=[0,0], parameter = np.diag([2, 1, 1]))
+    >>> spinham.add(nus=[(0,0,0)], alphas=[1,1], parameter = np.diag([2, 1, 1]))
+    >>> # Some of the nearest-neighbors exchange bonds
+    >>> spinham.add(nus=[(0,0,0)], alphas=[0,1], parameter = np.eye(3), populate_equivalent=True)
+
+
+Now you can change the constant before the sum
+
+.. doctest::
+
     >>> for nus, alphas, parameter in spinham.p21:
     ...     print(spinham.atoms.names[alphas[0]], parameter, sep="\n")
-    ...
     Fe1
-    [[ 2.  0.  0.]
-     [ 0. -1.  0.]
-     [ 0.  0. -1.]]
-    >>> for nus, alphas, parameters in spinham.p22:
+    [[2. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+    Fe2
+    [[2. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+    >>> spinham.convention = spinham.convention.get_modified(c21=2)
+    >>> for nus, alphas, parameter in spinham.p21:
+    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="\n")
+    Fe1
+    [[1.  0.  0. ]
+     [0.  0.5 0. ]
+     [0.  0.  0.5]]
+    Fe2
+    [[1.  0.  0. ]
+     [0.  0.5 0. ]
+     [0.  0.  0.5]]
+
+Or the multiple counting of the parameters
+
+.. doctest::
+
+    >>> len(spinham.p22)
+    2
+    >>> for nus, alphas, parameter in spinham.p22:
     ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
-    ...     print(parameters)
-    ...
-    Fe1 Fe1 (0, 0, 1)
+    ...     print(nus, alphas, parameter, sep="\n")
+    Fe1 Fe2 (0, 0, 0)
+    ((0, 0, 0),)
+    (0, 1)
+    [[1. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+    Fe2 Fe1 (0, 0, 0)
+    ((0, 0, 0),)
+    (1, 0)
+    [[1. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+    >>> spinham.convention = spinham.convention.get_modified(multiple_counting=False)
+    >>> len(spinham.p22)
+    1
+    >>> for nus, alphas, parameter in spinham.p22:
+    ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+    ...     print(nus, alphas, parameter, sep="\n")
+    Fe2 Fe1 (0, 0, 0)
+    ((0, 0, 0),)
+    (1, 0)
     [[2. 0. 0.]
      [0. 2. 0.]
      [0. 0. 2.]]
-    Fe1 Fe1 (0, 1, 0)
-    [[2. 0. 0.]
-     [0. 2. 0.]
-     [0. 0. 2.]]
-    Fe1 Fe1 (1, 0, 0)
-    [[2. 0. 0.]
-     [0. 2. 0.]
-     [0. 0. 2.]]
+
+Or any other property of the convention.
 
 .. hint::
 
-    The main principle of changing convention can be formulated as "Physical properties of
-    the Hamiltonian do not depend on its convention".
+    The main principle of changing the convention can be formulated as "Physical
+    properties of the Hamiltonian do not depend on its convention".
 
 
 Units
 =====
 
-Spin Hamiltonian supports a number of units for its parameters. See
-:ref:`user-guide_usage_units_parameters` for the full list of supported units.
+:py:class:`.SpinHamiltonian` supports a number of units for its parameters. See
+:ref:`user-guide_usage_units_parameters` for the full list.
 
-By default the units are set to ``meV``. You can consult or change the units of the
-parameters at any moment using :py:attr:`.SpinHamiltonian.units`
+First, we prepare an empty Hamiltonian for the examples in this section
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+    >>> spinham.convention = spinham.convention.get_modified(multiple_counting=True)
+
+When you use :py:meth:`.SpinHamiltonian.add` method the vector/matrix/tensor that you pass
+as the ``parameter`` argument is interpreted in the units of
+:py:attr:`.SpinHamiltonian.units`. By default, those are milli-electronvolts (``meV``).
 
 .. doctest::
 
     >>> spinham.units
     'meV'
-    >>> spinham.units = 'K'
+
+There is a number of ways to control the units of the parameters. Let us add a single
+exchange interaction to the Hamiltonian to illustrate those.
+
+.. doctest::
+
+    >>> spinham.add(nus=[(0,0,0)], alphas=[0,1], parameter = np.eye(3))
+
+Now the interactions parameter is an isotropic exchange with the value of 1 meV.
+
+.. doctest::
+
+    >>> for _, _, parameter in spinham.p22:
+    ...     print(parameter)
+    [[1. 0. 0.]
+     [0. 1. 0.]
+     [0. 0. 1.]]
+
+You can change the units at the hamiltonian level as
+
+.. doctest::
+
+    >>> spinham.units = 'Joule'
     >>> spinham.units
-    'Kelvin'
-    >>> for nus, alphas, parameter in spinham.p21:
-    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="\n")
-    ...
-    Fe1
-    [[ 23.20903624   0.           0.        ]
-     [  0.         -11.60451812   0.        ]
-     [  0.           0.         -11.60451812]]
+    'Joule'
 
-.. note::
+All parameters of the Hamiltonian are automatically converted to the new units
 
-    Change of units automatically rescales all parameters of the Hamiltonian. The
-    principle is the same as for change of convention: "Physical properties of the
-    Hamiltonian do not depend on its units".
+.. doctest::
 
-    Methods that add parameters to the Hamiltonian (i.e. :py:meth:`.SpinHamiltonian.add_1`,
-    :py:meth:`.SpinHamiltonian.add_21`, etc) interpret the input parameters in the units
-    of :py:attr:`.SpinHamiltonian.units` at the moment of the call.
+    >>> for _, _, parameter in spinham.p22:
+    ...     print(parameter)
+    [[1.60217663e-22 0.00000000e+00 0.00000000e+00]
+     [0.00000000e+00 1.60217663e-22 0.00000000e+00]
+     [0.00000000e+00 0.00000000e+00 1.60217663e-22]]
+
+and all parameters that will be added later on are expected to be given in the units
+of Joule.
+
+Alternatively, you can specify the units of the parameter while adding it to the
+Hamiltonian as
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus=[(0,0,0)],
+    ...     alphas=[1,0],
+    ...     parameter=np.eye(3),
+    ...     units='meV'
+    ... )
+
+Then the parameter is automatically converted to the units of the Hamiltonian
+
+.. doctest::
+
+    >>> for _, _, parameter in spinham.p22:
+    ...     print(parameter)
+    [[1.60217663e-22 0.00000000e+00 0.00000000e+00]
+     [0.00000000e+00 1.60217663e-22 0.00000000e+00]
+     [0.00000000e+00 0.00000000e+00 1.60217663e-22]]
+    [[1.60217663e-22 0.00000000e+00 0.00000000e+00]
+     [0.00000000e+00 1.60217663e-22 0.00000000e+00]
+     [0.00000000e+00 0.00000000e+00 1.60217663e-22]]
+
+
 
 .. _user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic:
 
 Magnetic vs non-magnetic atoms
 ==============================
 
-Magnopy defines magnetic atom as an atom that has at least one parameter of the spin
-Hamiltonian associated with it. Each spin Hamiltonian contains :math:`M` magnetic atoms
-(:py:attr:`.SpinHamiltonian.M`). However, the crystal (cell & atoms) that are used for
-the definition of the spin Hamiltonian can contain :math:`M^{\prime} \ne M` atoms.
+The Hamiltonian can contain any amount of atoms (:py:attr:`.SpinHamiltonian.atoms`).
+However, not all of them necessarily have parameters associated with them.
 
-Attribute :py:attr:`.SpinHamiltonian.atoms` returns a dictionary with all atoms of the
-crystal, while :py:attr:`.SpinHamiltonian.magnetic_atoms` returns dictionary with only
-magnetic atoms. The order of atoms is the same in both.
+In magnopy we classify atoms into two types
 
-The indices in the specification of parameters correspond to the
-:py:attr:`.SpinHamiltonian.atoms`. If you need to convert an index of
-:py:attr:`.SpinHamiltonian.atoms` to an index of
-:py:attr:`.SpinHamiltonian.magnetic_atoms` use the property :py:attr:`.SpinHamiltonian.map_to_magnetic`
+*   Magnetic atoms
 
-.. doctest::
+    Those are the atoms that have at least one parameter of the spin Hamiltonian associated
+    with them. Even if all elements of the corresponding vector/matrix/tensor of the
+    parameter are zeros.
 
-    >>> index_in_atoms = 0
-    >>> index_in_magnetic_atoms = spinham.map_to_magnetic[index_in_atoms]
+*   Non-magnetic atoms
 
-To convert from an index of :py:attr:`.SpinHamiltonian.magnetic_atoms` to the index of
-:py:attr:`.SpinHamiltonian.atoms` use
+    All other atoms.
 
-.. doctest::
+.. note::
 
-    >>> index_in_magnetic_atoms = 0
-    >>> index_in_atoms = spinham.map_to_all[index_in_magnetic_atoms]
+    Concept of magnetic and non-magnetic atoms **is not related** to the physical
+    properties of the atom (such as spin, g-factor, etc.). It only appears in the context
+    of the spin Hamiltonian.
 
+Now, magnetic atoms are the ones that contribute to the physics of the spin Hamiltonian.
+In fact in the |paper-2026|_ only magnetic atoms are considered.
 
-Here is an example that illustrates the difference between all atoms and magnetic atoms
+However, non-magnetic atoms together with the magnetic ones are typically used
+to define the crystal structure and relevant high-symmetry points and paths in the
+reciprocal space. Thus, Magnopy keeps track of all atoms and of the magnetic atoms.
 
-.. doctest::
+*   :py:attr:`.SpinHamiltonian.atoms` contains all atoms of the crystal: both magnetic and
+    non-magnetic.
 
-    >>> # Create a Hamiltonian with three atoms
-    >>> atoms = dict(
-    ...     names=["Cr1", "Cr2", "Cr3"],
-    ...     spins = [3/2, 3/2, 3/2],
-    ...     g_factors=[2, 2, 2],
-    ...     positions=[[0, 0, 0],[0.5, 0, 0],[0, 0.5, 0]]
-    ... )
-    >>> conv = magnopy.Convention(
-    ...     multiple_counting=True,
-    ...     spin_normalized=False,
-    ...     c21=1
-    ... )
-    >>> spinham = magnopy.SpinHamiltonian(
-    ...     cell=np.eye(3),
-    ...     atoms=atoms,
-    ...     convention=conv
-    ... )
+*   :py:attr:`.SpinHamiltonian.magnetic_atoms` contains only magnetic atoms.
 
-At this moment there is no magnetic atoms in the Hamiltonian (in the Magnopy's context),
-even though all atoms of the crystal have non-zero spin value.
+From the perspective of the user the following is important:
+
+*   Atom's indices in the context of interaction parameters of
+    :py:class:`.SpinHamiltonian` are always the indices of
+    :py:attr:`.SpinHamiltonian.atoms`.
+
+*   ``spin_directions`` are always given in the order of
+    :py:attr:`.SpinHamiltonian.magnetic_atoms`.
+
+*   Named interactions (i. e. Zeeman interaction or magnetic dipole-dipole interaction)
+    are always added only to magnetic atoms by default.
+
+*   The order of atoms in :py:attr:`.SpinHamiltonian.magnetic_atoms` is the same as the
+    order of atoms in :py:attr:`.SpinHamiltonian.atoms`.
+
+Let us give an example to illustrate this concept.
 
 .. doctest::
 
-    >>> spinham.M
+    >>> spinham = spinham.get_empty()
+    >>> spinham.atoms.names
+    ['Fe1', 'Fe2']
+
+
+There are no parameters in the Hamiltonian
+
+.. doctest::
+
+    >>> len(spinham.parameters())
     0
-    >>> spinham.magnetic_atoms
-    {'names': [], 'spins': [], 'g_factors': [], 'positions': []}
-    >>> spinham.map_to_magnetic
-    [None, None, None]
-    >>> spinham.map_to_all
+
+Therefore, there are no magnetic atoms in the Hamiltonian
+
+.. doctest::
+
+    >>> spinham.magnetic_atoms.names
     []
 
-Lets add an on-site quadratic anisotropy to the second atom
+Now we add an exchange interaction between "Fe2" from the unit cell :math:`(0, 0, 0)`
+and "Fe2" from the unit cell :math:`(1, 0, 0)`.
 
 .. doctest::
 
-    >>> spinham.add_21(alpha=1, parameter = np.diag([1, 2, 3]))
+    >>> spinham.add(nus=[(0,0,0)], alphas=[1,1], parameter = np.eye(3))
 
-Now second atom has a parameter associated with it, hence it is considered magnetic.
+Now there is a single interaction in the Hamiltonian that involves only "Fe2" atom.
 
 .. doctest::
 
-
-    >>> spinham.M
+    >>> len(spinham.parameters())
     1
-    >>> spinham.magnetic_atoms
-    {'names': ['Cr2'], 'spins': [1.5], 'g_factors': [2], 'positions': [[0.5, 0, 0]]}
-    >>> spinham.map_to_magnetic
-    [None, 0, None]
-    >>> spinham.map_to_all
-    [1]
+    >>> for _, alphas, _ in spinham.parameters():
+    ...     print(alphas)
+    (1, 1)
 
-Two mapping lists can be used to safely convert from one to another
+Therefore, "Fe2" is the only magnetic atom in the Hamiltonian now, while "Fe1" is still
+non-magnetic.
 
 .. doctest::
 
-    >>> # From index of magnetic atom to the index of non-magnetic atom
-    >>> for i in range(spinham.M):
-    ...     print(
-    ...         spinham.magnetic_atoms.names[i],
-    ...         spinham.atoms.names[spinham.map_to_all[i]]
-    ...     )
-    ...
-    Cr2 Cr2
-    >>> # From index of non-magnetic atom to the index of magnetic atom
-    >>> for i in range(len(spinham.atoms.names)):
-    ...     if spinham.map_to_magnetic[i] is not None:
-    ...         print(
-    ...             spinham.magnetic_atoms.names[spinham.map_to_magnetic[i]],
-    ...             spinham.atoms.names[i]
-    ...         )
-    ...
-    Cr2 Cr2
+    >>> spinham.magnetic_atoms.names
+    ['Fe2']
+
+
+.. hint::
+    You can always convert the index of an atom in :py:attr:`.SpinHamiltonian.atoms` to
+    the index of the same atom in :py:attr:`.SpinHamiltonian.magnetic_atoms` and vice
+    versa using the properties :py:attr:`.SpinHamiltonian.map_to_magnetic` and
+    :py:attr:`.SpinHamiltonian.map_to_all`.
+
+    Recall that there are two atoms in the Hamiltonian: "Fe1" and "Fe2".
+    "Fe1" is non-magnetic and "Fe2" is magnetic.
+
+    .. doctest::
+
+        >>> spinham.atoms.names
+        ['Fe1', 'Fe2']
+        >>> spinham.magnetic_atoms.names
+        ['Fe2']
+
+    The index of the "Fe2" atom in :py:attr:`.SpinHamiltonian.atoms` is 1, while its index
+    in :py:attr:`.SpinHamiltonian.magnetic_atoms` is 0, in other words
+
+    .. doctest::
+
+        >>> index_in_atoms = 1
+        >>> index_in_magnetic_atoms = 0
+
+    To convert from one to another use
+
+    .. doctest::
+
+        >>> spinham.map_to_magnetic[index_in_atoms]
+        0
+
+    and
+
+    .. doctest::
+
+        >>> spinham.map_to_all[index_in_magnetic_atoms]
+        1
+
+    :py:attr:`.SpinHamiltonian.map_to_magnetic` and :py:attr:`.SpinHamiltonian.map_to_all`
+    are simply lists of indices
+
+    .. doctest::
+
+        >>> spinham.map_to_magnetic
+        [None, 0]
+        >>> spinham.map_to_all
+        [1]
+
+    Note that you can not convert the index of the "Fe1" atom in
+    :py:attr:`.SpinHamiltonian.atoms` to the index in
+    :py:attr:`.SpinHamiltonian.magnetic_atoms` as atom "Fe1" is non-magnetic.
