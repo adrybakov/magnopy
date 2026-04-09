@@ -43,24 +43,30 @@ def ivuzjo(N=10, J=10):
         -\dfrac{1}{2}
         \sum_{\mu, \nu}
         J
-        \boldsymbol{S}_{\mu}
-        \cdot
-        \boldsymbol{S}_{\mu+\nu}
+        \left(
+            \boldsymbol{S}_{\mu}
+            \cdot
+            \boldsymbol{S}_{\mu+\nu}
+        \right)
         -
         \dfrac{1}{2}
         \sum_{\mu, \nu}
         \dfrac{J}{2}
         \boldsymbol{r}_{\nu}
+        \cdot
         \left(
-        \boldsymbol{S}_{\mu}
-        \times
-        \boldsymbol{S}_{\mu+\nu}
+            \boldsymbol{S}_{\mu}
+            \times
+            \boldsymbol{S}_{\mu+\nu}
         \right)
         +
         \sum_{\mu}
         J
-        \boldsymbol{\hat{z}}
-        \boldsymbol{S}_{\mu}
+        \left(
+            \boldsymbol{\hat{z}}
+            \cdot
+            \boldsymbol{S}_{\mu}
+        \right)
 
     Parameters
     ----------
@@ -96,13 +102,25 @@ def ivuzjo(N=10, J=10):
         >>> import magnopy
         >>> spinham = magnopy.examples.ivuzjo()
 
+    .. doctest::
+
+        >>> spinham.cell
+        array([[10.,  0.,  0.],
+               [ 0., 10.,  0.],
+               [ 0.,  0.,  1.]])
+
+    .. doctest::
+
+        >>> len(spinham.atoms.names)
+        100
+
     """
 
     D = J / 2
 
     BOHR_MAGNETON = 0.057883818060  # meV / Tesla
 
-    cell = np.eye(3, dtype=float) * N
+    cell = np.diag([N, N, 1.0])
 
     atoms = dict(names=[], positions=[], g_factors=[], spins=[])
     names_to_index = {}
@@ -136,7 +154,7 @@ def ivuzjo(N=10, J=10):
                 beta = names_to_index[f"Fe_{i + 2}_{j + 1}"]
 
             parameter = from_iso(iso=J) + from_dmi(dmi=[D, 0, 0])
-            spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=parameter)
+            spinham.add(nus=[nu], alphas=[alpha, beta], parameter=parameter)
 
             # 0 1 0
             if j == N - 1:
@@ -146,45 +164,147 @@ def ivuzjo(N=10, J=10):
                 nu = (0, 0, 0)
                 beta = names_to_index[f"Fe_{i + 1}_{j + 2}"]
             parameter = from_iso(iso=J) + from_dmi(dmi=[0, D, 0])
-            spinham.add_22(alpha=alpha, beta=beta, nu=nu, parameter=parameter)
+            spinham.add(nus=[nu], alphas=[alpha, beta], parameter=parameter)
 
     spinham.add_magnetic_field(B=[0, 0, J / 5 / BOHR_MAGNETON / 2])
 
     return spinham
 
 
-def full_ham():
+def full_ham(M=4):
     r"""
-    Prepares a Hamiltonian with all parameters being populated.
+    Prepares a Hamiltonian with ``M`` atoms on a cubic lattice and all possible types of
+    interaction parameters populated.
+
+    Parameters
+    ----------
+    M : int, default 4
+        Number of magnetic atoms in the unit cell. Must be greater than or equal to 4.
 
     Returns
     -------
 
     spinham : :py:class:`.SpinHamiltonian`
-        Spin Hamiltonian.
+        Spin Hamiltonian with ``M`` atoms and all possible types of interaction
+        parameters populated.
+
+    Notes
+    -----
+
+    This Hamiltonian is not meant to represent any physical system. Its purpose is to be
+    used in the examples of the code, when the creation of the Hamiltonian is not the main
+    point of the example.
 
     Examples
     --------
 
-    To create an example Hamiltonian use
+    To get an instance of the Hamiltonian use
 
     .. doctest::
 
         >>> import magnopy
         >>> spinham = magnopy.examples.full_ham()
+
+    .. doctest::
+
+        >>> spinham.cell
+        array([[1., 0., 0.],
+               [0., 1., 0.],
+               [0., 0., 1.]])
+        >>> spinham.atoms.names
+        ['Fe1', 'Fe2', 'Fe3', 'Fe4']
+        >>> spinham.convention
+        magnopy.Convention(
+            multiple_counting = True,
+            spin_normalized = False,
+            c1 = 1.0,
+            c21 = 1.0,
+            c22 = 1.0,
+            c31 = 1.0,
+            c32 = 1.0,
+            c33 = 1.0,
+            c41 = 1.0,
+            c42 = 1.0,
+            c43 = 1.0,
+            c44 = 1.0,
+            c45 = 1.0,
+            name = "full_ham(m=4)"
+        )
+
+    .. doctest::
+
+        >>> len(spinham.parameters())
+        1660
+        >>> len(spinham.p1)
+        4
+        >>> len(spinham.p21)
+        4
+        >>> len(spinham.p22)
+        20
+        >>> len(spinham.p31)
+        4
+        >>> len(spinham.p32)
+        84
+        >>> len(spinham.p33)
+        24
+        >>> len(spinham.p41)
+        4
+        >>> len(spinham.p42)
+        64
+        >>> len(spinham.p43)
+        60
+        >>> len(spinham.p44)
+        624
+        >>> len(spinham.p45)
+        768
+
+    Note how the amount of parameters changes when we change convention to
+    non-multiple counting:
+
+    .. doctest::
+
+        >>> spinham.convention = spinham.convention.get_modified(
+        ...     multiple_counting=False
+        ... )
+
+        >>> len(spinham.parameters())
+        168
+        >>> len(spinham.p1)
+        4
+        >>> len(spinham.p21)
+        4
+        >>> len(spinham.p22)
+        10
+        >>> len(spinham.p31)
+        4
+        >>> len(spinham.p32)
+        28
+        >>> len(spinham.p33)
+        4
+        >>> len(spinham.p41)
+        4
+        >>> len(spinham.p42)
+        16
+        >>> len(spinham.p43)
+        10
+        >>> len(spinham.p44)
+        52
+        >>> len(spinham.p45)
+        32
+
     """
 
     cell = np.eye(3, dtype=float)
+
+    if M < 4:
+        raise ValueError("M must be an integer greater than or equal to 4.")
+
     atoms = dict(
-        names=["Cr1", "Cr2", "Cr3", "Cr4"],
-        g_factors=[2, 2, 2, 2],
-        spins=[3 / 2, 3 / 2, 3 / 2, 3 / 2],
-        positions=[
-            [0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.5],
-            [0.0, 0.5, 0.0],
-            [0.0, 0.0, 0.5],
-        ],
+        names=[f"Fe{_ + 1}" for _ in range(M)],
+        positions=np.linspace([0, 0, 0], [1, 1, 1], M + 1)[:-1],
+        spins=[5 / 2] * M,
+        g_factors=[2] * M,
+        spglib_types=list(range(M)),
     )
     convention = Convention(
         spin_normalized=False,
@@ -200,6 +320,7 @@ def full_ham():
         c43=1,
         c44=1,
         c45=1,
+        name=f"full_ham(M={M})",
     )
 
     spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
@@ -207,92 +328,157 @@ def full_ham():
     ############################################################################
     #                                 One site                                 #
     ############################################################################
-    for alpha in range(4):
-        spinham.add(nus=(), alphas=(alpha,), parameter=[0, 0, 1])
+    for alpha_1 in range(0, M):
+        # (1) terms
+        spinham.add(nus=[], alphas=[alpha_1], parameter=[-1, 0, 2])
+
+        # (2, 1) terms
+        parameter = np.ones((3, 3))
+        parameter[0, 0] = -1
+        spinham.add(nus=[(0, 0, 0)], alphas=[alpha_1, alpha_1], parameter=parameter)
+
+        # (3, 1) terms
+        parameter = np.ones((3, 3, 3))
+        parameter[0, 0, 0] = 2
         spinham.add(
-            nus=((0, 0, 0),), alphas=(alpha, alpha), parameter=np.diag([0.5, 1, 1.5])
+            nus=[(0, 0, 0), (0, 0, 0)],
+            alphas=[alpha_1, alpha_1, alpha_1],
+            parameter=parameter,
         )
+
+        # (4, 1) terms
+        parameter = np.ones((3, 3, 3, 3))
+        parameter[0, 0, 0, 0] = -1
         spinham.add(
-            nus=((0, 0, 0), (0, 0, 0)),
-            alphas=(alpha, alpha, alpha),
-            parameter=np.ones((3, 3, 3)),
-        )
-        spinham.add(
-            nus=((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-            alphas=(alpha, alpha, alpha, alpha),
-            parameter=0.56 * np.ones((3, 3, 3, 3)),
+            nus=[(0, 0, 0), (0, 0, 0), (0, 0, 0)],
+            alphas=[alpha_1, alpha_1, alpha_1, alpha_1],
+            parameter=parameter,
         )
 
     ############################################################################
     #                                Two sites                                 #
     ############################################################################
 
-    for alpha, beta, nu in [
-        [0, 0, (1, 0, 0)],
-        [1, 1, (1, 0, 0)],
-        [2, 2, (1, 0, 0)],
-        [3, 3, (1, 0, 0)],
-    ]:
-        spinham.add(nus=(nu,), alphas=(alpha, beta), parameter=-np.eye(3))
-        spinham.add(
-            nus=((0, 0, 0), nu),
-            alphas=(alpha, alpha, beta),
-            parameter=-np.ones((3, 3, 3)),
-        )
-        spinham.add(
-            nus=((0, 0, 0), (0, 0, 0), nu),
-            alphas=(alpha, alpha, alpha, beta),
-            parameter=-np.ones((3, 3, 3, 3)),
-        )
-        spinham.add(
-            nus=((0, 0, 0), nu, nu),
-            alphas=(alpha, alpha, beta, beta),
-            parameter=-np.ones((3, 3, 3, 3)),
-        )
+    for alpha_1 in range(0, M):
+        for alpha_2 in range(0, M):
+            if alpha_1 != alpha_2:
+                nu_2 = (0, 0, 0)
+            else:
+                nu_2 = (1, 0, 0)
+            # (2, 2) terms
+            spinham.add(
+                nus=[nu_2],
+                alphas=[alpha_1, alpha_2],
+                parameter=-np.eye(3),
+                populate_equivalent=True,
+                when_present="skip",
+            )
 
-    for alpha, beta in [[0, 1], [1, 2], [2, 3], [3, 1]]:
-        spinham.add(nus=(nu,), alphas=(alpha, beta), parameter=0.5 * np.eye(3))
-        spinham.add(
-            nus=((0, 0, 0), nu),
-            alphas=(alpha, alpha, beta),
-            parameter=0.5 * np.ones((3, 3, 3)),
-        )
-        spinham.add(
-            nus=((0, 0, 0), (0, 0, 0), nu),
-            alphas=(alpha, alpha, alpha, beta),
-            parameter=0.5 * np.ones((3, 3, 3, 3)),
-        )
-        spinham.add(
-            nus=((0, 0, 0), nu, nu),
-            alphas=(alpha, alpha, beta, beta),
-            parameter=0.5 * np.ones((3, 3, 3, 3)),
-        )
+            # (3, 2) terms
+            parameter = np.ones((3, 3, 3))
+            parameter[0, 0, 1] = -1
+            spinham.add(
+                nus=[(0, 0, 0), nu_2],
+                alphas=[alpha_1, alpha_1, alpha_2],
+                parameter=parameter,
+                populate_equivalent=True,
+                when_present="skip",
+            )
+
+            # (4, 2) terms
+            parameter = np.ones((3, 3, 3, 3))
+            parameter[0, 0, 0, 1] = -1
+            spinham.add(
+                nus=[(0, 0, 0), (0, 0, 0), nu_2],
+                alphas=[alpha_1, alpha_1, alpha_1, alpha_2],
+                parameter=parameter,
+                populate_equivalent=True,
+                when_present="skip",
+            )
+
+            # (4, 3) terms
+            parameter = np.ones((3, 3, 3, 3))
+            parameter[0, 1, 0, 1] = -1
+            spinham.add(
+                nus=[(0, 0, 0), nu_2, nu_2],
+                alphas=[alpha_1, alpha_1, alpha_2, alpha_2],
+                parameter=parameter,
+                populate_equivalent=True,
+                when_present="skip",
+            )
 
     ############################################################################
     #                                Three sites                               #
     ############################################################################
-    for alpha, beta, gamma, nu, _lambda in [[0, 1, 2, (0, 0, 0), (0, 0, 0)]]:
-        spinham.add(
-            nus=(nu, _lambda),
-            alphas=(alpha, beta, gamma),
-            parameter=0.3 * np.ones((3, 3, 3)),
-        )
-        spinham.add(
-            nus=((0, 0, 0), nu, _lambda),
-            alphas=(alpha, alpha, beta, gamma),
-            parameter=0.3 * np.ones((3, 3, 3, 3)),
-        )
+
+    for alpha_1 in range(0, M):
+        for alpha_2 in range(0, M):
+            for alpha_3 in range(0, M):
+                if alpha_1 == alpha_2:
+                    nu_2 = (1, 0, 0)
+                else:
+                    nu_2 = (0, 0, 0)
+
+                if alpha_1 != alpha_3 and alpha_2 != alpha_3:
+                    nu_3 = (0, 0, 0)
+                else:
+                    nu_3 = (0, 1, 0)
+
+                # (3, 3) terms
+                parameter = np.ones((3, 3, 3))
+                parameter[0, 1, 1] = -1
+                spinham.add(
+                    nus=[nu_2, nu_3],
+                    alphas=[alpha_1, alpha_1, alpha_2],
+                    parameter=parameter,
+                    populate_equivalent=True,
+                    when_present="skip",
+                )
+
+                # (4, 4) terms
+                parameter = np.ones((3, 3, 3, 3))
+                parameter[0, 1, 1, 1] = -1
+                spinham.add(
+                    nus=[(0, 0, 0), nu_2, nu_3],
+                    alphas=[alpha_1, alpha_1, alpha_2, alpha_3],
+                    parameter=parameter,
+                    populate_equivalent=True,
+                    when_present="skip",
+                )
+
     ############################################################################
     #                                Four sites                                #
     ############################################################################
-    for alpha, beta, gamma, epsilon, nu, _lambda, rho in [
-        [0, 1, 2, 3, (0, 0, 0), (0, 0, 0), (0, 0, 0)]
-    ]:
-        spinham.add(
-            alphas=(alpha, beta, gamma, epsilon),
-            nus=(nu, _lambda, rho),
-            parameter=-0.1 * np.ones((3, 3, 3, 3)),
-        )
+
+    for alpha_1 in range(0, M):
+        for alpha_2 in range(0, M):
+            for alpha_3 in range(0, M):
+                for alpha_4 in range(0, M):
+                    if alpha_1 == alpha_2:
+                        nu_2 = (1, 0, 0)
+                    else:
+                        nu_2 = (0, 0, 0)
+
+                    if alpha_1 != alpha_3 and alpha_2 != alpha_3:
+                        nu_3 = (0, 0, 0)
+                    else:
+                        nu_3 = (0, 1, 0)
+
+                    if alpha_1 != alpha_4 and alpha_2 != alpha_4 and alpha_3 != alpha_4:
+                        nu_4 = (0, 0, 0)
+                    else:
+                        nu_4 = (0, 0, 1)
+
+                # (4, 5) terms
+                parameter = np.ones((3, 3, 3, 3))
+                parameter[1, 1, 1, 1] = -1
+                spinham.add(
+                    nus=[(0, 0, 0), nu_2, nu_3, nu_4],
+                    alphas=[alpha_1, alpha_2, alpha_3, alpha_4],
+                    parameter=parameter,
+                    populate_equivalent=True,
+                    when_present="skip",
+                )
 
     return spinham
 

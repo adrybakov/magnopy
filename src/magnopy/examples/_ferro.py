@@ -50,13 +50,17 @@ def cubic_ferro_nn(
         \dfrac{1}{2}
         \sum_{\mu, \nu}
         J_{iso}
-        \boldsymbol{S}_{\mu}
-        \cdot
-        \boldsymbol{S}_{\mu+\nu}
+        \left(
+            \boldsymbol{S}_{\mu}
+            \cdot
+            \boldsymbol{S}_{\mu+\nu}
+        \right)
         +
         \sum_{\mu}
         \boldsymbol{S}_{\mu}
+        \cdot
         \boldsymbol{J}_{21}
+        \cdot
         \boldsymbol{S}_{\mu}
 
     where
@@ -105,22 +109,34 @@ def cubic_ferro_nn(
 
         >>> import magnopy
         >>> spinham = magnopy.examples.cubic_ferro_nn()
+
+    .. doctest::
+
         >>> spinham.cell
         array([[1., 0., 0.],
                [0., 1., 0.],
                [0., 0., 1.]])
+
+    .. doctest::
+
         >>> spinham.atoms.names
         ['X']
         >>> spinham.atoms.spins
         [0.5]
         >>> spinham.atoms.positions
         [[0, 0, 0]]
+
+    .. doctest::
+
         >>> for _, alphas, parameter in spinham.p21:
         ...     print(alphas[0], parameter, sep="\n")
         0
         [[0. 0. 0.]
          [0. 0. 0.]
          [0. 0. 0.]]
+
+    .. doctest::
+
         >>> for nus, alphas, parameter in spinham.p22:
         ...     print(alphas[0], alphas[1], nus[0])
         ...     print(parameter)
@@ -221,6 +237,8 @@ def cubic_ferro_nn(
 
     *   Dimensionality of the nearest neighbors
 
+        1D ferromagnet
+
         .. doctest::
 
             >>> import magnopy
@@ -236,6 +254,11 @@ def cubic_ferro_nn(
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]
+
+        2D ferromagnet
+
+        .. doctest::
+
             >>> spinham = magnopy.examples.cubic_ferro_nn(dimensions=2)
             >>> for nus, alphas, parameter in spinham.p22:
             ...     print(alphas[0], alphas[1], nus[0])
@@ -245,6 +268,39 @@ def cubic_ferro_nn(
              [-0. -1. -0.]
              [-0. -0. -1.]]
             0 0 (0, -1, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, 1, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (1, 0, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+
+        3D ferromagnet (default)
+
+        .. doctest::
+
+            >>> spinham = magnopy.examples.cubic_ferro_nn(dimensions=3)
+            >>> for nus, alphas, parameter in spinham.p22:
+            ...     print(alphas[0], alphas[1], nus[0])
+            ...     print(parameter)
+            0 0 (-1, 0, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, -1, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, 0, -1)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, 0, 1)
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]
