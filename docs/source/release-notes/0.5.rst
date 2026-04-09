@@ -135,7 +135,10 @@ contact us via :ref:`support`.
 
 **Date**: Undefined
 
-TODO
+New features
+------------
+
+* :py:attr:`magnopy.SpinHamiltonian.M_prime`.
 
 0.5.1
 =====

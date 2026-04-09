@@ -302,6 +302,29 @@ class SpinHamiltonian:
             "Change of the atoms dictionary is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable."
         )
 
+    @property
+    def M_prime(self):
+        r"""
+        Number of atoms in the unit cell.
+
+        .. versionadded:: 0.5.2
+
+        Both magnetic and non-magnetic atoms are counted.
+
+        Returns
+        -------
+
+        M_prime : int
+            Number of atoms (magnetic and non-magnetic) in the unit cell.
+
+        See Also
+        --------
+        M
+
+        """
+
+        return len(self.atoms.names)
+
     def _reset_internals(self):
         self._map_to_magnetic = None
         self._map_to_all = None
@@ -397,18 +420,17 @@ class SpinHamiltonian:
     @property
     def M(self):
         r"""
-        Number of spins (magnetic atoms) in the unit cell.
+        Number of magnetic atoms in the unit cell.
 
         Returns
         -------
 
         M : int
-            Number of spins (magnetic atoms) in the unit cell.
+            Number of magnetic atoms in the unit cell.
 
         See Also
         --------
-
-        magnetic_atoms
+        M_prime
         """
 
         return len(self.magnetic_atoms.names)
