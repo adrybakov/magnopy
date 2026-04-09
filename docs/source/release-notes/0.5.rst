@@ -185,6 +185,7 @@ New features
 * :py:attr:`magnopy.SpinHamiltonian.M_prime`.
 * :py:func:`magnopy.SpinHamiltonian.set_magnetic_field`.
 * :py:attr:`magnopy.SpinHamiltonian.magnetic_field`.
+* :py:attr:`magnopy.SpinHamiltonian.zeeman_parameters`.
 
 
 0.5.1

@@ -1025,4 +1025,253 @@ non-magnetic.
 Magnetic field
 ==============
 
-TODO
+Zeeman interaction can be added by hand using the :py:meth:`.SpinHamiltonian.add`, as
+it has the form of :ref:`ug_tb_sh_1-1`. However, we recommend to use pre-defined method
+that does it automatically: :py:meth:`.SpinHamiltonian.set_magnetic_field`.
+
+Zeeman term in Magnopy is stored as part of the :py:attr:`.SpinHamiltonian.p1`
+parameters. The value of the magnetic flux density :math:`\boldsymbol{B}` can be accessed
+via :py:attr:`.SpinHamiltonian.magnetic_field` property.
+
+First, we create an empty Hamiltonian
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+    >>> spinham.units = "meV"
+
+Which atoms?
+------------
+
+By default magnetic field is being added only to the
+:ref:`magnetic atoms <user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic>`.
+Since there is no magnetic atoms in the Hamiltonian
+
+.. doctest::
+
+    >>> spinham.magnetic_atoms.names
+    []
+
+addition of the magnetic field has any effect
+
+.. doctest::
+
+    >>> spinham.set_magnetic_field([1, 0, 0])
+    >>> len(spinham.p1)
+    0
+    >>> spinham.magnetic_field
+    array([0., 0., 0.])
+
+Typically, there are some interaction parameters are added to the Hamiltonian and the
+magnetic atoms are clearly identified. For example, exchange interaction
+
+.. doctest::
+
+    >>> spinham.add(nus=[(0, 0, 0)], alphas=[0, 1], parameter = np.eye(3))
+    >>> spinham.magnetic_atoms.names
+    ['Fe1', 'Fe2']
+
+If we add the magnetic field now
+
+.. doctest::
+
+    >>> spinham.set_magnetic_field([1, 0, 0])
+    >>> len(spinham.p1)
+    2
+    >>> for nus, alphas, parameter in spinham.p1:
+    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+    Fe1   [0.11576764 0.         0.        ]
+    Fe2   [0.11576764 0.         0.        ]
+
+We see that the Zeeman term is being added to both atoms, as they are both magnetic now.
+
+
+Alternatively, you can control explicitly to which atoms the magnetic field is
+being added by supplying the atom's indices of :py:attr:`.SpinHamiltonian.atoms`
+
+.. doctest::
+
+    >>> # First, reset the parameters of the Hamiltonian
+    >>> spinham = spinham.get_empty()
+    >>> # There is no magnetic atoms in the Hamiltonian
+    >>> spinham.magnetic_atoms.names
+    []
+
+.. doctest::
+
+    >>> spinham.set_magnetic_field([1, 0, 0], alphas=[0, 1])
+
+
+We can check that the magnetic field have been added to both atoms, even though they were
+non-magnetic
+
+.. doctest::
+
+    >>> len(spinham.p1)
+    2
+    >>> for nus, alphas, parameter in spinham.p1:
+    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+    Fe1   [0.11576764 0.         0.        ]
+    Fe2   [0.11576764 0.         0.        ]
+
+Note that now both atoms are magnetic, as they both have Zeeman interaction associated with
+them.
+
+.. doctest::
+
+    >>> spinham.magnetic_atoms.names
+    ['Fe1', 'Fe2']
+
+Shortcut
+--------
+
+The value of the magnetic field can be checked at any time as
+
+.. doctest::
+
+    >>> spinham.magnetic_field
+    array([1., 0., 0.])
+
+Moreover, you can use the same property to set its value as well
+
+.. doctest::
+
+    >>> spinham.magnetic_field = [0, 2, 0]
+    >>> spinham.magnetic_field
+    array([0., 2., 0.])
+    >>> for nus, alphas, parameter in spinham.p1:
+    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+    Fe1   [0.         0.23153527 0.        ]
+    Fe2   [0.         0.23153527 0.        ]
+
+The latter is equivalent to
+
+.. doctest::
+
+    >>> spinham.set_magnetic_field([0, 2, 0])
+    >>> spinham.magnetic_field
+    array([0., 2., 0.])
+    >>> for nus, alphas, parameter in spinham.p1:
+    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+    Fe1   [0.         0.23153527 0.        ]
+    Fe2   [0.         0.23153527 0.        ]
+
+Note that the method :py:meth:`.SpinHamiltonian.set_magnetic_field` is more powerful as it
+allows to control with which atoms the magnetic field is interacting, while the property
+:py:attr:`.SpinHamiltonian.magnetic_field` always adds Zeeman term only for the magnetic
+atoms.
+
+Zeeman parameters
+-----------------
+
+Zeeman interaction is store as part of the :ref:`ug_tb_sh_1-1` of the Hamiltonian.
+The combined effect of the Zeeman term and any other :ref:`ug_tb_sh_1-1` can always be
+checked by looking at :py:attr:`.SpinHamiltonian.p1` parameters.
+
+However, if you would like to check the Zeeman parameters by themselves, you can use the
+property :py:attr:`.SpinHamiltonian.zeeman_parameters`.
+
+Let us illustrate with an example. First, create an empty Hamiltonian
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+
+Then add some non-Zeeman :ref:`ug_tb_sh_1-1` to the Hamiltonian
+
+.. doctest::
+
+    >>> spinham.add(nus=[], alphas=[0], parameter = [-1, 0, 2])
+    >>> spinham.add(nus=[], alphas=[1], parameter = [0, 0, 7])
+
+Now add the Zeeman term
+
+.. doctest::
+
+    >>> spinham.magnetic_field = [1, 0, 0]
+
+If we check the :py:attr:`.SpinHamiltonian.p1` parameters now, we see that the
+Zeeman term is being added to the existing :ref:`ug_tb_sh_1-1`
+
+.. doctest::
+
+    >>> for nus, alphas, parameter in spinham.p1:
+    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+    Fe1   [-0.88423236  0.          2.        ]
+    Fe2   [0.11576764 0.         7.        ]
+
+However, one can access the Zeeman parameters separately as
+
+.. doctest::
+
+    >>> for nus, alphas, parameter in spinham.zeeman_parameters:
+    ...     print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+    Fe1   [0.11576764 0.         0.        ]
+    Fe2   [0.11576764 0.         0.        ]
+
+Incremental change
+------------------
+
+The method :py:meth:`.SpinHamiltonian.set_magnetic_field` and the property
+:py:attr:`.SpinHamiltonian.magnetic_field` set the value of the magnetic field. However,
+if you'd like to change the value of the magnetic field incrementally, you can use the
+method :py:meth:`.SpinHamiltonian.add_magnetic_field`.
+
+First, get an empty Hamiltonian
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+
+Then, increase the magnetic field from 0 to 1 Tesla in steps of 0.1 Tesla
+
+.. doctest::
+
+    >>> for i in range(10):
+    ...     if i == 0: print("-"*40)
+    ...     spinham.add_magnetic_field(B = [0.1, 0, 0], alphas=[0, 1])
+    ...     print(f"B = {np.round(spinham.magnetic_field, decimals=1)} Tesla")
+    ...     for nus, alphas, parameter in spinham.p1:
+    ...         print(spinham.atoms.names[alphas[0]], parameter, sep="   ")
+    ...     print("-"*40)
+    ----------------------------------------
+    B = [0.1 0.  0. ] Tesla
+    Fe1   [0.01157676 0.         0.        ]
+    Fe2   [0.01157676 0.         0.        ]
+    ----------------------------------------
+    B = [0.2 0.  0. ] Tesla
+    Fe1   [0.02315353 0.         0.        ]
+    Fe2   [0.02315353 0.         0.        ]
+    ----------------------------------------
+    B = [0.3 0.  0. ] Tesla
+    Fe1   [0.03473029 0.         0.        ]
+    Fe2   [0.03473029 0.         0.        ]
+    ----------------------------------------
+    B = [0.4 0.  0. ] Tesla
+    Fe1   [0.04630705 0.         0.        ]
+    Fe2   [0.04630705 0.         0.        ]
+    ----------------------------------------
+    B = [0.5 0.  0. ] Tesla
+    Fe1   [0.05788382 0.         0.        ]
+    Fe2   [0.05788382 0.         0.        ]
+    ----------------------------------------
+    B = [0.6 0.  0. ] Tesla
+    Fe1   [0.06946058 0.         0.        ]
+    Fe2   [0.06946058 0.         0.        ]
+    ----------------------------------------
+    B = [0.7 0.  0. ] Tesla
+    Fe1   [0.08103735 0.         0.        ]
+    Fe2   [0.08103735 0.         0.        ]
+    ----------------------------------------
+    B = [0.8 0.  0. ] Tesla
+    Fe1   [0.09261411 0.         0.        ]
+    Fe2   [0.09261411 0.         0.        ]
+    ----------------------------------------
+    B = [0.9 0.  0. ] Tesla
+    Fe1   [0.10419087 0.         0.        ]
+    Fe2   [0.10419087 0.         0.        ]
+    ----------------------------------------
+    B = [1. 0. 0.] Tesla
+    Fe1   [0.11576764 0.         0.        ]
+    Fe2   [0.11576764 0.         0.        ]
+    ----------------------------------------

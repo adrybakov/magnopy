@@ -61,61 +61,6 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
-def _merge(list1: list, list2: list) -> list:
-    r"""
-    Merge two sorted parameter lists for any term.
-
-    Lists of parameters have the form
-
-    .. code-block:: python
-
-        list = [[specs, parameter], ...]
-
-    Comparison is based on specs.
-
-    Parameter
-    ---------
-    list1 : list
-        First list of parameters.
-    list2 : list
-        Second list of parameters.
-
-    Returns
-    -------
-    merged_list : list
-        Merged list of parameters.
-    """
-
-    list1 = deepcopy(list1)
-    list2 = deepcopy(list2)
-
-    merged_list = []
-
-    i1 = 0
-    i2 = 0
-
-    while i1 < len(list1) or i2 < len(list2):
-        if i1 >= len(list1):
-            merged_list.append(list2[i2])
-            i2 += 1
-        elif i2 >= len(list2):
-            merged_list.append(list1[i1])
-            i1 += 1
-        elif list1[i1][:-1] == list2[i2][:-1]:
-            merged_list.append(list1[i1])
-            merged_list[-1][-1] = merged_list[-1][-1] + list2[i2][-1]
-            i1 += 1
-            i2 += 1
-        elif list1[i1][:-1] < list2[i2][:-1]:
-            merged_list.append(list1[i1])
-            i1 += 1
-        else:
-            merged_list.append(list2[i2])
-            i2 += 1
-
-    return merged_list
-
-
 class SpinHamiltonian:
     r"""
     Spin Hamiltonian.
@@ -158,6 +103,10 @@ class SpinHamiltonian:
         self._magnetic_atoms = None
         self._map_to_magnetic = None
         self._map_to_all = None
+
+        # To keep track of the external magnetic field
+        self._magnetic_field = np.zeros(3, dtype=float)
+        self._zeeman_parameters = _InteractionParameters()
 
         self._convention = convention
 
@@ -230,6 +179,10 @@ class SpinHamiltonian:
         atoms : dict (with added sugar)
             Dictionary with the atoms.
 
+        See Also
+        --------
+        M_prime
+
         Notes
         -----
 
@@ -250,9 +203,6 @@ class SpinHamiltonian:
             ...
             AttributeError: Change of the atoms dictionary is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable.
 
-        See Also
-        --------
-        M_prime
         """
 
         return self._atoms
@@ -622,29 +572,48 @@ class SpinHamiltonian:
     ############################################################################
     #                          External magnetic field                         #
     ############################################################################
-    # ARGUMENT "h" DEPRECATED since 0.4.0
-    # Remove in May of 2026
-    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
+
+    @property
+    def magnetic_field(self):
         r"""
-        Adds external magnetic field to the Hamiltonian in the form of one spin
-        parameters.
+        External magnetic field applied to the Hamiltonian.
 
-        .. math::
+        Returns
+        -------
+        B : (3, ) :numpy:`ndarray`
+            Vector of magnetic field (magnetic flux density, B) in the units of
+            Tesla.
 
-            \mu_B  g_{\alpha} \boldsymbol{B}\cdot\boldsymbol{S}_{\mu,\alpha}
-            =
-            C_1
-            \boldsymbol{S}_{\mu,\alpha}
-            \cdot
-            \boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})
+        See Also
+        --------
+        set_magnetic_field
 
-        where :math:`\boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})` is defined as
+        Notes
+        -----
 
-        .. math::
+        See :py:meth:`.SpinHamiltonian.set_magnetic_field` for more details.
 
-            \boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})
-            =
-            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{B}
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_magnetic-field` for more details on
+        how to use this property.
+        """
+
+        if len(self._zeeman_parameters) == 0:
+            self._magnetic_field = np.zeros(3, dtype=float)
+
+        return self._magnetic_field
+
+    @magnetic_field.setter
+    def magnetic_field(self, new_value):
+        self.set_magnetic_field(B=new_value)
+
+    def set_magnetic_field(self, B=None, alphas=None) -> None:
+        r"""
+        Sets a uniform external magnetic field applied to the Hamiltonian.
+
+        .. versionadded:: 0.5.2
 
         Parameters
         ----------
@@ -654,10 +623,145 @@ class SpinHamiltonian:
             Tesla.
 
         alphas : list of int, optional
-            Indices of atoms, to which the magnetic field effect should be added.
+            Indices of atoms, to which the magnetic field effect should be added. If
+            none give, then magnetic field is added only to the
+            :py:attr:`.SpinHamiltonian.magnetic_atoms`. See
+            :ref:`user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic` for more
+            details on the difference between magnetic and non-magnetic atoms.
+
+        See Also
+        --------
+
+        magnetic_field
+
+        Notes
+        -----
+
+        The Zeeman term is defined as
+
+        .. math::
+            \sum_{\mu, \alpha}
+            \mu_B  g_{\alpha} \boldsymbol{B}\cdot\boldsymbol{S}_{\mu,\alpha}
+
+
+        We map this term to the :ref:`ug_tb_sh_1-1`, which are written as
+
+        .. math::
+
+            C_1
+            \sum_{\mu, \alpha}
+            \boldsymbol{S}_{\mu,\alpha}
+            \cdot
+            \boldsymbol{J}^{Zeeman}_{\alpha}
+
+        where :math:`\boldsymbol{J}^{Zeeman}_{\alpha}` is defined as
+
+        .. math::
+
+            \boldsymbol{J}^{Zeeman}_{\alpha}
+            =
+            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{B}
+
+        Zeeman energy is minimal when the magnetic moment is aligned with the direction of
+        the external field. Therefore, the spin vector shall be directed opposite to the
+        direction of the magnetic field. In other words, in the ground state
+        :math:`\ket{0}` of the Zeeman Hamiltonian, the eigenvalue of the spin operator
+        :math:`\boldsymbol{S}_{\mu,\alpha}^{||\boldsymbol{B}}` shall be equal to
+        :math:`-S_{\alpha}`. Therefore, the g-factors (``spinham.atoms.g_factors``) are
+        expected to be positive when the Zeeman term is written as we do in Magnopy.
+
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_magnetic-field` for more details on
+        how to use this method.
+        """
+
+        if B is None:
+            raise TypeError(
+                "SpinHamiltonian.set_magnetic_field() missing 1 required argument: 'B'"
+            )
+
+        B = np.array(B, dtype=float)
+
+        if B.shape != (3,):
+            raise ValueError(
+                f"Expected magnetic field to be a vector of shape (3,), got {B.shape}."
+            )
+
+        if self.convention._c1 is None:
+            self.convention._c1 = 1.0
+
+        mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
+
+        if alphas is None:
+            alphas = self.map_to_all
+        else:
+            alphas = sorted(alphas)
+
+        self._magnetic_field = B
+
+        zeeman_parameters = [
+            mu_B * self.atoms.g_factors[alpha] * B / self.convention.c1
+            for alpha in alphas
+        ]
+
+        zeeman_term = _InteractionParameters()
+
+        for alpha, parameter in zip(alphas, zeeman_parameters):
+            zeeman_term.add(specs=(1, 1, (), (alpha,)), parameter=parameter)
+
+        if len(self._zeeman_parameters) != 0:
+            self._parameters = self._parameters - self._zeeman_parameters
+
+        self._zeeman_parameters = zeeman_term
+
+        self._parameters = self._parameters + zeeman_term
+
+        self._reset_internals()
+
+    @property
+    def zeeman_parameters(self):
+        r"""
+        Returns an iterator over Zeeman parameters of the Hamiltonian.
+
+        .. versionadded:: 0.5.2
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian that originate from the Zeeman
+            interaction. See :py:attr:`.SpinHamiltonian.parameters` for more details on
+            the returned iterator.
+
+        See Also
+        --------
+        set_magnetic_field
+        magnetic_field
+        parameters
+        """
+
+        return _InteractionParametersIterator(
+            parameters=self._zeeman_parameters, n=1, p_n=1
+        )
+
+    # ARGUMENT "h" DEPRECATED since 0.4.0
+    # Remove in May of 2026
+    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
+        r"""
+        Adds external magnetic field to the Hamiltonian.
+
+        Parameters
+        ----------
+
+        B : (3, ) |array-like|_
+            See :py:attr:`.SpinHamiltonian.set_magnetic_field` for details.
+
+        alphas : list of int, optional
+            See :py:attr:`.SpinHamiltonian.set_magnetic_field` for details.
 
         h : (3, ) |array-like|_
-            Vector of magnetic field given in the units of Tesla.
 
             .. deprecated:: 0.4.0
                 The argument will be removed in May of 2026. Use ``B`` instead.
@@ -665,16 +769,15 @@ class SpinHamiltonian:
         Notes
         -----
 
-        To minimize the energy the magnetic moment will be aligned with the
-        direction of the external field. But spin vector will be directed opposite to the
-        direction of the magnetic field.
+        The call ``spinham.add_magnetic_field(B = B, alphas = alphas)`` is equivalent to
+        the call
+        ``spinham.set_magnetic_field(B = B + spinham.magnetic_field, alphas = alphas)``.
 
-        * If ``alphas is None``, then parameters of the magnetic field added
-          only to the magnetic atoms. In other words only to atoms that already have
-          at least one other parameter (any) associated with it.
-        * If ``alpha is not None``, then parameters of magnetic field are added
-          to the atoms with the provided indices (based on the order in
-          :py:attr:`.SpinHamiltonian.atoms`)
+        In other words, this method "adds" the magnetic field to the Hamiltonian whether
+        there was some magnetic field before or not.
+
+        On contrary, :py:attr:`.SpinHamiltonian.set_magnetic_field` "sets" the magnetic
+        field, i.e. replaces the previous magnetic field (if any).
         """
 
         if h is not None:
@@ -687,34 +790,7 @@ class SpinHamiltonian:
             )
             B = h
 
-        if B is None:
-            raise TypeError(
-                "SpinHamiltonian.add_magnetic_field() missing 1 required argument: 'B'"
-            )
-
-        if self.convention._c1 is None:
-            self.convention._c1 = 1.0
-
-        B = np.array(B, dtype=float)
-
-        mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
-
-        if alphas is None:
-            alphas = self.map_to_all
-
-        zeeman_parameters = [
-            mu_B * self.atoms.g_factors[alpha] * B / self.convention.c1
-            for alpha in alphas
-        ]
-
-        zeeman_term = _InteractionParameters()
-
-        for alpha, parameter in zip(alphas, zeeman_parameters):
-            zeeman_term.add(specs=(1, 1, (), (alpha,)), parameter=parameter)
-
-        self._parameters = self._parameters + zeeman_term
-
-        self._reset_internals()
+        self.set_magnetic_field(B=B + self.magnetic_field, alphas=alphas)
 
     ############################################################################
     #                    Magnetic dipole-dipole interaction                    #
@@ -1058,7 +1134,6 @@ class SpinHamiltonian:
     ############################################################################
     #                          Interaction parameters                          #
     ############################################################################
-    # TODO: check that the implementation is reasonable
     def add(
         self,
         nus,
@@ -1208,7 +1283,6 @@ class SpinHamiltonian:
                 when_present=when_present,
             )
 
-    # TODO: check that the implementation is reasonable
     def remove(self, nus, alphas, remove_equivalent=False):
         r"""
         Removes any parameter with at most four components of spin operator from the
@@ -1244,6 +1318,10 @@ class SpinHamiltonian:
         See notes of :py:meth:`.SpinHamiltonian.add` for the details on ``nus`` and
         ``alphas``.
 
+        Be careful when removing :py:attr:`.SpinHamiltonian.p1` parameters when
+        :py:attr:`.SpinHamiltonian.magnetic_field` is not zero, as the Zeeman term is
+        stored as a :py:attr:`.SpinHamiltonian.p1` parameters.
+
         Examples
         --------
 
@@ -1268,6 +1346,25 @@ class SpinHamiltonian:
 
         specs = _get_specs(nus=nus, alphas=alphas)
 
+        if (
+            specs[0] == 1
+            and specs[1] == 1
+            and not np.allclose(self.magnetic_field, np.zeros(3))
+        ):
+            import warnings
+
+            warnings.warn(
+                "Attempt to remove p1 parameter when magnetic field is not zero.",
+                UserWarning,
+                stacklevel=2,
+            )
+
+        # Need to remove from the Zeeman term as well, if it is present.
+        # Multiple counting does not affect the Zeeman term.
+        if specs[0] == 1 and specs[1] == 1 and len(self._zeeman_parameters) != 0:
+            self._zeeman_parameters.remove(specs=specs)
+
+        # Remove from the main container of parameters.
         if self.convention.multiple_counting:
             if remove_equivalent:
                 equivalent_parameters = get_equivalent(

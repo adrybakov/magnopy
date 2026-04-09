@@ -324,14 +324,14 @@ class _InteractionParameters:
 
         return result
 
-    def __mul__(self, scalar):
+    def __mul__(self, number):
         """
         Multiply all interaction parameters by a scalar.
 
         Parameters
         ----------
-        scalar : float
-            Scalar to multiply the interaction parameters by.
+        number : float
+            Number to multiply the interaction parameters by.
 
         Returns
         -------
@@ -339,21 +339,24 @@ class _InteractionParameters:
             New interaction parameters container with the multiplied interaction parameters.
         """
 
-        if not isinstance(scalar, int) and not isinstance(scalar, float):
+        if not isinstance(number, int) and not isinstance(number, float):
             raise TypeError(
-                f"unsupported operand type(s) for *: '{type(scalar)}' and '{self.__class__.__name__}'"
+                f"unsupported operand type(s) for *: '{type(number)}' and '{self.__class__.__name__}'"
             )
 
         result = _InteractionParameters()
         result._slices = self._slices.copy()
 
         for specs, parameter in self._container:
-            result._container.append([specs, parameter * scalar])
+            result._container.append([specs, parameter * number])
 
         return result
 
     def __rmul__(self, number):
         return self.__mul__(number=number)
+
+    def __sub__(self, other):
+        return self + (-1) * other
 
     def __len__(self):
         return len(self._container)
