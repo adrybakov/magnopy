@@ -2,13 +2,11 @@
 
 .. currentmodule:: {{ module }}
 
-.. role:: custom-header
-
 .. autoclass:: {{ objname }}
 
    {% block methods %}
    {% if methods %}
-   :custom-header:`{{ _('Methods:') }}`
+   .. rubric:: {{ _('Methods') }}
 
    .. autosummary::
       :toctree:
@@ -22,7 +20,7 @@
 
    {% block attributes %}
    {% if attributes %}
-   :custom-header:`{{ _('Properties:') }}`
+   .. rubric:: {{ _('Properties') }}
 
    .. autosummary::
       :toctree:
