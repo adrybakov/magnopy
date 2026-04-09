@@ -141,6 +141,9 @@ are used to create a :py:class:`.SpinHamiltonian` object. The magnetic atoms are
 as *atoms that have at least one interaction parameter associated with them (even if the
 value of the interaction parameter is zero)*.
 
+More details are given in the
+:ref:`user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic` page.
+
 .. note::
     In the example above one might be tempted to say that "Cr1" and "Cr2" are magnetic
     atoms, while "Br1", "Br2", "S1", and "S2" are non-magnetic based on the values of the

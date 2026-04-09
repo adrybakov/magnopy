@@ -431,6 +431,8 @@ Now both Hamiltonians have the same parameter stored, with :math:`\mu` forced to
      [0. 0. 1.]]
 
 
+.. _user-guide_usage_spin-hamiltonian_equivalent-parameters:
+
 Equivalent parameters
 =====================
 
@@ -614,7 +616,15 @@ are the same as before
      [ 0.   0.   1. ]]
 
 
+.. _user-guide_usage_spin-hamiltonian_symmetrization:
 
+Symmetrization
+==============
+
+TODO
+
+
+.. _user-guide_usage_spin-hamiltonian_removing-parameters:
 
 Removing a parameter
 ====================
@@ -657,6 +667,7 @@ And there is no parameters in the Hamiltonian anymore
     0
 
 
+.. _user-guide_usage_spin-hamiltonian_convention:
 
 Convention
 ==========
@@ -764,6 +775,8 @@ Or any other property of the convention.
     The main principle of changing the convention can be formulated as "Physical
     properties of the Hamiltonian do not depend on its convention".
 
+
+.. _user-guide_usage_spin-hamiltonian_units:
 
 Units
 =====
@@ -1005,3 +1018,11 @@ non-magnetic.
     Note that you can not convert the index of the "Fe1" atom in
     :py:attr:`.SpinHamiltonian.atoms` to the index in
     :py:attr:`.SpinHamiltonian.magnetic_atoms` as atom "Fe1" is non-magnetic.
+
+
+.. _user-guide_usage_spin-hamiltonian_magnetic-field:
+
+Magnetic field
+==============
+
+TODO

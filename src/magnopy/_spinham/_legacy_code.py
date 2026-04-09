@@ -408,7 +408,7 @@ def _add_41(spinham, alpha: int, parameter, units=None, when_present="raise erro
 
     See Also
     --------
-    p31
+    p41
     add
     remove
     parameters
@@ -441,7 +441,7 @@ def _remove_41(spinham, alpha: int) -> None:
 
     See Also
     --------
-    p31
+    p41
     add
     remove
     parameters
