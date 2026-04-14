@@ -170,7 +170,7 @@ Iterating over parameters of the Hamiltonian
 0.5.2
 =====
 
-**Date**: Undefined
+**Date**: 14 April 2026
 
 New features
 ------------
@@ -188,6 +188,13 @@ New features
 * :py:meth:`magnopy.SpinHamiltonian.set_distribution`.
 * :py:meth:`magnopy.SpinHamiltonian.purge`.
 * :py:func:`magnopy.get_equivalent_parameters`.
+
+Bugfix
+------
+
+* Bug in `magnopy.SpinHamiltonian.symmetrize` - new parameters were not saved, meaning
+  that symmetrization was not performed correctly. It is now.
+* Bug in a ``magnopy`` CLI, that prevented correct error message for unsupported commands.
 
 
 0.5.1
