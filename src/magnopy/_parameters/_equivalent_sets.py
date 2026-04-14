@@ -21,6 +21,7 @@
 import numpy as np
 
 from magnopy._parameters._interaction_parameters import _get_specs
+from magnopy._parameters._interaction_parameters import _InteractionParameters
 
 # Save local scope at this moment
 old_dir = set(dir())
@@ -624,6 +625,115 @@ def get_equivalent_parameters(nus, alphas, parameter=None):
         parameter = np.array(parameter)
 
     return _get_equivalent(n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter)
+
+
+def _get_missing_parameters(parameters, strategy="mean"):
+    r"""
+    Computes missing parameters of the equivalent sets.
+
+    Parameters
+    ----------
+    parameters : _InteractionParameters
+    strategy : str, default="mean"
+
+    Returns
+    -------
+    missing_parameters : _InteractionParameters
+    """
+
+    strategy = strategy.lower()
+    counter = {}
+    missing_parameters = _InteractionParameters()
+
+    for (n, p_n, nus, alphas), parameter in parameters._container:
+        equivalent_set = _get_equivalent(
+            n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+        )
+
+        for eq_nus, eq_alphas, eq_parameter in equivalent_set:
+            eq_specs = (n, p_n, eq_nus, eq_alphas)
+
+            if eq_specs not in parameters:
+                if strategy == "zeros":
+                    missing_parameters.add(
+                        specs=eq_specs,
+                        parameter=np.zeros_like(parameter, dtype=float),
+                        when_present="skip",
+                    )
+                elif strategy == "mean":
+                    if (eq_nus, eq_alphas) not in counter:
+                        counter[(eq_nus, eq_alphas)] = 0
+                    missing_parameters.add(
+                        specs=eq_specs,
+                        parameter=parameter,
+                        when_present="weighted average",
+                        weight=(counter[(eq_nus, eq_alphas)], 1),
+                    )
+                    counter[(eq_nus, eq_alphas)] += 1
+                else:
+                    raise ValueError(
+                        f'Expected strategy to be either "zeros" or "mean", got {strategy}.'
+                    )
+    return missing_parameters
+
+
+def _set_distribution(parameters, strategy="symmetrize"):
+    r"""
+    Changes distribution within equivalent sets.
+
+    Parameters
+    ----------
+    parameters : _InteractionParameters
+
+    Returns
+    -------
+    new_parameters : _InteractionParameters
+    """
+
+    strategy = strategy.lower()
+    new_parameters = _InteractionParameters()
+
+    if strategy == "symmetrize":
+        for (n, p_n, nus, alphas), parameter in parameters._container:
+            equivalent_parameters = _get_equivalent(
+                n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+            )
+
+            degeneracy = len(equivalent_parameters)
+
+            for eq_nus, eq_alphas, eq_parameter in equivalent_parameters:
+                new_parameters.add(
+                    specs=(n, p_n, eq_nus, eq_alphas),
+                    parameter=eq_parameter / degeneracy,
+                    when_present="sum",
+                )
+    elif strategy == "representative":
+        for (n, p_n, nus, alphas), parameter in parameters._container:
+            equivalent_parameters = _get_equivalent(
+                n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+            )
+
+            for index, (eq_nus, eq_alphas, eq_parameter) in enumerate(
+                equivalent_parameters
+            ):
+                if index == 0:
+                    new_parameters.add(
+                        specs=(n, p_n, eq_nus, eq_alphas),
+                        parameter=eq_parameter,
+                        when_present="sum",
+                    )
+                else:
+                    new_parameters.add(
+                        specs=(n, p_n, eq_nus, eq_alphas),
+                        parameter=np.zeros_like(eq_parameter, dtype=float),
+                        when_present="skip",
+                    )
+    else:
+        raise ValueError(
+            f'Expected strategy to be either "symmetrize" or "representative" got {strategy}.'
+        )
+
+    return new_parameters
 
 
 # Populate __all__ with objects defined in this file

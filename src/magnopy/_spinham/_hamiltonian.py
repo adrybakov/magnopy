@@ -50,7 +50,11 @@ from magnopy._parameters._interaction_parameters import (
     _InteractionParametersIterator,
     _get_specs,
 )
-from magnopy._parameters._equivalent_sets import _get_equivalent
+from magnopy._parameters._equivalent_sets import (
+    _get_equivalent,
+    _get_missing_parameters,
+    _set_distribution,
+)
 
 
 from magnopy._constants._units import _PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP
@@ -419,40 +423,12 @@ class SpinHamiltonian:
         if not self.convention._multiple_counting:
             return
 
-        strategy = strategy.lower()
-        counter = {}
-        missing_parameters = _InteractionParameters()
+        missing_parameters = _get_missing_parameters(
+            parameters=self._parameters, strategy=strategy.lower()
+        )
 
-        for (n, p_n, nus, alphas), parameter in self._parameters._container:
-            equivalent_set = _get_equivalent(
-                n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
-            )
-
-            for eq_nus, eq_alphas, eq_parameter in equivalent_set:
-                eq_specs = (n, p_n, eq_nus, eq_alphas)
-
-                if eq_specs not in self._parameters:
-                    if strategy == "zeros":
-                        missing_parameters.add(
-                            specs=eq_specs,
-                            parameter=np.zeros_like(parameter, dtype=float),
-                            when_present="skip",
-                        )
-                    elif strategy == "mean":
-                        if (eq_nus, eq_alphas) not in counter:
-                            counter[(eq_nus, eq_alphas)] = 0
-                        missing_parameters.add(
-                            specs=eq_specs,
-                            parameter=parameter,
-                            when_present="weighted average",
-                            weight=(counter[(eq_nus, eq_alphas)], 1),
-                        )
-                        counter[(eq_nus, eq_alphas)] += 1
-                    else:
-                        raise ValueError(
-                            f'Expected strategy to be either "zeros" or "mean", got {strategy}.'
-                        )
-        self._parameters = self._parameters + missing_parameters
+        if len(missing_parameters) > 0:
+            self._parameters = self._parameters + missing_parameters
 
     def symmetrize(self) -> None:
         r"""
@@ -528,48 +504,9 @@ class SpinHamiltonian:
                 "When spinham.convention.multiple_counting is False, the distribution of parameters is fixed and can not be changed."
             )
 
-        strategy = strategy.lower()
-        new_parameters = _InteractionParameters()
-
-        if strategy == "symmetrize":
-            for (n, p_n, nus, alphas), parameter in self._parameters._container:
-                equivalent_parameters = _get_equivalent(
-                    n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
-                )
-
-                degeneracy = len(equivalent_parameters)
-
-                for eq_nus, eq_alphas, eq_parameter in equivalent_parameters:
-                    new_parameters.add(
-                        specs=(n, p_n, eq_nus, eq_alphas),
-                        parameter=eq_parameter / degeneracy,
-                        when_present="sum",
-                    )
-        elif strategy == "representative":
-            for (n, p_n, nus, alphas), parameter in self._parameters._container:
-                equivalent_parameters = _get_equivalent(
-                    n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
-                )
-
-                for index, (eq_nus, eq_alphas, eq_parameter) in enumerate(
-                    equivalent_parameters
-                ):
-                    if index == 0:
-                        new_parameters.add(
-                            specs=(n, p_n, eq_nus, eq_alphas),
-                            parameter=eq_parameter,
-                            when_present="sum",
-                        )
-                    else:
-                        new_parameters.add(
-                            specs=(n, p_n, eq_nus, eq_alphas),
-                            parameter=np.zeros_like(eq_parameter, dtype=float),
-                            when_present="skip",
-                        )
-        else:
-            raise ValueError(
-                f'Expected strategy to be either "symmetrize" or "representative" got {strategy}.'
-            )
+        new_parameters = _set_distribution(
+            parameters=self._parameters, strategy=strategy.lower()
+        )
 
         self._parameters = new_parameters
 
@@ -1652,6 +1589,70 @@ class SpinHamiltonian:
             are removed. Expected to be non-negative. Expected to be
             in the same units as :py:attr:`.SpinHamiltonian.units`. Default
             value is :math:`10^{-8}` meV (converted to the units of the Hamiltonian).
+
+        Examples
+        --------
+
+        First lets create a Hamiltonian
+
+        .. doctest::
+
+            >>> import numpy as np
+            >>> import magnopy
+            >>> cell = np.eye(3)
+            >>> atoms = dict(
+            ...     names=["Fe"], positions=[[0, 0, 0]], spins=[5 / 2], g_factors=[2]
+            ... )
+            >>> convention = magnopy.Convention(
+            ...     multiple_counting=True, spin_normalized=False, c22=1
+            ... )
+            >>> spinham = magnopy.SpinHamiltonian(
+            ...     cell=cell, atoms=atoms, convention=convention
+            ... )
+
+        and add some parameters to it
+
+        .. doctest::
+
+            >>> spinham.add(
+            ...     nus=[(1, 0, 0)],
+            ...     alphas=[0, 0],
+            ...     parameter=np.eye(3) * 1e-9,
+            ...     populate_equivalent=True,
+            ... )
+            >>> spinham.add(
+            ...     nus=[(0, 1, 0)],
+            ...     alphas=[0, 0],
+            ...     parameter=np.eye(3) * 1e-7,
+            ...     populate_equivalent=True,
+            ... )
+
+        There are four interaction parameters in the Hamiltonian
+
+        .. doctest::
+
+            >>> len(spinham.parameters())
+            4
+            >>> for nus, alphas, parameter in spinham.parameters():
+            ...     print(nus, alphas)
+            ((-1, 0, 0),) (0, 0)
+            ((0, -1, 0),) (0, 0)
+            ((0, 1, 0),) (0, 0)
+            ((1, 0, 0),) (0, 0)
+
+
+        Now if we purge the Hamiltonian with the default tolerance of 1e-8 meV, then
+        only two parameters remain
+
+        .. doctest::
+
+            >>> spinham.purge()
+            >>> len(spinham.parameters())
+            2
+            >>> for nus, alphas, parameter in spinham.parameters():
+            ...     print(nus, alphas)
+            ((0, -1, 0),) (0, 0)
+            ((0, 1, 0),) (0, 0)
         """
 
         if tolerance is None:

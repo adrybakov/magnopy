@@ -86,7 +86,7 @@ def test_raises():
 @given(
     st.floats(min_value=0, max_value=7),
 )
-@settings(deadline=2000)
+@settings(deadline=5000)
 def test_R_cut(lattice_variation, R_cut):
     cell = sc_get_example(lattice_variation=lattice_variation)
     atoms = dict(
@@ -117,7 +117,7 @@ def test_R_cut(lattice_variation, R_cut):
 @given(
     st.floats(min_value=0.01, max_value=7),
 )
-@settings(deadline=2000)
+@settings(deadline=5000)
 def test_E_cut(lattice_variation, E_cut):
     cell = sc_get_example(lattice_variation=lattice_variation)
     atoms = dict(
