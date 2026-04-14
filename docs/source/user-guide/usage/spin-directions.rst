@@ -4,8 +4,9 @@
 Spin directions
 ***************
 
-Spin direction :math:`\boldsymbol{z}_1, ..., \boldsymbol{z}_M` is rather simple data structure: a list of 3D unit vectors (|array-like|_).
-It is used to defined a state of the Hamiltonian, for example its ground state.
+Spin direction :math:`\boldsymbol{z}_1, ..., \boldsymbol{z}_M` is a rather simple data
+structure: a list of 3D unit vectors (|array-like|_). It is used to defined a state of the
+Hamiltonian, for example its ground state.
 
 Number of unit vectors in the list must be equal to the number of the magnetic atoms in
 the unit cell of the spin Hamiltonian  (i. e. :py:attr:`.SpinHamiltonian.M`). Order of the
