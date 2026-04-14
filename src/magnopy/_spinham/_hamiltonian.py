@@ -455,6 +455,21 @@ class SpinHamiltonian:
                         )
         self._parameters = self._parameters + missing_parameters
 
+    def symmetrize(self) -> None:
+        r"""
+        Symmetrize interaction parameters as specified in the SI note 3 of |paper-2026|_.
+
+        Legacy method, equivalent to
+
+        .. code-block:: python
+
+            spinham.set_distribution(strategy="symmetrized")
+
+        Please use :py:meth:`.SpinHamiltonian.set_distribution` instead.
+        """
+
+        self.set_distribution(strategy="symmetrized")
+
     def set_distribution(self, strategy="symmetrized") -> None:
         """
         Enforces one of the supported distributions of parameters within the sets of
