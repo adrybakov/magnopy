@@ -187,6 +187,7 @@ New features
 * :py:meth:`magnopy.SpinHamiltonian.restore_missing_parameters`.
 * :py:meth:`magnopy.SpinHamiltonian.set_distribution`.
 * :py:meth:`magnopy.SpinHamiltonian.purge`.
+* :py:func:`magnopy.get_equivalent_parameters`.
 
 
 0.5.1

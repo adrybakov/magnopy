@@ -50,7 +50,7 @@ from magnopy._parameters._interaction_parameters import (
     _InteractionParametersIterator,
     _get_specs,
 )
-from magnopy._parameters._symmetrization import get_equivalent
+from magnopy._parameters._equivalent_sets import _get_equivalent
 
 
 from magnopy._constants._units import _PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP
@@ -424,7 +424,7 @@ class SpinHamiltonian:
         missing_parameters = _InteractionParameters()
 
         for (n, p_n, nus, alphas), parameter in self._parameters._container:
-            equivalent_set = get_equivalent(
+            equivalent_set = _get_equivalent(
                 n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
             )
 
@@ -533,7 +533,7 @@ class SpinHamiltonian:
 
         if strategy == "symmetrize":
             for (n, p_n, nus, alphas), parameter in self._parameters._container:
-                equivalent_parameters = get_equivalent(
+                equivalent_parameters = _get_equivalent(
                     n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
                 )
 
@@ -547,7 +547,7 @@ class SpinHamiltonian:
                     )
         elif strategy == "representative":
             for (n, p_n, nus, alphas), parameter in self._parameters._container:
-                equivalent_parameters = get_equivalent(
+                equivalent_parameters = _get_equivalent(
                     n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
                 )
 
@@ -655,7 +655,7 @@ class SpinHamiltonian:
 
         new_parameters = _InteractionParameters()
         for (n, p_n, nus, alphas), parameter in self._parameters._container:
-            equivalent_parameters = get_equivalent(
+            equivalent_parameters = _get_equivalent(
                 n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
             )
 
@@ -1198,7 +1198,7 @@ class SpinHamiltonian:
 
                                 if E_cut is None or (np.abs(parameter) >= E_cut).any():
                                     if not self.convention.multiple_counting:
-                                        equivalent_parameters = get_equivalent(
+                                        equivalent_parameters = _get_equivalent(
                                             n=2,
                                             p_n=2,
                                             nus=((i, j, k),),
@@ -1445,7 +1445,7 @@ class SpinHamiltonian:
 
         if self.convention.multiple_counting:
             if populate_equivalent:
-                equivalent_parameters = get_equivalent(
+                equivalent_parameters = _get_equivalent(
                     n=specs[0],
                     p_n=specs[1],
                     nus=specs[2],
@@ -1464,7 +1464,7 @@ class SpinHamiltonian:
                     specs=specs, parameter=parameter, when_present=when_present
                 )
         else:
-            equivalent_parameters = get_equivalent(
+            equivalent_parameters = _get_equivalent(
                 n=specs[0],
                 p_n=specs[1],
                 nus=specs[2],
@@ -1563,7 +1563,7 @@ class SpinHamiltonian:
         # Remove from the main container of parameters.
         if self.convention.multiple_counting:
             if remove_equivalent:
-                equivalent_parameters = get_equivalent(
+                equivalent_parameters = _get_equivalent(
                     n=specs[0],
                     p_n=specs[1],
                     nus=specs[2],
@@ -1576,7 +1576,7 @@ class SpinHamiltonian:
             else:
                 self._parameters.remove(specs=specs)
         else:
-            equivalent_parameters = get_equivalent(
+            equivalent_parameters = _get_equivalent(
                 n=specs[0], p_n=specs[1], nus=specs[2], alphas=specs[3]
             )
             nus, alphas, _ = equivalent_parameters[0]

@@ -20,6 +20,12 @@
 
 import numpy as np
 
+from magnopy._parameters._interaction_parameters import _get_specs
+
+# Save local scope at this moment
+old_dir = set(dir())
+old_dir.add("old_dir")
+
 
 def _minus(nu):
     return tuple([-_ for _ in nu])
@@ -516,42 +522,8 @@ def _get_equivalent_4_5(nus, alphas, parameter=None):
     return parameters
 
 
-def get_equivalent(n, p_n, nus, alphas, parameter=None):
-    """
-    Computes equivalent parameters resulting from the symmetrization procedure described
-    in supplementary information of |paper-2026|_ (eqs. S.21-S.27).
+def _get_equivalent(n, p_n, nus, alphas, parameter=None):
 
-    The returned list of parameters is sorted in descending order by the indices (nus and
-    alphas).
-
-    See :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of ``n`` and
-    ``p_n``.
-
-    Parameters
-    ----------
-    n : int
-        Number of spin operators associated with the parameter.
-    p_n : int
-        Index of integer partition associated with the parameter.
-    nus : list of tuples
-        List of ``n-1`` unit cell indices associated with the parameter. Each unit cell
-        index is a tuple of three integers.
-    alphas : list of tuples
-        List of ``n`` atom indices associated with the parameter. Each atom index is an
-        integer.
-    parameter : (3, ..., 3) |array-like|_, optional
-        Value of the parameter. The shape of the array should be (3, ..., 3) with ``n``
-        dimensions. If not provided, then the returned parameters will have ``None`` as
-        the value.
-
-    Returns
-    -------
-    parameters : list of tuples
-        List of equivalent parameters. Each parameter is a tuple of the form
-        ``(nus, alphas, parameter)`` where ``nus`` and ``alphas`` are the unit cell and
-        atom indices of the parameter, respectively, and ``parameter`` is the value of
-        the parameter (or ``None`` if not provided).
-    """
     if n == 2 and p_n == 2:
         return _get_equivalent_2_2(nus, alphas, parameter)
     elif n == 3 and p_n == 2:
@@ -570,3 +542,92 @@ def get_equivalent(n, p_n, nus, alphas, parameter=None):
         return [(nus, alphas, parameter)]
     else:
         raise ValueError("Invalid n and p_n values.")
+
+
+def get_equivalent_parameters(nus, alphas, parameter=None):
+    """
+    Computes equivalent parameters as described in supplementary information of
+    |paper-2026|_ (eqs. S.21-S.27).
+
+    The returned list of parameters is sorted in descending order by the indices (nus and
+    alphas).
+
+    Parameters
+    ----------
+    nus : list of tuples
+        List of ``n-1`` unit cell indices associated with the parameter. Each unit cell
+        index is a tuple of three integers.
+    alphas : list of tuples
+        List of ``n`` atom indices associated with the parameter. Each atom index is an
+        integer.
+    parameter : (3, ..., 3) |array-like|_, optional
+        Value of the parameter. The shape of the array should be (3, ..., 3) with ``n``
+        dimensions. If not provided, then the returned parameters will have ``None`` as
+        the value.
+
+    Returns
+    -------
+    parameters : list of tuples
+        List of equivalent parameters. Each parameter is a tuple of the form
+        ``(nus, alphas, parameter)`` where ``nus`` and ``alphas`` are the unit cell and
+        atom indices of the parameter, respectively, and ``parameter`` is the value of
+        the parameter (or ``None`` if not provided).
+
+    Notes
+    -----
+    See :ref:`user-guide_theory-behind_equivalent-parameters` for more details.
+
+    Examples
+    --------
+
+    .. doctest::
+
+        >>> import magnopy
+        >>> eq_params = magnopy.get_equivalent_parameters(
+        ...     nus=[(1, 0, 0)],
+        ...     alphas=[(0,), (1,)],
+        ...     parameter=[[0, -1, 0], [0.5, 0.3, 0], [0, 0, 0]],
+        ... )
+        >>> for nus, alphas, parameter in eq_params:
+        ...     print(nus, alphas)
+        ...     print(parameter)
+        ((1, 0, 0),) ((0,), (1,))
+        [[ 0.  -1.   0. ]
+         [ 0.5  0.3  0. ]
+         [ 0.   0.   0. ]]
+        ((-1, 0, 0),) ((1,), (0,))
+        [[ 0.   0.5  0. ]
+         [-1.   0.3  0. ]
+         [ 0.   0.   0. ]]
+
+    .. doctest::
+
+        >>> import magnopy
+        >>> eq_params = magnopy.get_equivalent_parameters(
+        ...     nus=[(1, 0, 0), (0, 1, 0)], alphas=[(0,), (1,), (2,)], parameter=None
+        ... )
+        >>> for nus, alphas, parameter in eq_params:
+        ...     print(nus, alphas)
+        ((1, 0, 0), (0, 1, 0)) ((0,), (1,), (2,))
+        ((1, -1, 0), (0, -1, 0)) ((2,), (1,), (0,))
+        ((0, 1, 0), (1, 0, 0)) ((0,), (2,), (1,))
+        ((0, -1, 0), (1, -1, 0)) ((2,), (0,), (1,))
+        ((-1, 1, 0), (-1, 0, 0)) ((1,), (2,), (0,))
+        ((-1, 0, 0), (-1, 1, 0)) ((1,), (0,), (2,))
+    """
+
+    nus_for_specs = [(0, 0, 0)] + list(nus)
+
+    n, p_n = _get_specs(nus=nus_for_specs, alphas=alphas)[:2]
+
+    if parameter is not None:
+        parameter = np.array(parameter)
+
+    return _get_equivalent(n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter)
+
+
+# Populate __all__ with objects defined in this file
+__all__ = list(set(dir()) - old_dir)
+# Remove all semi-private objects
+__all__ = [i for i in __all__ if not i.startswith("_")]
+del old_dir
