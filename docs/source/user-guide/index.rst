@@ -19,6 +19,7 @@ Magnopy's user guide
 
     theory-behind/spin-hamiltonian
     theory-behind/convention
+    theory-behind/equivalent-parameters
     theory-behind/energy-minimization
 
 .. toctree::

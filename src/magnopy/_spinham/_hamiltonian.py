@@ -402,9 +402,8 @@ class SpinHamiltonian:
 
             * "mean"
               Values of the missing parameters are set to the mean value of the parameters
-              from the relevant set of equivalent parameters, that are present in the
-              Hamiltonian. This value might change the physics of the Hamiltonian (as it
-              adds new non-zero parameters).
+              from the equivalent set. This value might change the physics of the
+              Hamiltonian (as it adds new non-zero parameters).
 
         Raises
         ------
@@ -470,7 +469,7 @@ class SpinHamiltonian:
 
         self.set_distribution(strategy="symmetrized")
 
-    def set_distribution(self, strategy="symmetrized") -> None:
+    def set_distribution(self, strategy="symmetrize") -> None:
         """
         Enforces one of the supported distributions of parameters within the sets of
         equivalent parameters.
@@ -481,18 +480,17 @@ class SpinHamiltonian:
 
         Parameters
         ----------
-        strategy : str, default "symmetrized"
+        strategy : str, default "symmetrize"
 
-            Strategy for distributing parameters in the sets of equivalent parameters.
-            Case-insensitive. Supported options are
+            Strategy for distributing overall value between parameters of the equivalent
+            set. Case-insensitive. Supported options are
 
-            * "symmetrized" (default)
+            * "symmetrize" (default)
               All parameters from the set are equal to each other.
 
             * "one-for-all"
-              The sum of all equivalent parameters from the set is assigned to the
-              single representative parameter. All other parameters from the set are set
-              to zeros.
+              The sum is assigned to the single representative parameter. All other
+              parameters from the set are set to zeros.
 
         Raises
         ------
@@ -533,7 +531,7 @@ class SpinHamiltonian:
         strategy = strategy.lower()
         new_parameters = _InteractionParameters()
 
-        if strategy == "symmetrized":
+        if strategy == "symmetrize":
             for (n, p_n, nus, alphas), parameter in self._parameters._container:
                 equivalent_parameters = get_equivalent(
                     n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
@@ -570,7 +568,7 @@ class SpinHamiltonian:
                         )
         else:
             raise ValueError(
-                f'Expected strategy to be either "symmetrized" or "representative" got {strategy}.'
+                f'Expected strategy to be either "symmetrize" or "representative" got {strategy}.'
             )
 
         self._parameters = new_parameters

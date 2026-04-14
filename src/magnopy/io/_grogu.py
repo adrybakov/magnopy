@@ -61,7 +61,7 @@ def load_grogu(
 
     g_factors : (M, ) iterable of floats, optional
 
-        ..versionadded:: 0.5.2
+        .. versionadded:: 0.5.2
 
         g-factors for all atoms. Order is the same as in |TB2J|_ file. If none given, then
         Magnopy sets :math:`g = 2` for all atoms.
@@ -87,7 +87,7 @@ def load_grogu(
         .. versionadded:: 0.5.2
 
         What to do if the exact same interaction is repeated twice in the file.
-        See :py:func:`.SpinHamiltonian.add` for supported values.
+        See :py:meth:`.SpinHamiltonian.add` for supported values.
 
     Returns
     -------

@@ -86,7 +86,7 @@ def load_tb2j(
         .. versionadded:: 0.5.2
 
         What to do if the exact same interaction is repeated twice in the file.
-        See :py:func:`.SpinHamiltonian.add` for supported values.
+        See :py:meth:`.SpinHamiltonian.add` for supported values.
 
     quiet : bool, default True
         If ``False``, warnings are printed when distances between atoms computed by

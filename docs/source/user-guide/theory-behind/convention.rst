@@ -111,6 +111,7 @@ are related as
     \dfrac{1}{S_{\alpha_1} S_{\alpha_2}}
     \Biggl(J^{i_1, i_2}_{\nu_2; \alpha_1, \alpha_2} \Biggr)_{\text{normalized}}
 
+.. _user-guide_theory-behind_convention_multiple-counting:
 
 Multiple counting
 =================
@@ -124,63 +125,27 @@ This property is known as "double counting" in the case of the bilinear terms
 magnetic sites (``multiple_counting = True``) or only one of them
 (``multiple_counting = False``). The two interaction parameters from the example above
 form what we call an "equivalent set" of parameters, as only their sum is relevant for the
-Hamiltonian and not the individual values of each of them.
+Hamiltonian and not the individual values of each of them (see also
+:ref:`user-guide_theory-behind_equivalent-parameters`).
 
 The generalization of this property for the other terms (with 3 and more components of
 spin operators) is not as straightforward as one would expect and is linked with the
-symmetrization of the interaction parameters that we discuss at length in the
-supplementary note 3 of the |paper-2026|_. For the terms with more than two spin
-operators, the equivalent sets can include more than two parameters. The equivalent sets
-of parameters for each case of bilinear, trilinear and quadlinear terms, discussed in
-:ref:`user-guide_theory-behind_spin-hamiltonian` page, are defined by equations
-(S.21)—(S.27) from the supplementary material of the |paper-2026|_.
+:ref:`sets of equivalent parameters <user-guide_theory-behind_equivalent-parameters>`.For
+terms with more than two spin operators, the equivalent sets can include more than two
+parameters.
 
-*   If by convention the multiple counting is allowed (``multiple_counting = True``), then
-    the Hamiltonian includes all the parameters from the equivalent set and user is
+*   If by convention the multiple counting is allowed (``multiple_counting = True``)
+
+    The Hamiltonian includes all the parameters from the equivalent set and user is
     expected to manually input each of them.
 
-*   If by convention the multiple counting is not allowed (``multiple_counting = False``),
-    then only one of the parameters from the equivalent set is included in the Hamiltonian
-    and user is expected to input only that single parameter.
+*   If by convention the multiple counting is not allowed (``multiple_counting = False``)
+
+    Only one of the parameters from the equivalent set is included in the Hamiltonian
+    and user is expected to input that single parameter only.
 
 
 .. hint::
     When ``multiple_counting = True``, one can pass ``populate_equivalent = True`` to the
     :py:meth:`magnopy.SpinHamiltonian.add` method to automatically populate the equivalent
     parameters and avoid the manual input of each of them.
-
-.. _user-guide_theory-behind_convention_symmetrization:
-
-Symmetrization of parameters
-============================
-
-The sum of parameters from the equivalent set can be arbitrary distributed between the
-parameters of that set. In Magnopy we assume only two types of symmetrization:
-
-*   The parameters of the equivalent set are equal to each other. For example, for the
-    bilinear term, we assume that
-    :math:`J^{i_1, i_2}_{\nu_2; \alpha_1, \alpha_2} = J^{i_2, i_1}_{-\nu_2; \alpha_2, \alpha_1}`.
-    This is the ``multiple_counting = True`` convention.
-
-*   The whole sum is attributed to the single parameter from the equivalent set and
-    the rest of the parameters from that set are zero. This is the same as the
-    ``multiple_counting = False`` convention.
-
-
-The user is free to input non-symmetrized parameters, but Magnopy will symmetrize them
-right away in most cases.
-
-For example, if ``multiple_counting = True``, and the user enters
-:math:`J^{x,y}_{\nu_2; \alpha_1, \alpha_2} = 1` and
-:math:`J^{y, x}_{-\nu_2; \alpha_2, \alpha_1} = 2`, Magnopy will symmetrize these
-parameters as
-:math:`J^{x,y}_{\nu_2; \alpha_1, \alpha_2} = J^{y, x}_{-\nu_2; \alpha_2, \alpha_1} = 1.5`.
-
-More information about the symmetrization can be found in the supplementary
-note 3 of the |paper-2026|_.
-
-.. note::
-    The symmetrization of the parameters **do not** place any restrictions on the
-    components of the vector/matrix/tensor of each individual parameter. It only relates
-    components of the vector/matrix/tensor of **different** parameters. For instance, it
-    **does not** forbid an antisymmetric Dzyaloshinskii-Moriya interaction.

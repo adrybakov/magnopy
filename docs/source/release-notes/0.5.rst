@@ -65,13 +65,6 @@ Adding parameters to the Hamiltonian
             spinham.add(nus=((1, 0, 0),), alphas=(0, 1), parameter=np.eye(3))
 
 
-
-
-
-
-
-
-
 Removing parameter from the Hamiltonian
 ---------------------------------------
 
@@ -186,6 +179,14 @@ New features
 * :py:func:`magnopy.SpinHamiltonian.set_magnetic_field`.
 * :py:attr:`magnopy.SpinHamiltonian.magnetic_field`.
 * :py:attr:`magnopy.SpinHamiltonian.zeeman_parameters`.
+* ``when_present`` argument in :py:func:`magnopy.io.load_tb2j` and
+  :py:func:`magnopy.io.load_tb2j`.
+* ``missing_bonds`` argument in :py:func:`magnopy.io.load_tb2j` and
+  :py:func:`magnopy.io.load_tb2j`.
+* ``g_factors`` argument in :py:func:`magnopy.io.load_grogu`.
+* :py:meth:`magnopy.SpinHamiltonian.restore_missing_parameters`.
+* :py:meth:`magnopy.SpinHamiltonian.set_distribution`.
+* :py:meth:`magnopy.SpinHamiltonian.purge`.
 
 
 0.5.1

@@ -436,9 +436,8 @@ Now both Hamiltonians have the same parameter stored, with :math:`\mu` forced to
 Equivalent parameters
 =====================
 
-Symmetrization of parameters that is describe in
-:ref:`user-guide_theory-behind_convention_symmetrization` page is linked to the concept of
-sets of equivalent parameters.
+See :ref:`user-guide_theory-behind_equivalent-parameters` for the introduction to the
+concept of equivalent parameters.
 
 We use the term with two spin operators that are located at different positions in real
 space as an example in this section. Similar logic applies to other terms of the
@@ -450,10 +449,10 @@ First, we create an empty copy of the Hamiltonian
 
     >>> spinham = spinham.get_empty()
 
-There are two equivalent parameter in each set in the case of the term with two spin
-operators located at different positions. Consider the interaction from the "Fe1" atom in
-the unit cell :math:`(0, 0, 0)` to the "Fe2" atom in the unit cell :math:`(-1, -1, -1)`
-with the matrix of the interaction parameter
+Equivalent set contains two parameters in the case of the term with two spin operators
+located at different positions. Consider the interaction from the "Fe1" atom in the unit
+cell :math:`(0, 0, 0)` to the "Fe2" atom in the unit cell :math:`(-1, -1, -1)` with the
+matrix of the interaction parameter
 
 .. doctest::
 
@@ -566,10 +565,8 @@ multiple_counting = False
     >>> spinham.convention.multiple_counting
     False
 
-In this case the sum of equivalent parameters is attributed to one of the parameters of
-the set, that is called the representative parameter. Therefore, the user is expected to
-add only one parameter from the set to the Hamiltonian (any parameter from the set will
-work).
+In the user is expected to add only one parameter from the set to the Hamiltonian (any
+parameter from the set will work).
 
 .. doctest::
 
@@ -621,7 +618,194 @@ are the same as before
 Symmetrization
 ==============
 
-TODO
+See :ref:`user-guide_theory-behind_equivalent-parameters` for the introduction to the
+concept of equivalent parameters and their symmetrization.
+
+This section is only relevant when ``multiple_counting=True``. In that case, if you
+do not use ``populate_equivalent=True`` while adding parameters to the Hamiltonian with
+:py:meth:`.SpinHamiltonian.add` method, then you a free to add non-symmetrized
+matrices/tensors of parameters to the Hamiltonian. Magnopy silently symmetrizes those
+parameters when necessary. In other words, while the Hamiltonian can contain
+non-symmetrized parameters, we **do not guarantee** that they stay non-symmetrized if some
+operations are performed with the Hamiltonian.
+
+Let us illustrate that with an example. First, we create an empty copy of the Hamiltonian
+
+.. doctest::
+
+    >>> spinham = spinham.get_empty()
+    >>> spinham.convention = spinham.convention.get_modified(multiple_counting=True)
+
+Then we consider the same pair of equivalent parameters as in the previous section:
+
+An interaction from the "Fe1" atom in the unit cell :math:`(0, 0, 0)` to the "Fe2" atom in
+the unit cell :math:`(-1, -1, -1)` and an interaction from the "Fe2" atom in the unit cell
+:math:`(0, 0, 0)` to the "Fe1" atom in the unit cell :math:`(1, 1, 1)`. However, this time
+we choose the matrices of interaction parameters to be non-symmetrized (while keeping the
+same physics as in the previous section)
+
+.. doctest::
+
+    >>> parameter1 = [
+    ...     [0, 0.3, 0],
+    ...     [-0.5, 1, 0],
+    ...     [0, 0, 1.68],
+    ... ]
+    >>> parameter2 = [
+    ...     [2, -0.5, 0],
+    ...     [0.7, 1, 0],
+    ...     [0, 0, 0.32],
+    ... ]
+
+Now we add those parameters to the Hamiltonian
+
+.. doctest::
+
+    >>> spinham.add(
+    ...     nus = [(-1, -1, -1)],
+    ...     alphas = [0, 1],
+    ...     parameter = parameter1
+    ... )
+    >>> spinham.add(
+    ...     nus = [(1, 1, 1)],
+    ...     alphas = [1, 0],
+    ...     parameter = parameter2
+    ... )
+
+And check that the parameters are indeed non-symmetrized
+
+.. doctest::
+
+    >>> for nus, alphas, parameter in spinham.p22:
+    ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+    ...     print(nus, alphas, parameter, sep="\n")
+    Fe1 Fe2 (-1, -1, -1)
+    ((-1, -1, -1),)
+    (0, 1)
+    [[ 0.    0.3   0.  ]
+     [-0.5   1.    0.  ]
+     [ 0.    0.    1.68]]
+    Fe2 Fe1 (1, 1, 1)
+    ((1, 1, 1),)
+    (1, 0)
+    [[ 2.   -0.5   0.  ]
+     [ 0.7   1.    0.  ]
+     [ 0.    0.    0.32]]
+
+Now one can symmetrize those parameters by calling the method
+:py:meth:`.SpinHamiltonian.set_distribution`.
+
+.. doctest::
+
+    >>> spinham.set_distribution(strategy="symmetrize")
+
+And now the parameters are symmetrized and are the same as in the previous section
+
+.. doctest::
+
+    >>> for nus, alphas, parameter in spinham.p22:
+    ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+    ...     print(nus, alphas, parameter, sep="\n")
+    Fe1 Fe2 (-1, -1, -1)
+    ((-1, -1, -1),)
+    (0, 1)
+    [[ 1.   0.5  0. ]
+     [-0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+    Fe2 Fe1 (1, 1, 1)
+    ((1, 1, 1),)
+    (1, 0)
+    [[ 1.  -0.5  0. ]
+     [ 0.5  1.   0. ]
+     [ 0.   0.   1. ]]
+
+.. note::
+    :py:meth:`.SpinHamiltonian.set_distribution` is different from using
+    ``populate_equivalent=True`` in the :py:meth:`.SpinHamiltonian.add`. The former
+    takes the parameters that are already present in the Hamiltonian and redistribute
+    them, while the latter adds extra parameters to the Hamiltonian.
+
+    Here is an example
+
+    .. doctest::
+
+        >>> spinham_v1 = spinham.get_empty()
+        >>> spinham_v2 = spinham.get_empty()
+        >>> parameter = [
+        ...     [0, 0.3, 0],
+        ...     [-0.5, 1, 0],
+        ...     [0, 0, 2],
+        ... ]
+
+    In the first case we add a parameter and then symmetrize the Hamiltonian
+
+    .. doctest::
+
+        >>> spinham_v1.add(
+        ...     nus=[(-1, -1, -1)],
+        ...     alphas = [0, 1],
+        ...     parameter = parameter,
+        ... )
+        >>> spinham_v1.set_distribution(strategy="symmetrize")
+
+    In the second case we request the code to populate equivalent parameters
+
+    .. doctest::
+
+        >>> spinham_v2.add(
+        ...     nus=[(-1, -1, -1)],
+        ...     alphas = [0, 1],
+        ...     parameter = parameter,
+        ...     populate_equivalent=True,
+        ... )
+
+    In both cases there are two interaction parameters
+
+    .. doctest::
+
+        >>> len(spinham_v1.p22)
+        2
+        >>> len(spinham_v2.p22)
+        2
+
+    However, the values of the parameters are different (meaning that two Hamiltonians
+    describe different physics)
+
+    .. doctest::
+
+        >>> for nus, alphas, parameter in spinham_v1.p22:
+        ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+        ...     print(nus, alphas, parameter, sep="\n")
+        Fe1 Fe2 (-1, -1, -1)
+        ((-1, -1, -1),)
+        (0, 1)
+        [[ 0.    0.15  0.  ]
+         [-0.25  0.5   0.  ]
+         [ 0.    0.    1.  ]]
+        Fe2 Fe1 (1, 1, 1)
+        ((1, 1, 1),)
+        (1, 0)
+        [[ 0.   -0.25  0.  ]
+         [ 0.15  0.5   0.  ]
+         [ 0.    0.    1.  ]]
+
+    .. doctest::
+
+        >>> for nus, alphas, parameter in spinham_v2.p22:
+        ...     print(spinham.atoms.names[alphas[0]], spinham.atoms.names[alphas[1]], nus[0])
+        ...     print(nus, alphas, parameter, sep="\n")
+        Fe1 Fe2 (-1, -1, -1)
+        ((-1, -1, -1),)
+        (0, 1)
+        [[ 0.   0.3  0. ]
+         [-0.5  1.   0. ]
+         [ 0.   0.   2. ]]
+        Fe2 Fe1 (1, 1, 1)
+        ((1, 1, 1),)
+        (1, 0)
+        [[ 0.  -0.5  0. ]
+         [ 0.3  1.   0. ]
+         [ 0.   0.   2. ]]
 
 
 .. _user-guide_usage_spin-hamiltonian_removing-parameters:
@@ -1052,7 +1236,7 @@ Since there is no magnetic atoms in the Hamiltonian
     >>> spinham.magnetic_atoms.names
     []
 
-addition of the magnetic field has any effect
+addition of the magnetic field has no effect
 
 .. doctest::
 
@@ -1062,7 +1246,7 @@ addition of the magnetic field has any effect
     >>> spinham.magnetic_field
     array([0., 0., 0.])
 
-Typically, there are some interaction parameters are added to the Hamiltonian and the
+Typically, there are some interaction parameters already added to the Hamiltonian and the
 magnetic atoms are clearly identified. For example, exchange interaction
 
 .. doctest::
@@ -1083,7 +1267,7 @@ If we add the magnetic field now
     Fe1   [0.11576764 0.         0.        ]
     Fe2   [0.11576764 0.         0.        ]
 
-We see that the Zeeman term is being added to both atoms, as they are both magnetic now.
+We see that the Zeeman term is being added to both atoms, as they are both magnetic.
 
 
 Alternatively, you can control explicitly to which atoms the magnetic field is
@@ -1114,8 +1298,8 @@ non-magnetic
     Fe1   [0.11576764 0.         0.        ]
     Fe2   [0.11576764 0.         0.        ]
 
-Note that now both atoms are magnetic, as they both have Zeeman interaction associated with
-them.
+Note that now both atoms are magnetic afterwards, as they both have Zeeman interaction
+associated with them.
 
 .. doctest::
 
@@ -1132,7 +1316,7 @@ The value of the magnetic field can be checked at any time as
     >>> spinham.magnetic_field
     array([1., 0., 0.])
 
-Moreover, you can use the same property to set its value as well
+Moreover, you can use the same property to change its value
 
 .. doctest::
 
@@ -1148,7 +1332,7 @@ The latter is equivalent to
 
 .. doctest::
 
-    >>> spinham.set_magnetic_field([0, 2, 0])
+    >>> spinham.set_magnetic_field(B=[0, 2, 0])
     >>> spinham.magnetic_field
     array([0., 2., 0.])
     >>> for nus, alphas, parameter in spinham.p1:
