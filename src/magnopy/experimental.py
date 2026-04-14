@@ -60,6 +60,34 @@ def plot_spinham(
     pe2 : :py:class:`.PlotlyEngine`
         Instance of the Magnopy's plot engine, with plotted spin Hamiltonian. Ready to be
         saved or showed. Only two-spins/two-sites parameters are plotted.
+
+    Notes
+    -----
+
+    Use as follows:
+
+    .. code-block:: python
+
+        pe1, pe2 = plot_spinham(spinham)
+
+        # Show
+        pe1.show(width=1000, height=1000, axes_visible=False)
+        pe2.show(width=1000, height=1000, axes_visible=False)
+
+        # If by some reason a window in a browser does not open automatically,
+        # save the figures and open them manually
+        pe1.save("spinham_1.html", axes_visible=False)
+        pe2.save("spinham_2.html", axes_visible=False)
+
+    ``pe1`` displays the :py:attr:`magnopy.SpinHamiltonian.p1` and
+    :py:attr:`magnopy.SpinHamiltonian.p21` parameters - :ref:`ug_tb_sh_1-1` and
+    :ref:`ug_tb_sh_2-1`.
+
+    ``pe2`` displays the :py:attr:`magnopy.SpinHamiltonian.p22` parameters -
+    :ref:`ug_tb_sh_2-2`.
+
+    Hover over the magnetic sites (``pe1``) or bonds (``pe2``) to see the values and more
+    details on the parameters.
     """
 
     pe1 = PlotlyEngine(_sphinx_gallery_fix=_sphinx_gallery_fix)
