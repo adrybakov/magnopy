@@ -1,12 +1,10 @@
 .. _ug_tb_sh_4-4:
 
-******************
-(2, 1, 1, 0) terms
-******************
+************
+(4, 4) terms
+************
 
-TODO: add links to the relevant API
-
-Forth case of quadlinear terms, where two of the four spin operators are associated
+Forth type of quadlinear terms, in which two of the four spin operators are associated
 with the first site, one spin operator is associated with the second site and one spin
 operator is associated with the third site. In this page we imply that
 :math:`\boldsymbol{r}_{\mu,\alpha_1}`,
@@ -54,3 +52,23 @@ operator is associated with the third site. In this page we imply that
         S_{\mu + \nu_3, \alpha_3}^{i_3}
         S_{\mu + \nu_3, \alpha_3}^{i_4}
     \Biggr)
+
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c44`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p44`
+
+    An iterator over the parameters already added to the Hamiltonian.

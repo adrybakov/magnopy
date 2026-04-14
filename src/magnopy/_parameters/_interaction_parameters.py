@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
 import numpy as np
@@ -174,7 +173,7 @@ class _InteractionParameters:
             elif (n, p_n) < key:
                 self._slices[key][0] += delta
 
-    def add(self, specs, parameter, when_present="raise error"):
+    def add(self, specs, parameter, when_present="raise error", weights=None):
         """
         Add arbitrary interaction parameter to the container.
 
@@ -200,8 +199,18 @@ class _InteractionParameters:
             - ``"sum"``: add the value of the parameter to the existing one.
             - ``"mean"``: replace the value of the parameter with the arithmetic mean of
             existing and new parameters.
+            - ``"weighted average"``: replace the value of the parameter with the weighted
+              average of existing and new parameters. Expect ``weights`` to be a tuple of two
+              weight: ``weights=(w_existing, w_new)``. ``w_existing`` is a weight for the
+              existing parameter and ``w_new`` is a weight for the ``parameter`` argument.
+              The new value of the parameter calculated as
+              ``(w_existing * existing_parameter + w_new * parameter) / (w_existing + w_new)``.
             - ``"skip"``: Leave existing parameter unchanged and continue without raising an
             error.
+
+        weights : tuple, optional
+            Weights for the weighted average when ``when_present`` is set to
+            ``"weighted average"``. Ignored otherwise.
 
         Raises
         ------
@@ -238,6 +247,15 @@ class _InteractionParameters:
                 self._container[index][1] += parameter
             elif when_present == "mean":
                 self._container[index][1] = (self._container[index][1] + parameter) / 2
+            elif when_present == "weighted average":
+                if weights is None or len(weights) != 2:
+                    raise ValueError(
+                        "Weights must be provided as a tuple of two numbers when when_present is set to 'weighted average'."
+                    )
+                w_existing, w_new = weights
+                self._container[index][1] = (
+                    w_existing * self._container[index][1] + w_new * parameter
+                ) / (w_existing + w_new)
             elif when_present == "skip":
                 pass
             else:
@@ -325,14 +343,14 @@ class _InteractionParameters:
 
         return result
 
-    def __mul__(self, scalar):
+    def __mul__(self, number):
         """
         Multiply all interaction parameters by a scalar.
 
         Parameters
         ----------
-        scalar : float
-            Scalar to multiply the interaction parameters by.
+        number : float
+            Number to multiply the interaction parameters by.
 
         Returns
         -------
@@ -340,21 +358,24 @@ class _InteractionParameters:
             New interaction parameters container with the multiplied interaction parameters.
         """
 
-        if not isinstance(scalar, int) and not isinstance(scalar, float):
+        if not isinstance(number, int) and not isinstance(number, float):
             raise TypeError(
-                f"unsupported operand type(s) for *: '{type(scalar)}' and '{self.__class__.__name__}'"
+                f"unsupported operand type(s) for *: '{type(number)}' and '{self.__class__.__name__}'"
             )
 
         result = _InteractionParameters()
         result._slices = self._slices.copy()
 
         for specs, parameter in self._container:
-            result._container.append([specs, parameter * scalar])
+            result._container.append([specs, parameter * number])
 
         return result
 
     def __rmul__(self, number):
         return self.__mul__(number=number)
+
+    def __sub__(self, other):
+        return self + (-1) * other
 
     def __len__(self):
         return len(self._container)

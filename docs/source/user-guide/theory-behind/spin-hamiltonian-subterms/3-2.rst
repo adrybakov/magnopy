@@ -1,14 +1,12 @@
 .. _ug_tb_sh_3-2:
 
-***************
-(2, 1, 0) terms
-***************
+************
+(3, 2) terms
+************
 
-TODO: add links to the relevant API
-
-Second case of the trilinear terms, where two spin operators are associated with the same
-site, and the third one is associated with a different site. In this page we imply that
-:math:`\boldsymbol{r}_{\mu,\alpha_1} \neq \boldsymbol{r}_{\mu + \nu_2, \alpha_2}`.
+Second type of the trilinear terms, in which two spin operators are associated with the
+same site, and the third one is associated with a different site. In this page we imply
+that :math:`\boldsymbol{r}_{\mu,\alpha_1} \neq \boldsymbol{r}_{\mu + \nu_2, \alpha_2}`.
 
 .. math::
     C_{3,2}
@@ -30,3 +28,22 @@ site, and the third one is associated with a different site. In this page we imp
         S_{\mu + \nu_2, \alpha_2}^{i_2}
         S_{\mu + \nu_2, \alpha_2}^{i_3}
     \Biggr)
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c32`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p32`
+
+    An iterator over the parameters already added to the Hamiltonian.

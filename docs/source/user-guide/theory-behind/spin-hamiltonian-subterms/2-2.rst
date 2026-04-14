@@ -1,13 +1,11 @@
 .. _ug_tb_sh_2-2:
 
 *************
-(1,  1) terms
+(2,  2) terms
 *************
 
-TODO: add links to the relevant API
-
-Second case of the bilinear terms where spin operators are associated with different sites.
-In other words, for these terms
+Second type of the bilinear terms, in which spin operators are associated with different
+sites. In other words, for these terms
 :math:`\boldsymbol{r}_{\mu,\alpha_1} \neq \boldsymbol{r}_{\mu + \nu_2, \alpha_2}`.
 
 .. math::
@@ -16,3 +14,22 @@ In other words, for these terms
     J^{i_1, i_2}_{\nu_2; \alpha_1, \alpha_2}
     S_{\mu, \alpha_1}^{i_1}
     S_{\mu + \nu_2, \alpha_2}^{i_2}
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c22`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p22`
+
+    An iterator over the parameters already added to the Hamiltonian.

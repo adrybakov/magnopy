@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
 
@@ -33,7 +32,13 @@ old_dir.add("old_dir")
 
 
 def load_tb2j(
-    filename, spin_values=None, spglib_types=None, g_factors=None, quiet=True
+    filename,
+    spin_values=None,
+    spglib_types=None,
+    g_factors=None,
+    missing_bonds="restore",
+    when_present="raise error",
+    quiet=True,
 ) -> SpinHamiltonian:
     r"""
     Reads spin Hamiltonian from the "exchange.out" file produced by |TB2J|_.
@@ -59,6 +64,29 @@ def load_tb2j(
     g_factors : (M, ) iterable of floats, optional
         g-factors for all atoms. Order is the same as in |TB2J|_ file. If none given, then
         Magnopy sets :math:`g = 2` for all atoms.
+
+    missing_bonds : bool, default "restore"
+
+        .. versionadded:: 0.5.2
+
+        What to do if some of the equivalent bonds are missing (see
+        :ref:`user-guide_theory-behind_equivalent-parameters`
+        and :ref:`user-guide_theory-behind_convention_multiple-counting` for more details
+        on equivalent bonds). Case-insensitive. Supported options are
+
+        * "restore" (default)
+          Magnopy adds missing equivalent bonds, by inserting additional parameters.
+
+        * "ignore"
+
+          Magnopy does nothing.
+
+    when_present : str, default "raise error"
+
+        .. versionadded:: 0.5.2
+
+        What to do if the exact same interaction is repeated twice in the file.
+        See :py:meth:`.SpinHamiltonian.add` for supported values.
 
     quiet : bool, default True
         If ``False``, warnings are printed when distances between atoms computed by
@@ -217,19 +245,15 @@ def load_tb2j(
             parameter = parameter + from_iso(iso=iso)
         if dmi is not None:
             parameter = parameter + from_dmi(dmi=dmi)
+        # Remember: aniso might be not traceless in the TB2J files
         if aniso is not None:
             parameter = parameter + aniso
 
-        # Adding info from the exchange block to the SpinHamiltonian structure
-        spinham.add_22(
-            alpha=atom1,
-            beta=atom2,
-            nu=ijk,
-            # Avoid passing aniso to the function as then the function make it traceless
-            # and symmetric, potentially loosing part of the matrix.
-            # Due to the TB2J problem: aniso not always traceless.
+        spinham.add(
+            nus=[ijk],
+            alphas=[atom1, atom2],
             parameter=parameter,
-            when_present="replace",
+            when_present=when_present,
         )
 
         computed_distance = get_distance(spinham.cell, spinham.atoms, atom1, atom2, ijk)
@@ -266,6 +290,15 @@ def load_tb2j(
                 f"Expected {len(spinham.atoms.names)} spglib types, got {len(spglib_types)}"
             )
         spinham.atoms["spglib_types"] = [int(_) for _ in spglib_types]
+
+    missing_bonds = missing_bonds.lower()
+    if missing_bonds == "restore":
+        spinham.restore_missing_parameters(strategy="mean")
+    else:
+        if missing_bonds != "ignore":
+            raise ValueError(
+                f"Unsupported value for missing_bonds. Expected 'restore' or 'ignore', got {missing_bonds}."
+            )
 
     spinham._reset_internals()
 

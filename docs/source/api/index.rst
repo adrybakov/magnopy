@@ -52,14 +52,15 @@ Functions
   make_supercell
   is_eigenstate
 
-Parameter converters
-====================
+Interaction parameters
+======================
 
 .. autosummary::
   :toctree: generated/
 
   converter22
   converter43
+  get_equivalent_parameters
 
 Exceptions
 ==========

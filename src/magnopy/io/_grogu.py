@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
 
@@ -30,7 +29,14 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
-def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian:
+def load_grogu(
+    filename,
+    spin_values=None,
+    spglib_types=None,
+    g_factors=None,
+    missing_bonds="restore",
+    when_present="raise error",
+) -> SpinHamiltonian:
     r"""
     Reads spin Hamiltonian from the .txt file produced by |GROGU|_.
 
@@ -52,6 +58,36 @@ def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian
         Spglib types for all atoms (not only for magnetic ones, but for all). Order is the
         same as in |GROGU|_ file. If none given, then there will be no "spglib_types" key
         in ``spinham.atoms``.
+
+    g_factors : (M, ) iterable of floats, optional
+
+        .. versionadded:: 0.5.2
+
+        g-factors for all atoms. Order is the same as in |TB2J|_ file. If none given, then
+        Magnopy sets :math:`g = 2` for all atoms.
+
+    missing_bonds : bool, default "restore"
+
+        .. versionadded:: 0.5.2
+
+        What to do if some of the equivalent bonds are missing (see
+        :ref:`user-guide_theory-behind_equivalent-parameters`
+        and :ref:`user-guide_theory-behind_convention_multiple-counting` for more details
+        on equivalent bonds). Case-insensitive. Supported options are
+
+        * "restore" (default)
+          Magnopy adds missing equivalent bonds, by inserting additional parameters.
+
+        * "ignore"
+
+          Magnopy does nothing.
+
+    when_present : str, default "raise error"
+
+        .. versionadded:: 0.5.2
+
+        What to do if the exact same interaction is repeated twice in the file.
+        See :py:meth:`.SpinHamiltonian.add` for supported values.
 
     Returns
     -------
@@ -105,9 +141,16 @@ def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian
     # Check if spglib_types were provided and of correct length
     if spglib_types is not None and len(spglib_types) != M:
         raise ValueError(f"Expected {M} spglib types, got {len(spglib_types)}")
+    # Check if g_factors were provided and of correct length
+    if g_factors is not None and len(g_factors) != M:
+        raise ValueError(f"Expected {M} g-factors, got {len(g_factors)}")
+
+    # Populate g_factors of atoms
+    if g_factors is None:
+        g_factors = [2] * M
 
     name_to_index = {}
-    atoms = dict(names=[], positions=[], spins=[], g_factors=[2 for _ in range(M)])
+    atoms = dict(names=[], positions=[], spins=[], g_factors=g_factors)
 
     for atom_index in range(M):
         i += 1
@@ -130,7 +173,7 @@ def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian
 
     # Add spglib types if provided
     if spglib_types is not None:
-        atoms["spglib_types"] = [int(_) for _ in spglib_types]
+        atoms["spglib_types"] = list(map(int, spglib_types))
 
     # Construct spin Hamiltonian
     spinham = SpinHamiltonian(convention=convention, cell=cell, atoms=atoms)
@@ -154,7 +197,12 @@ def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian
             list(map(float, lines[i + 2].split())),
         ]
         i += 2
-        spinham.add_21(alpha=alpha, parameter=parameter)
+        spinham.add(
+            nus=[(0, 0, 0)],
+            alphas=[alpha, alpha],
+            parameter=parameter,
+            when_present=when_present,
+        )
 
     while (
         "exchange" not in lines[i].lower()
@@ -185,9 +233,23 @@ def load_grogu(filename, spin_values=None, spglib_types=None) -> SpinHamiltonian
 
         i += 2
 
-        spinham.add_22(
-            alpha=alpha, beta=beta, nu=nu, parameter=parameter, when_present="replace"
+        spinham.add(
+            nus=[nu],
+            alphas=[alpha, beta],
+            parameter=parameter,
+            when_present=when_present,
         )
+
+    missing_bonds = missing_bonds.lower()
+    if missing_bonds == "restore":
+        spinham.restore_missing_parameters(strategy="mean")
+    else:
+        if missing_bonds != "ignore":
+            raise ValueError(
+                f"Unsupported value for missing_bonds. Expected 'restore' or 'ignore', got {missing_bonds}."
+            )
+
+    spinham._reset_internals()
 
     return spinham
 

@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
 
@@ -51,13 +50,17 @@ def cubic_ferro_nn(
         \dfrac{1}{2}
         \sum_{\mu, \nu}
         J_{iso}
-        \boldsymbol{S}_{\mu}
-        \cdot
-        \boldsymbol{S}_{\mu+\nu}
+        \left(
+            \boldsymbol{S}_{\mu}
+            \cdot
+            \boldsymbol{S}_{\mu+\nu}
+        \right)
         +
         \sum_{\mu}
         \boldsymbol{S}_{\mu}
+        \cdot
         \boldsymbol{J}_{21}
+        \cdot
         \boldsymbol{S}_{\mu}
 
     where
@@ -106,22 +109,34 @@ def cubic_ferro_nn(
 
         >>> import magnopy
         >>> spinham = magnopy.examples.cubic_ferro_nn()
+
+    .. doctest::
+
         >>> spinham.cell
         array([[1., 0., 0.],
                [0., 1., 0.],
                [0., 0., 1.]])
+
+    .. doctest::
+
         >>> spinham.atoms.names
         ['X']
         >>> spinham.atoms.spins
         [0.5]
         >>> spinham.atoms.positions
         [[0, 0, 0]]
+
+    .. doctest::
+
         >>> for _, alphas, parameter in spinham.p21:
         ...     print(alphas[0], parameter, sep="\n")
         0
         [[0. 0. 0.]
          [0. 0. 0.]
          [0. 0. 0.]]
+
+    .. doctest::
+
         >>> for nus, alphas, parameter in spinham.p22:
         ...     print(alphas[0], alphas[1], nus[0])
         ...     print(parameter)
@@ -222,6 +237,8 @@ def cubic_ferro_nn(
 
     *   Dimensionality of the nearest neighbors
 
+        1D ferromagnet
+
         .. doctest::
 
             >>> import magnopy
@@ -237,6 +254,11 @@ def cubic_ferro_nn(
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]
+
+        2D ferromagnet
+
+        .. doctest::
+
             >>> spinham = magnopy.examples.cubic_ferro_nn(dimensions=2)
             >>> for nus, alphas, parameter in spinham.p22:
             ...     print(alphas[0], alphas[1], nus[0])
@@ -246,6 +268,39 @@ def cubic_ferro_nn(
              [-0. -1. -0.]
              [-0. -0. -1.]]
             0 0 (0, -1, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, 1, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (1, 0, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+
+        3D ferromagnet (default)
+
+        .. doctest::
+
+            >>> spinham = magnopy.examples.cubic_ferro_nn(dimensions=3)
+            >>> for nus, alphas, parameter in spinham.p22:
+            ...     print(alphas[0], alphas[1], nus[0])
+            ...     print(parameter)
+            0 0 (-1, 0, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, -1, 0)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, 0, -1)
+            [[-1. -0. -0.]
+             [-0. -1. -0.]
+             [-0. -0. -1.]]
+            0 0 (0, 0, 1)
             [[-1. -0. -0.]
              [-0. -1. -0.]
              [-0. -0. -1.]]

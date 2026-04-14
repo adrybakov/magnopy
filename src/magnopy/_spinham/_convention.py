@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
 
@@ -27,7 +26,7 @@ Convention of spin Hamiltonian
 from magnopy._constants._conventions import _SPINHAM_CONVENTIONS
 from magnopy._exceptions import ConventionError
 
-ATTRIBUTE_ERROR_MESSAGE = "It is intentionally forbidden to change individual properties of convention. Use correct methods of SpinHamiltonian class to change convention."
+ATTRIBUTE_ERROR_MESSAGE = "It is intentionally forbidden to change individual properties of convention. Use convention.get_modified(...) and/or spinham.convention = spinham.convention.get_modified(...)"
 
 # Save local scope at this moment
 old_dir = set(dir())
@@ -38,8 +37,7 @@ class Convention:
     R"""
     Convention of the spin Hamiltonian.
 
-    For the detailed description of the convention problem see
-    :ref:`user-guide_theory-behind_convention` and
+    For more details see :ref:`user-guide_theory-behind_convention` and
     :ref:`user-guide_theory-behind_spin-hamiltonian`.
 
     Parameters
@@ -49,41 +47,52 @@ class Convention:
         Whether the pairs of spins are counted multiple times in the Hamiltonian's sums.
 
     spin_normalized : bool, optional
-        Whether spin vectors/operators are normalized to 1. If ``True``, then spin
-        vectors/operators are normalized.
+        Whether spin vectors/operators are "normalized" to 1. If ``True``, then spin
+        vectors/operators are "normalized".
 
     c1 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_1-1`).
 
     c21 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-1`).
 
     c22 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-2`).
 
     c31 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-1`).
 
     c32 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-2`).
 
     c33 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-3`).
 
     c41 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-1`).
 
     c42 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-2`).
 
     c43 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-3`).
 
     c44 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-4`).
 
     c45 : float, optional
-        Numerical factor before sum over sites in the spin Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-5`).
 
     name : str, default "custom"
         A label for the convention. Any string, case-insensitive.
@@ -91,32 +100,22 @@ class Convention:
     Examples
     --------
 
+    Creating conventions
+
     .. doctest::
 
         >>> import magnopy
-        >>> n1 = magnopy.Convention(True, True, c21=1, c22=-0.5, name="conv #1")
-        >>> n2 = magnopy.Convention(False, True, c21=1, c22=-0.5, name="conv #2")
-        >>> n3 = magnopy.Convention(False, True, c22=-0.5, name="conv #3")
-        >>> print(n1)
-        "conv #1" convention where
-          * Bonds are counted multiple times in the sum;
-          * Spin vectors are normalized to 1;
-          * Undefined c1 factor;
-          * c21 = 1.0;
-          * c22 = -0.5;
-          * Undefined c31 factor;
-          * Undefined c32 factor;
-          * Undefined c33 factor;
-          * Undefined c41 factor;
-          * Undefined c42 factor;
-          * Undefined c43 factor;
-          * Undefined c44 factor;
-          * Undefined c45 factor.
-        >>> n1.multiple_counting
+        >>> conv_1 = magnopy.Convention(True, True, c21=1, c22=-0.5, name="conv #1")
+        >>> conv_2 = magnopy.Convention(False, True, c21=1, c22=-0.5, name="conv #2")
+        >>> conv_3 = magnopy.Convention(False, True, c22=-0.5, name="conv #3")
+
+    Individual properties of the convention
+
+    .. doctest::
+
+        >>> conv_1.multiple_counting
         True
-        >>> n1 == n2
-        False
-        >>> n3.c21
+        >>> conv_3.c21
         Traceback (most recent call last):
         ...
         magnopy._exceptions.ConventionError: Convention of spin Hamiltonian has an undefined property 'c21':
@@ -134,8 +133,37 @@ class Convention:
           * Undefined c43 factor;
           * Undefined c44 factor;
           * Undefined c45 factor.
-        >>> n3.name
+        >>> conv_3.name
         'conv #3'
+
+    Full summary of the convention
+
+    .. doctest::
+
+        >>> print(conv_1)
+        "conv #1" convention where
+          * Bonds are counted multiple times in the sum;
+          * Spin vectors are normalized to 1;
+          * Undefined c1 factor;
+          * c21 = 1.0;
+          * c22 = -0.5;
+          * Undefined c31 factor;
+          * Undefined c32 factor;
+          * Undefined c33 factor;
+          * Undefined c41 factor;
+          * Undefined c42 factor;
+          * Undefined c43 factor;
+          * Undefined c44 factor;
+          * Undefined c45 factor.
+
+    Comparing conventions
+
+    .. doctest::
+
+        >>> conv_1 == conv_2
+        False
+        >>> conv_1 != conv_3
+        True
 
     """
 
@@ -376,8 +404,8 @@ class Convention:
         Parameters
         ----------
         return_as_string : bool, default False
-            Whether to print or return a ``str``. If ``True``, then return an ``str``.
-            If ``False``, then print it.
+            Whether to print or return a ``str``. If ``True``, then returns a ``str``.
+            If ``False``, then prints it.
 
         Examples
         --------
@@ -385,8 +413,8 @@ class Convention:
         .. doctest::
 
             >>> from magnopy import Convention
-            >>> n1 = Convention(True, True, c21=1, c22=-0.5)
-            >>> n1.summary()
+            >>> conv_1 = Convention(True, True, c21=1, c22=-0.5)
+            >>> conv_1.summary()
             "custom" convention where
               * Bonds are counted multiple times in the sum;
               * Spin vectors are normalized to 1;
@@ -421,12 +449,24 @@ class Convention:
     @property
     def name(self) -> str:
         r"""
-        A label for the convention. Any string, case-insensitive.
+        A label for the convention.
+
+        Arbitrary string, case-insensitive.
 
         Returns
         -------
 
         name : str
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(name="Conv #1")
+            >>> conv.name
+            'conv #1'
         """
 
         return self._name
@@ -441,14 +481,28 @@ class Convention:
     @property
     def multiple_counting(self) -> bool:
         r"""
-        Whether the pairs of spins are counted multiple times in the Hamiltonian's sums.
+        Whether the all elements of the equivalent sets of interaction parameters are
+        included in the Hamiltonian's sums.
 
-        If ``True``, then pairs are counted multiple times.
+        If ``True``, then each element of the set of equivalent interaction parameters is
+        included in the Hamiltonian's sums. If ``False``, then only one element of the
+        set of equivalent interaction parameters is included in the Hamiltonian's sums.
 
         Returns
         -------
 
         multiple_counting : bool
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(multiple_counting=True)
+            >>> conv.multiple_counting
+            True
+
         """
         if self._multiple_counting is None:
             raise ConventionError(convention=self, property="multiple_counting")
@@ -464,14 +518,25 @@ class Convention:
     @property
     def spin_normalized(self) -> bool:
         r"""
-        Whether spin vectors/operators are normalized to 1.
+        Whether spin vectors/operators are "normalized" to 1.
 
-        If ``True``, then spin vectors/operators are normalized.
+        If ``True``, then spin vectors/operators are "normalized". If ``False``, then
+        spin vectors/operators are not "normalized".
 
         Returns
         -------
 
         spin_normalized : bool
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(spin_normalized=False)
+            >>> conv.spin_normalized
+            False
         """
         if self._spin_normalized is None:
             raise ConventionError(convention=self, property="spin_normalized")
@@ -487,14 +552,24 @@ class Convention:
     @property
     def c1(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_1-1`).
 
         Returns
         -------
 
         c1 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c1=0.5)
+            >>> conv.c1
+            0.5
+
         """
         if self._c1 is None:
             raise ConventionError(convention=self, property="c1")
@@ -510,14 +585,23 @@ class Convention:
     @property
     def c21(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-1`).
 
         Returns
         -------
 
         c21 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c21=-1)
+            >>> conv.c21
+            -1.0
         """
         if self._c21 is None:
             raise ConventionError(convention=self, property="c21")
@@ -530,14 +614,24 @@ class Convention:
     @property
     def c22(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_2-2`).
 
         Returns
         -------
 
         c22 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c22=1 / 2)
+            >>> conv.c22
+            0.5
+
         """
         if self._c22 is None:
             raise ConventionError(convention=self, property="c22")
@@ -553,14 +647,24 @@ class Convention:
     @property
     def c31(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-1`).
 
         Returns
         -------
 
         c31 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c31=-1)
+            >>> conv.c31
+            -1.0
+
         """
         if self._c31 is None:
             raise ConventionError(convention=self, property="c31")
@@ -573,14 +677,23 @@ class Convention:
     @property
     def c32(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-2`).
 
         Returns
         -------
 
         c32 : float
+
+        Examples
+        --------
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c32=1 / 3)
+            >>> conv.c32
+            0.3333333333333333
+
         """
         if self._c32 is None:
             raise ConventionError(convention=self, property="c32")
@@ -593,14 +706,24 @@ class Convention:
     @property
     def c33(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_3-3`).
 
         Returns
         -------
 
         c33 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c33=1 / 6)
+            >>> conv.c33
+            0.16666666666666666
+
         """
         if self._c33 is None:
             raise ConventionError(convention=self, property="c33")
@@ -616,14 +739,24 @@ class Convention:
     @property
     def c41(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-1`).
 
         Returns
         -------
 
         c41 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c41=-1)
+            >>> conv.c41
+            -1.0
+
         """
         if self._c41 is None:
             raise ConventionError(convention=self, property="c41")
@@ -636,14 +769,23 @@ class Convention:
     @property
     def c42(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-2`).
 
         Returns
         -------
 
         c42 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c42=1 / 4)
+            >>> conv.c42
+            0.25
         """
         if self._c42 is None:
             raise ConventionError(convention=self, property="c42")
@@ -656,14 +798,24 @@ class Convention:
     @property
     def c43(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-3`).
 
         Returns
         -------
 
         c43 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c43=1 / 6)
+            >>> conv.c43
+            0.16666666666666666
+
         """
         if self._c43 is None:
             raise ConventionError(convention=self, property="c43")
@@ -676,14 +828,24 @@ class Convention:
     @property
     def c44(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-4`).
 
         Returns
         -------
 
         c44 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c44=1 / 12)
+            >>> conv.c44
+            0.08333333333333333
+
         """
         if self._c44 is None:
             raise ConventionError(convention=self, property="c44")
@@ -696,14 +858,23 @@ class Convention:
     @property
     def c45(self) -> float:
         r"""
-        Numerical factor before sum over sites in the spin Hamiltonian. See
-        :ref:`user-guide_theory-behind_spin-hamiltonian` for definition of relevant
-        terms of the Hamiltonian.
+        Numerical factor before the sum over sites in the spin Hamiltonian
+        (:ref:`ug_tb_sh_4-5`).
 
         Returns
         -------
 
         c45 : float
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(c45=1 / 24)
+            >>> conv.c45
+            0.041666666666666664
         """
         if self._c45 is None:
             raise ConventionError(convention=self, property="c45")
@@ -717,11 +888,11 @@ class Convention:
     #                              Comparison and has                              #
     ################################################################################
 
+    # Note: semi-private attributes are compared intentionally, as public ones raise
+    # an error if not defined.
+    # When attributes are not defined in both conventions, then these attributes are
+    # considered equal.
     def __eq__(self, other):
-        # Note semi-private attributes are compared intentionally, as
-        # public ones will raise an error if not defined
-        # If attributes are not defined in both conventions,
-        # then that attribute is considered equal.
         if not isinstance(other, Convention):
             return NotImplemented
 
@@ -731,10 +902,6 @@ class Convention:
         )
 
     def __hash__(self):
-        # Note semi-private attributes are used intentionally, as
-        # public ones will raise an error if not defined
-        # If attributes are not defined in both conventions,
-        # then that attribute is considered equal.
 
         return hash(
             tuple(getattr(self, attr) for attr in self.__comparison_attributes__)
@@ -747,13 +914,13 @@ class Convention:
     @staticmethod
     def get_predefined(name: str):
         r"""
-        Returns one of the pre-defined conventions.
+        Returns one of the predefined conventions.
 
         Parameters
         ----------
 
         name : str
-            Name of the desired pre-defined convention. Supported are
+            Name of the desired predefined convention. Supported are
 
             * "tb2j"
             * "grogu"
@@ -766,6 +933,17 @@ class Convention:
         -------
 
         convention : :py:class:`.Convention`
+
+        Notes
+        -----
+
+        To check which conventions are hard-coded in Magnopy one can do
+
+        .. doctest::
+
+            >>> from magnopy._constants._conventions import _SPINHAM_CONVENTIONS
+            >>> print(list(_SPINHAM_CONVENTIONS.keys()))
+            ['tb2j', 'grogu', 'vampire', 'spinw']
 
         Examples
         --------
@@ -789,6 +967,9 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor;
               * Undefined c45 factor.
+
+        .. doctest::
+
             >>> grogu = magnopy.Convention.get_predefined("GROGU")
             >>> print(grogu)
             "grogu" convention where
@@ -805,6 +986,9 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor;
               * Undefined c45 factor.
+
+        .. doctest::
+
             >>> vampire = magnopy.Convention.get_predefined("Vampire")
             >>> print(vampire)
             "vampire" convention where
@@ -821,6 +1005,9 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor;
               * Undefined c45 factor.
+
+        .. doctest::
+
             >>> spinW = magnopy.Convention.get_predefined("spinW")
             >>> print(spinW)
             "spinw" convention where
@@ -867,80 +1054,83 @@ class Convention:
         name: str = None,
     ):
         r"""
-        Returns the new instance of the :py:class:`.Convention` class based on the called
-        one with changed given properties.
+        Returns a new instance of the :py:class:`.Convention` class.
+
+        Properties of the new instance are the same as in the original convention, except
+        for those explicitly given as arguments of this method.
 
         Parameters
         ----------
+
         multiple_counting : bool, optional
-            Whether the pairs of spins are counted multiple times in the Hamiltonian's sums.
-            Modified to the given value, if None, then kept the same as in the original convention.
+            Whether the pairs of spins are counted multiple times in the Hamiltonian's
+            sums.
 
         spin_normalized : bool, optional
             Whether spin vectors/operators are normalized to 1. If ``True``, then spin
             vectors/operators are normalized.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
 
         c1 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_1-1`).
 
         c21 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_2-1`).
 
         c22 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_2-2`).
 
         c31 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_3-1`).
 
         c32 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_3-2`).
 
         c33 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_3-3`).
 
         c41 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-1`).
 
         c42 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-2`).
 
         c43 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-3`).
 
         c44 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-4`).
 
         c45 : float, optional
-            Numerical factor before sum over sites in the spin Hamiltonian.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+            Numerical factor before the sum over sites in the spin Hamiltonian
+            (:ref:`ug_tb_sh_4-5`).
 
         name : str, optional
             A label for the convention. Any string, case-insensitive.
-            Modified to the given value, if None, then kept the same as in the original
-            convention.
+
+        Notes
+        -----
+
+        Giving ``None`` as the value to the keyword arguments of this method does not
+        change the corresponding properties of the convention
+
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(name="original", c21=1)
+            >>> mod_conv = conv.get_modified(name="modified", c21=None)
+            >>> # Still 1, not None
+            >>> mod_conv.c21
+            1.0
 
         Examples
         --------
@@ -971,6 +1161,9 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor;
               * Undefined c45 factor.
+
+        .. doctest::
+
             >>> mod_conv = conv.get_modified(name="modified", c22=1, c33=-3)
             >>> print(mod_conv)
             "modified" convention where
@@ -987,6 +1180,7 @@ class Convention:
               * Undefined c43 factor;
               * Undefined c44 factor;
               * Undefined c45 factor.
+
         """
 
         if multiple_counting is None:

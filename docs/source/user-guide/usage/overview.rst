@@ -4,7 +4,7 @@
 Overview
 ********
 
-The start of almost every calculation with Magnopy is the creation of a
+Almost every calculation with Magnopy begins with the creation of a
 :py:class:`magnopy.SpinHamiltonian` object, that handles a
 :ref:`user-guide_theory-behind_spin-hamiltonian`.
 
@@ -21,10 +21,10 @@ When those three objects are created, then
 
 Once an instance of :py:class:`magnopy.SpinHamiltonian` exists, then
 you can add (:py:meth:`magnopy.SpinHamiltonian.add`) or remove
-(:py:meth:`magnopy.SpinHamiltonian.remove`) an interaction parameters from it. As well as
-do many other things that are present in :ref:`api` page.
+(:py:meth:`magnopy.SpinHamiltonian.remove`) an interaction parameters. As well as do many
+other things that are present in :ref:`api` page.
 
-Then from the spin Hamiltonian with some parameters you can create an instance of
+Then, from the spin Hamiltonian with some parameters, you can create an instance of
 the :py:class:`magnopy.Energy` class to compute the energy of the system in any
 state or optimize the spin directions to find the vacuum state.
 

@@ -37,11 +37,12 @@ terms with at most four coupled components of spin angular momentum operator (i.
     +\\&+
     C_4
     \sum_{\substack{\mu, \nu_2, \nu_3, \nu_4, \\ \alpha_1, \alpha_2, \alpha_3, \alpha_4, \\ i_1, i_2, i_3, i_4}}
-    J^{i_1, i_2, i_3, i_4}_{\nu_2, \nu_3, \nu_4; \alpha_1, \alpha_2, \alpha_3, \alpha_3}
+    J^{i_1, i_2, i_3, i_4}_{\nu_2, \nu_3, \nu_4; \alpha_1, \alpha_2, \alpha_3, \alpha_4}
     S_{\mu, \alpha_1}^{i_1}
     S_{\mu + \nu_2, \alpha_2}^{i_2}
     S_{\mu + \nu_3, \alpha_3}^{i_3}
     S_{\mu + \nu_4, \alpha_4}^{i_4}
+    :label: eq:user-guide_theory-behind_spin-hamiltonian_the_hamiltonian
 
 where the sum over :math:`n` is expanded.
 
@@ -195,21 +196,21 @@ indicates the amount of unique magnetic sites. The table below summarize the lab
 rules that are used in Magnopy. See linked pages for the details of the terms of the
 Hamiltonian for each case.
 
-========= ============ =========== =================== =======================================
-:math:`n` partition    :math:`p_n` Hamiltonian's terms Convention constant (:math:`C_{n,p_n}`)
-========= ============ =========== =================== =======================================
-1         ( 1 )        1           :ref:`ug_tb_sh_1-1` :math:`C_{1,1} \equiv C_1`
-2         (2, 0)       1           :ref:`ug_tb_sh_2-1` :math:`C_{2,1}`
-2         (1, 1)       2           :ref:`ug_tb_sh_2-2` :math:`C_{2,2}`
-3         (3, 0, 0)    1           :ref:`ug_tb_sh_3-1` :math:`C_{3,1}`
-3         (2, 1, 0)    2           :ref:`ug_tb_sh_3-2` :math:`C_{3,2}`
-3         (1, 1, 1)    3           :ref:`ug_tb_sh_3-3` :math:`C_{3,3}`
-4         (4, 0, 0, 0) 1           :ref:`ug_tb_sh_4-1` :math:`C_{4,1}`
-4         (3, 1, 0, 0) 2           :ref:`ug_tb_sh_4-2` :math:`C_{4,2}`
-4         (2, 2, 0, 0) 3           :ref:`ug_tb_sh_4-3` :math:`C_{4,3}`
-4         (2, 1, 1, 0) 4           :ref:`ug_tb_sh_4-4` :math:`C_{4,4}`
-4         (1, 1, 1, 1) 5           :ref:`ug_tb_sh_4-5` :math:`C_{4,5}`
-========= ============ =========== =================== =======================================
+========= =========== ============ =================== =======================================
+:math:`n` :math:`p_n` partition    Hamiltonian's terms Convention constant (:math:`C_{n,p_n}`)
+========= =========== ============ =================== =======================================
+1         1           ( 1 )        :ref:`ug_tb_sh_1-1` :math:`C_{1,1} \equiv C_1`
+2         1           (2, 0)       :ref:`ug_tb_sh_2-1` :math:`C_{2,1}`
+2         2           (1, 1)       :ref:`ug_tb_sh_2-2` :math:`C_{2,2}`
+3         1           (3, 0, 0)    :ref:`ug_tb_sh_3-1` :math:`C_{3,1}`
+3         2           (2, 1, 0)    :ref:`ug_tb_sh_3-2` :math:`C_{3,2}`
+3         3           (1, 1, 1)    :ref:`ug_tb_sh_3-3` :math:`C_{3,3}`
+4         1           (4, 0, 0, 0) :ref:`ug_tb_sh_4-1` :math:`C_{4,1}`
+4         2           (3, 1, 0, 0) :ref:`ug_tb_sh_4-2` :math:`C_{4,2}`
+4         3           (2, 2, 0, 0) :ref:`ug_tb_sh_4-3` :math:`C_{4,3}`
+4         4           (2, 1, 1, 0) :ref:`ug_tb_sh_4-4` :math:`C_{4,4}`
+4         5           (1, 1, 1, 1) :ref:`ug_tb_sh_4-5` :math:`C_{4,5}`
+========= =========== ============ =================== =======================================
 
 .. toctree::
     :maxdepth: 1
@@ -231,7 +232,7 @@ Examples
 ========
 
 In this part we show how the common terms of the spin Hamiltonian can be written in the
-expanded form.
+form of equation :eq:`eq:user-guide_theory-behind_spin-hamiltonian_the_hamiltonian`.
 
 Zeeman interaction
 ------------------
@@ -243,7 +244,7 @@ Linear coupling with the magnetic field is usually written as
     =
     \mu_B\boldsymbol{h}\sum_{\mu,\alpha_1} g_{\alpha_1} \boldsymbol{S}_{\mu, \alpha_1}
 
-This term can be written as linear interaction if one defines
+This term can be written in the form of :ref:`ug_tb_sh_1-1` if one defines
 :math:`C_1 = 1` and :math:`\boldsymbol{J}_{\alpha_1} = \mu_B\boldsymbol{h} g_{\alpha_1}`.
 
 On-site anisotropy
@@ -263,7 +264,7 @@ We take an example of the triaxial anisotropy, that can be written as
         K^z (S^z_{\mu,\alpha_1})^2
     \Bigr)
 
-This Hamiltonian can be written as bilinear interaction if one defines
+This Hamiltonian can be written in the form of :ref:`ug_tb_sh_2-1` if one defines
 :math:`C_{2, 1} = 1` and
 
 .. math::
@@ -300,7 +301,7 @@ be written as
     \Bigr]
 
 where :math:`\boldsymbol{D}_{\nu_2;\alpha_1,\alpha_2}` is a DM vector.
-This Hamiltonian can be written as the third term of the expanded form if one defines
+This Hamiltonian can be written in the form of :ref:`ug_tb_sh_2-2` if one defines
 :math:`C_{2, 2} = 1/2` and
 
 .. math::
@@ -326,8 +327,8 @@ Isotropic biquadratic exchange interaction can be written as
     \cdot
     \boldsymbol{S}_{\mu+\nu_2,\alpha_2})^2
 
-This Hamiltonian can be written as the quadlinear term if one defines :math:`C_{4,3} = 1`
-and
+This Hamiltonian can be written in the form of :ref:`ug_tb_sh_4-3` if one defines
+:math:`C_{4,3} = 1` and
 :math:`J^{i_1,i_2,i_3,i_4}_{0,\nu_2,\nu_2;\alpha_1, \alpha_1, \alpha_2, \alpha_2} = J_{\nu_2;\alpha_1,\alpha_2}`
 when :math:`(i_1,i_2,i_3,i_4) = (xxxx), (xyxy), (xzxz), (yxyx), (yyyy), (yzyz), (zxzx), (zyzy), (yyyy)`
 and

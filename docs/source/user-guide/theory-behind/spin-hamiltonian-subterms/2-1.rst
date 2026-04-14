@@ -1,13 +1,11 @@
 .. _ug_tb_sh_2-1:
 
 *************
-(2,  0) terms
+(2,  1) terms
 *************
 
-TODO: add links to the relevant API
-
-First case of the bilinear terms where both spin operators are associated with the same
-site.
+First type of the bilinear terms, in which both spin operators are associated with the
+same site.
 
 .. math::
     C_{2,1}
@@ -15,3 +13,22 @@ site.
     J^{i_1, i_2}_{0; \alpha_1, \alpha_1}
     S_{\mu, \alpha_1}^{i_1}
     S_{\mu, \alpha_1}^{i_2}
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c21`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p21`
+
+    An iterator over the parameters already added to the Hamiltonian.

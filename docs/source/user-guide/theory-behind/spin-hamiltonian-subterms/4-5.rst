@@ -1,14 +1,11 @@
 .. _ug_tb_sh_4-5:
 
-******************
-(1, 1, 1, 1) terms
-******************
+************
+(4, 5) terms
+************
 
-TODO: add links to the relevant API
-
-Fifth case of quadlinear terms, where two of the four spin operators are associated
-with the first site, one spin operator is associated with the second site and one spin
-operator is associated with the third site. In this page we imply that
+Fifth type of quadlinear terms, in which all four spin operators are associated
+with different sites. In this page we imply that
 :math:`\boldsymbol{r}_{\mu,\alpha_1}`,
 :math:`\boldsymbol{r}_{\mu + \nu_2, \alpha_2}`,
 :math:`\boldsymbol{r}_{\mu + \nu_3, \alpha_3}`, and
@@ -22,3 +19,23 @@ operator is associated with the third site. In this page we imply that
     S_{\mu + \nu_2, \alpha_2}^{i_2}
     S_{\mu + \nu_3, \alpha_3}^{i_3}
     S_{\mu + \nu_4, \alpha_4}^{i_4}
+
+
+Relevant API
+============
+
+*   :py:attr:`magnopy.Convention.c45`
+
+    Convention constant.
+
+*   :py:meth:`magnopy.SpinHamiltonian.add`
+
+    Method to add the parameter to the Hamiltonian.
+
+*   :py:meth:`magnopy.SpinHamiltonian.remove`
+
+    Method to remove the parameter from the Hamiltonian.
+
+*   :py:attr:`magnopy.SpinHamiltonian.p45`
+
+    An iterator over the parameters already added to the Hamiltonian.

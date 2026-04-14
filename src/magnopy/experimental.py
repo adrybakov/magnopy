@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 import random
 import numpy as np
@@ -61,6 +60,34 @@ def plot_spinham(
     pe2 : :py:class:`.PlotlyEngine`
         Instance of the Magnopy's plot engine, with plotted spin Hamiltonian. Ready to be
         saved or showed. Only two-spins/two-sites parameters are plotted.
+
+    Notes
+    -----
+
+    Use as follows:
+
+    .. code-block:: python
+
+        pe1, pe2 = plot_spinham(spinham)
+
+        # Show
+        pe1.show(width=1000, height=1000, axes_visible=False)
+        pe2.show(width=1000, height=1000, axes_visible=False)
+
+        # If by some reason a window in a browser does not open automatically,
+        # save the figures and open them manually
+        pe1.save("spinham_1.html", axes_visible=False)
+        pe2.save("spinham_2.html", axes_visible=False)
+
+    ``pe1`` displays the :py:attr:`magnopy.SpinHamiltonian.p1` and
+    :py:attr:`magnopy.SpinHamiltonian.p21` parameters - :ref:`ug_tb_sh_1-1` and
+    :ref:`ug_tb_sh_2-1`.
+
+    ``pe2`` displays the :py:attr:`magnopy.SpinHamiltonian.p22` parameters -
+    :ref:`ug_tb_sh_2-2`.
+
+    Hover over the magnetic sites (``pe1``) or bonds (``pe2``) to see the values and more
+    details on the parameters.
     """
 
     pe1 = PlotlyEngine(_sphinx_gallery_fix=_sphinx_gallery_fix)

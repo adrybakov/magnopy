@@ -6,24 +6,15 @@ Units
 
 
 Magnopy supports a number of units both for input and output data. On this page we
-describe what units are supported and in which context.
+describe what units are supported. All units keywords are case-insensitive.
 
-.. _user-guide_usage_units_energy-units:
+.. _user-guide_usage_units_energy:
 
-Units of energy
-===============
+Energy
+======
 
-Magnopy outputs a number of properties that have units of energy. By default Magnopy
-outputs energy in the units of "meV", but the user can ask for other supported units.
-
-.. hint::
-    To check what units are hardcoded in Magnopy's source code one can use the trick:
-
-    .. doctest::
-
-        >>> from magnopy._constants._units import _ENERGY_UNITS
-        >>> print(list(_ENERGY_UNITS))
-        ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg']
+By default Magnopy outputs energy in the units of "meV", but the user can ask for other
+supported units.
 
 ======================== ======================
 Units                    Keywords
@@ -36,7 +27,6 @@ Erg                      ``"Erg"``
 ======================== ======================
 
 
-
 .. dropdown:: Conversion factors
 
     .. doctest::
@@ -47,6 +37,21 @@ Erg                      ``"Erg"``
         >>> Joule = magnopy.si.JOULE
         >>> Rydberg = magnopy.si.RYDBERG_ENERGY
         >>> Erg = magnopy.si.ERG
+
+    .. doctest::
+        :hide:
+
+        >>> from magnopy._constants._units import _ENERGY_UNITS
+        >>> eV == _ENERGY_UNITS["ev"]
+        True
+        >>> meV == _ENERGY_UNITS["mev"]
+        True
+        >>> Joule == _ENERGY_UNITS["joule"]
+        True
+        >>> Rydberg == _ENERGY_UNITS["rydberg"]
+        True
+        >>> Erg == _ENERGY_UNITS["erg"]
+        True
 
     .. doctest::
 
@@ -71,8 +76,8 @@ Erg                      ``"Erg"``
 
     .. doctest::
 
-        >>> print(f"{eV / Erg:.8e} Erg in eV")
-        1.60217663e-12 Erg in eV
+        >>> print(f"{eV / Erg:.8e} Erg in 1 eV")
+        1.60217663e-12 Erg in 1 eV
         >>> print(f"{Erg / eV:.8e} eV in 1 Erg")
         6.24150907e+11 eV in 1 Erg
 
@@ -92,8 +97,8 @@ Erg                      ``"Erg"``
 
     .. doctest::
 
-        >>> print(f"{meV / Erg:.8e} Erg in meV")
-        1.60217663e-15 Erg in meV
+        >>> print(f"{meV / Erg:.8e} Erg in 1 meV")
+        1.60217663e-15 Erg in 1 meV
         >>> print(f"{Erg / meV:.8e} meV in 1 Erg")
         6.24150907e+14 meV in 1 Erg
 
@@ -108,47 +113,32 @@ Erg                      ``"Erg"``
 
     .. doctest::
 
-        >>> print(f"{Joule / Erg:.1e} Erg in Joule")
-        1.0e+07 Erg in Joule
+        >>> print(f"{Joule / Erg:.1e} Erg in 1 Joule")
+        1.0e+07 Erg in 1 Joule
         >>> print(f"{Erg / Joule:.1e} Joule in 1 Erg")
         1.0e-07 Joule in 1 Erg
 
 
     .. doctest::
 
-        >>> print(f"{Rydberg / Erg:.8e} Erg in Rydberg")
-        2.17987236e-11 Erg in Rydberg
+        >>> print(f"{Rydberg / Erg:.8e} Erg in 1 Rydberg")
+        2.17987236e-11 Erg in 1 Rydberg
         >>> print(f"{Erg / Rydberg:.8e} Rydberg in 1 Erg")
         4.58742456e+10 Rydberg in 1 Erg
 
 
-.. _user-guide_usage_units_parameter-units:
+.. _user-guide_usage_units_parameters:
 
-Units of Hamiltonian's parameters
-=================================
+Hamiltonian's parameters
+========================
 
-Parameters of the :py:class:`.SpinHamiltonian` are typically stored in the units of energy
-(i.e meV or Joule) or some units that offer direct conversion to some energy scale (like
-Kelvin, via Boltzmann constant). Magnopy takes the same approach and support a number of
-energy-like units.
+Interaction parameters of the :py:class:`.SpinHamiltonian` are typically stored in the
+units of energy (i.e meV or Joule) or some units that offer direct conversion to an energy
+scale (like Kelvin, via Boltzmann constant). Use :py:attr:`.SpinHamiltonian.units` to
+check or change the units of the parameters.
 
-
-.. note::
-
-    Temperature scale and energy scale are connected via Boltzmann constant
-    :math:`E = k_B\cdot T`.
-
-.. hint::
-    To check what units are hardcoded in Magnopy's source code one can use the trick:
-
-    .. doctest::
-
-        >>> from magnopy._constants._units import _PARAMETER_UNITS
-        >>> print(list(_PARAMETER_UNITS))
-        ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'k', 'kelvin']
-
-For the parameters of the spin Hamiltonian Magnopy supports all
-:ref:`user-guide_usage_units_energy-units` from above and
+For the interaction parameters Magnopy supports all
+:ref:`energy units <user-guide_usage_units_energy>` and
 
 ====== =====================
 Units  Keywords
@@ -156,12 +146,34 @@ Units  Keywords
 Kelvin ``"K"``, ``"Kelvin"``
 ====== =====================
 
+.. note::
+
+    Temperature scale and energy scale are connected via Boltzmann constant
+    :math:`E = k_B\cdot T`.
+
 
 .. dropdown:: Conversion factors
 
     .. doctest::
 
-        >>> Kelvin = _PARAMETER_UNITS["kelvin"]
+        >>> Kelvin = magnopy.si.BOLTZMANN_CONSTANT * magnopy.si.KELVIN
+
+    .. doctest::
+        :hide:
+
+        >>> from magnopy._constants._units import _PARAMETER_UNITS
+        >>> eV == _PARAMETER_UNITS["ev"]
+        True
+        >>> meV == _PARAMETER_UNITS["mev"]
+        True
+        >>> Joule == _PARAMETER_UNITS["joule"]
+        True
+        >>> Rydberg == _PARAMETER_UNITS["rydberg"]
+        True
+        >>> Erg == _PARAMETER_UNITS["erg"]
+        True
+        >>> Kelvin == _PARAMETER_UNITS["kelvin"]
+        True
 
     .. doctest::
 
@@ -198,31 +210,17 @@ Kelvin ``"K"``, ``"Kelvin"``
         >>> print(f"{Erg / Kelvin:.8e} Kelvin for 1 Erg")
         7.24297052e+15 Kelvin for 1 Erg
 
-.. _user-guide_usage_units_magnon-energy-units:
+.. _user-guide_usage_units_magnon-energy:
 
-Units of magnon energies
-========================
+Magnon energies
+===============
 
-Magnon is associated with the oscillatory behavior in the classical picture. Thus, the
-list of supported units is extended by the frequency units.
+Magnon quasiparticles are associated with the oscillatory behavior in the classical
+picture. Thus, the list of supported units for magnon energies is extended with the
+frequency units.
 
-.. note::
-
-    Frequencies scale and energy scale are connected via Planck constant
-    :math:`E = h\cdot f`.
-
-.. hint::
-    To check what units are hardcoded in Magnopy's source code one can use the trick:
-
-    .. doctest::
-
-        >>> from magnopy._constants._units import _MAGNON_ENERGY_UNITS
-        >>> print(list(_MAGNON_ENERGY_UNITS))
-        ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'hertz', 'hz', 'gigahertz', 'ghz', 'terahertz', 'thz']
-
-
-For the magnon energies Magnopy supports all :ref:`user-guide_usage_units_energy-units`
-and some extra units
+For the magnon energies Magnopy supports all
+:ref:`energy units <user-guide_usage_units_energy>` and
 
 ========= ==========================
 Units     Keywords
@@ -232,14 +230,40 @@ GigaHertz ``"GigaHertz"``, ``"GHz"``
 TeraHertz ``"TeraHertz"``, ``"THz"``
 ========= ==========================
 
+.. note::
+
+    Frequency scale and energy scale are connected via Planck constant
+    :math:`E = h\cdot f`.
+
 .. dropdown:: Conversion factors
 
 
     .. doctest::
 
-        >>> Hz = _MAGNON_ENERGY_UNITS["hz"]
-        >>> GHz = _MAGNON_ENERGY_UNITS["ghz"]
-        >>> THz = _MAGNON_ENERGY_UNITS["thz"]
+        >>> Hz = magnopy.si.PLANCK_CONSTANT * magnopy.si.HERTZ
+        >>> GHz = magnopy.si.GIGA * Hz
+        >>> THz = magnopy.si.TERA * Hz
+
+    .. doctest::
+        :hide:
+
+        >>> from magnopy._constants._units import _MAGNON_ENERGY_UNITS
+        >>> eV == _MAGNON_ENERGY_UNITS["ev"]
+        True
+        >>> meV == _MAGNON_ENERGY_UNITS["mev"]
+        True
+        >>> Joule == _MAGNON_ENERGY_UNITS["joule"]
+        True
+        >>> Rydberg == _MAGNON_ENERGY_UNITS["rydberg"]
+        True
+        >>> Erg == _MAGNON_ENERGY_UNITS["erg"]
+        True
+        >>> Hz == _MAGNON_ENERGY_UNITS["hz"]
+        True
+        >>> GHz == _MAGNON_ENERGY_UNITS["ghz"]
+        True
+        >>> THz == _MAGNON_ENERGY_UNITS["thz"]
+        True
 
     .. doctest::
 
@@ -366,3 +390,25 @@ TeraHertz ``"TeraHertz"``, ``"THz"``
         6.62607015e-15 Erg for 1 THz
         >>> print(f"{Erg / THz:.8e} THz for 1 Erg")
         1.50919018e+14 THz for 1 Erg
+
+
+.. hint::
+    To check what units are hardcoded in Magnopy's source code one can do the following
+
+    .. doctest::
+
+        >>> from magnopy._constants._units import _ENERGY_UNITS
+        >>> print(list(_ENERGY_UNITS))
+        ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg']
+
+    .. doctest::
+
+        >>> from magnopy._constants._units import _PARAMETER_UNITS
+        >>> print(list(_PARAMETER_UNITS))
+        ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'k', 'kelvin']
+
+    .. doctest::
+
+        >>> from magnopy._constants._units import _MAGNON_ENERGY_UNITS
+        >>> print(list(_MAGNON_ENERGY_UNITS))
+        ['ev', 'mev', 'joule', 'j', 'ry', 'rydberg', 'erg', 'hertz', 'hz', 'gigahertz', 'ghz', 'terahertz', 'thz']

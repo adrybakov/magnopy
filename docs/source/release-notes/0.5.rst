@@ -17,110 +17,147 @@ versions. As always, if you have questions of how to modify your existing script
 contact us via :ref:`support`.
 
 
-..  list-table:: Adding parameter to the Hamiltonian
-    :widths: 50 50
-    :header-rows: 1
+Adding parameters to the Hamiltonian
+------------------------------------
+
+.. list-table::
+    :stub-columns: 1
 
     * - Prior to 0.5.0
-      - 0.5.0 and later
-    * - .. code-block:: python
+      - .. code-block:: python
 
             spinham.add_1(alpha=0, parameter = [0,0,1])
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             spinham.add(nus=(), alphas=(0,), parameter=[0,0,1])
-            # or, equivalently
-            spinham.add(nus=((0,0,0),), alphas=(0,), parameter=[0,0,1])
 
-    * - .. code-block:: python
+
+
+.. list-table::
+    :stub-columns: 1
+
+    * - Prior to 0.5.0
+      - .. code-block:: python
 
             spinham.add_21(alpha=0, parameter = np.eye(3))
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             spinham.add(nus=((1, 0, 0),), alphas=(0, 0), parameter=np.eye(3))
-            # or, equivalently
-            spinham.add(nus=((0, 0, 0), (1, 0, 0)), alphas=(0, 0), parameter=np.eye(3))
 
-    * - .. code-block:: python
+
+
+
+.. list-table::
+    :stub-columns: 1
+
+    * - Prior to 0.5.0
+      - .. code-block:: python
 
             spinham.add_22(alpha=0, beta=1, nu=(1, 0, 0),m parameter = np.eye(3))
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             spinham.add(nus=((1, 0, 0),), alphas=(0, 1), parameter=np.eye(3))
-            # or, equivalently
-            spinham.add(nus=((0, 0, 0), (1, 0, 0)), alphas=(0, 1), parameter=np.eye(3))
 
 
-..  list-table:: Removing parameter from the Hamiltonian
-    :widths: 50 50
-    :header-rows: 1
+Removing parameter from the Hamiltonian
+---------------------------------------
+
+
+.. list-table::
+    :stub-columns: 1
 
     * - Prior to 0.5.0
-      - 0.5.0 and later
-    * - .. code-block:: python
+      - .. code-block:: python
 
             spinham.remove_1(alpha=0)
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             spinham.remove(nus=(), alphas=(0,))
-            # or, equivalently
-            spinham.remove(nus=((0,0,0),), alphas=(0,))
 
-    * - .. code-block:: python
+.. list-table::
+    :stub-columns: 1
+
+    * - Prior to 0.5.0
+      - .. code-block:: python
 
             spinham.remove_21(alpha=0)
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             spinham.remove(nus=((1, 0, 0),), alphas=(0, 0))
-            # or, equivalently
-            spinham.remove(nus=((0, 0, 0), (1, 0, 0)), alphas=(0, 0))
 
-    * - .. code-block:: python
+.. list-table::
+    :stub-columns: 1
+
+    * - Prior to 0.5.0
+      - .. code-block:: python
 
             spinham.remove_22(alpha=0, beta=1, nu=(1, 0, 0))
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             spinham.remove(nus=((1, 0, 0),), alphas=(0, 1))
-            # or, equivalently
-            spinham.remove(nus=((0, 0, 0), (1, 0, 0)), alphas=(0, 1))
 
-..  list-table:: Iterating over parameters of the Hamiltonian
-    :header-rows: 1
+
+Iterating over parameters of the Hamiltonian
+--------------------------------------------
+
+
+.. list-table::
+    :stub-columns: 1
 
     * - Prior to 0.5.0
-      - 0.5.0 and later
-    * - .. code-block:: python
+      - .. code-block:: python
 
             for alpha, parameter in spinham.p1:
                 print(spinham.atoms.names[alpha], parameter)
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             for nus, alphas, parameters in spinham.p1:
                 alpha = alphas[0]
                 print(spinham.atoms.names[alpha], parameter)
-    * - .. code-block:: python
+
+
+.. list-table::
+    :stub-columns: 1
+
+    * - Prior to 0.5.0
+      - .. code-block:: python
 
             for alpha, parameter in spinham.p21:
                 print(spinham.atoms.names[alpha], parameter)
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             for nus, alphas, parameters in spinham.p21:
                 alpha = alphas[0]
                 print(spinham.atoms.names[alpha], parameter)
-    * - .. code-block:: python
+
+
+.. list-table::
+    :stub-columns: 1
+
+    * - Prior to 0.5.0
+      - .. code-block:: python
 
             for alpha, beta, nu, parameter in spinham.p22:
                 print(spinham.atoms.names[alpha], spinham.atoms.names[beta], nu)
                 print(parameter)
 
+    * - 0.5.0 and later
       - .. code-block:: python
 
             for nus, alphas, parameters in spinham.p22:
@@ -129,6 +166,36 @@ contact us via :ref:`support`.
                 nu = nus[0]
                 print(spinham.atoms.names[alpha], spinham.atoms.names[beta], nu)
                 print(parameter)
+
+0.5.2
+=====
+
+**Date**: 14 April 2026
+
+New features
+------------
+
+* :py:attr:`magnopy.SpinHamiltonian.M_prime`.
+* :py:func:`magnopy.SpinHamiltonian.set_magnetic_field`.
+* :py:attr:`magnopy.SpinHamiltonian.magnetic_field`.
+* :py:attr:`magnopy.SpinHamiltonian.zeeman_parameters`.
+* ``when_present`` argument in :py:func:`magnopy.io.load_tb2j` and
+  :py:func:`magnopy.io.load_tb2j`.
+* ``missing_bonds`` argument in :py:func:`magnopy.io.load_tb2j` and
+  :py:func:`magnopy.io.load_tb2j`.
+* ``g_factors`` argument in :py:func:`magnopy.io.load_grogu`.
+* :py:meth:`magnopy.SpinHamiltonian.restore_missing_parameters`.
+* :py:meth:`magnopy.SpinHamiltonian.set_distribution`.
+* :py:meth:`magnopy.SpinHamiltonian.purge`.
+* :py:func:`magnopy.get_equivalent_parameters`.
+
+Bugfix
+------
+
+* Bug in `magnopy.SpinHamiltonian.symmetrize` - new parameters were not saved, meaning
+  that symmetrization was not performed correctly. It is now.
+* Bug in a ``magnopy`` CLI, that prevented correct error message for unsupported commands.
+
 
 0.5.1
 =====
@@ -172,8 +239,7 @@ Removed
 * ``magnopy.SpinHamiltonian.add_32``, ``magnopy.SpinHamiltonian.remove_32``,
   ``magnopy.SpinHamiltonian.add_421``, ``magnopy.SpinHamiltonian.remove_421``,
   ``magnopy.SpinHamiltonian.add_422``, ``magnopy.SpinHamiltonian.remove_422``,
-  ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.remove_43``,
-  ``magnopy.SpinHamiltonian.add_44``, ``magnopy.SpinHamiltonian.remove_44`` are removed as
+  ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.remove_43`` are removed as
   being incorrect. Use :py:meth:`.SpinHamiltonian.add` and
   :py:meth:`.SpinHamiltonian.remove` instead.
 * ``magnopy.SpinHamiltonian.add_44``, ``magnopy.SpinHamiltonian.remove_44`` are renamed to

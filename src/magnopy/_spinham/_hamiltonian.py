@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
 
@@ -51,7 +50,11 @@ from magnopy._parameters._interaction_parameters import (
     _InteractionParametersIterator,
     _get_specs,
 )
-from magnopy._parameters._symmetrization import get_equivalent
+from magnopy._parameters._equivalent_sets import (
+    _get_equivalent,
+    _get_missing_parameters,
+    _set_distribution,
+)
 
 
 from magnopy._constants._units import _PARAMETER_UNITS, _PARAMETER_UNITS_MAKEUP
@@ -62,76 +65,25 @@ old_dir = set(dir())
 old_dir.add("old_dir")
 
 
-def _merge(list1: list, list2: list) -> list:
-    r"""
-    Merge two sorted parameter lists for any term.
-
-    Lists of parameters have the form
-
-    .. code-block:: python
-
-        list = [[specs, parameter], ...]
-
-    Comparison is based on specs.
-
-    Parameter
-    ---------
-    list1 : list
-        First list of parameters.
-    list2 : list
-        Second list of parameters.
-
-    Returns
-    -------
-    merged_list : list
-        Merged list of parameters.
-    """
-
-    list1 = deepcopy(list1)
-    list2 = deepcopy(list2)
-
-    merged_list = []
-
-    i1 = 0
-    i2 = 0
-
-    while i1 < len(list1) or i2 < len(list2):
-        if i1 >= len(list1):
-            merged_list.append(list2[i2])
-            i2 += 1
-        elif i2 >= len(list2):
-            merged_list.append(list1[i1])
-            i1 += 1
-        elif list1[i1][:-1] == list2[i2][:-1]:
-            merged_list.append(list1[i1])
-            merged_list[-1][-1] = merged_list[-1][-1] + list2[i2][-1]
-            i1 += 1
-            i2 += 1
-        elif list1[i1][:-1] < list2[i2][:-1]:
-            merged_list.append(list1[i1])
-            i1 += 1
-        else:
-            merged_list.append(list2[i2])
-            i2 += 1
-
-    return merged_list
-
-
 class SpinHamiltonian:
     r"""
     Spin Hamiltonian.
+
+    Implements the :ref:`user-guide_theory-behind_spin-hamiltonian`.
 
     Parameters
     ----------
 
     convention : :py:class:`.Convention` or str
-        A convention of the spin Hamiltonian.
+        A convention of the spin Hamiltonian. See :ref:`user-guide_usage_convention` for
+        more details.
 
     cell : (3, 3) |array-like|_
-        Matrix of a cell, rows are interpreted as vectors.
+        Matrix of a cell, rows are interpreted as vectors. See
+        :ref:`user-guide_usage_cell` for more details.
 
     atoms : dict
-        Dictionary with atoms.
+        Dictionary with atoms. See :ref:`user-guide_usage_atoms` for more details.
 
     units : str, default "meV"
         .. versionadded:: 0.3.0
@@ -139,12 +91,10 @@ class SpinHamiltonian:
         Units of the Hamiltonian's parameters. See :py:attr:`.SpinHamiltonian.units`
         for more details. Case-insensitive.
 
-
     Examples
     --------
 
-    For example of usage see the page in the user guide -
-    :ref:`user-guide_usage_spin-hamiltonian`.
+    See :ref:`user-guide_usage_spin-hamiltonian` for examples.
 
     """
 
@@ -157,6 +107,10 @@ class SpinHamiltonian:
         self._magnetic_atoms = None
         self._map_to_magnetic = None
         self._map_to_all = None
+
+        # To keep track of the external magnetic field
+        self._magnetic_field = np.zeros(3, dtype=float)
+        self._zeeman_parameters = _InteractionParameters()
 
         self._convention = convention
 
@@ -178,6 +132,8 @@ class SpinHamiltonian:
     def cell(self):
         r"""
         Cell of the crystal on which the Hamiltonian is build.
+
+        See :ref:`user-guide_usage_cell` for more details.
 
         Returns
         -------
@@ -203,34 +159,7 @@ class SpinHamiltonian:
             >>> spinham.cell = 2 * np.eye(3)
             Traceback (most recent call last):
             ...
-            AttributeError: Change of the cell attribute is not supported after the creation of SpinHamiltonian instance. If you need to modify cell, then use pre-defined methods of SpinHamiltonian or create a new one.
-
-        Use pre-defined methods of the :py:class:`.SpinHamiltonian` class to safely
-        modify the cell.
-
-        If you need to change the cell attribute, then use
-
-        .. doctest::
-
-            >>> import numpy as np
-            >>> import magnopy
-            >>> convention = magnopy.Convention()
-            >>> spinham = magnopy.SpinHamiltonian(
-            ...     cell=np.eye(3), atoms={}, convention=convention
-            ... )
-            >>> spinham.cell
-            array([[1., 0., 0.],
-                   [0., 1., 0.],
-                   [0., 0., 1.]])
-            >>> spinham._cell = 2 * np.eye(3)
-            >>> spinham.cell
-            array([[2., 0., 0.],
-                   [0., 2., 0.],
-                   [0., 0., 2.]])
-
-
-        In the latter case correct behavior of Magnopy **is not** guaranteed. Use only
-        if you have a deep understanding of the Magnopy source code.
+            AttributeError: Change of the cell attribute is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.cell is immutable.
         """
 
         return self._cell
@@ -246,17 +175,23 @@ class SpinHamiltonian:
         r"""
         Atoms of the crystal on which the Hamiltonian is build.
 
+        See :ref:`user-guide_usage_atoms` for more details.
+
         Returns
         -------
 
         atoms : dict (with added sugar)
             Dictionary with the atoms.
 
+        See Also
+        --------
+        M_prime
+
         Notes
         -----
 
         If is not recommended to change the atoms property after the creation of
-        :py:class:`.SpinHamiltonian`. In fact an attempt to do so will raise an
+        :py:class:`.SpinHamiltonian`. In fact an attempt to do so raises an
         ``AttributeError``:
 
         .. doctest::
@@ -270,29 +205,8 @@ class SpinHamiltonian:
             >>> spinham.atoms = {"names": ["Cr"]}
             Traceback (most recent call last):
             ...
-            AttributeError: Change of the atoms dictionary is not supported after the creation of SpinHamiltonian instance. If you need to modify atoms, then use pre-defined methods of SpinHamiltonian or create a new one.
+            AttributeError: Change of the atoms dictionary is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable.
 
-        Use pre-defined methods of the :py:class:`.SpinHamiltonian` class to safely
-        modify atoms.
-
-        If you need to change the whole dictionary at once, then use
-
-        .. doctest::
-
-            >>> import numpy as np
-            >>> import magnopy
-            >>> convention = magnopy.Convention()
-            >>> spinham = magnopy.SpinHamiltonian(
-            ...     cell=np.eye(3), atoms={}, convention=convention
-            ... )
-            >>> spinham.atoms
-            {}
-            >>> spinham._atoms = {"names": ["Cr"]}
-            >>> spinham.atoms
-            {'names': ['Cr']}
-
-        In the latter case correct behavior of Magnopy **is not** guaranteed. Use only
-        if you have a deep understanding of the Magnopy source code.
         """
 
         return self._atoms
@@ -300,8 +214,31 @@ class SpinHamiltonian:
     @atoms.setter
     def atoms(self, new_value):
         raise AttributeError(
-            "Change of the atoms dictionary is not supported after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable."
+            "Change of the atoms dictionary is not allowed after the creation of SpinHamiltonian instance. SpinHamiltonian.atoms is immutable."
         )
+
+    @property
+    def M_prime(self):
+        r"""
+        Amount of atoms in the unit cell.
+
+        .. versionadded:: 0.5.2
+
+        Both magnetic and non-magnetic atoms are counted.
+
+        Returns
+        -------
+
+        M_prime : int
+            Amount of atoms (magnetic and non-magnetic) in the unit cell.
+
+        See Also
+        --------
+        atoms
+
+        """
+
+        return len(self.atoms.names)
 
     def _reset_internals(self):
         self._map_to_magnetic = None
@@ -342,8 +279,18 @@ class SpinHamiltonian:
         Returns
         -------
 
-        map_to_magnetic (L, ) list of int
-            Index map. Integers. ``L = len(spinham.atoms.names)``
+        map_to_magnetic (M_prime, ) list of int
+            Index map. Integers. ``M_prime = len(spinham.atoms.names)``
+
+        See also
+        --------
+        map_to_all
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic` for more
+        details on how to use this property.
         """
 
         if self._map_to_magnetic is None:
@@ -361,6 +308,16 @@ class SpinHamiltonian:
 
         map_to_all (M, ) list of int
             Index map. Integers. ``M = len(spinham.magnetic_atoms.names)``
+
+        See also
+        --------
+        map_to_magnetic
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic` for more
+        details on how to use this property.
         """
 
         if self._map_to_all is None:
@@ -381,13 +338,20 @@ class SpinHamiltonian:
         Returns
         -------
 
-        magnetic_atoms : list of int
-            Indices of magnetic atoms in the ``spinham.atoms``. Sorted.
+        magnetic_atoms : dict
+            Dictionary of magnetic atoms. Have the same structure as
+            :py:attr:`.SpinHamiltonian.atoms`.
 
         See Also
         --------
 
         M
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic` for more
+        details on how to use this property.
         """
 
         if self._magnetic_atoms is None:
@@ -398,25 +362,158 @@ class SpinHamiltonian:
     @property
     def M(self):
         r"""
-        Number of spins (magnetic atoms) in the unit cell.
+        Amount of magnetic atoms in the unit cell.
 
         Returns
         -------
 
         M : int
-            Number of spins (magnetic atoms) in the unit cell.
+            Amount of magnetic atoms in the unit cell.
 
         See Also
         --------
-
         magnetic_atoms
         """
 
         return len(self.magnetic_atoms.names)
 
     ############################################################################
+    #                        Distribution in equal sets                        #
+    ############################################################################
+
+    def restore_missing_parameters(self, strategy="zeros") -> None:
+        r"""
+        Checks that all interactions from the equivalent sets are present in the
+        Hamiltonian and adds the missing ones (if any).
+
+        .. versionadded:: 0.5.2
+
+        See :ref:`user-guide_theory-behind_equivalent-parameters` for more details on sets
+        of equivalent parameters.
+
+        Parameters
+        ----------
+
+        strategy : str, default "zeros"
+
+            When some parameters from the equivalent set are missing, this argument
+            defines the value of the added parameters. Case-insensitive. Supported options
+            are
+
+            * "zeros" (default)
+              Values of missing parameters are set to zeros. This option does not change
+              the physics of the Hamiltonian.
+
+            * "mean"
+              Values of the missing parameters are set to the mean value of the parameters
+              from the equivalent set. This value might change the physics of the
+              Hamiltonian (as it adds new non-zero parameters).
+
+        Raises
+        ------
+        ValueError
+            If ``strategy`` is not one of the supported options.
+
+        Notes
+        -----
+        If ``spinham.convention.multiple_counting`` is False, then this function does
+        nothing as only one parameter per set is stored and no parameters can be missing.
+        """
+
+        if not self.convention._multiple_counting:
+            return
+
+        missing_parameters = _get_missing_parameters(
+            parameters=self._parameters, strategy=strategy.lower()
+        )
+
+        if len(missing_parameters) > 0:
+            self._parameters = self._parameters + missing_parameters
+
+    def symmetrize(self) -> None:
+        r"""
+        Symmetrize interaction parameters as specified in the SI note 3 of |paper-2026|_.
+
+        Legacy method, equivalent to
+
+        .. code-block:: python
+
+            spinham.set_distribution(strategy="symmetrized")
+
+        Please use :py:meth:`.SpinHamiltonian.set_distribution` instead.
+        """
+
+        self.set_distribution(strategy="symmetrized")
+
+    def set_distribution(self, strategy="symmetrize") -> None:
+        """
+        Enforces one of the supported distributions of parameters within the sets of
+        equivalent parameters.
+
+        .. versionadded:: 0.5.2
+
+        See :ref:`user-guide_theory-behind_equivalent-parameters` for more details.
+
+        Parameters
+        ----------
+        strategy : str, default "symmetrize"
+
+            Strategy for distributing overall value between parameters of the equivalent
+            set. Case-insensitive. Supported options are
+
+            * "symmetrize" (default)
+              All parameters from the set are equal to each other.
+
+            * "one-for-all"
+              The sum is assigned to the single representative parameter. All other
+              parameters from the set are set to zeros.
+
+        Raises
+        ------
+        ValueError
+            If ``strategy`` is not one of the supported options.
+        ValueError
+            If ``spinham.convention.multiple_counting`` is False. See Notes below.
+
+        See Also
+        --------
+        restore_missing_parameters
+
+        Notes
+        -----
+
+        If ``spinham.convention.multiple_counting`` is False, then this function raises
+        a ``ValueError`` as the distribution of parameters is fixed and can not be
+        changed.
+
+        On contrary to :py:meth:`.SpinHamiltonian.restore_missing_parameters`, this
+        method never changes the physics of the Hamiltonian.
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_symmetrization` for more details on
+        how to use this function.
+        """
+
+        # Note: self._zeeman_parameters never change, as there is always one
+        # parameter per set
+
+        if not self.convention._multiple_counting:
+            raise ValueError(
+                "When spinham.convention.multiple_counting is False, the distribution of parameters is fixed and can not be changed."
+            )
+
+        new_parameters = _set_distribution(
+            parameters=self._parameters, strategy=strategy.lower()
+        )
+
+        self._parameters = new_parameters
+
+    ############################################################################
     #                                Convention                                #
     ############################################################################
+
     @property
     def convention(self) -> Convention:
         r"""
@@ -431,6 +528,13 @@ class SpinHamiltonian:
         --------
 
         Convention
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_convention` for more details on how to
+        use this property.
+
         """
 
         return self._convention
@@ -488,7 +592,7 @@ class SpinHamiltonian:
 
         new_parameters = _InteractionParameters()
         for (n, p_n, nus, alphas), parameter in self._parameters._container:
-            equivalent_parameters = get_equivalent(
+            equivalent_parameters = _get_equivalent(
                 n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
             )
 
@@ -504,9 +608,7 @@ class SpinHamiltonian:
             else:
                 nus, alphas, parameter = equivalent_parameters[0]
                 new_parameters.add(
-                    specs=(n, p_n, nus, alphas),
-                    parameter=parameter * degeneracy,
-                    when_present="skip",
+                    specs=(n, p_n, nus, alphas), parameter=parameter, when_present="sum"
                 )
 
         self._parameters = new_parameters
@@ -553,35 +655,41 @@ class SpinHamiltonian:
     @property
     def units(self) -> str:
         r"""
-        Units of the Hamiltonian's parameters.
+        Units of the Hamiltonian's interaction parameters.
 
         .. versionadded:: 0.3.0
 
         The parameters of the Hamiltonian are stored in some units of energy (or
         energy-like).
 
-        When user adds a parameters to the Hamiltonian (i. e.
-        :py:meth:`.SpinHamiltonian.add_21`, ...) the ``parameter`` argument is understood
-        to be given in the units of :py:attr:`.SpinHamiltonian.units`.
+        When user adds a parameters to the Hamiltonian (:py:meth:`.SpinHamiltonian.add`)
+        the ``parameter`` argument is understood to be given in the units of
+        :py:attr:`.SpinHamiltonian.units`.
 
         By default the Hamiltonian stores and expects parameters in "meV", but the user
-        can choose out of the list of the supported units. See
-        :ref:`user-guide_usage_units_parameter-units` for the full list of supported units.
+        can choose out of the supported units. See
+        :ref:`user-guide_usage_units_parameters` for the full list of supported units.
 
         When Hamiltonian already has some parameters in it, then the change of
-        :py:attr:`.SpinHamiltonian.units` will convert all parameter to the new units.
+        :py:attr:`.SpinHamiltonian.units` converts all parameter to the new units.
         The parameters that the user tries to add afterwards are expected to be in the new
-        units already.
+        units.
 
         Returns
         -------
 
         units : str
 
-        See Also
+        Notes
+        -----
+
+        List of supported units can be fount in :ref:`user-guide_usage_units` page.
+
+        Examples
         --------
 
-        :ref:`user-guide_usage_units`
+        See :ref:`user-guide_usage_spin-hamiltonian_units` for more details on how to use
+        this property.
         """
 
         return _PARAMETER_UNITS_MAKEUP[self._units]
@@ -600,29 +708,48 @@ class SpinHamiltonian:
     ############################################################################
     #                          External magnetic field                         #
     ############################################################################
-    # ARGUMENT "h" DEPRECATED since 0.4.0
-    # Remove in May of 2026
-    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
+
+    @property
+    def magnetic_field(self):
         r"""
-        Adds external magnetic field to the Hamiltonian in the form of one spin
-        parameters.
+        External magnetic field applied to the Hamiltonian.
 
-        .. math::
+        Returns
+        -------
+        B : (3, ) :numpy:`ndarray`
+            Vector of magnetic field (magnetic flux density, B) in the units of
+            Tesla.
 
-            \mu_B  g_{\alpha} \boldsymbol{B}\cdot\boldsymbol{S}_{\mu,\alpha}
-            =
-            C_1
-            \boldsymbol{S}_{\mu,\alpha}
-            \cdot
-            \boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})
+        See Also
+        --------
+        set_magnetic_field
 
-        where :math:`\boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})` is defined as
+        Notes
+        -----
 
-        .. math::
+        See :py:meth:`.SpinHamiltonian.set_magnetic_field` for more details.
 
-            \boldsymbol{J}_{Zeeman}(\boldsymbol{r}_{\alpha})
-            =
-            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{B}
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_magnetic-field` for more details on
+        how to use this property.
+        """
+
+        if len(self._zeeman_parameters) == 0:
+            self._magnetic_field = np.zeros(3, dtype=float)
+
+        return self._magnetic_field
+
+    @magnetic_field.setter
+    def magnetic_field(self, new_value):
+        self.set_magnetic_field(B=new_value)
+
+    def set_magnetic_field(self, B=None, alphas=None) -> None:
+        r"""
+        Sets a uniform external magnetic field applied to the Hamiltonian.
+
+        .. versionadded:: 0.5.2
 
         Parameters
         ----------
@@ -632,10 +759,145 @@ class SpinHamiltonian:
             Tesla.
 
         alphas : list of int, optional
-            Indices of atoms, to which the magnetic field effect should be added.
+            Indices of atoms, to which the magnetic field effect should be added. If
+            none give, then magnetic field is added only to the
+            :py:attr:`.SpinHamiltonian.magnetic_atoms`. See
+            :ref:`user-guide_usage_spin-hamiltonian_magnetic-vs-non-magnetic` for more
+            details on the difference between magnetic and non-magnetic atoms.
+
+        See Also
+        --------
+
+        magnetic_field
+
+        Notes
+        -----
+
+        The Zeeman term is defined as
+
+        .. math::
+            \sum_{\mu, \alpha}
+            \mu_B  g_{\alpha} \boldsymbol{B}\cdot\boldsymbol{S}_{\mu,\alpha}
+
+
+        We map this term to the :ref:`ug_tb_sh_1-1`, which are written as
+
+        .. math::
+
+            C_1
+            \sum_{\mu, \alpha}
+            \boldsymbol{S}_{\mu,\alpha}
+            \cdot
+            \boldsymbol{J}^{Zeeman}_{\alpha}
+
+        where :math:`\boldsymbol{J}^{Zeeman}_{\alpha}` is defined as
+
+        .. math::
+
+            \boldsymbol{J}^{Zeeman}_{\alpha}
+            =
+            \dfrac{\mu_B g_{\alpha}}{C_1}\boldsymbol{B}
+
+        Zeeman energy is minimal when the magnetic moment is aligned with the direction of
+        the external field. Therefore, the spin vector shall be directed opposite to the
+        direction of the magnetic field. In other words, in the ground state
+        :math:`\ket{0}` of the Zeeman Hamiltonian, the eigenvalue of the spin operator
+        :math:`\boldsymbol{S}_{\mu,\alpha}^{||\boldsymbol{B}}` shall be equal to
+        :math:`-S_{\alpha}`. Therefore, the g-factors (``spinham.atoms.g_factors``) are
+        expected to be positive when the Zeeman term is written as we do in Magnopy.
+
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_magnetic-field` for more details on
+        how to use this method.
+        """
+
+        if B is None:
+            raise TypeError(
+                "SpinHamiltonian.set_magnetic_field() missing 1 required argument: 'B'"
+            )
+
+        B = np.array(B, dtype=float)
+
+        if B.shape != (3,):
+            raise ValueError(
+                f"Expected magnetic field to be a vector of shape (3,), got {B.shape}."
+            )
+
+        if self.convention._c1 is None:
+            self.convention._c1 = 1.0
+
+        mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
+
+        if alphas is None:
+            alphas = self.map_to_all
+        else:
+            alphas = sorted(alphas)
+
+        self._magnetic_field = B
+
+        zeeman_parameters = [
+            mu_B * self.atoms.g_factors[alpha] * B / self.convention.c1
+            for alpha in alphas
+        ]
+
+        zeeman_term = _InteractionParameters()
+
+        for alpha, parameter in zip(alphas, zeeman_parameters):
+            zeeman_term.add(specs=(1, 1, (), (alpha,)), parameter=parameter)
+
+        if len(self._zeeman_parameters) != 0:
+            self._parameters = self._parameters - self._zeeman_parameters
+
+        self._zeeman_parameters = zeeman_term
+
+        self._parameters = self._parameters + zeeman_term
+
+        self._reset_internals()
+
+    @property
+    def zeeman_parameters(self):
+        r"""
+        Returns an iterator over Zeeman parameters of the Hamiltonian.
+
+        .. versionadded:: 0.5.2
+
+        Returns
+        -------
+        parameters : iterator
+            Iterator over parameters of the Hamiltonian that originate from the Zeeman
+            interaction. See :py:attr:`.SpinHamiltonian.parameters` for more details on
+            the returned iterator.
+
+        See Also
+        --------
+        set_magnetic_field
+        magnetic_field
+        parameters
+        """
+
+        return _InteractionParametersIterator(
+            parameters=self._zeeman_parameters, n=1, p_n=1
+        )
+
+    # ARGUMENT "h" DEPRECATED since 0.4.0
+    # Remove in May of 2026
+    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
+        r"""
+        Adds external magnetic field to the Hamiltonian.
+
+        Parameters
+        ----------
+
+        B : (3, ) |array-like|_
+            See :py:attr:`.SpinHamiltonian.set_magnetic_field` for details.
+
+        alphas : list of int, optional
+            See :py:attr:`.SpinHamiltonian.set_magnetic_field` for details.
 
         h : (3, ) |array-like|_
-            Vector of magnetic field given in the units of Tesla.
 
             .. deprecated:: 0.4.0
                 The argument will be removed in May of 2026. Use ``B`` instead.
@@ -643,16 +905,15 @@ class SpinHamiltonian:
         Notes
         -----
 
-        To minimize the energy the magnetic moment will be aligned with the
-        direction of the external field. But spin vector will be directed opposite to the
-        direction of the magnetic field.
+        The call ``spinham.add_magnetic_field(B = B, alphas = alphas)`` is equivalent to
+        the call
+        ``spinham.set_magnetic_field(B = B + spinham.magnetic_field, alphas = alphas)``.
 
-        * If ``alphas is None``, then parameters of the magnetic field added
-          only to the magnetic atoms. In other words only to atoms that already have
-          at least one other parameter (any) associated with it.
-        * If ``alpha is not None``, then parameters of magnetic field are added
-          to the atoms with the provided indices (based on the order in
-          :py:attr:`.SpinHamiltonian.atoms`)
+        In other words, this method "adds" the magnetic field to the Hamiltonian whether
+        there was some magnetic field before or not.
+
+        On contrary, :py:attr:`.SpinHamiltonian.set_magnetic_field` "sets" the magnetic
+        field, i.e. replaces the previous magnetic field (if any).
         """
 
         if h is not None:
@@ -665,34 +926,7 @@ class SpinHamiltonian:
             )
             B = h
 
-        if B is None:
-            raise TypeError(
-                "SpinHamiltonian.add_magnetic_field() missing 1 required argument: 'B'"
-            )
-
-        if self.convention._c1 is None:
-            self.convention._c1 = 1.0
-
-        B = np.array(B, dtype=float)
-
-        mu_B = BOHR_MAGNETON / _PARAMETER_UNITS[self._units]  # spinham.units / Tesla
-
-        if alphas is None:
-            alphas = self.map_to_all
-
-        zeeman_parameters = [
-            mu_B * self.atoms.g_factors[alpha] * B / self.convention.c1
-            for alpha in alphas
-        ]
-
-        zeeman_term = _InteractionParameters()
-
-        for alpha, parameter in zip(alphas, zeeman_parameters):
-            zeeman_term.add(specs=(1, 1, (), (alpha,)), parameter=parameter)
-
-        self._parameters = self._parameters + zeeman_term
-
-        self._reset_internals()
+        self.set_magnetic_field(B=B + self.magnetic_field, alphas=alphas)
 
     ############################################################################
     #                    Magnetic dipole-dipole interaction                    #
@@ -901,7 +1135,7 @@ class SpinHamiltonian:
 
                                 if E_cut is None or (np.abs(parameter) >= E_cut).any():
                                     if not self.convention.multiple_counting:
-                                        equivalent_parameters = get_equivalent(
+                                        equivalent_parameters = _get_equivalent(
                                             n=2,
                                             p_n=2,
                                             nus=((i, j, k),),
@@ -946,13 +1180,13 @@ class SpinHamiltonian:
         Returns
         -------
 
-        spinham : py:class:`.SpinHamiltonian`
+        spinham : :py:class:`.SpinHamiltonian`
             New instance of the spin Hamiltonian.
 
         Notes
         -----
         Note that in the new Hamiltonian ``spinham.M == 0`` - as there is no parameters
-        present, then no atoms are considered to be magnetic.
+        present, meaning that no atoms are considered to be magnetic.
         """
 
         return SpinHamiltonian(
@@ -1011,22 +1245,19 @@ class SpinHamiltonian:
                 "Atoms of two spin Hamiltonians are different, summation is not supported."
             )
 
+        result = other.copy()
+
         # Make sure that units are the same
-        other_units = other.units
-        other.units = self.units
+        result.units = self.units
 
         # Make sure that conventions are the same
-        other_convention = other.convention
-        other.convention = self.convention
+        result.convention = self.convention
 
-        result = self.get_empty()
-        result._parameters = self._parameters + other._parameters
+        result._parameters = self._parameters + result._parameters
 
-        # Restore units of other Hamiltonian
-        other.units = other_units
-
-        # Restore convention of other Hamiltonian
-        other.convention = other_convention
+        # Make sure that Zeeman parameters and magnetic field are correctly tracked.
+        result._magnetic_field = self._magnetic_field + result._magnetic_field
+        result._zeeman_parameters = self._zeeman_parameters + result._zeeman_parameters
 
         return result
 
@@ -1036,7 +1267,6 @@ class SpinHamiltonian:
     ############################################################################
     #                          Interaction parameters                          #
     ############################################################################
-    # TODO: check that the implementation is reasonable
     def add(
         self,
         nus,
@@ -1047,7 +1277,7 @@ class SpinHamiltonian:
         when_present="raise error",
     ):
         r"""
-        Add any parameter with at most four components of spin operator to the
+        Adds any parameter with at most four components of spin operator to the
         Hamiltonian.
 
         .. versionadded:: 0.5.0
@@ -1057,10 +1287,11 @@ class SpinHamiltonian:
 
         Parameters
         ----------
+
         nus : (n, 3) or (n-1, 3) list/tuple of tuple of int
             List of unit cell indices associated with the parameter. Each unit cell index
-            is a tuple of three integers (i, j, k) corresponding to the translation by
-            :math:`i\boldsymbol{a}_1 + j\boldsymbol{a}_2 + k\boldsymbol{a}_3`.
+            is a tuple of three integers (t_1, t_2, t_3) corresponding to the translation
+            by :math:`t_1 \boldsymbol{a}_1 + t_2 \boldsymbol{a}_2 + t_3 \boldsymbol{a}_3`.
 
         alphas : (n,) list/tuple of int
             List of indices of atoms associated with the parameter. Based on the order in
@@ -1069,7 +1300,7 @@ class SpinHamiltonian:
         units : str, optional
             Units in which the  ``parameter``  is given.  Parameters have the the units of
             energy. By default assumes :py:attr:`.SpinHamiltonian.units`.  For the list of
-            the  supported  units  see  :ref:`user-guide_usage_units_parameter-units`.  If
+            the  supported  units  see  :ref:`user-guide_usage_units_parameters`.  If
             given  ``units``  are different from  :py:attr:`.SpinHamiltonian.units`,  then
             the  parameter's  value  will be  converted  automatically from  ``units``  to
             :py:attr:`.SpinHamiltonian.units`.
@@ -1077,10 +1308,11 @@ class SpinHamiltonian:
         populate_equivalent : bool, default False
             Whether to automatically populate all equivalent parameters related by the
             symmetrization procedure. Ignored if ``convention.multiple_counting`` is
-            ``False``.
+            ``False``. See :ref:`user-guide_usage_spin-hamiltonian_equivalent-parameters`
+            for more details.
 
         when_present : str, default "raise error"
-            Action to take if an atom already has a parameter associated with it.
+            Action to take if such parameter is already present in the Hamiltonian.
             Case-insensitive. Supported values are:
 
             - ``"raise error"`` (default): raises an error.
@@ -1094,16 +1326,24 @@ class SpinHamiltonian:
         Notes
         -----
 
-        If ``len(nus) == len(alphas) -1``, the correspondence between the ``alphas`` and
-        ``nus`` is as follows
+        If ``len(nus) == len(alphas) - 1``, then
 
         * ``alphas[0]`` always located in the unit cell (0, 0, 0).
         * ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for ``i >= 1``.
 
-        If ``len(nus) == len(alphas)``, then the ``i``-th atom is located in the unit cell
-        ``nus[i]`` for all ``i``. Note that the translational symmetry is always
-        enforced, so the ``nus`` are updated as ``nus[i] = nus[i] - nus[0]`` for all
-        ``i`` before the parameter is added to the Hamiltonian.
+        If ``len(nus) == len(alphas)``, then
+
+        * ``alphas[i]`` is located in the unit cell ``nus[i]`` for all ``i``.
+
+        Note that the translational symmetry is always enforced, so in the second case the
+        ``nus`` are updated as ``nus[i] = nus[i] - nus[0]`` for all ``i`` before the
+        parameter is added to the Hamiltonian.
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_adding-parameters` for more details
+        on how to use this method.
 
         """
 
@@ -1142,7 +1382,7 @@ class SpinHamiltonian:
 
         if self.convention.multiple_counting:
             if populate_equivalent:
-                equivalent_parameters = get_equivalent(
+                equivalent_parameters = _get_equivalent(
                     n=specs[0],
                     p_n=specs[1],
                     nus=specs[2],
@@ -1161,7 +1401,7 @@ class SpinHamiltonian:
                     specs=specs, parameter=parameter, when_present=when_present
                 )
         else:
-            equivalent_parameters = get_equivalent(
+            equivalent_parameters = _get_equivalent(
                 n=specs[0],
                 p_n=specs[1],
                 nus=specs[2],
@@ -1176,10 +1416,9 @@ class SpinHamiltonian:
                 when_present=when_present,
             )
 
-    # TODO: check that the implementation is reasonable
     def remove(self, nus, alphas, remove_equivalent=False):
         r"""
-        Removes any parameter with at most four components of spin operator to the
+        Removes any parameter with at most four components of spin operator from the
         Hamiltonian.
 
         .. versionadded:: 0.5.0
@@ -1189,10 +1428,11 @@ class SpinHamiltonian:
 
         Parameters
         ----------
+
         nus : (n, 3) or (n-1, 3) list/tuple of tuple of int
             List of unit cell indices associated with the parameter. Each unit cell index
-            is a tuple of three integers (i, j, k) corresponding to the translation by
-            :math:`i\boldsymbol{a}_1 + j\boldsymbol{a}_2 + k\boldsymbol{a}_3`.
+            is a tuple of three integers (t_1, t_2, t_3) corresponding to the translation
+            by :math:`t_1 \boldsymbol{a}_1 + t_2 \boldsymbol{a}_2 + t_3 \boldsymbol{a}_3`.
 
         alphas : (n,) list/tuple of int
             List of indices of atoms associated with the parameter. Based on the order in
@@ -1201,22 +1441,25 @@ class SpinHamiltonian:
         remove_equivalent : bool, default False
             Whether to automatically remove all equivalent parameters related by the
             symmetrization procedure. Ignored if ``convention.multiple_counting`` is
-            ``False``.
+            ``False``. See :ref:`user-guide_usage_spin-hamiltonian_equivalent-parameters`
+            for more details.
 
 
         Notes
         -----
 
-        If ``len(nus) == len(alphas) -1``, the correspondence between the ``alphas`` and
-        ``nus`` is as follows
+        See notes of :py:meth:`.SpinHamiltonian.add` for the details on ``nus`` and
+        ``alphas``.
 
-        * ``alphas[0]`` always located in the unit cell (0, 0, 0).
-        * ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for ``i >= 1``.
+        Be careful when removing :py:attr:`.SpinHamiltonian.p1` parameters when
+        :py:attr:`.SpinHamiltonian.magnetic_field` is not zero, as the Zeeman term is
+        stored as a :py:attr:`.SpinHamiltonian.p1` parameters.
 
-        If ``len(nus) == len(alphas)``, then the ``i``-th atom is located in the unit cell
-        ``nus[i]`` for all ``i``. Note that the translational symmetry is always
-        enforced, so the ``nus`` are updated as ``nus[i] = nus[i] - nus[0]`` for all
-        ``i`` before the parameter is added to the Hamiltonian.
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_removing-parameters` for more details
+        on how to use this method.
 
         """
 
@@ -1236,9 +1479,28 @@ class SpinHamiltonian:
 
         specs = _get_specs(nus=nus, alphas=alphas)
 
+        if (
+            specs[0] == 1
+            and specs[1] == 1
+            and not np.allclose(self.magnetic_field, np.zeros(3))
+        ):
+            import warnings
+
+            warnings.warn(
+                "Attempt to remove p1 parameter when magnetic field is not zero.",
+                UserWarning,
+                stacklevel=2,
+            )
+
+        # Need to remove from the Zeeman term as well, if it is present.
+        # Multiple counting does not affect the Zeeman term.
+        if specs[0] == 1 and specs[1] == 1 and len(self._zeeman_parameters) != 0:
+            self._zeeman_parameters.remove(specs=specs)
+
+        # Remove from the main container of parameters.
         if self.convention.multiple_counting:
             if remove_equivalent:
-                equivalent_parameters = get_equivalent(
+                equivalent_parameters = _get_equivalent(
                     n=specs[0],
                     p_n=specs[1],
                     nus=specs[2],
@@ -1251,7 +1513,7 @@ class SpinHamiltonian:
             else:
                 self._parameters.remove(specs=specs)
         else:
-            equivalent_parameters = get_equivalent(
+            equivalent_parameters = _get_equivalent(
                 n=specs[0], p_n=specs[1], nus=specs[2], alphas=specs[3]
             )
             nus, alphas, _ = equivalent_parameters[0]
@@ -1264,12 +1526,15 @@ class SpinHamiltonian:
 
         .. versionadded:: 0.5.0
 
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the definition of the
+        Hamiltonian and the meaning of ``n`` and ``p_n``.
+
         Parameters
         ----------
         n : int, optional
-            Number of spins of the respective spin Hamiltonian term.
-            Expected to be between 1 and 4. If not given, then all parameters are returned
-            and ``p_n`` is ignored.
+            Number of spins in the terms of the spin Hamiltonian. Expected to be between
+            1 and 4. If not given, then all parameters are returned and ``p_n`` is
+            ignored.
         p_n : int, optional
             Index of integer partition of ``n``. Expected to be between 1 and maximal
             number of integer partitions for the given ``n``. If not given, then
@@ -1279,11 +1544,10 @@ class SpinHamiltonian:
         Returns
         -------
         parameters : iterator
-            Iterator over parameters of the Hamiltonian. The form of the element
-            is defined by the given ``n`` and ``p_n``. See notes for details. Each element
-            of the iterator is a tuple ``(nus, alphas, parameter)`` where ``nus`` is a
+            Iterator over parameters of the Hamiltonian. Each element of the iterator is
+            a tuple ``(nus, alphas, parameter)`` where ``nus`` is a
             tuple of unit cell indices, ``alphas`` is a tuple of atom indices, and
-            ``parameter`` is a tensor of the parameter's value.
+            ``parameter`` is a vector/matrix/tensor of the interaction parameter.
 
             - ``len(alphas) = n``
             - ``len(nus) == len(alphas) - 1``
@@ -1292,30 +1556,122 @@ class SpinHamiltonian:
             - ``alphas[0]`` is always located in the unit cell (0, 0, 0)
             - ``alphas[i]`` is located in the unit cell ``nus[i-1]`` for
               ``1 <= i < len(alphas)``
+
+        See Also
+        --------
+        add
+        remove
+        p1
+        p21
+        p22
+        p31
+        p32
+        p33
+        p41
+        p42
+        p43
+        p44
+        p45
         """
 
         return _InteractionParametersIterator(parameters=self._parameters, n=n, p_n=p_n)
 
-    def symmetrize(self):
+    def purge(self, tolerance=None):
         r"""
-        Symmetrize interaction parameters as specified in the SI note 3 of |paper-2026|_.
+        Removes parameters of the Hamiltonian that are smaller than the given tolerance.
+
+        .. versionadded:: 0.5.2
+
+        Parameters
+        ----------
+        tolerance : float, default 1e-8 meV
+            Parameters with absolute value of all components smaller than the tolerance
+            are removed. Expected to be non-negative. Expected to be
+            in the same units as :py:attr:`.SpinHamiltonian.units`. Default
+            value is :math:`10^{-8}` meV (converted to the units of the Hamiltonian).
+
+        Examples
+        --------
+
+        First lets create a Hamiltonian
+
+        .. doctest::
+
+            >>> import numpy as np
+            >>> import magnopy
+            >>> cell = np.eye(3)
+            >>> atoms = dict(
+            ...     names=["Fe"], positions=[[0, 0, 0]], spins=[5 / 2], g_factors=[2]
+            ... )
+            >>> convention = magnopy.Convention(
+            ...     multiple_counting=True, spin_normalized=False, c22=1
+            ... )
+            >>> spinham = magnopy.SpinHamiltonian(
+            ...     cell=cell, atoms=atoms, convention=convention
+            ... )
+
+        and add some parameters to it
+
+        .. doctest::
+
+            >>> spinham.add(
+            ...     nus=[(1, 0, 0)],
+            ...     alphas=[0, 0],
+            ...     parameter=np.eye(3) * 1e-9,
+            ...     populate_equivalent=True,
+            ... )
+            >>> spinham.add(
+            ...     nus=[(0, 1, 0)],
+            ...     alphas=[0, 0],
+            ...     parameter=np.eye(3) * 1e-7,
+            ...     populate_equivalent=True,
+            ... )
+
+        There are four interaction parameters in the Hamiltonian
+
+        .. doctest::
+
+            >>> len(spinham.parameters())
+            4
+            >>> for nus, alphas, parameter in spinham.parameters():
+            ...     print(nus, alphas)
+            ((-1, 0, 0),) (0, 0)
+            ((0, -1, 0),) (0, 0)
+            ((0, 1, 0),) (0, 0)
+            ((1, 0, 0),) (0, 0)
+
+
+        Now if we purge the Hamiltonian with the default tolerance of 1e-8 meV, then
+        only two parameters remain
+
+        .. doctest::
+
+            >>> spinham.purge()
+            >>> len(spinham.parameters())
+            2
+            >>> for nus, alphas, parameter in spinham.parameters():
+            ...     print(nus, alphas)
+            ((0, -1, 0),) (0, 0)
+            ((0, 1, 0),) (0, 0)
         """
 
-        if self.convention.multiple_counting:
-            new_parameters = _InteractionParameters()
-            for (n, p_n, nus, alphas), parameter in self._parameters._container:
-                equivalent_parameters = get_equivalent(
-                    n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
-                )
+        if tolerance is None:
+            tolerance = 1e-8 * _PARAMETER_UNITS["mev"] / _PARAMETER_UNITS[self._units]
+        tolerance = abs(float(tolerance))
 
-                degeneracy = len(equivalent_parameters)
+        # Remove from main container
+        new_parameters = _InteractionParameters()
+        for specs, parameter in self._parameters._container:
+            if not np.all(np.abs(parameter) < tolerance):
+                new_parameters._container.append((specs, parameter))
+        self._parameters = new_parameters
 
-                for nus, alphas, parameter in equivalent_parameters:
-                    new_parameters.add(
-                        specs=(n, p_n, nus, alphas),
-                        parameter=parameter / degeneracy,
-                        when_present="sum",
-                    )
+        # Remove from Zeeman parameters
+        new_zeeman_parameters = _InteractionParameters()
+        for specs, parameter in self._zeeman_parameters._container:
+            if not np.all(np.abs(parameter) < tolerance):
+                new_zeeman_parameters._container.append((specs, parameter))
+        self._zeeman_parameters = new_zeeman_parameters
 
     ############################################################################
     #                          One spin & one site (1)                         #
@@ -1323,10 +1679,9 @@ class SpinHamiltonian:
     @property
     def p1(self):
         r"""
-        Parameters of one spin & one site term of the Hamiltonian (partition 1).
+        Parameters of one spin & one site term of the Hamiltonian (:ref:`ug_tb_sh_1-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1350,10 +1705,9 @@ class SpinHamiltonian:
     @property
     def p21(self):
         r"""
-        Parameters of two spins & one site term of the Hamiltonian (partition 2+0).
+        Parameters of two spins & one site term of the Hamiltonian (:ref:`ug_tb_sh_2-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1377,10 +1731,9 @@ class SpinHamiltonian:
     @property
     def p22(self):
         r"""
-        Parameters of two spins & two sites term of the Hamiltonian (partition 1+1).
+        Parameters of two spins & two sites term of the Hamiltonian (:ref:`ug_tb_sh_2-2`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1404,10 +1757,10 @@ class SpinHamiltonian:
     @property
     def p31(self):
         r"""
-        Parameters of three spins & one site term of the Hamiltonian (partition 3+0+0).
+        Parameters of three spins & one site term of the Hamiltonian
+        (:ref:`ug_tb_sh_3-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1430,10 +1783,10 @@ class SpinHamiltonian:
     @property
     def p32(self):
         r"""
-        Parameters of three spins & two sites term of the Hamiltonian (partition 2+1+0).
+        Parameters of three spins & two sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_3-2`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1456,10 +1809,10 @@ class SpinHamiltonian:
     @property
     def p33(self):
         r"""
-        Parameters of three spins & three sites term of the Hamiltonian (partition 1+1+1).
+        Parameters of three spins & three sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_3-3`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1482,10 +1835,9 @@ class SpinHamiltonian:
     @property
     def p41(self):
         r"""
-        Parameters of four spins & one site term of the Hamiltonian (partition 4+0+0+0).
+        Parameters of four spins & one site term of the Hamiltonian (:ref:`ug_tb_sh_4-1`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1508,10 +1860,10 @@ class SpinHamiltonian:
     @property
     def p42(self):
         r"""
-        Parameters of four spins & two sites term of the Hamiltonian (partition 3+1+0+0).
+        Parameters of four spins & two sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-2`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1534,10 +1886,10 @@ class SpinHamiltonian:
     @property
     def p43(self):
         r"""
-        Parameters of four spins & two sites term of the Hamiltonian (partition 2+2+0+0).
+        Parameters of four spins & two sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-3`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1560,10 +1912,10 @@ class SpinHamiltonian:
     @property
     def p44(self):
         r"""
-        Parameters of four spins & three sites term of the Hamiltonian (partition 2+1+1+0).
+        Parameters of four spins & three sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-4`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------
@@ -1586,10 +1938,10 @@ class SpinHamiltonian:
     @property
     def p45(self):
         r"""
-        Parameters of four spins & four sites term of the Hamiltonian (partition 1+1+1+1).
+        Parameters of four spins & four sites term of the Hamiltonian
+        (:ref:`ug_tb_sh_4-5`).
 
-        See :ref:`user-guide_theory-behind_spin-hamiltonian` for the
-        definition of the relevant term of the Hamiltonian.
+        See :ref:`user-guide_theory-behind_spin-hamiltonian` for more details.
 
         Returns
         -------

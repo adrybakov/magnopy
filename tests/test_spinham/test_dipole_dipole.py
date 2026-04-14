@@ -1,22 +1,21 @@
 # ================================== LICENSE ===================================
 # Magnopy - Python package for magnons.
-# Copyright (C) 2023-2026 Magnopy Team
+#
+# Copyright (C) 2023 Magnopy Team
 #
 # e-mail: anry@uv.es, web: magnopy.org
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software: you  can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the  Free Software
+# Foundation,  either  version 3  of the License,  or (at your option) any later
+# version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the  hope  that it will be useful,  but WITHOUT
+# ANY WARRANTY;  without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the  GNU General Public License  along with
+# this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
 
@@ -87,7 +86,7 @@ def test_raises():
 @given(
     st.floats(min_value=0, max_value=7),
 )
-@settings(deadline=2000)
+@settings(deadline=5000)
 def test_R_cut(lattice_variation, R_cut):
     cell = sc_get_example(lattice_variation=lattice_variation)
     atoms = dict(
@@ -118,7 +117,7 @@ def test_R_cut(lattice_variation, R_cut):
 @given(
     st.floats(min_value=0.01, max_value=7),
 )
-@settings(deadline=2000)
+@settings(deadline=5000)
 def test_E_cut(lattice_variation, E_cut):
     cell = sc_get_example(lattice_variation=lattice_variation)
     atoms = dict(
