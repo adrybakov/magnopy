@@ -374,8 +374,196 @@ class SpinHamiltonian:
         return len(self.magnetic_atoms.names)
 
     ############################################################################
+    #                        Distribution in equal sets                        #
+    ############################################################################
+
+    def restore_missing_parameters(self, strategy="zeros") -> None:
+        r"""
+        Checks that all interactions from the equivalent sets are present in the
+        Hamiltonian and adds the missing ones (if any).
+
+        .. versionadded:: 0.5.2
+
+        See :ref:`user-guide_theory-behind_equivalent-parameters` for more details on sets
+        of equivalent parameters.
+
+        Parameters
+        ----------
+
+        strategy : str, default "zeros"
+
+            When some parameters from the equivalent set are missing, this argument
+            defines the value of the added parameters. Case-insensitive. Supported options
+            are
+
+            * "zeros" (default)
+              Values of missing parameters are set to zeros. This option does not change
+              the physics of the Hamiltonian.
+
+            * "mean"
+              Values of the missing parameters are set to the mean value of the parameters
+              from the relevant set of equivalent parameters, that are present in the
+              Hamiltonian. This value might change the physics of the Hamiltonian (as it
+              adds new non-zero parameters).
+
+        Raises
+        ------
+        ValueError
+            If ``strategy`` is not one of the supported options.
+
+        Notes
+        -----
+        If ``spinham.convention.multiple_counting`` is False, then this function does
+        nothing as only one parameter per set is stored and no parameters can be missing.
+        """
+
+        if not self.convention._multiple_counting:
+            return
+
+        strategy = strategy.lower()
+        counter = {}
+        missing_parameters = _InteractionParameters()
+
+        for (n, p_n, nus, alphas), parameter in self._parameters._container:
+            equivalent_set = get_equivalent(
+                n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+            )
+
+            for eq_nus, eq_alphas, eq_parameter in equivalent_set:
+                eq_specs = (n, p_n, eq_nus, eq_alphas)
+
+                if eq_specs not in self._parameters:
+                    if strategy == "zeros":
+                        missing_parameters.add(
+                            specs=eq_specs,
+                            parameter=np.zeros_like(parameter, dtype=float),
+                            when_present="skip",
+                        )
+                    elif strategy == "mean":
+                        if (eq_nus, eq_alphas) not in counter:
+                            counter[(eq_nus, eq_alphas)] = 0
+                        missing_parameters.add(
+                            specs=eq_specs,
+                            parameter=parameter,
+                            when_present="weighted average",
+                            weight=(counter[(eq_nus, eq_alphas)], 1),
+                        )
+                        counter[(eq_nus, eq_alphas)] += 1
+                    else:
+                        raise ValueError(
+                            f'Expected strategy to be either "zeros" or "mean", got {strategy}.'
+                        )
+        self._parameters = self._parameters + missing_parameters
+
+    def set_distribution(self, strategy="symmetrized") -> None:
+        """
+        Enforces one of the supported distributions of parameters within the sets of
+        equivalent parameters.
+
+        .. versionadded:: 0.5.2
+
+        See :ref:`user-guide_theory-behind_equivalent-parameters` for more details.
+
+        Parameters
+        ----------
+        strategy : str, default "symmetrized"
+
+            Strategy for distributing parameters in the sets of equivalent parameters.
+            Case-insensitive. Supported options are
+
+            * "symmetrized" (default)
+              All parameters from the set are equal to each other.
+
+            * "one-for-all"
+              The sum of all equivalent parameters from the set is assigned to the
+              single representative parameter. All other parameters from the set are set
+              to zeros.
+
+        Raises
+        ------
+        ValueError
+            If ``strategy`` is not one of the supported options.
+        ValueError
+            If ``spinham.convention.multiple_counting`` is False. See Notes below.
+
+        See Also
+        --------
+        restore_missing_parameters
+
+        Notes
+        -----
+
+        If ``spinham.convention.multiple_counting`` is False, then this function raises
+        a ``ValueError`` as the distribution of parameters is fixed and can not be
+        changed.
+
+        On contrary to :py:meth:`.SpinHamiltonian.restore_missing_parameters`, this
+        method never changes the physics of the Hamiltonian.
+
+        Examples
+        --------
+
+        See :ref:`user-guide_usage_spin-hamiltonian_symmetrization` for more details on
+        how to use this function.
+        """
+
+        # Note: self._zeeman_parameters never change, as there is always one
+        # parameter per set
+
+        if not self.convention._multiple_counting:
+            raise ValueError(
+                "When spinham.convention.multiple_counting is False, the distribution of parameters is fixed and can not be changed."
+            )
+
+        strategy = strategy.lower()
+        new_parameters = _InteractionParameters()
+
+        if strategy == "symmetrized":
+            for (n, p_n, nus, alphas), parameter in self._parameters._container:
+                equivalent_parameters = get_equivalent(
+                    n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+                )
+
+                degeneracy = len(equivalent_parameters)
+
+                for eq_nus, eq_alphas, eq_parameter in equivalent_parameters:
+                    new_parameters.add(
+                        specs=(n, p_n, eq_nus, eq_alphas),
+                        parameter=eq_parameter / degeneracy,
+                        when_present="sum",
+                    )
+        elif strategy == "representative":
+            for (n, p_n, nus, alphas), parameter in self._parameters._container:
+                equivalent_parameters = get_equivalent(
+                    n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
+                )
+
+                for index, (eq_nus, eq_alphas, eq_parameter) in enumerate(
+                    equivalent_parameters
+                ):
+                    if index == 0:
+                        new_parameters.add(
+                            specs=(n, p_n, eq_nus, eq_alphas),
+                            parameter=eq_parameter,
+                            when_present="sum",
+                        )
+                    else:
+                        new_parameters.add(
+                            specs=(n, p_n, eq_nus, eq_alphas),
+                            parameter=np.zeros_like(eq_parameter, dtype=float),
+                            when_present="skip",
+                        )
+        else:
+            raise ValueError(
+                f'Expected strategy to be either "symmetrized" or "representative" got {strategy}.'
+            )
+
+        self._parameters = new_parameters
+
+    ############################################################################
     #                                Convention                                #
     ############################################################################
+
     @property
     def convention(self) -> Convention:
         r"""
@@ -470,9 +658,7 @@ class SpinHamiltonian:
             else:
                 nus, alphas, parameter = equivalent_parameters[0]
                 new_parameters.add(
-                    specs=(n, p_n, nus, alphas),
-                    parameter=parameter * degeneracy,
-                    when_present="skip",
+                    specs=(n, p_n, nus, alphas), parameter=parameter, when_present="sum"
                 )
 
         self._parameters = new_parameters
@@ -1109,22 +1295,19 @@ class SpinHamiltonian:
                 "Atoms of two spin Hamiltonians are different, summation is not supported."
             )
 
+        result = other.copy()
+
         # Make sure that units are the same
-        other_units = other.units
-        other.units = self.units
+        result.units = self.units
 
         # Make sure that conventions are the same
-        other_convention = other.convention
-        other.convention = self.convention
+        result.convention = self.convention
 
-        result = self.get_empty()
-        result._parameters = self._parameters + other._parameters
+        result._parameters = self._parameters + result._parameters
 
-        # Restore units of other Hamiltonian
-        other.units = other_units
-
-        # Restore convention of other Hamiltonian
-        other.convention = other_convention
+        # Make sure that Zeeman parameters and magnetic field are correctly tracked.
+        result._magnetic_field = self._magnetic_field + result._magnetic_field
+        result._zeeman_parameters = self._zeeman_parameters + result._zeeman_parameters
 
         return result
 
@@ -1443,28 +1626,38 @@ class SpinHamiltonian:
 
         return _InteractionParametersIterator(parameters=self._parameters, n=n, p_n=p_n)
 
-    def symmetrize(self):
+    def purge(self, tolerance=None):
         r"""
-        Symmetrize interaction parameters as specified in the SI note 3 of |paper-2026|_.
+        Removes parameters of the Hamiltonian that are smaller than the given tolerance.
+
+        .. versionadded:: 0.5.2
+
+        Parameters
+        ----------
+        tolerance : float, default 1e-8 meV
+            Parameters with absolute value of all components smaller than the tolerance
+            are removed. Expected to be non-negative. Expected to be
+            in the same units as :py:attr:`.SpinHamiltonian.units`. Default
+            value is :math:`10^{-8}` meV (converted to the units of the Hamiltonian).
         """
 
-        if self.convention.multiple_counting:
-            new_parameters = _InteractionParameters()
-            for (n, p_n, nus, alphas), parameter in self._parameters._container:
-                equivalent_parameters = get_equivalent(
-                    n=n, p_n=p_n, nus=nus, alphas=alphas, parameter=parameter
-                )
+        if tolerance is None:
+            tolerance = 1e-8 * _PARAMETER_UNITS["mev"] / _PARAMETER_UNITS[self._units]
+        tolerance = abs(float(tolerance))
 
-                degeneracy = len(equivalent_parameters)
+        # Remove from main container
+        new_parameters = _InteractionParameters()
+        for specs, parameter in self._parameters._container:
+            if not np.all(np.abs(parameter) < tolerance):
+                new_parameters._container.append((specs, parameter))
+        self._parameters = new_parameters
 
-                for nus, alphas, parameter in equivalent_parameters:
-                    new_parameters.add(
-                        specs=(n, p_n, nus, alphas),
-                        parameter=parameter / degeneracy,
-                        when_present="sum",
-                    )
-
-            self._parameters = new_parameters
+        # Remove from Zeeman parameters
+        new_zeeman_parameters = _InteractionParameters()
+        for specs, parameter in self._zeeman_parameters._container:
+            if not np.all(np.abs(parameter) < tolerance):
+                new_zeeman_parameters._container.append((specs, parameter))
+        self._zeeman_parameters = new_zeeman_parameters
 
     ############################################################################
     #                          One spin & one site (1)                         #

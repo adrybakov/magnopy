@@ -173,7 +173,7 @@ class _InteractionParameters:
             elif (n, p_n) < key:
                 self._slices[key][0] += delta
 
-    def add(self, specs, parameter, when_present="raise error"):
+    def add(self, specs, parameter, when_present="raise error", weights=None):
         """
         Add arbitrary interaction parameter to the container.
 
@@ -199,8 +199,18 @@ class _InteractionParameters:
             - ``"sum"``: add the value of the parameter to the existing one.
             - ``"mean"``: replace the value of the parameter with the arithmetic mean of
             existing and new parameters.
+            - ``"weighted average"``: replace the value of the parameter with the weighted
+              average of existing and new parameters. Expect ``weights`` to be a tuple of two
+              weight: ``weights=(w_existing, w_new)``. ``w_existing`` is a weight for the
+              existing parameter and ``w_new`` is a weight for the ``parameter`` argument.
+              The new value of the parameter calculated as
+              ``(w_existing * existing_parameter + w_new * parameter) / (w_existing + w_new)``.
             - ``"skip"``: Leave existing parameter unchanged and continue without raising an
             error.
+
+        weights : tuple, optional
+            Weights for the weighted average when ``when_present`` is set to
+            ``"weighted average"``. Ignored otherwise.
 
         Raises
         ------
@@ -237,6 +247,15 @@ class _InteractionParameters:
                 self._container[index][1] += parameter
             elif when_present == "mean":
                 self._container[index][1] = (self._container[index][1] + parameter) / 2
+            elif when_present == "weighted average":
+                if weights is None or len(weights) != 2:
+                    raise ValueError(
+                        "Weights must be provided as a tuple of two numbers when when_present is set to 'weighted average'."
+                    )
+                w_existing, w_new = weights
+                self._container[index][1] = (
+                    w_existing * self._container[index][1] + w_new * parameter
+                ) / (w_existing + w_new)
             elif when_present == "skip":
                 pass
             else:
