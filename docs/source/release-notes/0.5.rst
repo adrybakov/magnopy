@@ -170,6 +170,17 @@ Iterating over parameters of the Hamiltonian
 0.5.2
 =====
 
+**Date**: Undefined
+
+Bugfix
+------
+
+* Fix a bug in :py:meth:`magnopy.SpinHamiltonian._get_missing_parameters`, that prevented
+  the method from working, when there are indeed missing parameters.
+
+0.5.2
+=====
+
 **Date**: 14 April 2026
 
 New features

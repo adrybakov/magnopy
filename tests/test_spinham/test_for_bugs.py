@@ -20,6 +20,7 @@
 
 
 import numpy as np
+import pytest
 
 from magnopy import Convention, Energy, SpinHamiltonian
 
@@ -48,3 +49,27 @@ def test_energy_p1():
     energy = Energy(spinham=spinham)
 
     assert abs(energy.E_0([[0, 0, 1]]) - 2 * BOHR_MAGNETON) < 1e-8
+
+
+# See release notes of 0.5.3
+@pytest.mark.parametrize("strategy", ["zeros", "mean"])
+def test_restore_missing_parameters(strategy):
+    cell = np.eye(3, dtype=float)
+
+    atoms = dict(
+        names=["A1", "A2"],
+        positions=[[0, 0, 0], [0.5, 0.5, 0.5]],
+        spins=[1, 1],
+        g_factors=[2, 2],
+    )
+    convention = Convention(multiple_counting=True, spin_normalized=False, c1=1, c22=1)
+
+    spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
+
+    spinham.add(nus=[(1, 0, 0)], alphas=[0, 0], parameter=np.ones((3, 3)))
+
+    assert len(spinham.p22) == 1
+
+    spinham.restore_missing_parameters(strategy=strategy)
+
+    assert len(spinham.p22) == 2
