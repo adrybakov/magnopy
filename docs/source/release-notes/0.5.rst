@@ -167,16 +167,24 @@ Iterating over parameters of the Hamiltonian
                 print(spinham.atoms.names[alpha], spinham.atoms.names[beta], nu)
                 print(parameter)
 
-0.5.2
+0.5.3
 =====
 
 **Date**: Undefined
+
+New features
+------------
+
+* Update :py:func:`magnopy.io.load_grogu` to be able to actually read the Hamiltonian's
+  convention and not to always assume the GROGU's one.
 
 Bugfix
 ------
 
 * Fix a bug in :py:meth:`magnopy.SpinHamiltonian._get_missing_parameters`, that prevented
   the method from working, when there are indeed missing parameters.
+
+
 
 0.5.2
 =====
