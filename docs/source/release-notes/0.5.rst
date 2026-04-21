@@ -183,6 +183,8 @@ Bugfix
 
 * Fix a bug in :py:meth:`magnopy.SpinHamiltonian._get_missing_parameters`, that prevented
   the method from working, when there are indeed missing parameters.
+* Fix a bug in :py:meth:`magnopy.SpinHamiltonian.purge`. The bug prevented modification of
+  the Hamiltonian parameters if this method was used.
 
 
 

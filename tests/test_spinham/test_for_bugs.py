@@ -73,3 +73,25 @@ def test_restore_missing_parameters(strategy):
     spinham.restore_missing_parameters(strategy=strategy)
 
     assert len(spinham.p22) == 2
+
+
+# See release notes of 0.5.3
+def test_purge():
+    cell = np.eye(3, dtype=float)
+
+    atoms = dict(
+        names=["A1", "A2"],
+        positions=[[0, 0, 0], [0.5, 0.5, 0.5]],
+        spins=[1, 1],
+        g_factors=[2, 2],
+    )
+    convention = Convention(multiple_counting=True, spin_normalized=False, c1=1, c22=1)
+
+    spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
+
+    spinham.add(nus=[(1, 0, 0)], alphas=[0, 0], parameter=np.ones((3, 3)))
+
+    spinham.purge()
+
+    for entry in spinham._parameters._container:
+        assert isinstance(entry, list)

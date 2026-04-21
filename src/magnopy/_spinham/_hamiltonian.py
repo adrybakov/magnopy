@@ -1663,14 +1663,14 @@ class SpinHamiltonian:
         new_parameters = _InteractionParameters()
         for specs, parameter in self._parameters._container:
             if not np.all(np.abs(parameter) < tolerance):
-                new_parameters._container.append((specs, parameter))
+                new_parameters._container.append([specs, parameter])
         self._parameters = new_parameters
 
         # Remove from Zeeman parameters
         new_zeeman_parameters = _InteractionParameters()
         for specs, parameter in self._zeeman_parameters._container:
             if not np.all(np.abs(parameter) < tolerance):
-                new_zeeman_parameters._container.append((specs, parameter))
+                new_zeeman_parameters._container.append([specs, parameter])
         self._zeeman_parameters = new_zeeman_parameters
 
     ############################################################################
