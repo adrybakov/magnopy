@@ -37,8 +37,8 @@ GREY = "#777777"
 LIGHT_GREY = "#AAAAAA"
 # Fontsize baseline
 FONTSIZE = 10
-# A4
-WIDTH = 8.27 * 0.8
+# Two-column
+WIDTH = 2 * (3 + 3 / 8)  # inches
 # Arrow style
 ARROW_STYLE = dict(
     angles="xy",
