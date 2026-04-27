@@ -537,7 +537,7 @@ def plot_model_2(ax, ax_ratio):
                 * S
                 * np.sqrt(
                     (1 + A / 4 / J_ANTIFERRO) ** 2
-                    - (1 + np.cos(k @ cell[0])) * (1 + np.cos(k @ cell[1])) / 4
+                    - np.cos(k @ cell[0] / 2) ** 2 * np.cos(k @ cell[1] / 2) ** 2
                 ),
                 -G_FACTOR * MU_B * B
                 + 8
@@ -545,7 +545,7 @@ def plot_model_2(ax, ax_ratio):
                 * S
                 * np.sqrt(
                     (1 + A / 4 / J_ANTIFERRO) ** 2
-                    - (1 + np.cos(k @ cell[0])) * (1 + np.cos(k @ cell[1])) / 4
+                    - np.cos(k @ cell[0] / 2) ** 2 * np.cos(k @ cell[1] / 2) ** 2
                 ),
             ]
         )
