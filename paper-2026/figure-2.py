@@ -529,25 +529,24 @@ def plot_model_2(ax, ax_ratio):
     omega_analytical = []
     omega_numerical = []
     for k in kp.points(relative=False):
-        gamma = (
-            1
-            + np.exp(1j * k @ cell[0])
-            + np.exp(1j * k @ cell[1])
-            + np.exp(1j * k @ (cell[0] + cell[1]))
-        ) / 4
-
         omega_analytical.append(
             [
                 G_FACTOR * MU_B * B
                 + 8
                 * J_ANTIFERRO
                 * S
-                * np.sqrt((1 + A / 4 / J_ANTIFERRO) ** 2 - np.abs(gamma) ** 2),
+                * np.sqrt(
+                    (1 + A / 4 / J_ANTIFERRO) ** 2
+                    - (1 + np.cos(k @ cell[0])) * (1 + np.cos(k @ cell[1])) / 4
+                ),
                 -G_FACTOR * MU_B * B
                 + 8
                 * J_ANTIFERRO
                 * S
-                * np.sqrt((1 + A / 4 / J_ANTIFERRO) ** 2 - np.abs(gamma) ** 2),
+                * np.sqrt(
+                    (1 + A / 4 / J_ANTIFERRO) ** 2
+                    - (1 + np.cos(k @ cell[0])) * (1 + np.cos(k @ cell[1])) / 4
+                ),
             ]
         )
         omega_numerical.append(lswt.omega(k=k, relative=False))
