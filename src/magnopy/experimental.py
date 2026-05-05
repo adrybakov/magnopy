@@ -276,8 +276,8 @@ def plot_spinham(
         "<br>".join(
             [
                 "Bond",
-                f'  from magnetic center "{spinham.atoms.names[alpha]}" in (0, 0, 0) unit cell',
-                f'  to magnetic center "{spinham.atoms.names[beta]}" in ({nu[0]}, {nu[1]}, {nu[2]}) unit cell',
+                f'  from magnetic center "{spinham.magnetic_atoms.names[alpha]}" in (0, 0, 0) unit cell',
+                f'  to magnetic center "{spinham.magnetic_atoms.names[beta]}" in ({nu[0]}, {nu[1]}, {nu[2]}) unit cell',
                 "",
                 "Full two-spins/two-sites parameter:",
                 f"  {param[0][0]:10.5f} {param[0][1]:10.5f} {param[0][2]:10.5f}",
