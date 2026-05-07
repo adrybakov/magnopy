@@ -18,8 +18,9 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+# import matplotlib.patheffects as pe
 
 import magnopy
 import wulfric
@@ -30,7 +31,8 @@ import wulfric
 # Colors
 COLOR_NUMERICAL = "#0C7BDC"
 COLOR_ANALYTICAL = "#FFC20A"
-COLOR_PARAMETERS = "#8BA300FF"
+COLOR_PARAMETERS = "#42D69C"  # "#8BA300FF"
+COLOR_PARAMETERS_BACK = "#000000"  # "#8BA300FF"
 RED = "#DC3220"
 BLUE = "#005AB5"
 GREY = "#777777"
@@ -40,7 +42,15 @@ FONTSIZE = 10
 # Two-column
 WIDTH = 2 * (3 + 3 / 8)  # inches
 # Arrow style
-ARROW_STYLE = dict(
+ARROW_STYLE_1 = dict(
+    angles="xy",
+    scale_units="xy",
+    width=0.01,
+    scale=1,
+    headlength=3,
+    headaxislength=2.7,
+)
+ARROW_STYLE_2 = dict(
     angles="xy",
     scale_units="xy",
     width=0.01,
@@ -74,7 +84,9 @@ K_PATH = "GAMMA-X-M-GAMMA"
 
 # Plots a hord of a circle
 # dmi = [x,y,scale]
-def hord(ax, offset, p1, p2, dmi=None):
+def hord(
+    ax, offset, p1, p2, dmi=None, cap_angle=0.1, color_parameters=COLOR_PARAMETERS
+):
     p1 = np.array(p1)
     p2 = np.array(p2)
 
@@ -113,8 +125,8 @@ def hord(ax, offset, p1, p2, dmi=None):
         start = p2
     else:
         start = p1
-
-    for angle in np.linspace(0, max_angle, 100):
+    cap_angle = cap_angle * max_angle
+    for angle in np.linspace(cap_angle, max_angle - cap_angle, 100):
         rot_matrix = np.array(
             [
                 [np.cos(angle), -np.sin(angle)],
@@ -126,15 +138,27 @@ def hord(ax, offset, p1, p2, dmi=None):
 
     points = np.array(points).T
 
-    ax.plot(points[0], points[1], color=COLOR_PARAMETERS, lw=1.5, zorder=1)
+    ax.plot(
+        points[0],
+        points[1],
+        color=color_parameters,
+        lw=1.5,
+        zorder=1,
+        # path_effects=[
+        #     pe.Stroke(linewidth=2.5, foreground=COLOR_PARAMETERS_BACK),
+        #     pe.Normal(),
+        # ],
+        solid_capstyle="round",
+    )
 
     if dmi is not None:
         dx = dmi[0] * dmi[2]
         dy = dmi[1] * dmi[2]
+        dmi_pos = max_angle / 2.5
         rot_matrix = np.array(
             [
-                [np.cos(max_angle / 2), -np.sin(max_angle / 2)],
-                [np.sin(max_angle / 2), np.cos(max_angle / 2)],
+                [np.cos(dmi_pos), -np.sin(dmi_pos)],
+                [np.sin(dmi_pos), np.cos(dmi_pos)],
             ]
         )
         x0, y0 = rot_matrix @ start + shift
@@ -149,7 +173,9 @@ def hord(ax, offset, p1, p2, dmi=None):
             scale=1,
             headlength=3,
             headaxislength=2.7,
-            color=COLOR_PARAMETERS,
+            color=color_parameters,
+            # edgecolor=COLOR_PARAMETERS_BACK,
+            # linewidth=0.5,
             zorder=1,
         )
 
@@ -182,7 +208,7 @@ def schema_1(ax):
             -0.2,
             color="black",
             zorder=2,
-            **ARROW_STYLE,
+            **ARROW_STYLE_1,
         )
 
     # Draw lattice vectors
@@ -218,12 +244,41 @@ def schema_1(ax):
     # )
 
     # Draw interaction parameters
-    offset = 1
+    offset = 0.7
     dmi_scale = 0.4
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[1.5, 0.5], dmi=[0, 1, dmi_scale])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, 1.5], dmi=[-1, 0, dmi_scale])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[-0.5, 0.5], dmi=[0, -1, dmi_scale])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, -0.5], dmi=[1, 0, dmi_scale])
+    cap_angle = 0.17
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[1.5, 0.5],
+        dmi=[0, 1, dmi_scale],
+        cap_angle=cap_angle,
+    )
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[0.5, 1.5],
+        dmi=[-1, 0, dmi_scale],
+        cap_angle=cap_angle,
+    )
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[-0.5, 0.5],
+        dmi=[0, -1, dmi_scale],
+        cap_angle=cap_angle,
+    )
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[0.5, -0.5],
+        dmi=[1, 0, dmi_scale],
+        cap_angle=cap_angle,
+    )
 
 
 # Antiferromagnet
@@ -262,7 +317,7 @@ def schema_2(ax):
                 points_up.append([i + 0.5, j + 0.5])
     points_up = np.array(points_up)
     points_down = np.array(points_down)
-    shift = 0.03
+    shift = 0.0
     for x, y in points_up:
         ax.quiver(
             x + 0.1 - shift,
@@ -271,7 +326,7 @@ def schema_2(ax):
             0.2,
             color=BLUE,
             zorder=2,
-            **ARROW_STYLE,
+            **ARROW_STYLE_2,
         )
     for x, y in points_down:
         ax.quiver(
@@ -281,7 +336,7 @@ def schema_2(ax):
             -0.2,
             color=RED,
             zorder=2,
-            **ARROW_STYLE,
+            **ARROW_STYLE_2,
         )
 
     # Draw lattice vectors
@@ -318,16 +373,17 @@ def schema_2(ax):
     # )
 
     # Draw interaction parameters
-    offset = 1
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[1.5, 0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, 1.5])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[-0.5, 0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, -0.5])
+    offset = 0.7
+    cap_angle = 0.17
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[1.5, 0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, 1.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[-0.5, 0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, -0.5], cap_angle=cap_angle)
     # Second set
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[1.5, -0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, 0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[-0.5, -0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, -1.5])
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[1.5, -0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, 0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[-0.5, -0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, -1.5], cap_angle=cap_angle)
 
 
 def configure_axes(ax, ax_ratio, kp):
@@ -665,10 +721,10 @@ def main():
 
     # subfigure labels
     style = dict(fontsize=1.2 * FONTSIZE, ha="right", va="top")
-    fig.text(dx / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "a)", **style)
-    fig.text((1 + dx) / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "b)", **style)
-    fig.text(dx / 2, (1 - dy) / 2, "c)", **style)
-    fig.text((1 + dx) / 2, (1 - dy) / 2, "d)", **style)
+    fig.text(dx / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "(a)", **style)
+    fig.text((1 + dx) / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "(b)", **style)
+    fig.text(dx / 2, (1 - dy) / 2, "(c)", **style)
+    fig.text((1 + dx) / 2, (1 - dy) / 2, "(d)", **style)
 
     ####################################
     # Plot schematic of the two models #
