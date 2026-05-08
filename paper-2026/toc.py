@@ -20,20 +20,16 @@
 
 import matplotlib.pyplot as plt
 
-# One column of A4
-WIDTH = 3 + 3 / 8  # inches
-
-
 # Style parameters
 COLOR_BORDER = "#265DC3"
 COLOR_FILL = "#E9EEF7"
-FONTSIZE = 10
+FONTSIZE = 8
 
 
 # Display the cat of magnopy's logo
 def plot_logo(ax, x0, y0, size):
     sx = size
-    sy = size / 3 * 4
+    sy = size / 5 * 5.5
 
     style = dict(color="white", lw=0, zorder=1)
     ax.fill_between(
@@ -115,7 +111,8 @@ def main():
     ##################
     # Prepare canvas #
     ##################
-    fig = plt.figure(figsize=(WIDTH, 0.75 * WIDTH))
+    cm = 1 / 2.54
+    fig = plt.figure(figsize=(5.5 * cm, 5 * cm))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 100)
     ax.set_ylim(0, 100)
@@ -143,7 +140,7 @@ def main():
     #################
     # Draw the logo #
     #################
-    plot_logo(ax, 91, 17, 0.7)
+    plot_logo(ax, 91, 17, 1)
 
     #################
     # Define styles #
@@ -190,23 +187,22 @@ def main():
     ########################
     # Text outside the box #
     ########################
-    ax.text(
-        50, (100 + top) / 2, R"input (configuration & system parameters)", **text_out
-    )
+    ax.text(50, (100 + top) / 2, R"input (parameters & configuration)", **text_out)
     ax.text(50, bottom / 2, R"output (visual & numerical)", **text_out)
 
     #######################
     # Text inside the box #
     #######################
     # Spin Hamiltonian
-    ax.text(45, 72.5, "Spin Hamiltonian", **text_in)
-    ax.text(71, 80, "unit cell", **text_in_small, ha="left")
-    ax.text(71, 75, "site positions", **text_in_small, ha="left")
-    ax.text(71, 70, "parameters", **text_in_small, ha="left")
-    ax.text(71, 65, "convention", **text_in_small, ha="left")
+    ax.text(50, 72.5, "Spin Hamiltonian", **text_in)
+    ax.text(78, 72.5, R"$\hat{\mathcal{H}}$", **text_in_small, ha="left")
+    # ax.text(65, 80, "unit cell", **text_in_small, ha="left")
+    # ax.text(65, 75, "site positions", **text_in_small, ha="left")
+    # ax.text(65, 70, "parameters", **text_in_small, ha="left")
+    # ax.text(65, 65, "convention", **text_in_small, ha="left")
     # Vacuum state
-    ax.text(46, 56, "Vacuum state", **text_in)
-    ax.text(71, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
+    ax.text(50, 56, "Vacuum state", **text_in)
+    ax.text(74, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
     # LSWT
     ax.text(35, 41, "LSWT", **text_in)
     ax.text(22, 44, R"$E^{(2)}$", **text_in_small, ha="right")
@@ -222,18 +218,19 @@ def main():
     # Content lines #
     #################
     # Spin Hamiltonian
-    line(64, 72.5, 70, 75)
-    line(64, 72.5, 70, 70)
-    line(64, 72.5, 70, 65)
-    line(64, 72.5, 70, 80)
+    line(73, 72.5, 77, 72.5)
+    # line(60, 72.5, 64, 75)
+    # line(60, 72.5, 64, 70)
+    # line(60, 72.5, 64, 65)
+    # line(60, 72.5, 64, 80)
     # Vacuum state
-    line(62, 56, 70, 56)
+    line(69, 56, 73, 56)
     # LSWT
-    line(29, 41, 23, 44)
-    line(29, 41, 23, 38)
+    line(27, 41, 23, 44)
+    line(27, 41, 23, 38)
     # Energy
-    line(72, 41, 78, 44)
-    line(72, 41, 78, 38)
+    line(74, 41, 78, 44)
+    line(74, 41, 78, 38)
 
     ##########
     # Arrows #
@@ -256,8 +253,8 @@ def main():
     ###############
     # Save figure #
     ###############
-    plt.savefig("figure-3.eps", dpi=600)
-    plt.savefig("figure-3.png", dpi=600)
+    plt.savefig("toc.eps", dpi=600)
+    plt.savefig("toc.png", dpi=600)
     plt.close()
 
 
