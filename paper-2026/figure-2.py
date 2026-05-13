@@ -664,6 +664,41 @@ def main():
 
     # Figure
     fig = plt.figure(figsize=(WIDTH, WIDTH * sqz))
+
+    # Global reference frame
+    frameax_size = 0.08
+    frameax_x = 0.5
+    frameax_y = 0.6
+    frameax = fig.add_axes(
+        [
+            frameax_x - frameax_size / 2,
+            frameax_y - frameax_size / 2 / sqz,
+            frameax_size,
+            frameax_size / sqz,
+        ]
+    )
+    frame_arrow_style = dict(
+        angles="xy",
+        scale_units="xy",
+        width=0.05,
+        scale=1,
+        headlength=3,
+        headaxislength=2.7,
+        capstyle="round",
+    )
+    frameax.quiver(0.1, 0.1, 0.8, 0, **frame_arrow_style, color="tab:red")
+    frameax.text(
+        0.9, 0.2, "x", fontsize=FONTSIZE, ha="center", va="bottom", color="tab:red"
+    )
+    frameax.quiver(0.1, 0.1, 0, 0.8, **frame_arrow_style, color="tab:green")
+    frameax.text(
+        0.2, 0.9, "y", fontsize=FONTSIZE, ha="left", va="center", color="tab:green"
+    )
+
+    frameax.set_xlim(0, 1)
+    frameax.set_ylim(0, 1)
+    frameax.axis("off")
+
     # Top left axis
     ax_a = fig.add_axes(
         [
