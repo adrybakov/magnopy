@@ -31,12 +31,13 @@ import wulfric
 # Colors
 COLOR_NUMERICAL = "#006dcc"
 COLOR_ANALYTICAL = "#ffcc33"
+COLOR_RATIO = "#00800b"
 COLOR_PARAMETERS = "#13ec95"
 COLOR_PARAMETERS_BACK = "#000000"
 RED = "#ec2213"
 BLUE = "#1395ec"
-GREY = "#777777"
-LIGHT_GREY = "#AAAAAA"
+GREY = "#bbbbbb"
+LIGHT_GREY = "#cccccc"
 # Fontsize baseline
 FONTSIZE = 10
 # Two-column
@@ -59,17 +60,23 @@ ARROW_STYLE_2 = dict(
     headaxislength=2.7,
 )
 
+RATIO_LINESTYLE = dict(
+    color=COLOR_NUMERICAL,
+    zorder=1,
+    lw=2,
+)
+
 ANALYTICAL_LINESTYLE = dict(
     linestyle="-",
     color=COLOR_ANALYTICAL,
     lw=3,
-    zorder=0,
+    zorder=1,
 )
 NUMERICAL_LINESTYLE = dict(
     linestyle="--",
     color=COLOR_NUMERICAL,
     lw=1.5,
-    zorder=1,
+    zorder=2,
     dash_capstyle="round",
     dashes=[3.5, 2.5],
 )
@@ -226,38 +233,6 @@ def schema_1(ax):
             **ARROW_STYLE_1,
         )
 
-    # Draw lattice vectors
-    # l_vector_style = dict(
-    #     angles="xy",
-    #     scale_units="xy",
-    #     width=0.01,
-    #     scale=1,
-    #     headlength=4,
-    #     headaxislength=3.7,
-    #     color=GREY,
-    #     zorder=0,
-    # )
-    # ax.quiver(-1, -1, 1, 0, **l_vector_style)
-    # ax.quiver(-1, -1, 0, 1, **l_vector_style)
-    # ax.text(
-    #     -0.2,
-    #     -0.85,
-    #     R"$\boldsymbol{a_1}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-    # ax.text(
-    #     -0.85,
-    #     -0.2,
-    #     R"$\boldsymbol{a_2}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-
     # Draw interaction parameters
     offset = 0.7
     dmi_scale = 0.4
@@ -361,39 +336,6 @@ def schema_2(ax):
             **ARROW_STYLE_2,
         )
 
-    # Draw lattice vectors
-    # l_vector_style = dict(
-    #     angles="xy",
-    #     scale_units="xy",
-    #     width=0.01,
-    #     scale=1,
-    #     headlength=4,
-    #     headaxislength=3.7,
-    #     color=GREY,
-    #     zorder=0,
-    # )
-    # ax.quiver(-0.5, -1.5, 1, 1, **l_vector_style)
-    # ax.quiver(-0.5, -1.5, -1, 1, **l_vector_style)
-
-    # ax.text(
-    #     0.4,
-    #     -0.8,
-    #     R"$\boldsymbol{a_1}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-    # ax.text(
-    #     -1.4,
-    #     -0.8,
-    #     R"$\boldsymbol{a_2}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-
     # Draw interaction parameters
     offset = 0.7
     cap_angle = 0.17
@@ -416,7 +358,13 @@ def configure_axes(ax, ax_ratio, kp):
     ax.set_xticks(kp.ticks(), kp.labels, fontsize=FONTSIZE)
     ax.set_xlim(kp.ticks()[0], kp.ticks()[-1])
     ax.vlines(
-        kp.ticks(), 0, 1, lw=0.5, transform=ax.get_xaxis_transform(), color="black"
+        kp.ticks(),
+        0,
+        1,
+        lw=0.5,
+        transform=ax.get_xaxis_transform(),
+        color=GREY,
+        zorder=0,
     )
 
     # Ratio axis
@@ -433,7 +381,8 @@ def configure_axes(ax, ax_ratio, kp):
         1,
         lw=0.5,
         transform=ax_ratio.get_xaxis_transform(),
-        color="black",
+        color=GREY,
+        zorder=0,
     )
 
 
@@ -513,9 +462,7 @@ def plot_model_1(ax, ax_ratio):
     ax_ratio.plot(
         kp.flat_points(),
         omega_numerical / omega_analytical,
-        color="black",
-        zorder=0,
-        lw=2,
+        **RATIO_LINESTYLE,
     )
 
     # Display the legend
@@ -641,9 +588,7 @@ def plot_model_2(ax, ax_ratio):
         ax_ratio.plot(
             kp.flat_points(),
             omega_numerical[mode_index] / omega_analytical[mode_index],
-            color="black",
-            zorder=0,
-            lw=2,
+            **RATIO_LINESTYLE,
         )
 
     # Display the legend
