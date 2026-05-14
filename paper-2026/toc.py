@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 # Style parameters
 COLOR_BORDER = "#265DC3"
 COLOR_FILL = "#E9EEF7"
-FONTSIZE = 8
+FONTSIZE = 10
 
 
 # Display the cat of magnopy's logo
@@ -121,8 +121,8 @@ def main():
     ####################
     # Draw a rectangle #
     ####################
-    left = 7
-    right = 93
+    left = 5
+    right = 95
     bottom = 15
     top = 85
     gap_left = 47
@@ -140,7 +140,7 @@ def main():
     #################
     # Draw the logo #
     #################
-    plot_logo(ax, 91, 17, 1)
+    plot_logo(ax, 92, 17, 1)
 
     #################
     # Define styles #
@@ -187,7 +187,7 @@ def main():
     ########################
     # Text outside the box #
     ########################
-    ax.text(50, (100 + top) / 2, R"input (parameters & configuration)", **text_out)
+    ax.text(50, (100 + top) / 2, R"parameters & configuration", **text_out)
     ax.text(50, bottom / 2, R"output (visual & numerical)", **text_out)
 
     #######################
@@ -195,22 +195,22 @@ def main():
     #######################
     # Spin Hamiltonian
     ax.text(50, 72.5, "Spin Hamiltonian", **text_in)
-    ax.text(78, 72.5, R"$\hat{\mathcal{H}}$", **text_in_small, ha="left")
+    ax.text(83, 72.5, R"$\hat{\mathcal{H}}$", **text_in_small, ha="left")
     # ax.text(65, 80, "unit cell", **text_in_small, ha="left")
     # ax.text(65, 75, "site positions", **text_in_small, ha="left")
     # ax.text(65, 70, "parameters", **text_in_small, ha="left")
     # ax.text(65, 65, "convention", **text_in_small, ha="left")
     # Vacuum state
     ax.text(50, 56, "Vacuum state", **text_in)
-    ax.text(74, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
+    ax.text(79, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
     # LSWT
     ax.text(35, 41, "LSWT", **text_in)
-    ax.text(22, 44, R"$E^{(2)}$", **text_in_small, ha="right")
-    ax.text(22, 38, R"$\omega_{\beta}(\boldsymbol{k})$", **text_in_small, ha="right")
+    ax.text(20, 44, R"$E^{(2)}$", **text_in_small, ha="right")
+    ax.text(20, 38, R"$\omega_{\beta}(\boldsymbol{k})$", **text_in_small, ha="right")
     # Energy
     ax.text(64, 41, "Energy", **text_in)
-    ax.text(79, 44, R"$E^{(0)}$", **text_in_small, ha="left")
-    ax.text(79, 38, R"$E^{corr}$", **text_in_small, ha="left")
+    ax.text(81, 44, R"$E^{(0)}$", **text_in_small, ha="left")
+    ax.text(81, 38, R"$E^{corr}$", **text_in_small, ha="left")
     # Post-processing
     ax.text(50, 25, "Post-processing", **text_in)
 
@@ -218,19 +218,19 @@ def main():
     # Content lines #
     #################
     # Spin Hamiltonian
-    line(73, 72.5, 77, 72.5)
+    line(78, 72.5, 82, 72.5)
     # line(60, 72.5, 64, 75)
     # line(60, 72.5, 64, 70)
     # line(60, 72.5, 64, 65)
     # line(60, 72.5, 64, 80)
     # Vacuum state
-    line(69, 56, 73, 56)
+    line(74, 56, 78, 56)
     # LSWT
-    line(27, 41, 23, 44)
-    line(27, 41, 23, 38)
+    line(25, 41, 21, 44)
+    line(25, 41, 21, 38)
     # Energy
-    line(74, 41, 78, 44)
-    line(74, 41, 78, 38)
+    line(76, 41, 80, 44)
+    line(76, 41, 80, 38)
 
     ##########
     # Arrows #
@@ -240,9 +240,9 @@ def main():
     # Spin Hamiltonian -> Vacuum state
     arrow(50, 68.25, 50, 60.25, COLOR_BORDER)
     # Vacuum state -> LSWT
-    arrow(46, 52.5, 35, 44.5, COLOR_BORDER)
+    arrow(46, 52.5, 35, 45.5, COLOR_BORDER)
     # Vacuum state -> Energy
-    arrow(54, 52.5, 65, 44.5, COLOR_BORDER)
+    arrow(54, 52.5, 65, 45.5, COLOR_BORDER)
     # LSWT -> Post-processing
     arrow(35, 37, 46, 29, COLOR_BORDER)
     # Energy -> Post-processing
