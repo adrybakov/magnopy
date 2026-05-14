@@ -21,8 +21,8 @@
 import matplotlib.pyplot as plt
 
 # Style parameters
-COLOR_BORDER = "#016bb2"  # "#265DC3"
-COLOR_FILL = "#b3e0ff"  # "#E6F4FD"  # "#E9EEF7"
+COLOR_BORDER = "#017acb"  # "#265DC3"
+COLOR_FILL = "#e6f5ff"  # "#E6F4FD"  # "#E9EEF7"
 FONTSIZE = 10
 
 
