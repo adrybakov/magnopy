@@ -63,7 +63,7 @@ ARROW_STYLE_2 = dict(
 RATIO_LINESTYLE = dict(
     color=COLOR_NUMERICAL,
     zorder=1,
-    lw=2,
+    lw=1.5,
 )
 
 ANALYTICAL_LINESTYLE = dict(
