@@ -29,12 +29,12 @@ import wulfric
 # Style parameters #
 ####################
 # Colors
-COLOR_NUMERICAL = "#0C7BDC"
-COLOR_ANALYTICAL = "#FFC20A"
-COLOR_PARAMETERS = "#42D69C"  # "#8BA300FF"
-COLOR_PARAMETERS_BACK = "#000000"  # "#8BA300FF"
-RED = "#DC3220"
-BLUE = "#005AB5"
+COLOR_NUMERICAL = "#006dcc"
+COLOR_ANALYTICAL = "#ffcc33"
+COLOR_PARAMETERS = "#13ec95"
+COLOR_PARAMETERS_BACK = "#000000"
+RED = "#ec2213"
+BLUE = "#1395ec"
 GREY = "#777777"
 LIGHT_GREY = "#AAAAAA"
 # Fontsize baseline
@@ -57,6 +57,21 @@ ARROW_STYLE_2 = dict(
     scale=1,
     headlength=3,
     headaxislength=2.7,
+)
+
+ANALYTICAL_LINESTYLE = dict(
+    linestyle="-",
+    color=COLOR_ANALYTICAL,
+    lw=3,
+    zorder=0,
+)
+NUMERICAL_LINESTYLE = dict(
+    linestyle="--",
+    color=COLOR_NUMERICAL,
+    lw=1.5,
+    zorder=1,
+    dash_capstyle="round",
+    dashes=[3.5, 2.5],
 )
 
 
@@ -295,7 +310,14 @@ def schema_2(ax):
     ax.hlines([-1, 0, 1, 2], 0, 1, transform=ax.get_yaxis_transform(), **lattice_style)
 
     # Draw magnetic lattice
-    lattice_style = dict(color=LIGHT_GREY, lw=1, linestyle="dashed", zorder=0)
+    lattice_style = dict(
+        color=LIGHT_GREY,
+        lw=1,
+        linestyle="dashed",
+        dash_capstyle="round",
+        dashes=[4, 3],
+        zorder=0,
+    )
     ax.plot([-2.5, 0.5], [0.5, -2.5], **lattice_style)
     ax.plot([-2.5, 2.5], [2.5, -2.5], **lattice_style)
     ax.plot([-1.5, 3.5], [3.5, -1.5], **lattice_style)
@@ -483,23 +505,10 @@ def plot_model_1(ax, ax_ratio):
 
     # Analytical
     ax.plot(
-        kp.flat_points(),
-        omega_analytical,
-        label="Analytical",
-        color=COLOR_ANALYTICAL,
-        lw=4,
-        zorder=0,
+        kp.flat_points(), omega_analytical, label="Analytical", **ANALYTICAL_LINESTYLE
     )
     # Numerical
-    ax.plot(
-        kp.flat_points(),
-        omega_numerical,
-        "--",
-        label="Magnopy",
-        color=COLOR_NUMERICAL,
-        lw=2,
-        zorder=1,
-    )
+    ax.plot(kp.flat_points(), omega_numerical, label="Magnopy", **NUMERICAL_LINESTYLE)
     # Ratio
     ax_ratio.plot(
         kp.flat_points(),
@@ -619,19 +628,14 @@ def plot_model_2(ax, ax_ratio):
             kp.flat_points(),
             omega_analytical[mode_index],
             label="Analytical" if mode_index == 0 else None,
-            color=COLOR_ANALYTICAL,
-            lw=4,
-            zorder=0,
+            **ANALYTICAL_LINESTYLE,
         )
         # Numerical
         ax.plot(
             kp.flat_points(),
             omega_numerical[mode_index],
-            "--",
             label="Magnopy" if mode_index == 0 else None,
-            color=COLOR_NUMERICAL,
-            lw=2,
-            zorder=1,
+            **NUMERICAL_LINESTYLE,
         )
         # Ratio
         ax_ratio.plot(
