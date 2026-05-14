@@ -195,22 +195,22 @@ def main():
     #######################
     # Spin Hamiltonian
     ax.text(50, 72.5, "Spin Hamiltonian", **text_in)
-    ax.text(83, 72.5, R"$\hat{\mathcal{H}}$", **text_in_small, ha="left")
+    ax.text(84, 72.5, R"$\hat{\mathcal{H}}$", **text_in_small, ha="left")
     # ax.text(65, 80, "unit cell", **text_in_small, ha="left")
     # ax.text(65, 75, "site positions", **text_in_small, ha="left")
     # ax.text(65, 70, "parameters", **text_in_small, ha="left")
     # ax.text(65, 65, "convention", **text_in_small, ha="left")
     # Vacuum state
     ax.text(50, 56, "Vacuum state", **text_in)
-    ax.text(79, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
+    ax.text(80, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
     # LSWT
-    ax.text(35, 41, "LSWT", **text_in)
-    ax.text(20, 44, R"$E^{(2)}$", **text_in_small, ha="right")
-    ax.text(20, 38, R"$\omega_{\beta}(\boldsymbol{k})$", **text_in_small, ha="right")
+    ax.text(64, 41, "LSWT", **text_in)
+    ax.text(79, 44, R"$E^{(2)}$", **text_in_small, ha="left")
+    ax.text(79, 38, R"$\omega_{\beta}(\boldsymbol{k})$", **text_in_small, ha="left")
     # Energy
-    ax.text(64, 41, "Energy", **text_in)
-    ax.text(81, 44, R"$E^{(0)}$", **text_in_small, ha="left")
-    ax.text(81, 38, R"$E^{corr}$", **text_in_small, ha="left")
+    ax.text(35, 41, "Energy", **text_in)
+    ax.text(8, 44, R"$E^{(0)}$", **text_in_small, ha="left")
+    ax.text(8, 38, R"$E^{corr}$", **text_in_small, ha="left")
     # Post-processing
     ax.text(50, 25, "Post-processing", **text_in)
 
@@ -218,7 +218,7 @@ def main():
     # Content lines #
     #################
     # Spin Hamiltonian
-    line(78, 72.5, 82, 72.5)
+    line(79, 72.5, 83, 72.5)
     # line(60, 72.5, 64, 75)
     # line(60, 72.5, 64, 70)
     # line(60, 72.5, 64, 65)
@@ -226,11 +226,11 @@ def main():
     # Vacuum state
     line(74, 56, 78, 56)
     # LSWT
-    line(25, 41, 21, 44)
-    line(25, 41, 21, 38)
+    line(23, 41, 19, 44)
+    line(23, 41, 19, 38)
     # Energy
-    line(76, 41, 80, 44)
-    line(76, 41, 80, 38)
+    line(74, 41, 78, 44)
+    line(74, 41, 78, 38)
 
     ##########
     # Arrows #
