@@ -21,8 +21,8 @@
 import matplotlib.pyplot as plt
 
 # Style parameters
-COLOR_BORDER = "#018DE9"  # "#265DC3"
-COLOR_FILL = "#E6F4FD"  # "#E9EEF7"
+COLOR_BORDER = "#016bb2"  # "#265DC3"
+COLOR_FILL = "#b3e0ff"  # "#E6F4FD"  # "#E9EEF7"
 FONTSIZE = 10
 
 
@@ -31,7 +31,7 @@ def plot_logo(ax, x0, y0, size):
     sx = size
     sy = size / 5 * 5.5
 
-    style = dict(color="white", lw=0, zorder=1)
+    style = dict(color="#ffffff", lw=0, zorder=1)
     ax.fill_between(
         [x0 - 9.5 * sx, x0 - 5.5 * sx],
         [y0 + 8.5 * sy, y0 + 8.5 * sy],
