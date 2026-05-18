@@ -18,8 +18,9 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+# import matplotlib.patheffects as pe
 
 import magnopy
 import wulfric
@@ -28,25 +29,56 @@ import wulfric
 # Style parameters #
 ####################
 # Colors
-COLOR_NUMERICAL = "#0C7BDC"
-COLOR_ANALYTICAL = "#FFC20A"
-COLOR_PARAMETERS = "#8BA300FF"
-RED = "#DC3220"
-BLUE = "#005AB5"
-GREY = "#777777"
-LIGHT_GREY = "#AAAAAA"
+COLOR_NUMERICAL = "#006dcc"
+COLOR_ANALYTICAL = "#ffcc33"
+COLOR_RATIO = "#00800b"
+COLOR_PARAMETERS = "#13ec95"
+COLOR_PARAMETERS_BACK = "#000000"
+RED = "#ec2213"
+BLUE = "#1395ec"
+GREY = "#bbbbbb"
+LIGHT_GREY = "#cccccc"
 # Fontsize baseline
 FONTSIZE = 10
-# A4
-WIDTH = 8.27 * 0.8
+# Two-column
+WIDTH = 2 * (3 + 3 / 8)  # inches
 # Arrow style
-ARROW_STYLE = dict(
+ARROW_STYLE_1 = dict(
     angles="xy",
     scale_units="xy",
     width=0.01,
     scale=1,
     headlength=3,
     headaxislength=2.7,
+)
+ARROW_STYLE_2 = dict(
+    angles="xy",
+    scale_units="xy",
+    width=0.01,
+    scale=1,
+    headlength=3,
+    headaxislength=2.7,
+)
+
+RATIO_LINESTYLE = dict(
+    color=COLOR_NUMERICAL,
+    zorder=1,
+    lw=1.5,
+)
+
+ANALYTICAL_LINESTYLE = dict(
+    linestyle="-",
+    color=COLOR_ANALYTICAL,
+    lw=3,
+    zorder=1,
+)
+NUMERICAL_LINESTYLE = dict(
+    linestyle="--",
+    color=COLOR_NUMERICAL,
+    lw=1.5,
+    zorder=2,
+    dash_capstyle="round",
+    dashes=[3.5, 2.5],
 )
 
 
@@ -74,7 +106,9 @@ K_PATH = "GAMMA-X-M-GAMMA"
 
 # Plots a hord of a circle
 # dmi = [x,y,scale]
-def hord(ax, offset, p1, p2, dmi=None):
+def hord(
+    ax, offset, p1, p2, dmi=None, cap_angle=0.1, color_parameters=COLOR_PARAMETERS
+):
     p1 = np.array(p1)
     p2 = np.array(p2)
 
@@ -113,8 +147,8 @@ def hord(ax, offset, p1, p2, dmi=None):
         start = p2
     else:
         start = p1
-
-    for angle in np.linspace(0, max_angle, 100):
+    cap_angle = cap_angle * max_angle
+    for angle in np.linspace(cap_angle, max_angle - cap_angle, 100):
         rot_matrix = np.array(
             [
                 [np.cos(angle), -np.sin(angle)],
@@ -126,15 +160,23 @@ def hord(ax, offset, p1, p2, dmi=None):
 
     points = np.array(points).T
 
-    ax.plot(points[0], points[1], color=COLOR_PARAMETERS, lw=1.5, zorder=1)
+    ax.plot(
+        points[0],
+        points[1],
+        color=color_parameters,
+        lw=1.5,
+        zorder=1,
+        solid_capstyle="round",
+    )
 
     if dmi is not None:
         dx = dmi[0] * dmi[2]
         dy = dmi[1] * dmi[2]
+        dmi_pos = max_angle / 2.5
         rot_matrix = np.array(
             [
-                [np.cos(max_angle / 2), -np.sin(max_angle / 2)],
-                [np.sin(max_angle / 2), np.cos(max_angle / 2)],
+                [np.cos(dmi_pos), -np.sin(dmi_pos)],
+                [np.sin(dmi_pos), np.cos(dmi_pos)],
             ]
         )
         x0, y0 = rot_matrix @ start + shift
@@ -149,7 +191,7 @@ def hord(ax, offset, p1, p2, dmi=None):
             scale=1,
             headlength=3,
             headaxislength=2.7,
-            color=COLOR_PARAMETERS,
+            color=color_parameters,
             zorder=1,
         )
 
@@ -182,48 +224,45 @@ def schema_1(ax):
             -0.2,
             color="black",
             zorder=2,
-            **ARROW_STYLE,
+            **ARROW_STYLE_1,
         )
 
-    # Draw lattice vectors
-    # l_vector_style = dict(
-    #     angles="xy",
-    #     scale_units="xy",
-    #     width=0.01,
-    #     scale=1,
-    #     headlength=4,
-    #     headaxislength=3.7,
-    #     color=GREY,
-    #     zorder=0,
-    # )
-    # ax.quiver(-1, -1, 1, 0, **l_vector_style)
-    # ax.quiver(-1, -1, 0, 1, **l_vector_style)
-    # ax.text(
-    #     -0.2,
-    #     -0.85,
-    #     R"$\boldsymbol{a_1}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-    # ax.text(
-    #     -0.85,
-    #     -0.2,
-    #     R"$\boldsymbol{a_2}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-
     # Draw interaction parameters
-    offset = 1
+    offset = 0.7
     dmi_scale = 0.4
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[1.5, 0.5], dmi=[0, 1, dmi_scale])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, 1.5], dmi=[-1, 0, dmi_scale])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[-0.5, 0.5], dmi=[0, -1, dmi_scale])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, -0.5], dmi=[1, 0, dmi_scale])
+    cap_angle = 0.17
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[1.5, 0.5],
+        dmi=[0, 1, dmi_scale],
+        cap_angle=cap_angle,
+    )
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[0.5, 1.5],
+        dmi=[-1, 0, dmi_scale],
+        cap_angle=cap_angle,
+    )
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[-0.5, 0.5],
+        dmi=[0, -1, dmi_scale],
+        cap_angle=cap_angle,
+    )
+    hord(
+        ax=ax,
+        offset=offset,
+        p1=[0.5, 0.5],
+        p2=[0.5, -0.5],
+        dmi=[1, 0, dmi_scale],
+        cap_angle=cap_angle,
+    )
 
 
 # Antiferromagnet
@@ -240,7 +279,14 @@ def schema_2(ax):
     ax.hlines([-1, 0, 1, 2], 0, 1, transform=ax.get_yaxis_transform(), **lattice_style)
 
     # Draw magnetic lattice
-    lattice_style = dict(color=LIGHT_GREY, lw=1, linestyle="dashed", zorder=0)
+    lattice_style = dict(
+        color=LIGHT_GREY,
+        lw=1,
+        linestyle="dashed",
+        dash_capstyle="round",
+        dashes=[4, 3],
+        zorder=0,
+    )
     ax.plot([-2.5, 0.5], [0.5, -2.5], **lattice_style)
     ax.plot([-2.5, 2.5], [2.5, -2.5], **lattice_style)
     ax.plot([-1.5, 3.5], [3.5, -1.5], **lattice_style)
@@ -262,7 +308,7 @@ def schema_2(ax):
                 points_up.append([i + 0.5, j + 0.5])
     points_up = np.array(points_up)
     points_down = np.array(points_down)
-    shift = 0.03
+    shift = 0.0
     for x, y in points_up:
         ax.quiver(
             x + 0.1 - shift,
@@ -271,7 +317,7 @@ def schema_2(ax):
             0.2,
             color=BLUE,
             zorder=2,
-            **ARROW_STYLE,
+            **ARROW_STYLE_2,
         )
     for x, y in points_down:
         ax.quiver(
@@ -281,72 +327,48 @@ def schema_2(ax):
             -0.2,
             color=RED,
             zorder=2,
-            **ARROW_STYLE,
+            **ARROW_STYLE_2,
         )
 
-    # Draw lattice vectors
-    # l_vector_style = dict(
-    #     angles="xy",
-    #     scale_units="xy",
-    #     width=0.01,
-    #     scale=1,
-    #     headlength=4,
-    #     headaxislength=3.7,
-    #     color=GREY,
-    #     zorder=0,
-    # )
-    # ax.quiver(-0.5, -1.5, 1, 1, **l_vector_style)
-    # ax.quiver(-0.5, -1.5, -1, 1, **l_vector_style)
-
-    # ax.text(
-    #     0.4,
-    #     -0.8,
-    #     R"$\boldsymbol{a_1}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-    # ax.text(
-    #     -1.4,
-    #     -0.8,
-    #     R"$\boldsymbol{a_2}$",
-    #     ha="center",
-    #     va="center",
-    #     fontsize=FONTSIZE * 1.2,
-    #     color=GREY,
-    # )
-
     # Draw interaction parameters
-    offset = 1
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[1.5, 0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, 1.5])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[-0.5, 0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, -0.5])
+    offset = 0.7
+    cap_angle = 0.17
+    # First set
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[1.5, 0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, 1.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[-0.5, 0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, -0.5], cap_angle=cap_angle)
     # Second set
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[1.5, -0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, 0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[-0.5, -0.5])
-    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, -1.5])
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[1.5, -0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, 0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[-0.5, -0.5], cap_angle=cap_angle)
+    hord(ax=ax, offset=offset, p1=[0.5, -0.5], p2=[0.5, -1.5], cap_angle=cap_angle)
 
 
 def configure_axes(ax, ax_ratio, kp):
     # Main axis
     ax.set_ylim(0, None)
-    ax.tick_params(axis="y", which="major", labelsize=0.75 * FONTSIZE)
+    ax.tick_params(axis="y", which="major", labelsize=FONTSIZE)
     ax.set_ylabel("Energy (meV)", fontsize=FONTSIZE)
     ax.set_xticks(kp.ticks(), kp.labels, fontsize=FONTSIZE)
     ax.set_xlim(kp.ticks()[0], kp.ticks()[-1])
     ax.vlines(
-        kp.ticks(), 0, 1, lw=0.5, transform=ax.get_xaxis_transform(), color="black"
+        kp.ticks(),
+        0,
+        1,
+        lw=0.5,
+        transform=ax.get_xaxis_transform(),
+        color=GREY,
+        zorder=0,
     )
 
     # Ratio axis
     ax_ratio.set_xticks([])
+    ax_ratio.set_yticks([0, 1, 2])
     ax_ratio.yaxis.tick_right()
     ax_ratio.yaxis.set_label_position("right")
     ax_ratio.set_ylim(0, 2)
-    ax_ratio.tick_params(axis="y", which="major", labelsize=0.75 * FONTSIZE)
+    ax_ratio.tick_params(axis="y", which="major", labelsize=FONTSIZE)
     ax_ratio.set_ylabel("Ratio", fontsize=FONTSIZE)
     ax_ratio.set_xlim(kp.ticks()[0], kp.ticks()[-1])
     ax_ratio.vlines(
@@ -355,7 +377,8 @@ def configure_axes(ax, ax_ratio, kp):
         1,
         lw=0.5,
         transform=ax_ratio.get_xaxis_transform(),
-        color="black",
+        color=GREY,
+        zorder=0,
     )
 
 
@@ -427,30 +450,15 @@ def plot_model_1(ax, ax_ratio):
 
     # Analytical
     ax.plot(
-        kp.flat_points(),
-        omega_analytical,
-        label="Analytical",
-        color=COLOR_ANALYTICAL,
-        lw=4,
-        zorder=0,
+        kp.flat_points(), omega_analytical, label="Analytical", **ANALYTICAL_LINESTYLE
     )
     # Numerical
-    ax.plot(
-        kp.flat_points(),
-        omega_numerical,
-        "--",
-        label="Magnopy",
-        color=COLOR_NUMERICAL,
-        lw=2,
-        zorder=1,
-    )
+    ax.plot(kp.flat_points(), omega_numerical, label="Magnopy", **NUMERICAL_LINESTYLE)
     # Ratio
     ax_ratio.plot(
         kp.flat_points(),
         omega_numerical / omega_analytical,
-        color="black",
-        zorder=0,
-        lw=2,
+        **RATIO_LINESTYLE,
     )
 
     # Display the legend
@@ -529,25 +537,24 @@ def plot_model_2(ax, ax_ratio):
     omega_analytical = []
     omega_numerical = []
     for k in kp.points(relative=False):
-        gamma = (
-            1
-            + np.exp(1j * k @ cell[0])
-            + np.exp(1j * k @ cell[1])
-            + np.exp(1j * k @ (cell[0] + cell[1]))
-        ) / 4
-
         omega_analytical.append(
             [
                 G_FACTOR * MU_B * B
                 + 8
                 * J_ANTIFERRO
                 * S
-                * np.sqrt((1 + A / 4 / J_ANTIFERRO) ** 2 - np.abs(gamma) ** 2),
+                * np.sqrt(
+                    (1 + A / 4 / J_ANTIFERRO) ** 2
+                    - np.cos(k @ cell[0] / 2) ** 2 * np.cos(k @ cell[1] / 2) ** 2
+                ),
                 -G_FACTOR * MU_B * B
                 + 8
                 * J_ANTIFERRO
                 * S
-                * np.sqrt((1 + A / 4 / J_ANTIFERRO) ** 2 - np.abs(gamma) ** 2),
+                * np.sqrt(
+                    (1 + A / 4 / J_ANTIFERRO) ** 2
+                    - np.cos(k @ cell[0] / 2) ** 2 * np.cos(k @ cell[1] / 2) ** 2
+                ),
             ]
         )
         omega_numerical.append(lswt.omega(k=k, relative=False))
@@ -564,27 +571,20 @@ def plot_model_2(ax, ax_ratio):
             kp.flat_points(),
             omega_analytical[mode_index],
             label="Analytical" if mode_index == 0 else None,
-            color=COLOR_ANALYTICAL,
-            lw=4,
-            zorder=0,
+            **ANALYTICAL_LINESTYLE,
         )
         # Numerical
         ax.plot(
             kp.flat_points(),
             omega_numerical[mode_index],
-            "--",
             label="Magnopy" if mode_index == 0 else None,
-            color=COLOR_NUMERICAL,
-            lw=2,
-            zorder=1,
+            **NUMERICAL_LINESTYLE,
         )
         # Ratio
         ax_ratio.plot(
             kp.flat_points(),
             omega_numerical[mode_index] / omega_analytical[mode_index],
-            color="black",
-            zorder=0,
-            lw=2,
+            **RATIO_LINESTYLE,
         )
 
     # Display the legend
@@ -609,6 +609,41 @@ def main():
 
     # Figure
     fig = plt.figure(figsize=(WIDTH, WIDTH * sqz))
+
+    # Global reference frame
+    frameax_size = 0.08
+    frameax_x = 0.5
+    frameax_y = 0.6
+    frameax = fig.add_axes(
+        [
+            frameax_x - frameax_size / 2,
+            frameax_y - frameax_size / 2 / sqz,
+            frameax_size,
+            frameax_size / sqz,
+        ]
+    )
+    frame_arrow_style = dict(
+        angles="xy",
+        scale_units="xy",
+        width=0.05,
+        scale=1,
+        headlength=3,
+        headaxislength=2.7,
+        capstyle="round",
+    )
+    frameax.quiver(0.1, 0.1, 0.8, 0, **frame_arrow_style, color="tab:red")
+    frameax.text(
+        0.9, 0.2, "x", fontsize=FONTSIZE, ha="center", va="bottom", color="tab:red"
+    )
+    frameax.quiver(0.1, 0.1, 0, 0.8, **frame_arrow_style, color="tab:green")
+    frameax.text(
+        0.2, 0.9, "y", fontsize=FONTSIZE, ha="left", va="center", color="tab:green"
+    )
+
+    frameax.set_xlim(0, 1)
+    frameax.set_ylim(0, 1)
+    frameax.axis("off")
+
     # Top left axis
     ax_a = fig.add_axes(
         [
@@ -666,10 +701,10 @@ def main():
 
     # subfigure labels
     style = dict(fontsize=1.2 * FONTSIZE, ha="right", va="top")
-    fig.text(dx / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "a)", **style)
-    fig.text((1 + dx) / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "b)", **style)
-    fig.text(dx / 2, (1 - dy) / 2, "c)", **style)
-    fig.text((1 + dx) / 2, (1 - dy) / 2, "d)", **style)
+    fig.text(dx / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "(a)", **style)
+    fig.text((1 + dx) / 2, 1 - dy + (zoom - 1) * (1 - 4 * dx) / 4, "(b)", **style)
+    fig.text(dx / 2, (1 - dy) / 2, "(c)", **style)
+    fig.text((1 + dx) / 2, (1 - dy) / 2, "(d)", **style)
 
     ####################################
     # Plot schematic of the two models #

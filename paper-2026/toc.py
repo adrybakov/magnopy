@@ -20,21 +20,18 @@
 
 import matplotlib.pyplot as plt
 
-# One column of A4
-WIDTH = 0.36 * 8.27
-
 # Style parameters
-COLOR_BORDER = "#265DC3"
-COLOR_FILL = "#E9EEF7"
-FONTSIZE = 8
+COLOR_BORDER = "#017acb"  # "#265DC3"
+COLOR_FILL = "#e6f5ff"  # "#E6F4FD"  # "#E9EEF7"
+FONTSIZE = 10
 
 
 # Display the cat of magnopy's logo
 def plot_logo(ax, x0, y0, size):
     sx = size
-    sy = size / 3 * 4
+    sy = size / 5 * 5.5
 
-    style = dict(color="white", lw=0, zorder=1)
+    style = dict(color="#ffffff", lw=0, zorder=1)
     ax.fill_between(
         [x0 - 9.5 * sx, x0 - 5.5 * sx],
         [y0 + 8.5 * sy, y0 + 8.5 * sy],
@@ -114,7 +111,8 @@ def main():
     ##################
     # Prepare canvas #
     ##################
-    fig = plt.figure(figsize=(WIDTH, 0.75 * WIDTH))
+    cm = 1 / 2.54
+    fig = plt.figure(figsize=(5.5 * cm, 5 * cm))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 100)
     ax.set_ylim(0, 100)
@@ -123,17 +121,26 @@ def main():
     ####################
     # Draw a rectangle #
     ####################
+    left = 5
+    right = 95
+    bottom = 15
+    top = 85
+    gap_left = 47
+    gap_right = 53
     # Fill
-    ax.fill_between([10, 90], [15, 15], [85, 85], color=COLOR_FILL, zorder=0, lw=0)
+    ax.fill_between(
+        [left, right], [bottom, bottom], [top, top], color=COLOR_FILL, zorder=0, lw=0
+    )
     # Border
-    border = dict(color=COLOR_BORDER, lw=3, solid_capstyle="butt", zorder=1)
-    ax.plot([47, 10, 10, 47], [85, 85, 15, 15], **border)
-    ax.plot([53, 90, 90, 53], [15, 15, 85, 85], **border)
+    border = dict(color=COLOR_BORDER, lw=3, solid_capstyle="round", zorder=1)
+
+    ax.plot([gap_left, left, left, gap_left], [top, top, bottom, bottom], **border)
+    ax.plot([gap_right, right, right, gap_right], [bottom, bottom, top, top], **border)
 
     #################
     # Draw the logo #
     #################
-    plot_logo(ax, 88, 17, 0.7)
+    plot_logo(ax, 92, 17, 1)
 
     #################
     # Define styles #
@@ -168,34 +175,38 @@ def main():
 
     # Style of the lines
     def line(x0, y0, x1, y1):
-        ax.plot([x0, x1], [y0, y1], color=COLOR_BORDER, lw=1, zorder=1)
+        ax.plot(
+            [x0, x1],
+            [y0, y1],
+            color=COLOR_BORDER,
+            lw=1,
+            zorder=1,
+            solid_capstyle="round",
+        )
 
     ########################
     # Text outside the box #
     ########################
-    ax.text(50, 92.5, R"input (configuration & system parameters)", **text_out)
-    ax.text(50, 7.5, R"output (visual & numerical)", **text_out)
+    ax.text(50, (100 + top) / 2, R"parameters & configuration", **text_out)
+    ax.text(50, bottom / 2, R"output (visual & numerical)", **text_out)
 
     #######################
     # Text inside the box #
     #######################
     # Spin Hamiltonian
-    ax.text(46, 72.5, "Spin Hamiltonian", **text_in)
-    ax.text(70, 80, "unit cell", **text_in_small, ha="left")
-    ax.text(70, 75, "site positions", **text_in_small, ha="left")
-    ax.text(70, 70, "parameters", **text_in_small, ha="left")
-    ax.text(70, 65, "convention", **text_in_small, ha="left")
+    ax.text(50, 72.5, "Spin Hamiltonian", **text_in)
+    ax.text(84, 72.5, R"$\hat{\mathcal{H}}$", **text_in_small, ha="left")
     # Vacuum state
-    ax.text(46, 56, "Vacuum state", **text_in)
-    ax.text(70, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
+    ax.text(50, 56, "Vacuum state", **text_in)
+    ax.text(80, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
     # LSWT
-    ax.text(35, 41, "LSWT", **text_in)
-    ax.text(25, 44, R"$E^{(2)}$", **text_in_small, ha="right")
-    ax.text(25, 38, R"$\omega_{\beta}(\boldsymbol{k})$", **text_in_small, ha="right")
+    ax.text(64, 41, "LSWT", **text_in)
+    ax.text(79, 44, R"$E^{(2)}$", **text_in_small, ha="left")
+    ax.text(79, 38, R"$\omega_{\beta}(\boldsymbol{k})$", **text_in_small, ha="left")
     # Energy
-    ax.text(65, 41, "Energy", **text_in)
-    ax.text(76, 44, R"$E^{(0)}$", **text_in_small, ha="left")
-    ax.text(76, 38, R"$E^{corr}$", **text_in_small, ha="left")
+    ax.text(35, 41, "Energy", **text_in)
+    ax.text(8, 44, R"$E^{(0)}$", **text_in_small, ha="left")
+    ax.text(8, 38, R"$E^{corr}$", **text_in_small, ha="left")
     # Post-processing
     ax.text(50, 25, "Post-processing", **text_in)
 
@@ -203,42 +214,39 @@ def main():
     # Content lines #
     #################
     # Spin Hamiltonian
-    line(63, 72.5, 69, 80)
-    line(63, 72.5, 69, 75)
-    line(63, 72.5, 69, 70)
-    line(63, 72.5, 69, 65)
+    line(79, 72.5, 83, 72.5)
     # Vacuum state
-    line(60, 56, 69, 56)
+    line(74, 56, 78, 56)
     # LSWT
-    line(29, 41, 26, 44)
-    line(29, 41, 26, 38)
+    line(23, 41, 19, 44)
+    line(23, 41, 19, 38)
     # Energy
-    line(72, 41, 75, 44)
-    line(72, 41, 75, 38)
+    line(74, 41, 78, 44)
+    line(74, 41, 78, 38)
 
     ##########
     # Arrows #
     ##########
     # In
-    arrow(50, 89, 50, 81, "black")
+    arrow(50, top + 4, 50, top - 4, "black")
     # Spin Hamiltonian -> Vacuum state
     arrow(50, 68.25, 50, 60.25, COLOR_BORDER)
     # Vacuum state -> LSWT
-    arrow(46, 52.5, 35, 44.5, COLOR_BORDER)
+    arrow(46, 52.5, 35, 45.5, COLOR_BORDER)
     # Vacuum state -> Energy
-    arrow(54, 52.5, 65, 44.5, COLOR_BORDER)
+    arrow(54, 52.5, 65, 45.5, COLOR_BORDER)
     # LSWT -> Post-processing
     arrow(35, 37, 46, 29, COLOR_BORDER)
     # Energy -> Post-processing
     arrow(65, 37, 54, 29, COLOR_BORDER)
     # Out
-    arrow(50, 19, 50, 11, "black")
+    arrow(50, bottom + 4, 50, bottom - 4, "black")
 
     ###############
     # Save figure #
     ###############
-    plt.savefig("figure-3.eps", dpi=600)
-    plt.savefig("figure-3.png", dpi=600)
+    plt.savefig("toc.eps", dpi=600)
+    plt.savefig("toc.png", dpi=600)
     plt.close()
 
 

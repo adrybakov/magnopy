@@ -21,8 +21,9 @@
 import matplotlib.pyplot as plt
 
 
-# One column of A4
-WIDTH = 0.36 * 8.27
+# Single-column
+WIDTH = 3 + 3 / 8  # inches
+FONTSIZE = 10
 
 
 def main():
@@ -37,10 +38,10 @@ def main():
     text_box = dict(
         ha="center",
         va="center",
-        fontsize=8,
+        fontsize=FONTSIZE,
         bbox=dict(boxstyle="round,pad=0.5", fc="white", ec="black", lw=1.5),
     )
-    text_arrow = dict(ha="center", va="center", fontsize=8)
+    text_arrow = dict(ha="center", va="center", fontsize=FONTSIZE)
     arrow_style = dict(
         angles="xy", scale_units="xy", scale=1, headlength=3, headaxislength=2.7
     )
