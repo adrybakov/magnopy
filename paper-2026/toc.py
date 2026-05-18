@@ -196,10 +196,6 @@ def main():
     # Spin Hamiltonian
     ax.text(50, 72.5, "Spin Hamiltonian", **text_in)
     ax.text(84, 72.5, R"$\hat{\mathcal{H}}$", **text_in_small, ha="left")
-    # ax.text(65, 80, "unit cell", **text_in_small, ha="left")
-    # ax.text(65, 75, "site positions", **text_in_small, ha="left")
-    # ax.text(65, 70, "parameters", **text_in_small, ha="left")
-    # ax.text(65, 65, "convention", **text_in_small, ha="left")
     # Vacuum state
     ax.text(50, 56, "Vacuum state", **text_in)
     ax.text(80, 56, R"$\boldsymbol{z}_{\alpha}$", **text_in_small, ha="left")
@@ -219,10 +215,6 @@ def main():
     #################
     # Spin Hamiltonian
     line(79, 72.5, 83, 72.5)
-    # line(60, 72.5, 64, 75)
-    # line(60, 72.5, 64, 70)
-    # line(60, 72.5, 64, 65)
-    # line(60, 72.5, 64, 80)
     # Vacuum state
     line(74, 56, 78, 56)
     # LSWT

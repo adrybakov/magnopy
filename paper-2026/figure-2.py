@@ -166,10 +166,6 @@ def hord(
         color=color_parameters,
         lw=1.5,
         zorder=1,
-        # path_effects=[
-        #     pe.Stroke(linewidth=2.5, foreground=COLOR_PARAMETERS_BACK),
-        #     pe.Normal(),
-        # ],
         solid_capstyle="round",
     )
 
@@ -196,8 +192,6 @@ def hord(
             headlength=3,
             headaxislength=2.7,
             color=color_parameters,
-            # edgecolor=COLOR_PARAMETERS_BACK,
-            # linewidth=0.5,
             zorder=1,
         )
 
@@ -339,6 +333,7 @@ def schema_2(ax):
     # Draw interaction parameters
     offset = 0.7
     cap_angle = 0.17
+    # First set
     hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[1.5, 0.5], cap_angle=cap_angle)
     hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[0.5, 1.5], cap_angle=cap_angle)
     hord(ax=ax, offset=offset, p1=[0.5, 0.5], p2=[-0.5, 0.5], cap_angle=cap_angle)
@@ -353,7 +348,7 @@ def schema_2(ax):
 def configure_axes(ax, ax_ratio, kp):
     # Main axis
     ax.set_ylim(0, None)
-    ax.tick_params(axis="y", which="major", labelsize=0.75 * FONTSIZE)
+    ax.tick_params(axis="y", which="major", labelsize=FONTSIZE)
     ax.set_ylabel("Energy (meV)", fontsize=FONTSIZE)
     ax.set_xticks(kp.ticks(), kp.labels, fontsize=FONTSIZE)
     ax.set_xlim(kp.ticks()[0], kp.ticks()[-1])
@@ -369,10 +364,11 @@ def configure_axes(ax, ax_ratio, kp):
 
     # Ratio axis
     ax_ratio.set_xticks([])
+    ax_ratio.set_yticks([0, 1, 2])
     ax_ratio.yaxis.tick_right()
     ax_ratio.yaxis.set_label_position("right")
     ax_ratio.set_ylim(0, 2)
-    ax_ratio.tick_params(axis="y", which="major", labelsize=0.75 * FONTSIZE)
+    ax_ratio.tick_params(axis="y", which="major", labelsize=FONTSIZE)
     ax_ratio.set_ylabel("Ratio", fontsize=FONTSIZE)
     ax_ratio.set_xlim(kp.ticks()[0], kp.ticks()[-1])
     ax_ratio.vlines(
