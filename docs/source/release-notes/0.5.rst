@@ -170,13 +170,13 @@ Iterating over parameters of the Hamiltonian
 0.5.3
 =====
 
-**Date**: Undefined
+**Date**: 25 May 2026
 
 New features
 ------------
 
-* Update :py:func:`magnopy.io.load_grogu` to be able to actually read the Hamiltonian's
-  convention and not to always assume the GROGU's one.
+* Update :py:func:`magnopy.io.load_grogu` can read the Hamiltonian's convention from the
+  file instead of assuming the default GROGU's one.
 
 Bugfix
 ------
