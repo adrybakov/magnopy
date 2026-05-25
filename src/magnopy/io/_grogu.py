@@ -20,6 +20,7 @@
 
 
 import numpy as np
+import warnings
 
 from magnopy._spinham._convention import Convention
 from magnopy._spinham._hamiltonian import SpinHamiltonian
@@ -108,16 +109,93 @@ def load_grogu(
 
     """
 
-    convention = Convention.get_predefined("grogu")
-
     # Read the content of the file
     with open(filename, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
-    # Read the cell
+    # Read the convention
     i = 0
+    CONVENTION_FOUND = True
+    while "hamiltonian" not in lines[i].lower() or "convention" not in lines[i].lower():
+        i += 1
+        if i >= len(lines):
+            CONVENTION_FOUND = False
+            warnings.warn(
+                "Could not find Hamiltonian convention section in the file from GROGU. Using default convention values.",
+                UserWarning,
+                stacklevel=2,
+            )
+            break
+
+    if CONVENTION_FOUND:
+        i += 1
+        convention_data = []
+        for _ in range(4):
+            convention_data.append(lines[i].lower())
+            i += 1
+
+        # Double counting      true
+        # Normalized spins     true
+        # Intra-atomic factor  +1
+        # Exchange factor      +0.5
+
+        for entry in convention_data:
+            if "double" in entry and "counting" in entry:
+                value = entry.split()[-1].lower()
+                if value in ["1", "true", "yes"]:
+                    double_counting = True
+                elif value in ["0", "false", "no"]:
+                    double_counting = False
+                else:
+                    raise ValueError(
+                        f"Could not parse double counting value from GROGU file: {entry}"
+                    )
+            elif "normalized" in entry and "spins" in entry:
+                value = entry.split()[-1].lower()
+                if value in ["1", "true", "yes"]:
+                    spin_normalized = True
+                elif value in ["0", "false", "no"]:
+                    spin_normalized = False
+                else:
+                    raise ValueError(
+                        f"Could not parse normalized spins value from GROGU file: {entry}"
+                    )
+            elif "intra-atomic" in entry and "factor" in entry:
+                value = entry.split()[-1]
+                try:
+                    intra_atomic_factor = float(value)
+                except ValueError:
+                    raise ValueError(
+                        f"Could not parse intra-atomic factor value from GROGU file: {entry}"
+                    )
+            elif "exchange" in entry and "factor" in entry:
+                value = entry.split()[-1]
+                try:
+                    exchange_factor = float(value)
+                except ValueError:
+                    raise ValueError(
+                        f"Could not parse exchange factor value from GROGU file: {entry}"
+                    )
+            else:
+                raise RuntimeError(
+                    f"Could not parse convention entry from GROGU file: {entry}"
+                )
+
+        convention = Convention(
+            multiple_counting=double_counting,
+            spin_normalized=spin_normalized,
+            c21=intra_atomic_factor,
+            c22=exchange_factor,
+        )
+    else:
+        i = 0
+        convention = Convention.get_predefined("grogu")
+
+    # Read the cell
     while "cell" not in lines[i].lower() or "(ang)" not in lines[i].lower():
         i += 1
+        if i >= len(lines):
+            raise RuntimeError("Could not find cell section in the file from GROGU.")
 
     i += 1
 
@@ -130,6 +208,10 @@ def load_grogu(
     # Read the atoms
     while "magnetic" not in lines[i].lower() or "sites" not in lines[i].lower():
         i += 1
+        if i >= len(lines):
+            raise RuntimeError(
+                "Could not find magnetic sites section in the file from GROGU."
+            )
 
     i += 1
     M = int(lines[i].split()[3])
@@ -185,6 +267,10 @@ def load_grogu(
         or "(mev)" not in lines[i].lower()
     ):
         i += 1
+        if i >= len(lines):
+            raise RuntimeError(
+                "Could not find intra-atomic anisotropy section in the file from GROGU."
+            )
 
     for _ in range(M):
         i += 2
@@ -210,6 +296,10 @@ def load_grogu(
         or "(mev)" not in lines[i].lower()
     ):
         i += 1
+        if i >= len(lines):
+            raise RuntimeError(
+                "Could not find exchange section in the file from GROGU."
+            )
 
     i += 1
     N = int(lines[i].split()[3])

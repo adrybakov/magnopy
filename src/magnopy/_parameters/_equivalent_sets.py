@@ -667,7 +667,7 @@ def _get_missing_parameters(parameters, strategy="mean"):
                         specs=eq_specs,
                         parameter=parameter,
                         when_present="weighted average",
-                        weight=(counter[(eq_nus, eq_alphas)], 1),
+                        weights=(counter[(eq_nus, eq_alphas)], 1),
                     )
                     counter[(eq_nus, eq_alphas)] += 1
                 else:
