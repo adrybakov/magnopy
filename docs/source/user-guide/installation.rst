@@ -6,7 +6,7 @@ How to install Magnopy
 
 Requirement for Magnopy installation are
 
-* |Python|_ (>=3.9)
+* |Python|_ (3.10 or higher)
 
 And several third-party libraries
 
