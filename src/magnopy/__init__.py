@@ -19,7 +19,7 @@
 # ================================ END LICENSE =================================
 
 
-__version__ = "0.5.4.dev"
+__version__ = "0.6.0.dev"
 __doclink__ = "magnopy.org"
 __release_date__ = "Undefined"
 
