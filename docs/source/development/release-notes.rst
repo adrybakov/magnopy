@@ -31,8 +31,8 @@ not forget to add this new file in the toctree inside the
     <Follow template for micro release to describe 0.<minor>.0 release>
 
 
-    Breaking changes from 0.<minor-1>
-    =========================
+    Breaking changes wrt 0.<minor-1>
+    ========================
 
     Deprecated features
     -------------------
@@ -41,23 +41,25 @@ not forget to add this new file in the toctree inside the
     * Second deprecated feature. Identify alternative if possible.
     * ...
 
-    Removal of features
-    -------------------
+    Removed features
+    ----------------
 
     * First removed feature. Identify alternative if possible.
-
     * Second removed feature. Identify alternative if possible.
-
     * ...
 
     Change of behavior
     ------------------
 
     * First changed behavior.
-
     * Second changed behavior.
-
     * ...
+
+    Transition guide
+    ================
+
+    <Describe how to transition from 0.<minor-1> to 0.<minor>. Include code snippets
+    if possible.>
 
 
 

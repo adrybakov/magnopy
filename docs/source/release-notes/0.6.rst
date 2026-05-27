@@ -20,12 +20,12 @@ New features
 Breaking changes from 0.5
 =========================
 
-Removal of previously deprecated features
------------------------------------------
+Removed features
+----------------
 
 * ``magnopy.Convention.summary()``. Use ``print(convention)`` or ``str(convention)``
   instead.
-* Option ``h`` in ``magnopy.SpinHamiltonian.add_magnetic_field``. Use ``B`` instead.
+* Option ``h`` in :py:meth:`.SpinHamiltonian.add_magnetic_field`. Use ``B`` instead.
 
 Change of behavior
 ------------------

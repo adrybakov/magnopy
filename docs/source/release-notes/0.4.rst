@@ -9,12 +9,12 @@ Version 0.4
 
 **Date**: 9 January 2026
 
-Improvement
------------
+Improvements
+------------
 
-* Make LSWT diagonalization more numerically stable. This should fix rare cases of non-continues
-  magnon spectra.
-* Improve speed of the diagonalization in LSWT diagonalization (up to the factor x2).
+* Make LSWT diagonalization more numerically stable. This should fix rare cases of
+  non-continues magnon spectra.
+* Improve speed of the LSWT diagonalization (up to the factor x2).
 
 0.4.2
 =====
@@ -25,7 +25,7 @@ Bugfix
 ------
 
 * Fix a rare bug with p21 parameter in the dispersion calculation.
-* Fix :issue:`79`: Incorrect sorting of the eigenvectors in some cases, introduced in 0.2.
+* Fix :issue:`79`: Incorrect sorting of the eigenvectors in edge cases, introduced in 0.2.
 
 Improvements
 ------------
@@ -59,30 +59,18 @@ Bugfix
     We do not recommend to use ``magnopy-lswt`` script with ``--k-points`` argument
     of this version. There is a bug that was fixed in 0.4.1.
 
-.. important::
-
-    Together with this release we release a master tutorial about Magnopy:
-    |magnopy-tutorials|_. You can take it as a starting point to learn how to use
-    Magnopy.
-
-Bugfix
-------
-
-* Fix :issue:`74`: a bug in ``magnopy-lswt``, when it is used with ``--k-points`` argument.
-* Fix a bug in ``magnopy.examples.ivuzjo``: J=10 was fixed, now input value is used.
-
 New features
 ------------
 
-* Major improvement of the console output for both ``magnopy-lswt`` and
-  ``magnopy-optimize-sd``.
+* Together with this release we release a master tutorial about Magnopy:
+  |magnopy-tutorials|_.
 * Add summary of the executed commands to the output of both ``magnopy-lswt`` and
   ``magnopy-optimize-sd``.
 * Add output of magnetic field to ``magnopy-optimize-sd``.
 * Add "E_0.txt" output file to ``magnopy-optimize-sd``.
 * Add "E_0.txt", "E_2.txt" and "ONE_OPERATOR_TERMS.txt" output file to
   ``magnopy-optimize-sd``.
-* Add parameter ``B``in ``magnopy.SpinHamiltonian.add_magnetic_field``.
+* Add parameter ``B`` in ``magnopy.SpinHamiltonian.add_magnetic_field``.
 * Implement :issue:`72`: ``magnopy.Convention.__str__()`` and
   ``magnopy.Convention.__repr__()``.
 * Implement ``magnopy.Convention.__hash__()``.
@@ -95,12 +83,29 @@ New features
 * Implement ``spin_values`` in ``load_grogu()``, same as in ``load_tb2j()``.
 * Implement :issue:`75`: ``--spglib-types`` in ``magnopy-lswt``.
 * Implement ``magnopy.io.plot_dispersion``.
-* Extend ``--spin-values`` for the |GROGU|_ as well in ``magnopy-optimize-sd`` and
+* Support ``--spin-values`` for the |GROGU|_ as well in ``magnopy-optimize-sd`` and
   ``magnopy-lswt``.
+
+
+Bugfix
+------
+
+* Fix :issue:`74`: a bug in ``magnopy-lswt``, when it is used with ``--k-points`` argument.
+* Fix a bug in ``magnopy.examples.ivuzjo``: J=10 was fixed, now input value is used.
+
+Improvements
+------------
+
+* Overall improvement of the console output for both ``magnopy-lswt`` and
+  ``magnopy-optimize-sd``.
 * Extend hover information in ``magnopy.experimental.plot_spinham()``.
 
-Deprecated
-----------
+
+Breaking changes wrt 0.3
+========================
+
+Deprecated features
+-------------------
 
 * ``magnopy.Convention.summary`` use ``print(convention)`` or ``str(convention)`` instead.
 * ``replace`` argument in ``magnopy.SpinHamiltonian.add_1``,

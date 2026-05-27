@@ -30,15 +30,14 @@ Bugfix
 .. warning::
 
     We do not recommend to use ``magnopy.experimental.plot_spinham`` of this version with
-    old (<2.*) of |numpy|_.
+    old (<2.*) versions of |numpy|_.
 
     We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
     this version of Magnopy.
 
 **Date**: 10 September 2025
 
-*   Make matplotlib and plotly optional dependencies. Use ``pip install "magnopy[visual]"``
-    to be able to use plotting functions.
+
 
 New features
 ------------
@@ -57,8 +56,13 @@ New features
   ``-spg-s, --spglib-symprec``, ``-msdi, --make-sd-image`` in ``magnopy-lswt``.
 * Output of "INITIAL_GUESS.txt", "SPIN_DIRECTIONS.html" and "SPIN_POSITIONS.txt"
   of the ``magnopy-optimize-sd`` script.
-* Output of "K-POINTS.html", "SPIN_VECTORS.txt", "HIGH-SYMMETRY_POINTS.txt", "K-POINTS.txt"
-  and  "SPIN_DIRECTIONS.html" of the ``magnopy-lswt`` script.
+* Output of "K-POINTS.html", "SPIN_VECTORS.txt", "HIGH-SYMMETRY_POINTS.txt",
+  "K-POINTS.txt" and  "SPIN_DIRECTIONS.html" of the ``magnopy-lswt`` script.
+* Add ``magnopy.experimental`` submodule, where experimental features of Magnopy will be
+  located. Those features might migrate to the core package in the future versions or be
+  removed from it.
+* ``magnopy.experimental.plot_spinham``
+* ``magnopy.experimental.change_unit_cell``
 
 
 Bug fixes
@@ -68,23 +72,25 @@ Bug fixes
 * Fix a bug in ``magnopy.io.dump_vampire`` - material index in .UCF file was always 0,
   now it varies when it should.
 
-Deprecations
+Improvements
 ------------
+
+*   Make matplotlib and plotly optional dependencies. Use ``pip install "magnopy[visual]"``
+    to be able to use plotting functions.
+
+
+Breaking changes wrt 0.1
+========================
+
+Deprecated features
+-------------------
 
 * ``magnopy.io.output_k_resolved``
 
-Removed
--------
+
+Removed features
+----------------
 
 * ``magnopy.LSWT.G_inv``
 * ``make_sd_image`` argument in ``magnopy.scenarios.solve_lswt`` and
   ``magnopy.scenarios.optimize_sd``.
-
-Experimental
-------------
-
-Add ``magnopy.experimental`` submodule, where experimental features of Magnopy are located.
-Those features might migrate to the core package in the future versions or removed from it.
-
-* ``magnopy.experimental.plot_spinham``
-* ``magnopy.experimental.change_unit_cell``

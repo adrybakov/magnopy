@@ -14,6 +14,15 @@ Version 0.3
 
 **Date**: 23 September 2025
 
+New features
+------------
+
+* Refactor and expose to public ``magnopy.si`` submodule that collects units of
+  International system of units (SI) and physical constants that are expressed in SI.
+* ``magnopy.experimental.plot_dispersion``
+* Second scale with eigenfrequiencies in THz for "OMEGAS.png" and "DELTAS.png" plots of
+  ``magnopy-lswt``.
+
 Bugfix
 ------
 
@@ -35,16 +44,10 @@ Bugfix
     ``magnopy.LSWT.omega``, ``magnopy.LSWT.delta``.
   * ``units`` keyword in ``magnopy.multiprocess_over_k``.
 
-New features
-------------
+Breaking changes wrt 0.2
+========================
 
-* Refactor and expose to public ``magnopy.si`` submodule that collects units of
-  International system of units (SI) and physical constants that are expressed in SI.
-* ``magnopy.experimental.plot_dispersion``
-* Second scale with eigenfrequiencies in THz for "OMEGAS.png" and "DELTAS.png" plots of
-  ``magnopy-lswt``.
-
-Deprecated
-----------
+Deprecated features
+-------------------
 
 * ``magnopy.io.plot_k_resolved``
