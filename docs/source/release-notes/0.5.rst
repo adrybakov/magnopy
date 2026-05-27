@@ -167,12 +167,16 @@ Iterating over parameters of the Hamiltonian
                 print(spinham.atoms.names[alpha], spinham.atoms.names[beta], nu)
                 print(parameter)
 
-0.5.4
-=====
+<dev-version-placeholder>
+=========================
 
 **Date**: Undefined
 
-TODO
+New features
+------------
+
+* Move tests to the installable package. Introduce :py:func:`magnopy.test` and
+  ``magnopy test`` CLI command.
 
 0.5.3
 =====
