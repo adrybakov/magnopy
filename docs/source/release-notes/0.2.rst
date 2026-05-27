@@ -13,7 +13,7 @@ Version 0.2
 =====
 .. warning::
 
-    We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
+    We do not recommend to use :py:meth:`.Energy.optimize()` or :ref:`user-guide_cli_optimize-sd` of
     this version of Magnopy.
 
 **Date** : 10 September 2025
@@ -22,17 +22,17 @@ Bugfix
 ------
 
 * Fix problem with ``np.linalg.trace`` and with ``np.linalm.norm(..., axis=1)`` in
-  ``magnopy.experimental``
+  :ref:`api_experimental` module.
 
 0.2.0
 =====
 
 .. warning::
 
-    We do not recommend to use ``magnopy.experimental.plot_spinham`` of this version with
+    We do not recommend to use :py:func:`.experimental.plot_spinham` of this version with
     old (<2.*) versions of |numpy|_.
 
-    We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
+    We do not recommend to use :py:meth:`.Energy.optimize()` or :ref:`user-guide_cli_optimize-sd` of
     this version of Magnopy.
 
 **Date**: 10 September 2025
@@ -42,34 +42,34 @@ Bugfix
 New features
 ------------
 
-* ``magnopy.Energy.optimize_generator``
-* ``magnopy.PlotlyEngine``
-* ``magnopy.LSWT.G``
-* ``magnopy.SpinHamiltonian.add_dipole_dipole``
+* :py:meth:`.Energy.optimize_generator`
+* :py:class:`.PlotlyEngine`
+* :py:meth:`.LSWT.G`
+* :py:meth:`.SpinHamiltonian.add_dipole_dipole`
 * ``no_html``, ``hide_personal_data``, ``spglib_symprec`` arguments in
-  ``magnopy.scenarios.solve_lswt``.
+  :py:func:`.scenarios.solve_lswt`.
 * ``no_html``, ``hide_personal_data``, ``supercell`` arguments in
-  ``magnopy.scenarios.optimize_sd``.
+  :py:func:`.scenarios.optimize_sd`.
 * ``-s, --supercell``, ``-no-html, --no-html``, ``-hpd, --hide-personal-data``
-  in ``magnopy-optimize-sd``.
+  in :ref:`user-guide_cli_optimize-sd`.
 * ``-no-html, --no-html``, ``-hpd, --hide-personal-data``,
-  ``-spg-s, --spglib-symprec``, ``-msdi, --make-sd-image`` in ``magnopy-lswt``.
+  ``-spg-s, --spglib-symprec``, ``-msdi, --make-sd-image`` in :ref:`user-guide_cli_lswt`.
 * Output of "INITIAL_GUESS.txt", "SPIN_DIRECTIONS.html" and "SPIN_POSITIONS.txt"
-  of the ``magnopy-optimize-sd`` script.
+  of the :ref:`user-guide_cli_optimize-sd` script.
 * Output of "K-POINTS.html", "SPIN_VECTORS.txt", "HIGH-SYMMETRY_POINTS.txt",
-  "K-POINTS.txt" and  "SPIN_DIRECTIONS.html" of the ``magnopy-lswt`` script.
-* Add ``magnopy.experimental`` submodule, where experimental features of Magnopy will be
+  "K-POINTS.txt" and  "SPIN_DIRECTIONS.html" of the :ref:`user-guide_cli_lswt` script.
+* Implement :ref:`api_experimental` module, where experimental features of Magnopy will be
   located. Those features might migrate to the core package in the future versions or be
   removed from it.
-* ``magnopy.experimental.plot_spinham``
-* ``magnopy.experimental.change_unit_cell``
+* :py:func:`.experimental.plot_spinham`
+* :py:func:`.experimental.change_unit_cell`
 
 
 Bug fixes
 ---------
 
 * Fix :issue:`40`
-* Fix a bug in ``magnopy.io.dump_vampire`` - material index in .UCF file was always 0,
+* Fix a bug in :py:func:`.io.dump_vampire` - material index in .UCF file was always 0,
   now it varies when it should.
 
 Improvements
@@ -85,12 +85,12 @@ Breaking changes wrt 0.1
 Deprecated features
 -------------------
 
-* ``magnopy.io.output_k_resolved``
+* :py:func:`.io.output_k_resolved`
 
 
 Removed features
 ----------------
 
-* ``magnopy.LSWT.G_inv``
-* ``make_sd_image`` argument in ``magnopy.scenarios.solve_lswt`` and
-  ``magnopy.scenarios.optimize_sd``.
+* :py:meth:`.LSWT.G_inv`
+* ``make_sd_image`` argument in :py:func:`.scenarios.solve_lswt` and
+  :py:func:`.scenarios.optimize_sd`.

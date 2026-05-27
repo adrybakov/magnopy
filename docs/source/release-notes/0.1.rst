@@ -7,7 +7,7 @@ Version 0.1
 .. warning::
     We recommend to update from this version of Magnopy.
 
-    We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
+    We do not recommend to use :py:meth:`.Energy.optimize` or :ref:`user-guide_cli_optimize-sd` of
     this version of Magnopy.
 
 
@@ -34,7 +34,7 @@ Bugfix
 New features
 ------------
 
-* Add ``full_ham()`` example.
+* Add :py:func:`.examples.full_ham` example.
 * Add date and time to the output of CLI scripts.
 * Add primitive plotter for spin directions to both CLI scripts.
 * Add new script with primitive plotter for the spin directions.
@@ -59,14 +59,14 @@ New features
 
 *   Add parameter converters for ``22`` (``converter22``) and ``422`` (``converter422``)
     terms.
-*   Add ``alphas`` parameter to the ``magnopy.SpinHamiltonian.add_magnetic_field``.
+*   Add ``alphas`` parameter to the :py:meth:`.SpinHamiltonian.add_magnetic_field`.
 *   Implement multiplication of the Hamiltonian by a number.
 *   Implement reading of the new public file format of |GROGU|_.
 *   Implement summation (and subtraction) of spin Hamiltonians.
 *   Implement submodule with examples.
 *   Implement energy minimization algorithm.
 *   Implement creation of the supercell (warning: not tested)
-*   Implement ``__call__`` (equivalent to ``Energy.E_0``) for ``Energy`` class.
+*   Implement ``__call__`` (equivalent to :py:attr:`.Energy.E_0`) for ``Energy`` class.
 
 Bugfix
 ------
@@ -95,13 +95,13 @@ New features
 Bugfix
 ------
 
-*   Fix a typo in ``load_tb2j()``
-*   Fix a bug with reading of TB2J (when no anisotropy is present)
+*   Fix a typo in :py:func:`.io.load_tb2j()`.
+*   Fix a bug with reading of TB2J (when no anisotropy is present).
 
 Improvements
 ------------
 
-*   Rename ``-s/--spins`` to ``-sv/--spin-values`` in ``magnopy-lswt``.
+*   Rename ``-s/--spins`` to ``-sv/--spin-values`` in :ref:`user-guide_cli_lswt`.
 
 0.1.5
 =====
@@ -146,19 +146,13 @@ Bugfix
 
 **Date**: 22 May 2025
 
-New features
-------------
-
-*   Add ax.set_xlabel() for the plot with the custom list of kpoints.
-
 Improvements
 ------------
 
+*   Add custom xlabels for the plot with the custom list of kpoints.
 *   Start to use the term "convention" instead of "notation" both in documentation and
     in the code.
-
 *   Change development status from "planning" to "beta" in pyproject.toml
-
 *   Remove total energy from the output. It was not meaningful, as it was summed
     along the high symmetry path and not across the Brillouin zone.
 

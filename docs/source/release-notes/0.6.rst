@@ -13,8 +13,8 @@ Version 0.6
 New features
 ------------
 
-* Move tests to the installable package. Introduce :py:func:`magnopy.test` and
-  ``magnopy test`` CLI command.
+* Move tests to the installable package. Introduce :py:func:`.test` and
+  :ref:`user-guide_cli_magnopy_test` CLI command.
 
 
 Breaking changes from 0.5
@@ -23,7 +23,7 @@ Breaking changes from 0.5
 Removed features
 ----------------
 
-* ``magnopy.Convention.summary()``. Use ``print(convention)`` or ``str(convention)``
+* :py:meth:`.Convention.summary`. Use ``print(convention)`` or ``str(convention)``
   instead.
 * Option ``h`` in :py:meth:`.SpinHamiltonian.add_magnetic_field`. Use ``B`` instead.
 

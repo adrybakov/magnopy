@@ -14,15 +14,15 @@ Version 0.5
 New features
 ------------
 
-* Update :py:func:`magnopy.io.load_grogu` can read the Hamiltonian's convention from the
+* Update :py:func:`.io.load_grogu` can read the Hamiltonian's convention from the
   file instead of assuming the default GROGU's one.
 
 Bugfix
 ------
 
-* Fix a bug in :py:meth:`magnopy.SpinHamiltonian._get_missing_parameters`, that prevented
+* Fix a bug in :py:meth:`.SpinHamiltonian._get_missing_parameters`, that prevented
   the method from working, when there are indeed missing parameters.
-* Fix a bug in :py:meth:`magnopy.SpinHamiltonian.purge`. The bug prevented modification of
+* Fix a bug in :py:meth:`.SpinHamiltonian.purge`. The bug prevented modification of
   the Hamiltonian parameters if this method was used.
 
 0.5.2
@@ -33,26 +33,27 @@ Bugfix
 New features
 ------------
 
-* :py:attr:`magnopy.SpinHamiltonian.M_prime`.
-* :py:func:`magnopy.SpinHamiltonian.set_magnetic_field`.
-* :py:attr:`magnopy.SpinHamiltonian.magnetic_field`.
-* :py:attr:`magnopy.SpinHamiltonian.zeeman_parameters`.
-* ``when_present`` argument in :py:func:`magnopy.io.load_tb2j` and
-  :py:func:`magnopy.io.load_tb2j`.
-* ``missing_bonds`` argument in :py:func:`magnopy.io.load_tb2j` and
-  :py:func:`magnopy.io.load_tb2j`.
-* ``g_factors`` argument in :py:func:`magnopy.io.load_grogu`.
-* :py:meth:`magnopy.SpinHamiltonian.restore_missing_parameters`.
-* :py:meth:`magnopy.SpinHamiltonian.set_distribution`.
-* :py:meth:`magnopy.SpinHamiltonian.purge`.
-* :py:func:`magnopy.get_equivalent_parameters`.
+* :py:attr:`.SpinHamiltonian.M_prime`.
+* :py:meth:`.SpinHamiltonian.set_magnetic_field`.
+* :py:attr:`.SpinHamiltonian.magnetic_field`.
+* :py:attr:`.SpinHamiltonian.zeeman_parameters`.
+* ``when_present`` argument in :py:func:`.io.load_tb2j` and
+  :py:func:`.io.load_tb2j`.
+* ``missing_bonds`` argument in :py:func:`.io.load_tb2j` and
+  :py:func:`.io.load_tb2j`.
+* ``g_factors`` argument in :py:func:`.io.load_grogu`.
+* :py:meth:`.SpinHamiltonian.restore_missing_parameters`.
+* :py:meth:`.SpinHamiltonian.set_distribution`.
+* :py:meth:`.SpinHamiltonian.purge`.
+* :py:func:`.get_equivalent_parameters`.
 
 Bugfix
 ------
 
-* Bug in `magnopy.SpinHamiltonian.symmetrize` - new parameters were not saved, meaning
+* Bug in :py:meth:`.SpinHamiltonian.symmetrize` - new parameters were not saved, meaning
   that symmetrization was not performed correctly. It is now.
-* Bug in a ``magnopy`` CLI, that prevented correct error message for unsupported commands.
+* Bug in a :ref:`user-guide_cli_magnopy` CLI, that prevented correct error message for
+  unsupported commands.
 
 
 0.5.1
@@ -63,14 +64,14 @@ Bugfix
 Bugfix
 ------
 
-* Fix a bug in ``magnopy.experimental.plot_spinham``, that was introduced in 0.5.0 and
+* Fix a bug in :py:func:`.experimental.plot_spinham`, that was introduced in 0.5.0 and
   prevented the function from working.
 
 0.5.0
 =====
 
 .. warning::
-    We recommend to update to 0.5.1 if you need to use ``magnopy.experimental.plot_spinham``.
+    We recommend to update to 0.5.1 if you need to use :py:func:`.experimental.plot_spinham`.
     This function was broken in 0.5.0 and fixed in 0.5.1.
 
 **Date**: 31 March 2026
@@ -78,11 +79,11 @@ Bugfix
 New features
 ------------
 
-* :py:func:`magnopy.is_eigenstate`
-* :py:meth:`magnopy.Energy.E_corr`
-* :py:meth:`magnopy.SpinHamiltonian.add`
-* :py:meth:`magnopy.SpinHamiltonian.remove`
-* :py:meth:`magnopy.SpinHamiltonian.symmetrize`
+* :py:func:`.is_eigenstate`
+* :py:meth:`.Energy.E_corr`
+* :py:meth:`.SpinHamiltonian.add`
+* :py:meth:`.SpinHamiltonian.remove`
+* :py:meth:`.SpinHamiltonian.symmetrize`
 * Optimization of classical energy with quantum correction.
 
 
@@ -92,41 +93,41 @@ Breaking changes wrt 0.4
 Deprecated features
 -------------------
 
-* ``magnopy.SpinHamiltonian.add_1``, ``magnopy.SpinHamiltonian.remove_1``,
-  ``magnopy.SpinHamiltonian.add_21``, ``magnopy.SpinHamiltonian.remove_21``,
-  ``magnopy.SpinHamiltonian.add_22``, ``magnopy.SpinHamiltonian.remove_22``,
-  ``magnopy.SpinHamiltonian.add_31``, ``magnopy.SpinHamiltonian.remove_31``,
-  ``magnopy.SpinHamiltonian.add_33``, ``magnopy.SpinHamiltonian.remove_33``,
-  ``magnopy.SpinHamiltonian.add_41``, ``magnopy.SpinHamiltonian.remove_41``. Use
+* :py:meth:`.SpinHamiltonian.add_1`, :py:meth:`.SpinHamiltonian.remove_1`,
+  :py:meth:`.SpinHamiltonian.add_21`, :py:meth:`.SpinHamiltonian.remove_21`,
+  :py:meth:`.SpinHamiltonian.add_22`, :py:meth:`.SpinHamiltonian.remove_22`,
+  :py:meth:`.SpinHamiltonian.add_31`, :py:meth:`.SpinHamiltonian.remove_31`,
+  :py:meth:`.SpinHamiltonian.add_41`, :py:meth:`.SpinHamiltonian.remove_41`. Use
   :py:meth:`.SpinHamiltonian.add` and :py:meth:`.SpinHamiltonian.remove` instead.
 
 
 Removed features
 ----------------
 
-* ``magnopy.LSWT.G_inv()``.
-* ``magnopy.experimental.plot_dispersion()`` (made permanent part of Magnopy:
-  :py:func:`magnopy.io.plot_dispersion`).
-* ``magnopy.io.plot_k_resolved()``.
-* ``magnopy.io.output_k_resolved()``.
+* :py:meth:`.LSWT.G_inv`.
+* :py:func:`.experimental.plot_dispersion` (made permanent part of Magnopy:
+  :py:func:`.io.plot_dispersion`).
+* :py:func:`.io.plot_k_resolved`.
+* :py:func:`.io.output_k_resolved`.
 * ``make_sd_image`` argument in CLI scripts.
-* ``replace`` argument in the ``magnopy.SpinHamiltonian.add_*`` methods.
-* ``magnopy.SpinHamiltonian.add_32``, ``magnopy.SpinHamiltonian.remove_32``,
-  ``magnopy.SpinHamiltonian.add_421``, ``magnopy.SpinHamiltonian.remove_421``,
-  ``magnopy.SpinHamiltonian.add_422``, ``magnopy.SpinHamiltonian.remove_422``,
-  ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.remove_43`` are removed as
+* ``replace`` argument in the :py:meth:`.SpinHamiltonian.add_*` methods.
+* :py:meth:`.SpinHamiltonian.add_32`, :py:meth:`.SpinHamiltonian.remove_32`,
+  :py:meth:`.SpinHamiltonian.add_421`, :py:meth:`.SpinHamiltonian.remove_421`,
+  :py:meth:`.SpinHamiltonian.add_422`, :py:meth:`.SpinHamiltonian.remove_422`,
+  :py:meth:`.SpinHamiltonian.add_43`, :py:meth:`.SpinHamiltonian.remove_43` are removed as
   being incorrect. Use :py:meth:`.SpinHamiltonian.add` and
   :py:meth:`.SpinHamiltonian.remove` instead.
-* ``magnopy.SpinHamiltonian.add_44``, ``magnopy.SpinHamiltonian.remove_44`` are renamed to
-  ``magnopy.SpinHamiltonian.add_45``, ``magnopy.SpinHamiltonian.remove_45`` to be
+* :py:meth:`.SpinHamiltonian.add_33`, :py:meth:`.SpinHamiltonian.remove_33`.
+* :py:meth:`.SpinHamiltonian.add_44`, :py:meth:`.SpinHamiltonian.remove_44` are renamed to
+  :py:meth:`.SpinHamiltonian.add_45`, :py:meth:`.SpinHamiltonian.remove_45` to be
   consistent with the new labeling rules described
   :ref:`here <user-guide_theory-behind_spin-hamiltonian>`.
-* ``magnopy.SpinHamiltonian.p421``, ``magnopy.SpinHamiltonian.p422``,
-  ``magnopy.SpinHamiltonian.p43``, ``magnopy.SpinHamiltonian.p44`` are renamed to be
+* :py:meth:`.SpinHamiltonian.p421`, :py:meth:`.SpinHamiltonian.p422`,
+  :py:meth:`.SpinHamiltonian.p43`, :py:meth:`.SpinHamiltonian.p44` are renamed to be
   consistent with the new labeling rules described
   :ref:`here <user-guide_theory-behind_spin-hamiltonian>`. The new properties are
-  ``magnopy.SpinHamiltonian.p42``, ``magnopy.SpinHamiltonian.p43``,
-  ``magnopy.SpinHamiltonian.p44``, ``magnopy.SpinHamiltonian.p45`` respectively.
+  :py:meth:`.SpinHamiltonian.p42`, :py:meth:`.SpinHamiltonian.p43`,
+  :py:meth:`.SpinHamiltonian.p44`, :py:meth:`.SpinHamiltonian.p45` respectively.
 
 Transition guide
 ================
