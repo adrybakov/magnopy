@@ -1,0 +1,42 @@
+name: Test documentation
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version'
+        required: true
+        default: '3.12'
+        type: string
+      os:
+        description: 'Operating system'
+        required: true
+        default: 'ubuntu-latest'
+        type: string
+
+jobs:
+  documentation:
+    name: Documentation tests on Python ${{ inputs.python-version }} and ${{ inputs.os }}
+    runs-on: ${{ inputs.os }}
+    steps:
+
+    - uses: actions/checkout@v6
+
+    - uses: actions/setup-python@v6
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install dependencies (package)
+      run: pip install -r requirements.txt
+
+    - name: Install dependencies (docs)
+      run: pip install -r docs/requirements.txt
+
+    - name: Install the package
+      run: pip install .
+
+    - name: Make pictures
+      run: make html-from-zero
+
+    - name: Run doctests
+      run: make doctest
