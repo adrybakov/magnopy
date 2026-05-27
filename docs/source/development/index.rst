@@ -31,6 +31,7 @@ Topical guides
     tests
     origin-upstream
     branches
+    release-notes
     theory-notes
 
 
