@@ -1,0 +1,34 @@
+.. _release-notes_0.6:
+
+***********
+Version 0.6
+***********
+
+
+0.6.0
+=====
+
+**Date**: Undefined
+
+New features
+------------
+
+* Move tests to the installable package. Introduce :py:func:`magnopy.test` and
+  ``magnopy test`` CLI command.
+
+
+Breaking changes from 0.5
+=========================
+
+Removal of previously deprecated features
+-----------------------------------------
+
+* ``magnopy.Convention.summary()``. Use ``print(convention)`` or ``str(convention)``
+  instead.
+* Option ``h`` in ``magnopy.SpinHamiltonian.add_magnetic_field``. Use ``B`` instead.
+
+Change of behavior
+------------------
+
+* Logo of Magnopy was redesign to use only ASCII characters. :py:func:`magnopy.logo`
+  functions the same, but the output is different.

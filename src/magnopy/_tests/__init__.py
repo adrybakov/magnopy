@@ -21,7 +21,7 @@ def test():
     r"""
     Runs unit tests for the whole Magnopy package.
 
-    .. versionadded:: <dev-version-placeholder> Test suite is made part of the installable package.
+    .. versionadded:: 0.6.0 Test suite is made part of the installable package.
 
     Notes
     -----
