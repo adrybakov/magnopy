@@ -882,9 +882,7 @@ class SpinHamiltonian:
             parameters=self._zeeman_parameters, n=1, p_n=1
         )
 
-    # ARGUMENT "h" DEPRECATED since 0.4.0
-    # Remove in May of 2026
-    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
+    def add_magnetic_field(self, B=None, alphas=None) -> None:
         r"""
         Adds external magnetic field to the Hamiltonian.
 
@@ -896,11 +894,6 @@ class SpinHamiltonian:
 
         alphas : list of int, optional
             See :py:attr:`.SpinHamiltonian.set_magnetic_field` for details.
-
-        h : (3, ) |array-like|_
-
-            .. deprecated:: 0.4.0
-                The argument will be removed in May of 2026. Use ``B`` instead.
 
         Notes
         -----
@@ -915,16 +908,6 @@ class SpinHamiltonian:
         On contrary, :py:attr:`.SpinHamiltonian.set_magnetic_field` "sets" the magnetic
         field, i.e. replaces the previous magnetic field (if any).
         """
-
-        if h is not None:
-            import warnings
-
-            warnings.warn(
-                'Argument "h" is deprecated as of 0.4.0, use "B" instead. "h" will be removed in May of 2026.',
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            B = h
 
         self.set_magnetic_field(B=B + self.magnetic_field, alphas=alphas)
 
