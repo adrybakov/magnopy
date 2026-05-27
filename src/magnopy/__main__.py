@@ -23,6 +23,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from magnopy import __version__
 from magnopy._package_info import _warranty, logo
+from magnopy._tests import test
 
 
 def main():
@@ -37,7 +38,7 @@ def main():
     parser.add_argument(
         "commands",
         default=None,
-        help="command/commands on what to do. Use to display some information about package. Choose from 'logo', 'warranty'",
+        help="command/commands on what to do. Use to display some information about package. Choose from 'logo', 'warranty', 'test'",
         metavar="command",
         nargs="*",
     )
@@ -62,6 +63,8 @@ def main():
             print(logo())
         elif command == "warranty":
             print("\n" + _warranty() + "\n")
+        elif command == "test":
+            test()
         else:
             raise ValueError(f'Sub-command "{command}" is not recognized.')
 

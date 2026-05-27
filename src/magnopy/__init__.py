@@ -35,3 +35,4 @@ from ._parallelization import *
 from ._parameters import *
 from ._spinham import *
 from ._plotly_engine import *
+from ._tests import test

@@ -72,7 +72,7 @@ doctest:
 	@$(SPHINXBUILD) -b doctest "docs/$(SOURCEDIR)" "docs/$(BUILDDIR)" $(SPHINXOPTS)
 
 test:
-	@pytest -s tests #-o log_cli=true -o log_cli_level=DEBUG
+	@magnopy test
 
 logo:
 	-@ rm docs/source/_static/magnopy-logo-black.png
