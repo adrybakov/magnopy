@@ -62,6 +62,14 @@ Interaction parameters
   converter43
   get_equivalent_parameters
 
+Unit tests
+==========
+
+.. autosummary::
+  :toctree: generated/
+
+  test
+
 Exceptions
 ==========
 
