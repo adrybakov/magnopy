@@ -16,9 +16,25 @@ New features
 * Move tests to the installable package. Introduce :py:func:`.test` and
   :ref:`user-guide_cli_magnopy_test` CLI command.
 
+Bugfix
+------
+
+* Rare bug with change of units and non-zero magnetic field: the units of
+  ``._zeeman_parameters`` were not converted, which can lead to complex undesired behavior.
+  This is now fixed, and the units of ``._zeeman_parameters`` are converted together with
+  the units of ``._parameters`` when the units are changed using
+  :py:meth:`.SpinHamiltonian.units`.
+
 
 Breaking changes from 0.5
 =========================
+
+Deprecated features
+-------------------
+
+* Method :py:meth:`.SpinHamiltonian.symmetrize`. Use
+  :py:meth:`.SpinHamiltonian.set_distribution` with ``strategy="symmetrize"`` instead.
+  :py:meth:`.SpinHamiltonian.symmetrize` will be removed in November of 2026.
 
 Removed features
 ----------------
