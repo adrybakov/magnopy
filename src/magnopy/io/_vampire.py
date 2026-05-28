@@ -148,7 +148,7 @@ def dump_vampire(
     )
     with open(os.path.join(head, "input-template"), "w", encoding="utf-8") as file:
         if not no_logo:
-            file.write(f"{logo(comment=True, date_time=True)}\n")
+            file.write(f"{logo(comment_char='# ', date_time=True, logo_width=80)}\n")
 
         file.write(
             "\n".join(
@@ -228,7 +228,7 @@ def dump_vampire_mat(
     if no_logo:
         text = []
     else:
-        text = [logo(comment=True, date_time=True)]
+        text = [logo(comment_char="# ", date_time=True, logo_width=80)]
 
     text.append(f"material:num-materials = {max(materials) + 1}")
 
@@ -351,7 +351,7 @@ def dump_vampire_ucf(
     if no_logo:
         text = []
     else:
-        text = [logo(comment=True, date_time=True)]
+        text = [logo(comment_char="# ", date_time=True, logo_width=80)]
 
     a, b, c, _, _, _ = get_params(spinham.cell)
     text.append("# Unit cell size:")

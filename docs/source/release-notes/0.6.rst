@@ -26,9 +26,20 @@ Removed features
 * :py:meth:`.Convention.summary`. Use ``print(convention)`` or ``str(convention)``
   instead.
 * Option ``h`` in :py:meth:`.SpinHamiltonian.add_magnetic_field`. Use ``B`` instead.
+* Option ``flat`` in :py:func:`.logo`. As there is only one variation of the logo now,
+  this option is not needed. Existing code will still function, but it will raise a
+  warning. Please remove the ``flat`` option from your code.
+
 
 Change of behavior
 ------------------
 
 * Logo of Magnopy was redesign to use only ASCII characters. :py:func:`magnopy.logo`
   functions the same, but the output is different.
+* Rename option ``comment`` to ``comment_char`` in :py:func:`.logo`. Existing code will
+  function the same, but it will raise a warning.
+* Option ``line_length`` in :py:func:`.logo` is renamed to ``line_width``. The existing
+  code will still function, but it will raise a warning.
+* Option ``info`` in :py:func:`.logo` is removed. The existing code will still function,
+  but it will raise a warning. Please remove the ``info`` option from your code, as it is
+  ignored now.

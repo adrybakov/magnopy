@@ -28,7 +28,7 @@ from magnopy._tests import test
 
 def main():
     parser = ArgumentParser(
-        description=logo() + "\n\nAvailable scripts are:\n\n"
+        description=logo(logo_width=80) + "\n\nAvailable scripts are:\n\n"
         "* magnopy-optimize-sd\n\n"
         "* magnopy-lswt\n\n"
         "To call for help for each script type <script name> --help\n"
@@ -60,7 +60,7 @@ def main():
 
     for command in args.commands:
         if command == "logo":
-            print(logo())
+            print(logo(logo_width=80))
         elif command == "warranty":
             print("\n" + _warranty() + "\n")
         elif command == "test":

@@ -52,9 +52,9 @@ from magnopy._constants._icons import ICON_IN_FILE
 def manager():
     # Configure a parser
     parser = ArgumentParser(
-        description=logo()
+        description=logo(logo_width=80)
         + "\n\nThis script solves the spin Hamiltonian at the level of "
-        "Linear Spin Wave Theory (LSWT) and outputs (almost) every possible quantity.",
+        "Linear Spin Wave Theory (LSWT).",
         formatter_class=RawDescriptionHelpFormatter,
     )
 

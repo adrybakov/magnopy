@@ -203,7 +203,7 @@ def solve_lswt(
     ##                       Logo, comment and plotly check                       ##
     ################################################################################
     # Print logo and a comment
-    print(logo(date_time=True, line_length=80))
+    print(logo(date_time=True, logo_width=80))
     if comment is not None:
         print(f"\n{' Comment ':=^80}\n")
         print(comment)

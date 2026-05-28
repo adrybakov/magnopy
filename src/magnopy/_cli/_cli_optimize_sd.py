@@ -46,9 +46,9 @@ from magnopy._constants._icons import ICON_IN_FILE
 def manager():
     # Configure a parser
     parser = ArgumentParser(
-        description=logo()
+        description=logo(logo_width=80)
         + "\n\nThis script optimizes classical energy of the spin Hamiltonian and "
-        "finds spin directions that describe a local minima of the energy landscape.",
+        "finds spin directions that define a local minima of the energy landscape.",
         formatter_class=RawDescriptionHelpFormatter,
     )
 

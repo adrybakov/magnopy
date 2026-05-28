@@ -190,24 +190,32 @@ and the script printed in the terminal the following
     usage: magnopy-scenario [-h] -if FILENAME -of FILENAME [-mf h_x h_y h_z] [-r]
                             [-sv [S1 ...]]
 
-    ███╗   ███╗  █████╗   ██████╗  ███╗   ██╗  ██████╗  ██████╗  ██╗   ██╗
-    ████╗ ████║ ██╔══██╗ ██╔════╝  ████╗  ██║ ██╔═══██╗ ██╔══██╗ ╚██╗ ██╔╝
-    ██╔████╔██║ ███████║ ██║  ███╗ ██╔██╗ ██║ ██║   ██║ ██████╔╝  ╚████╔╝
-    ██║╚██╔╝██║ ██╔══██║ ██║  ╚██║ ██║╚██╗██║ ██║   ██║ ██╔═══╝    ╚██╔╝
-    ██║ ╚═╝ ██║ ██║  ██║ ╚██████╔╝ ██║ ╚████║ ╚██████╔╝ ██║         ██║
-    ╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝  ╚═╝  ╚═══╝  ╚═════╝  ╚═╝         ╚═╝
-                                                               ▄   ▄
-                          Version: major.minor.micro           █▀█▀█
-                    Documentation: magnopy.org                 █▄█▄█
-                 Release date: DAY MONTH YEAR                   ███   ▄▄
-                        License: GNU GPLv3                      ████ █  █
-              Copyright (C) 2023-CURRENT-YEAR  Magnopy Team     ████    █
-                                                                ▀▀▀▀▀▀▀▀
+                  #   #
+                  #####
+                  # # #
+                  # # #
+                  #####
+                   ###
+                   ###   #   #  ###   ###  #   #  ###  ####  #   #
+                   ####  ## ## #   # #     ##  # #   # #   # ## ##
+                   ####  # # # ##### #  ## # # # #   # ####   ###
+                   ####  #   # #   # #   # #  ## #   # #       #
+                   ####  #   # #   #  ###  #   #  ###  #       #
+                   #############################################
+                   ##                                         ##
+                   ##        Version: major.minor.micro       ##
+                   ##       Release date: DD Month YYYY       ##
+                   ##                                         ##
+                   ##           License: GNU GPLv3            ##
+                   ##       Documentation: magnopy.org        ##
+                   ##     Copyright (C) 2023 Magnopy Team     ##
+                   ##                                         ##
+                   #############################################
 
     This script is doing a thing, when provided a thing.
 
     options:
-      -h, --help            show this help message and exit
+      -h, --help            Show this help message and exit
       -if, --input-file     FILENAME
                             Input file for the script.
       -of, --output-file     FILENAME
@@ -231,55 +239,55 @@ A draft of the command for using the script. Arguments that are enclosed in "[]"
 optional, other arguments are mandatory. In this example ``--input-file`` and
 ``--output-file`` are mandatory and all other arguments are optional.
 
-Lines 4-16
+Lines 4-24
 ----------
 
 Magnopy's logo and metadata.
 
 *   Version of Magnopy that is installed. For example "0.3.0", which would mean "0" major
     version, "3" minor version and "0" micro version;
-*   Link to the web-site with documentation;
 *   Release date;
 *   License;
+*   Link to the web-site with documentation;
 *   Copyright message;
 
-Line 18
+Line 26
 -------
 
 Short description of what this script can do.
 
-Lines 21-34
+Lines 29-42
 -----------
 
 Full list of all supported arguments and their description.
 
 =========== ==============================================================================
 =========== ==============================================================================
-lines 22-23 *   "-if" is a short keyword of the argument.
+lines 30-31 *   "-if" is a short keyword of the argument.
             *   "--input-file" is a long keyword of the argument.
             *   "FILENAME" is a placeholder for its value. Substitute "FILENAME" by an
                 actual value.
             *   "Input file for the script." is a description of what this argument means.
-lines 26-28 *   "-mf" is a short keyword of the argument.
+lines 34-36 *   "-mf" is a short keyword of the argument.
             *   "--magnetic-field" is a long keyword of the argument.
             *   "H_X H_Y H_Z" are the placeholders for its values. Three placeholders
                 indicate that this argument expects three values.
             *   "Vector of external magnetic field, given in the units of Tesla." is a
                 description of what this argument means.
-lines 29-30 *   "-r" is a short keyword of the argument.
+lines 37-38 *   "-r" is a short keyword of the argument.
             *   "--relative" is a long keyword of the argument.
             *   There are no placeholder for the value, which means that this is a
                 :ref:`user-guide_cli_common-notes_arguments_keyword_without_value`.
             *   "Whether to consider a thing to be a relative thing." is a description of
                 what this argument means.
-lines 31-32 *   "-sv" is a short keyword of the argument.
+lines 39-40 *   "-sv" is a short keyword of the argument.
             *   "--spin-values" is a long keyword of the argument.
             *   "[S1 ...]" is a placeholder for the values. Brackets and "..." indicate
                 that this argument expects several values. For example, substitute
                 "[S1 ...]" by "1 0.5 1.5" to pass three values to this argument.
             *   "Spin values for the input thing." is a description of what this argument
                 means.
-lines 33-34 *   "-om" is a short keyword of the argument.
+lines 41-42 *   "-om" is a short keyword of the argument.
             *   "--optimization-mode" is a long keyword of the argument.
             *   "{memory,speed}" is a placeholder for the values. Figure parenthesis
                 indicate that one of the pre-defined values is expected. Use either
