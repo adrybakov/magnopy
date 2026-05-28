@@ -18,10 +18,10 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
-
+import os
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from magnopy import __version__
+from magnopy import __version__, __release_date__, __path__
 from magnopy._package_info import _warranty, logo
 from magnopy._tests import test
 
@@ -38,7 +38,7 @@ def main():
     parser.add_argument(
         "commands",
         default=None,
-        help="command/commands on what to do. Use to display some information about package. Choose from 'logo', 'warranty', 'test'",
+        help="command/commands on what to do. Use to display information about Magnopy. Choose from 'logo', 'warranty', 'test'",
         metavar="command",
         nargs="*",
     )
@@ -52,7 +52,13 @@ def main():
     args = parser.parse_args()
 
     if args.version:
-        print(f"Magnopy v{__version__}")
+        print(f"Magnopy version : {__version__}")
+        print(f"Release date    : {__release_date__}")
+        try:
+            print(f"Library path    : {os.path.abspath(__path__[0])}")
+        except Exception as _:
+            pass
+        return
 
     if len(args.commands) == 0:
         parser.print_help()
