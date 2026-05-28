@@ -126,7 +126,7 @@ class _InteractionParameters:
         Parameters
         ----------
         specs : tuple
-            Tuple with the special structure tha uniquely defines the spin operators
+            Tuple with the special structure that uniquely defines the spin operators
             associated with the interaction parameter.
 
             .. code-block:: python
@@ -180,7 +180,7 @@ class _InteractionParameters:
         Parameters
         ----------
         specs : tuple
-            Tuple with the special structure tha uniquely defines the spin operators
+            Tuple with the special structure that uniquely defines the spin operators
             associated with the interaction parameter.
 
             .. code-block:: python
@@ -260,7 +260,7 @@ class _InteractionParameters:
                 pass
             else:
                 raise ValueError(
-                    f"Unsupported value for when_present: {when_present}. Supported values are: 'raise error', 'replace', 'sum', 'mean', 'skip'."
+                    f"Unsupported value for when_present: {when_present}. Supported values are: 'raise error', 'replace', 'sum', 'mean', 'weighted average', 'skip'."
                 )
 
     def remove(self, specs):
@@ -270,7 +270,7 @@ class _InteractionParameters:
         Parameters
         ----------
         specs : tuple
-            Tuple with the special structure tha uniquely defines the spin operators
+            Tuple with the special structure that uniquely defines the spin operators
             associated with the interaction parameter.
 
             .. code-block:: python
