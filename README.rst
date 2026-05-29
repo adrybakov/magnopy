@@ -43,7 +43,7 @@ Magnopy can be used both as a Python library and as a command line tool.
 * For code examples see
   `User guide <https://docs.magnopy.org/en/latest/user-guide/index.html>`_.
 * For full public API see
-  `API <https://magnopy.org/en/latest/api/index.html>`_.
+  `API <https://docs.magnopy.org/en/latest/api/index.html>`_.
 * To get some support and ask questions see
   `User support <https://docs.magnopy.org/en/latest/user-support/index.html>`_.
 * For summary of releases see
