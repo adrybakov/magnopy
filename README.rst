@@ -2,50 +2,82 @@
 Magnopy
 *******
 
-Magnopy is a Python package for the magnon-related properties:
+Spin Hamiltonian, ground state, magnons.
 
-* Ground state energy
-* Energy minimization
-* Linear Spin Wave theory and what comes from it
+.. image:: https://badge.fury.io/py/magnopy.svg
+  :target: https://badge.fury.io/py/magnopy/
 
-Please visit an extensive documentation on `magnopy.org <https://magnopy.org>`_ to find
-out more.
+.. image:: https://readthedocs.org/projects/magnopy/badge/?version=latest
+  :target: https://magnopy.org/en/latest/?badge=latest
+  :alt: Documentation Status
 
+.. image:: https://img.shields.io/badge/License-GPLv3-blue.svg
+  :target: https://www.gnu.org/licenses/gpl-3.0
+
+.. image:: https://results.pre-commit.ci/badge/github/adrybakov/magnopy/main.svg
+  :target: https://results.pre-commit.ci/latest/github/adrybakov/magnopy/main
+  :alt: pre-commit.ci status
+
+****************
+What is Magnopy?
+****************
+
+Magnopy is a python code that, given
+`spin Hamiltonian <https://docs.magnopy.org/en/latest/user-guide/theory-behind/spin-hamiltonian.html>`_
+in **any**
+`convention <https://docs.magnopy.org/en/latest/user-guide/theory-behind/convention.html>`_,
+computes bosonic (magnon) Hamiltonian.
+
+*************
+Documentation
+*************
+
+Extensive documentation is available at `magnopy.org <https://magnopy.org>`_.
+
+Magnopy can be used both as a Python library and as a command line tool.
+
+* For details about black box style usage see
+  `magnopy-optimize-sd <https://docs.magnopy.org/en/latest/user-guide/cli/magnopy-optimize-sd/index.html>`_
+  or
+  `magnopy-lswt <https://docs.magnopy.org/en/latest/user-guide/cli/magnopy-lswt/index.html>`_.
+* For code examples see
+  `User guide <https://docs.magnopy.org/en/latest/user-guide/index.html>`_.
+* For full public API see
+  `API <https://magnopy.org/en/latest/api/index.html>`_.
+* To get some support and ask questions see
+  `User support <https://docs.magnopy.org/en/latest/user-support/index.html>`_.
+* For summary of releases see
+  `Release notes <https://docs.magnopy.org/en/latest/release-notes/index.html>`_.
+
+************
 Installation
-============
+************
 
-To install magnopy run (you may need to use ``pip3``):
+To install Magnopy run (you may need to use ``pip3``):
 
 .. code-block:: console
 
     pip install magnopy
 
-Usage
-=====
+To install with visualization capabilities (recommended) run (you may need to use
+``pip3``):
 
-There are two ways to use magnopy:
+.. code-block:: console
 
-* As a blackbox via `command line interface <https://docs.magnopy.org/en/latest/user-guide/index.html>`_
-* As a `Python library <https://docs.magnopy.org/en/latest/user-guide/index.html>`_
+  pip install "magnopy[visual]"
 
+************
 User support
-============
+************
 
-There are two ways to ask for help or give feedback
+If you have a question about Magnopy, have an idea for its improvement, or found a bug,
+please do not hesitate to contact us via one of the
+`support channels <https://docs.magnopy.org/en/latest/user-support/index.html>`_.
 
-*   `Forum at google groups <https://groups.google.com/g/magnopy>`_
-
-    You may send email directly to magnopy@googlegroups.com
-
-*   `Github discussions <https://github.com/magnopy/magnopy/discussions>`_
-
-    You may need to create an account at github to post a question.
-
-Both are monitored by the authors, choose the one you prefer.
-
+***********
 Development
-===========
+***********
 
-We welcome contributions to magnopy. If you would like to contribute, please
-consult the `development guide <https://docs.magnopy.org/en/latest/development/index.html>`_
-or contact the authors of the project.
+We welcome contributions to Magnopy. Pleas visit the
+`development guide <https://docs.magnopy.org/en/latest/development/index.html>`_
+or contact authors of the project to find out more.
