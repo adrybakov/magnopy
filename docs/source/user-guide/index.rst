@@ -128,7 +128,7 @@ each concept and give code examples.
 Magnopy as a black box
 ======================
 
-The second way to use magnopy is via a command line interface.
+The second way to use Magnopy is via a command line interface.
 
 There are a number of scripts that takes some files as an input and produce some other
 files as an output. You can use those scripts without any knowledge of python, but you
