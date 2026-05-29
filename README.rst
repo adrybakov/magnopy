@@ -5,18 +5,18 @@ Magnopy
 Spin Hamiltonian, ground state, magnons.
 
 .. image:: https://badge.fury.io/py/magnopy.svg
-  :target: https://badge.fury.io/py/magnopy/
+   :target: https://badge.fury.io/py/magnopy/
 
 .. image:: https://readthedocs.org/projects/magnopy/badge/?version=latest
-  :target: https://magnopy.org/en/latest/?badge=latest
-  :alt: Documentation Status
+   :target: https://magnopy.org/en/latest/?badge=latest
+   :alt: Documentation Status
 
 .. image:: https://img.shields.io/badge/License-GPLv3-blue.svg
-  :target: https://www.gnu.org/licenses/gpl-3.0
+   :target: https://www.gnu.org/licenses/gpl-3.0
 
-.. image:: https://results.pre-commit.ci/badge/github/adrybakov/magnopy/main.svg
-  :target: https://results.pre-commit.ci/latest/github/adrybakov/magnopy/main
-  :alt: pre-commit.ci status
+.. image:: https://results.pre-commit.ci/badge/github/magnopy/magnopy/main.svg
+   :target: https://results.pre-commit.ci/latest/github/magnopy/magnopy/main
+   :alt: pre-commit.ci status
 
 ****************
 What is Magnopy?
