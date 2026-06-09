@@ -169,9 +169,9 @@ class LSWT:
                 0.5
                 * np.sqrt(self.spins[alphas[0]] * self.spins[alphas[1]])
                 * (
-                    np.conjugate(self.p[alphas[0]])
+                    self.p[alphas[0]]
                     @ parameter
-                    @ np.conjugate(self.p[alphas[1]])
+                    @ self.p[alphas[1]]
                 )
             )
 
