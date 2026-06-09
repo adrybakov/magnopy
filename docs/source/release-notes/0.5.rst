@@ -5,6 +5,17 @@ Version 0.5
 ***********
 
 
+0.5.4
+=====
+
+**Date**: 9 June 2026
+
+Bugfix
+------
+
+* Fix :issue:`114`. Bug that affected calculations of magnon dispersion with non-collinear
+  ground states or with anisotropic exchange interactions.
+
 
 0.5.3
 =====

@@ -217,6 +217,7 @@ def solve_via_colpa(D):
                [-0.,  1.]])
 
     .. doctest::
+
         >>> # np.round is only for the sake of pretty printing
         >>> import numpy as np
         >>> import magnopy

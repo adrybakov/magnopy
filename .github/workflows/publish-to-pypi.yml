@@ -17,13 +17,13 @@ jobs:
     - name: Install dev tools
       run: pip install -r requirements-dev.txt
     - name: Inspect metadata
-      run: python3 -u tools/check-release-metadata.py -v ${{  github.ref_name }} -rd .
+      run: python3 -u dev-tools/check-release-metadata.py -v ${{  github.ref_name }} -rd .
 
 
   test:
     name: Run tests
     needs: check-release-metadata
-    uses: adrybakov/wulfric/.github/workflows/os-python-matrix-test.yml@main
+    uses: magnopy/magnopy/.github/workflows/os-python-matrix-test.yml@main
 
   build:
     name: Build distribution 📦
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/wulfric
+      url: https://pypi.org/p/magnopy
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
