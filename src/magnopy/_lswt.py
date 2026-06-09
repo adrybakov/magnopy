@@ -168,11 +168,7 @@ class LSWT:
             self.B2[nu][alphas[0], alphas[1]] = (
                 0.5
                 * np.sqrt(self.spins[alphas[0]] * self.spins[alphas[1]])
-                * (
-                    np.conjugate(self.p[alphas[0]])
-                    @ parameter
-                    @ np.conjugate(self.p[alphas[1]])
-                )
+                * (self.p[alphas[0]] @ parameter @ self.p[alphas[1]])
             )
 
     def E_2(self, units="meV") -> float:
