@@ -23,7 +23,7 @@ jobs:
   test:
     name: Run tests
     needs: check-release-metadata
-    uses: adrybakov/wulfric/.github/workflows/os-python-matrix-test.yml@main
+    uses: magnopy/magnopy/.github/workflows/os-python-matrix-test.yml@main
 
   build:
     name: Build distribution 📦
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/wulfric
+      url: https://pypi.org/p/magnopy
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
