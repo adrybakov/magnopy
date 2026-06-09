@@ -218,20 +218,16 @@ def solve_via_colpa(D):
 
     .. doctest::
 
+        >>> # np.round is only for the sake of pretty printing
+        >>> import numpy as np
         >>> import magnopy
         >>> D = [[1, 1j], [-1j, 2]]
         >>> E, G = magnopy.solve_via_colpa(D)
-        >>> E
-        array([0.61803399+0.j, 1.61803399+0.j])
-        >>> G
-        array([[ 1.08204454-0.j        ,  0.        +0.41330424j],
-               [-0.        -0.41330424j,  1.08204454-0.j        ]])
-        >>> E, G = magnopy.solve_via_colpa(D)
-        >>> E
-        array([0.61803399+0.j, 1.61803399+0.j])
-        >>> G # doctest: +SKIP
-        array([[1.08204454+0.j        , 0.        -0.41330424j],
-               [0.        +0.41330424j, 1.08204454+0.j        ]])
+        >>> np.round(E, decimals=3)
+        array([0.618+0.j, 1.618+0.j])
+        >>> np.round(G, decimals=4)
+        array([[ 1.082-0.j    ,  0.   +0.4133j],
+               [-0.   -0.4133j,  1.082-0.j    ]])
     """
 
     # Guarantee that D is 2Nx2N matrix
