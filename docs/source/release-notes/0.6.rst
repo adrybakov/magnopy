@@ -8,7 +8,7 @@ Version 0.6
 0.6.0
 =====
 
-**Date**: Undefined
+**Date**: 18 June 2026
 
 New features
 ------------
@@ -24,6 +24,13 @@ Bugfix
   This is now fixed, and the units of ``._zeeman_parameters`` are converted together with
   the units of ``._parameters`` when the units are changed using
   :py:meth:`.SpinHamiltonian.units`.
+* Fix :issue:`124`: four-spin parameters were not renormalized correctly, due to typos in
+  the source code.
+
+Improvements
+------------
+
+* Implement :issue:`42`.
 
 
 Breaking changes wrt 0.5

@@ -19,9 +19,9 @@
 # ================================ END LICENSE =================================
 
 
-__version__ = "0.6.0.dev"
+__version__ = "0.6.0"
 __doclink__ = "magnopy.org"
-__release_date__ = "Undefined"
+__release_date__ = "18 June 2026"
 
 from . import examples, io, scenarios, experimental
 from ._constants import _si as si
