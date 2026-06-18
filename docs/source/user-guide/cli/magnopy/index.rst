@@ -32,7 +32,7 @@ which outputs to the standard output channel (console or terminal) Magnopy's met
 Version
 =======
 
-To get the version of the installed Magnopy, use
+To get the version of the Magnopy's installation, use
 
 .. code-block:: bash
 
@@ -55,7 +55,7 @@ To run the test suite of Magnopy, use
    magnopy test
 
 The runtime of the test suite depends on the hardware and can take several minutes.
-The progress of testing is printed to the console.
+Progress is printed to the console.
 
 .. _user-guide_cli_magnopy_logo:
 
