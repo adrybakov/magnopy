@@ -9,12 +9,12 @@ Version 0.4
 
 **Date**: 9 January 2026
 
-Improvement
------------
+Improvements
+------------
 
-* Make LSWT diagonalization more numerically stable. This should fix rare cases of non-continues
-  magnon spectra.
-* Improve speed of the diagonalization in LSWT diagonalization (up to the factor x2).
+* Make LSWT diagonalization more numerically stable. This should fix rare cases of
+  non-continues magnon spectra.
+* Improve speed of the LSWT diagonalization (up to the factor x2).
 
 0.4.2
 =====
@@ -25,12 +25,12 @@ Bugfix
 ------
 
 * Fix a rare bug with p21 parameter in the dispersion calculation.
-* Fix :issue:`79`: Incorrect sorting of the eigenvectors in some cases, introduced in 0.2.
+* Fix :issue:`79`: Incorrect sorting of the eigenvectors in edge cases, introduced in 0.2.
 
 Improvements
 ------------
 
-* Improve text of warnings of the ``magnopy-lswt`` script.
+* Improve text of warnings of the :ref:`user-guide_cli_lswt` script.
 
 
 0.4.1
@@ -46,7 +46,7 @@ Improvements
 Bugfix
 ------
 
-* Fix :issue:`80`: a bug in ``magnopy-lswt`` when using ``--k-points`` argument.
+* Fix :issue:`80`: a bug in :ref:`user-guide_cli_lswt` when using ``--k-points`` argument.
 
 
 0.4.0
@@ -56,59 +56,65 @@ Bugfix
 
 .. warning::
 
-    We do not recommend to use ``magnopy-lswt`` script with ``--k-points`` argument
+    We do not recommend to use :ref:`user-guide_cli_lswt` script with ``--k-points`` argument
     of this version. There is a bug that was fixed in 0.4.1.
-
-.. important::
-
-    Together with this release we release a master tutorial about Magnopy:
-    |magnopy-tutorials|_. You can take it as a starting point to learn how to use
-    Magnopy.
-
-Bugfix
-------
-
-* Fix :issue:`74`: a bug in ``magnopy-lswt``, when it is used with ``--k-points`` argument.
-* Fix a bug in ``magnopy.examples.ivuzjo``: J=10 was fixed, now input value is used.
 
 New features
 ------------
 
-* Major improvement of the console output for both ``magnopy-lswt`` and
-  ``magnopy-optimize-sd``.
-* Add summary of the executed commands to the output of both ``magnopy-lswt`` and
-  ``magnopy-optimize-sd``.
-* Add output of magnetic field to ``magnopy-optimize-sd``.
-* Add "E_0.txt" output file to ``magnopy-optimize-sd``.
+* Together with this release we release a master tutorial about Magnopy:
+  |magnopy-tutorials|_.
+* Add summary of the executed commands to the output of both :ref:`user-guide_cli_lswt` and
+  :ref:`user-guide_cli_optimize-sd`.
+* Add output of magnetic field to :ref:`user-guide_cli_optimize-sd`.
+* Add "E_0.txt" output file to :ref:`user-guide_cli_optimize-sd`.
 * Add "E_0.txt", "E_2.txt" and "ONE_OPERATOR_TERMS.txt" output file to
-  ``magnopy-optimize-sd``.
-* Add parameter ``B``in ``magnopy.SpinHamiltonian.add_magnetic_field``.
-* Implement :issue:`72`: ``magnopy.Convention.__str__()`` and
-  ``magnopy.Convention.__repr__()``.
-* Implement ``magnopy.Convention.__hash__()``.
-* Implement ``when_present`` argument in  ``magnopy.SpinHamiltonian.add_1``,
-  ``magnopy.SpinHamiltonian.add_21``, ``magnopy.SpinHamiltonian.add_22``,
-  ``magnopy.SpinHamiltonian.add_31``, ``magnopy.SpinHamiltonian.add_32``,
-  ``magnopy.SpinHamiltonian.add_33``, ``magnopy.SpinHamiltonian.add_41``,
-  ``magnopy.SpinHamiltonian.add_421``, ``magnopy.SpinHamiltonian.add_422``,
-  ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.add_44``.
-* Implement ``spin_values`` in ``load_grogu()``, same as in ``load_tb2j()``.
-* Implement :issue:`75`: ``--spglib-types`` in ``magnopy-lswt``.
-* Implement ``magnopy.io.plot_dispersion``.
-* Extend ``--spin-values`` for the |GROGU|_ as well in ``magnopy-optimize-sd`` and
-  ``magnopy-lswt``.
-* Extend hover information in ``magnopy.experimental.plot_spinham()``.
+  :ref:`user-guide_cli_optimize-sd`.
+* Add parameter ``B`` in :py:meth:`.SpinHamiltonian.add_magnetic_field`.
+* Implement :issue:`72`: ``.Convention.__str__()`` and
+  ``.Convention.__repr__()``.
+* Implement ``.Convention.__hash__()``.
+* Implement ``when_present`` argument in  :py:meth:`.SpinHamiltonian.add_1`,
+  :py:meth:`.SpinHamiltonian.add_21`, :py:meth:`.SpinHamiltonian.add_22`,
+  :py:meth:`.SpinHamiltonian.add_31`, :py:meth:`.SpinHamiltonian.add_32`,
+  :py:meth:`.SpinHamiltonian.add_33`, :py:meth:`.SpinHamiltonian.add_41`,
+  :py:meth:`.SpinHamiltonian.add_421`, :py:meth:`.SpinHamiltonian.add_422`,
+  :py:meth:`.SpinHamiltonian.add_43`, :py:meth:`.SpinHamiltonian.add_44`.
+* Implement ``spin_values`` in :py:func:`.io.load_grogu`, same as in :py:func:`.io.load_tb2j`.
+* Implement :issue:`75`: ``--spglib-types`` in :ref:`user-guide_cli_lswt`.
+* Implement :py:func:`.io.plot_dispersion`.
+* Support ``--spin-values`` for the |GROGU|_ as well in :ref:`user-guide_cli_optimize-sd` and
+  :ref:`user-guide_cli_lswt`.
 
-Deprecated
-----------
 
-* ``magnopy.Convention.summary`` use ``print(convention)`` or ``str(convention)`` instead.
-* ``replace`` argument in ``magnopy.SpinHamiltonian.add_1``,
-  ``magnopy.SpinHamiltonian.add_21``, ``magnopy.SpinHamiltonian.add_22``,
-  ``magnopy.SpinHamiltonian.add_31``, ``magnopy.SpinHamiltonian.add_32``,
-  ``magnopy.SpinHamiltonian.add_33``, ``magnopy.SpinHamiltonian.add_41``,
-  ``magnopy.SpinHamiltonian.add_421``, ``magnopy.SpinHamiltonian.add_422``,
-  ``magnopy.SpinHamiltonian.add_43``, ``magnopy.SpinHamiltonian.add_44``.
+Bugfix
+------
+
+* Fix :issue:`74`: a bug in :ref:`user-guide_cli_lswt`, when it is used with
+  ``--k-points`` argument.
+* Fix a bug in :py:func:`.examples.ivuzjo`.
+
+Improvements
+------------
+
+* Overall improvement of the console output for both :ref:`user-guide_cli_lswt` and
+  :ref:`user-guide_cli_optimize-sd`.
+* Extend hover information in :py:func:`.experimental.plot_spinham`.
+
+
+Breaking changes wrt 0.3
+========================
+
+Deprecated features
+-------------------
+
+* :py:func:`.Convention.summary` use ``print(convention)`` or ``str(convention)`` instead.
+* ``replace`` argument in :py:meth:`.SpinHamiltonian.add_1`,
+  :py:meth:`.SpinHamiltonian.add_21`, :py:meth:`.SpinHamiltonian.add_22`,
+  :py:meth:`.SpinHamiltonian.add_31`, :py:meth:`.SpinHamiltonian.add_32`,
+  :py:meth:`.SpinHamiltonian.add_33`, :py:meth:`.SpinHamiltonian.add_41`,
+  :py:meth:`.SpinHamiltonian.add_421`, :py:meth:`.SpinHamiltonian.add_422`,
+  :py:meth:`.SpinHamiltonian.add_43`, :py:meth:`.SpinHamiltonian.add_44`.
   Use ``when_present="replace"`` instead.
-* ``h`` in ``magnopy.SpinHamiltonian.add_magnetic_field`` in favor of ``B``.
-* ``magnopy.experimental.plot_dispersion`` use ``magnopy.io.plot_dispersion`` instead.
+* ``h`` in :py:meth:`.SpinHamiltonian.add_magnetic_field` in favor of ``B``.
+* :py:func:`.experimental.plot_dispersion` use :py:func:`.io.plot_dispersion` instead.

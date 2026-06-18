@@ -4,6 +4,7 @@
 Version 0.5
 ***********
 
+
 0.5.4
 =====
 
@@ -62,7 +63,7 @@ Bugfix
 
 * Bug in :py:meth:`.SpinHamiltonian.symmetrize` - new parameters were not saved, meaning
   that symmetrization was not performed correctly. It is now.
-* Bug in a ``magnopy`` CLI, that prevented correct error message for
+* Bug in a :ref:`user-guide_cli_magnopy` CLI, that prevented correct error message for
   unsupported commands.
 
 

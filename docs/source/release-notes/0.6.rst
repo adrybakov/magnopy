@@ -1,0 +1,68 @@
+.. _release-notes_0.6:
+
+***********
+Version 0.6
+***********
+
+
+0.6.0
+=====
+
+**Date**: 18 June 2026
+
+New features
+------------
+
+* Move tests to the installable package. Introduce :py:func:`.test` and
+  :ref:`user-guide_cli_magnopy_test` CLI command.
+
+Bugfix
+------
+
+* Rare bug with change of units and non-zero magnetic field: the units of
+  ``._zeeman_parameters`` were not converted, which can lead to complex undesired behavior.
+  This is now fixed, and the units of ``._zeeman_parameters`` are converted together with
+  the units of ``._parameters`` when the units are changed using
+  :py:meth:`.SpinHamiltonian.units`.
+* Fix :issue:`124`: four-spin parameters were not renormalized correctly, due to typos in
+  the source code.
+
+Improvements
+------------
+
+* Implement :issue:`42`.
+
+
+Breaking changes wrt 0.5
+========================
+
+Deprecated features
+-------------------
+
+* Method :py:meth:`.SpinHamiltonian.symmetrize`. Use
+  :py:meth:`.SpinHamiltonian.set_distribution` with ``strategy="symmetrize"`` instead.
+  :py:meth:`.SpinHamiltonian.symmetrize` will be removed in November of 2026.
+
+Removed features
+----------------
+
+* :py:meth:`.Convention.summary`. Use ``print(convention)`` or ``str(convention)``
+  instead.
+* Option ``h`` in :py:meth:`.SpinHamiltonian.add_magnetic_field`. Use ``B`` instead.
+* Option ``flat`` in :py:func:`.logo`. As there is only one variation of the logo now,
+  this option is not needed. Existing code will still function, but it will raise a
+  warning. Please remove the ``flat`` option from your code.
+* Option ``info`` in :py:func:`.logo` is removed. The existing code will still function,
+  but it will raise a warning. Please remove the ``info`` option from your code, as it is
+  ignored now.
+
+
+Change of behavior
+------------------
+
+* Redesign logo of Magnopy to use only ASCII characters. Output of the
+  :py:func:`magnopy.logo` has new format.
+* Rename option ``comment`` to ``comment_char`` in :py:func:`.logo`. Existing code will
+  function the same, but it will raise a warning.
+* Option ``line_length`` in :py:func:`.logo` is renamed to ``line_width``. The existing
+  code will still function, but it will raise a warning.

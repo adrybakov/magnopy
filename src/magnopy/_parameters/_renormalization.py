@@ -181,22 +181,22 @@ def _get_corrections_4(nus, alphas, parameter, C4, spins):
         ],
         # Three spins
         [
-            (nu_2, nu_3),
+            ((0, 0, 0), nu_2, nu_3),
             (alpha_1, alpha_2, alpha_3),
             C4 * np.einsum("ijkl,l->ijk", parameter, spins[alpha_4]),
         ],
         [
-            (nu_2, nu_4),
+            ((0, 0, 0), nu_2, nu_4),
             (alpha_1, alpha_2, alpha_4),
             C4 * np.einsum("ijlk,l->ijk", parameter, spins[alpha_3]),
         ],
         [
-            (nu_4, nu_3),
+            ((0, 0, 0), nu_4, nu_3),
             (alpha_1, alpha_4, alpha_3),
             C4 * np.einsum("ilkj,l->ijk", parameter, spins[alpha_2]),
         ],
         [
-            (_diff(nu_2 - nu_4), _diff(nu_3 - nu_4)),
+            ((0, 0, 0), _diff(nu_2, nu_4), _diff(nu_3, nu_4)),
             (alpha_4, alpha_2, alpha_3),
             C4 * np.einsum("ljki,l->ijk", parameter, spins[alpha_1]),
         ],

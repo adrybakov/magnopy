@@ -392,60 +392,6 @@ class Convention:
 
         return summary
 
-    # DEPRECATED in v0.4.0
-    # Remove in May 2026
-    def summary(self, return_as_string=False):
-        r"""
-        Gives human-readable summary of the convention.
-
-        .. deprecated:: 0.4.0
-            Will be removed in May of 2026. Use ``print(convention)`` or ``str(convention)`` instead.
-
-        Parameters
-        ----------
-        return_as_string : bool, default False
-            Whether to print or return a ``str``. If ``True``, then returns a ``str``.
-            If ``False``, then prints it.
-
-        Examples
-        --------
-
-        .. doctest::
-
-            >>> from magnopy import Convention
-            >>> conv_1 = Convention(True, True, c21=1, c22=-0.5)
-            >>> conv_1.summary()
-            "custom" convention where
-              * Bonds are counted multiple times in the sum;
-              * Spin vectors are normalized to 1;
-              * Undefined c1 factor;
-              * c21 = 1.0;
-              * c22 = -0.5;
-              * Undefined c31 factor;
-              * Undefined c32 factor;
-              * Undefined c33 factor;
-              * Undefined c41 factor;
-              * Undefined c42 factor;
-              * Undefined c43 factor;
-              * Undefined c44 factor;
-              * Undefined c45 factor.
-        """
-
-        import warnings
-
-        warnings.warn(
-            "The 'summary' method is deprecated since Magnopy 0.4.0. Use print(convention) or str(convention) instead. magnopy.Convention.summary will be removed in May of 2026.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
-        summary = self.__str__()
-
-        if return_as_string:
-            return summary
-
-        print(summary)
-
     @property
     def name(self) -> str:
         r"""

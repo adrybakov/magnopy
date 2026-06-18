@@ -86,7 +86,7 @@ limited to the LSWT level and is exact.
 What can it do?
 ===============
 
-*   Computes :ref:`all terms of the magnon Hamiltonian <user-guide_cli_magnopy-lswt>`
+*   Computes :ref:`all terms of the magnon Hamiltonian <user-guide_cli_lswt>`
     from above.
 *   Supports :ref:`spin Hamiltonian <user-guide_theory-behind_spin-hamiltonian>` in any
     :ref:`convention <user-guide_theory-behind_convention>`.

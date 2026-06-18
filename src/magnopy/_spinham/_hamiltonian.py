@@ -430,18 +430,25 @@ class SpinHamiltonian:
         if len(missing_parameters) > 0:
             self._parameters = self._parameters + missing_parameters
 
+    # DEPRECATED 0.6.0
+    # REMOVE in November of 2026
     def symmetrize(self) -> None:
         r"""
         Symmetrize interaction parameters as specified in the SI note 3 of |paper-2026|_.
 
-        Legacy method, equivalent to
+        .. deprecated:: 0.6.0 Use :py:meth:`.SpinHamiltonian.set_distribution` with ``strategy="symmetrize"`` instead. This method will be removed in November of 2026.
 
-        .. code-block:: python
-
-            spinham.set_distribution(strategy="symmetrized")
 
         Please use :py:meth:`.SpinHamiltonian.set_distribution` instead.
         """
+
+        import warnings
+
+        warnings.warn(
+            "The method SpinHamiltonian.symmetrize is deprecated since version 0.6.0 and will be removed in November of 2026. Please use SpinHamiltonian.set_distribution with strategy='symmetrize' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         self.set_distribution(strategy="symmetrized")
 
@@ -703,6 +710,9 @@ class SpinHamiltonian:
         for i in range(len(self._parameters._container)):
             self._parameters._container[i][1] *= conversion_factor
 
+        for i in range(len(self._zeeman_parameters._container)):
+            self._zeeman_parameters._container[i][1] *= conversion_factor
+
         self._units = new_units.lower()
 
     ############################################################################
@@ -745,7 +755,7 @@ class SpinHamiltonian:
     def magnetic_field(self, new_value):
         self.set_magnetic_field(B=new_value)
 
-    def set_magnetic_field(self, B=None, alphas=None) -> None:
+    def set_magnetic_field(self, B, alphas=None) -> None:
         r"""
         Sets a uniform external magnetic field applied to the Hamiltonian.
 
@@ -814,11 +824,6 @@ class SpinHamiltonian:
         how to use this method.
         """
 
-        if B is None:
-            raise TypeError(
-                "SpinHamiltonian.set_magnetic_field() missing 1 required argument: 'B'"
-            )
-
         B = np.array(B, dtype=float)
 
         if B.shape != (3,):
@@ -882,9 +887,7 @@ class SpinHamiltonian:
             parameters=self._zeeman_parameters, n=1, p_n=1
         )
 
-    # ARGUMENT "h" DEPRECATED since 0.4.0
-    # Remove in May of 2026
-    def add_magnetic_field(self, B=None, alphas=None, h=None) -> None:
+    def add_magnetic_field(self, B=None, alphas=None) -> None:
         r"""
         Adds external magnetic field to the Hamiltonian.
 
@@ -896,11 +899,6 @@ class SpinHamiltonian:
 
         alphas : list of int, optional
             See :py:attr:`.SpinHamiltonian.set_magnetic_field` for details.
-
-        h : (3, ) |array-like|_
-
-            .. deprecated:: 0.4.0
-                The argument will be removed in May of 2026. Use ``B`` instead.
 
         Notes
         -----
@@ -915,16 +913,6 @@ class SpinHamiltonian:
         On contrary, :py:attr:`.SpinHamiltonian.set_magnetic_field` "sets" the magnetic
         field, i.e. replaces the previous magnetic field (if any).
         """
-
-        if h is not None:
-            import warnings
-
-            warnings.warn(
-                'Argument "h" is deprecated as of 0.4.0, use "B" instead. "h" will be removed in May of 2026.',
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            B = h
 
         self.set_magnetic_field(B=B + self.magnetic_field, alphas=alphas)
 

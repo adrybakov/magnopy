@@ -18,16 +18,17 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
 
-
+import os
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from magnopy import __version__
+from magnopy import __version__, __release_date__, __path__
 from magnopy._package_info import _warranty, logo
+from magnopy._tests import test
 
 
 def main():
     parser = ArgumentParser(
-        description=logo() + "\n\nAvailable scripts are:\n\n"
+        description=logo(logo_width=80) + "\n\nAvailable scripts are:\n\n"
         "* magnopy-optimize-sd\n\n"
         "* magnopy-lswt\n\n"
         "To call for help for each script type <script name> --help\n"
@@ -37,7 +38,7 @@ def main():
     parser.add_argument(
         "commands",
         default=None,
-        help="command/commands on what to do. Use to display some information about package. Choose from 'logo', 'warranty'",
+        help="command/commands on what to do. Use to display information about Magnopy. Choose from 'logo', 'warranty', 'test'",
         metavar="command",
         nargs="*",
     )
@@ -51,7 +52,13 @@ def main():
     args = parser.parse_args()
 
     if args.version:
-        print(f"Magnopy v{__version__}")
+        print(f"Magnopy version : {__version__}")
+        print(f"Release date    : {__release_date__}")
+        try:
+            print(f"Library path    : {os.path.abspath(__path__[0])}")
+        except Exception as _:
+            pass
+        return
 
     if len(args.commands) == 0:
         parser.print_help()
@@ -59,9 +66,11 @@ def main():
 
     for command in args.commands:
         if command == "logo":
-            print(logo())
+            print(logo(logo_width=80))
         elif command == "warranty":
             print("\n" + _warranty() + "\n")
+        elif command == "test":
+            test()
         else:
             raise ValueError(f'Sub-command "{command}" is not recognized.')
 

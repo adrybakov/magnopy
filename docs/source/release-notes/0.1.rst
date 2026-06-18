@@ -7,7 +7,7 @@ Version 0.1
 .. warning::
     We recommend to update from this version of Magnopy.
 
-    We do not recommend to use ``magnopy.Energy.optimize()`` or ``magnopy-optimize-sd`` of
+    We do not recommend to use :py:meth:`.Energy.optimize` or :ref:`user-guide_cli_optimize-sd` of
     this version of Magnopy.
 
 
@@ -15,6 +15,9 @@ Version 0.1
 =====
 
 **Date**: 30 June 2025
+
+Bugfix
+------
 
 - Fix :issue:`38`.
 
@@ -28,13 +31,20 @@ Version 0.1
 
 **Date**: 26 June 2025
 
-* Fix bugs
-* Fix a bug with spin directions provided in a file (for the scripts that accept that).
-* Fix a bug in Energy with 43 parameters.
+New features
+------------
+
+* Add :py:func:`.examples.full_ham` example.
+* Add date and time to the output of CLI scripts.
+* Add primitive plotter for spin directions to both CLI scripts.
 * Add new script with primitive plotter for the spin directions.
-* Add ``full_ham()`` example.
-* Add date and time to the script's output.
-* Add primitive plotter for spin directions to both scripts.
+
+Bugfix
+------
+
+* Fix bugs
+* Fix a bug of reading spin directions from a file.
+* Fix a bug in Energy with 43 parameters.
 
 0.1.7
 =====
@@ -44,19 +54,29 @@ Version 0.1
 
 **Date**: 12 June 2025
 
-*   Fix bugs
+New features
+------------
+
 *   Add parameter converters for ``22`` (``converter22``) and ``422`` (``converter422``)
     terms.
-*   Add ``alphas`` parameter to the magnetic field addition.
-*   Add multiplication of the Hamiltonian by a number.
+*   Add ``alphas`` parameter to the :py:meth:`.SpinHamiltonian.add_magnetic_field`.
+*   Implement multiplication of the Hamiltonian by a number.
 *   Implement reading of the new public file format of |GROGU|_.
 *   Implement summation (and subtraction) of spin Hamiltonians.
 *   Implement submodule with examples.
 *   Implement energy minimization algorithm.
 *   Implement creation of the supercell (warning: not tested)
-*   Implement ``__call__`` (equivalent to ``Energy.E_0``) for ``Energy`` class.
-*   Update LSWT scenario for the convenience of usage within python.
-*   Add spin direction's optimization to the LSWT scenario.
+*   Implement ``__call__`` (equivalent to :py:attr:`.Energy.E_0`) for ``Energy`` class.
+
+Bugfix
+------
+
+*   Fix bugs.
+
+Improvements
+------------
+*   Make use of LSWT scenario within Python more convenient.
+*   Add spin direction's optimization step to the LSWT scenario.
 *   Implement new scenario and command line interface for energy optimization.
 
 0.1.6
@@ -67,10 +87,21 @@ Version 0.1
 
 **Date**: 16 May 2025
 
-*   Fix a typo in ``load_tb2j()``
-*   Fix a bug with reading of TB2J (when no anisotropy is present)
+New features
+------------
+
 *   Add reading of magnetic moment from TB2J when no-SOC case is used.
-*   Rename ``-s/--spins`` to ``-sv/--spin-values`` in ``magnopy-lswt``.
+
+Bugfix
+------
+
+*   Fix a typo in :py:func:`.io.load_tb2j()`.
+*   Fix a bug with reading of TB2J (when no anisotropy is present).
+
+Improvements
+------------
+
+*   Rename ``-s/--spins`` to ``-sv/--spin-values`` in :ref:`user-guide_cli_lswt`.
 
 0.1.5
 =====
@@ -80,8 +111,16 @@ Version 0.1
 
 **Date**: 26 May 2025
 
+Bugfix
+------
+
 *   Fix :issue:`23`.
-*   Rename output file for vampire from "input" to "input-template" to avoid frustrating overwrites.
+
+Improvements
+------------
+
+*   Rename output file for vampire from "input" to "input-template" to avoid frustrating
+    overwrites.
 
 0.1.4
 =====
@@ -91,47 +130,54 @@ Version 0.1
 
 **Date**: 23 May 2025
 
-*   Fix a bug in the TB2J reader. Atom's positions were read as absolute instead of relative.
-    Now they are read as relative, as it should be.
+Bugfix
+------
+
+*   Fix a bug in the TB2J reader: atom's positions have been read as absolute instead of
+    relative.
 
 *   Fix various bugs in the vampire output.
 
 0.1.3
 =====
 
-**Date**: 22 May 2025
-
 .. warning::
     We recommend not to use this version.
 
+**Date**: 22 May 2025
+
+Improvements
+------------
+
+*   Add custom xlabels for the plot with the custom list of kpoints.
 *   Start to use the term "convention" instead of "notation" both in documentation and
     in the code.
-
-*   Add ax.set_xlabel() for the plot with the custom list of kpoints.
-
-*   Change development status from planning to beta in pyproject.toml
-
-*   Remove total energy from the output. It was not really meaningful, as it was summed
-    along the high symmetry path and not across the Brillouin zone. In other words that
-    number was incorrect to be outputted from the very beginning.
+*   Change development status from "planning" to "beta" in pyproject.toml
+*   Remove total energy from the output. It was not meaningful, as it was summed
+    along the high symmetry path and not across the Brillouin zone.
 
 0.1.2
 =====
 
-**Date**: 20 May 2025
-
 .. warning::
     We recommend not to use this version.
 
+**Date**: 20 May 2025
+
+Improvements
+------------
 Change colors in the plots.
 
 0.1.1
 =====
 
-**Date**: 20 May 2025
-
 .. warning::
     We recommend not to use this version.
+
+**Date**: 20 May 2025
+
+Bugfix
+------
 
 *   Fix a bug with the energy units. In the output "eV" was written instead of "meV".
     Now it is written "meV". The values were always outputted in meV.

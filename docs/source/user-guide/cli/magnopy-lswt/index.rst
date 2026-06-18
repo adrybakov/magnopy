@@ -1,4 +1,4 @@
-.. _user-guide_cli_magnopy-lswt:
+.. _user-guide_cli_lswt:
 
 ************
 magnopy-lswt

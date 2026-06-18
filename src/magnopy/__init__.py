@@ -19,9 +19,9 @@
 # ================================ END LICENSE =================================
 
 
-__version__ = "0.5.4"
+__version__ = "0.6.0"
 __doclink__ = "magnopy.org"
-__release_date__ = "9 June 2026"
+__release_date__ = "18 June 2026"
 
 from . import examples, io, scenarios, experimental
 from ._constants import _si as si
@@ -35,3 +35,4 @@ from ._parallelization import *
 from ._parameters import *
 from ._spinham import *
 from ._plotly_engine import *
+from ._tests import test

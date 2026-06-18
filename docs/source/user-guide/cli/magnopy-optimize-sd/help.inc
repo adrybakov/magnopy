@@ -2,23 +2,31 @@ usage: magnopy-optimize-sd [-h] -ss {GROGU,TB2J,tb2j,grogu} -sf FILENAME
                            [-et ENERGY_TOLERANCE] [-tt TORQUE_TOLERANCE]
                            [-s xA_1 xA_2 xA_3] [-mf B_X B_Y B_Z]
                            [-of OUTPUT_FOLDER] [-sv [S1 ...]] [-no-html]
-                           [-hpd]
+                           [-hpd] [-qc]
 
-███╗   ███╗  █████╗   ██████╗  ███╗   ██╗  ██████╗  ██████╗  ██╗   ██╗
-████╗ ████║ ██╔══██╗ ██╔════╝  ████╗  ██║ ██╔═══██╗ ██╔══██╗ ╚██╗ ██╔╝
-██╔████╔██║ ███████║ ██║  ███╗ ██╔██╗ ██║ ██║   ██║ ██████╔╝  ╚████╔╝
-██║╚██╔╝██║ ██╔══██║ ██║  ╚██║ ██║╚██╗██║ ██║   ██║ ██╔═══╝    ╚██╔╝
-██║ ╚═╝ ██║ ██║  ██║ ╚██████╔╝ ██║ ╚████║ ╚██████╔╝ ██║         ██║
-╚═╝     ╚═╝ ╚═╝  ╚═╝  ╚═════╝  ╚═╝  ╚═══╝  ╚═════╝  ╚═╝         ╚═╝
-                                                           ▄   ▄
-                    Version: 0.5.0.dev                     █▀█▀█
-                Documentation: magnopy.org                 █▄█▄█
-                 Release date: Undefined                    ███   ▄▄
-                    License: GNU GPLv3                      ████ █  █
-          Copyright (C) 2023-2026  Magnopy Team             ████    █
-                                                            ▀▀▀▀▀▀▀▀
+                #   #
+                #####
+                # # #
+                # # #
+                #####
+                 ###
+                 ###   #   #  ###   ###  #   #  ###  ####  #   #
+                 ####  ## ## #   # #     ##  # #   # #   # ## ##
+                 ####  # # # ##### #  ## # # # #   # ####   ###
+                 ####  #   # #   # #   # #  ## #   # #       #
+                 ####  #   # #   #  ###  #   #  ###  #       #
+                 #############################################
+                 ##                                         ##
+                 ##           Version: 0.6.0.dev            ##
+                 ##         Release date: Undefined         ##
+                 ##                                         ##
+                 ##           License: GNU GPLv3            ##
+                 ##       Documentation: magnopy.org        ##
+                 ##     Copyright (C) 2023 Magnopy Team     ##
+                 ##                                         ##
+                 #############################################
 
-This script optimizes classical energy of the spin Hamiltonian and finds spin directions that describe a local minima of the energy landscape.
+This script optimizes classical energy of the spin Hamiltonian and finds spin directions that define a local minima of the energy landscape.
 
 options:
   -h, --help            show this help message and exit
@@ -72,3 +80,8 @@ options:
                         structure of your personal computer. Note, that the
                         relative paths can still expose the structure of you
                         filesystem.
+  -qc, --quantum-correction
+                        Whether to include quantum correction to the classical
+                        energy for the optimization of spin directions. This
+                        parameter is experimental. It will be improved and
+                        tested in future versions. Use with caution.

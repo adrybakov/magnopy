@@ -43,6 +43,7 @@ Magnopy's user guide
     :hidden:
 
     cli/how-to-execute
+    cli/magnopy/index
     cli/magnopy-optimize-sd/index
     cli/magnopy-lswt/index
 
@@ -127,7 +128,7 @@ each concept and give code examples.
 Magnopy as a black box
 ======================
 
-The second way to use magnopy is via a command line interface.
+The second way to use Magnopy is via a command line interface.
 
 There are a number of scripts that takes some files as an input and produce some other
 files as an output. You can use those scripts without any knowledge of python, but you
@@ -137,6 +138,9 @@ will need to run a command in a terminal.
     A guide on how to execute a script from the command line.
 
 Below is the list of the scripts that are available in Magnopy today.
+
+:doc:`cli/magnopy/index`
+    Interface for stats about the package and tests of the package.
 
 :doc:`cli/magnopy-optimize-sd/index`
     A script that minimization of classical energy with respect to spin directions.

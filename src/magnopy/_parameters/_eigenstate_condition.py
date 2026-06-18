@@ -88,104 +88,29 @@ def is_eigenstate(spinham, spin_directions, energy_tolerance=1e-8):
         spin_values=spin_values,
     )
 
-    if not _check_S_40(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
+    checks = [
+        _check_S_40,
+        _check_S_41,
+        _check_S_42,
+        _check_S_43,
+        _check_S_44,
+        _check_S_45,
+        _check_S_46,
+        _check_S_47,
+        _check_S_48,
+        _check_S_49,
+        _check_S_50,
+    ]
 
-    if not _check_S_41(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_42(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_43(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_44(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_45(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_46(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_47(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_48(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_49(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
-
-    if not _check_S_50(
-        renormalized_parameters=renormalized_parameters,
-        p=p,
-        z=z,
-        spin_values=spin_values,
-        energy_tolerance=energy_tolerance,
-    ):
-        return False
+    for check in checks:
+        if not check(
+            renormalized_parameters=renormalized_parameters,
+            p=p,
+            z=z,
+            spin_values=spin_values,
+            energy_tolerance=energy_tolerance,
+        ):
+            return False
 
     return True
 

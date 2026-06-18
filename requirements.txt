@@ -1,8 +1,8 @@
 # Package dependencies
-numpy
-wulfric>=0.6.3,==0.6.*
+numpy~=2.0
+wulfric~=0.7
 
 # Optional package dependencies [visual]
 matplotlib
 plotly
-wulfric[visual]>=0.6.3,==0.6.*
+wulfric[visual]~=0.7

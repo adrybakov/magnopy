@@ -20,7 +20,6 @@
 
 
 import sys
-from datetime import datetime
 from os.path import abspath, join
 
 sys.path.insert(0, abspath(join("..", "..")))
@@ -32,7 +31,7 @@ from magnopy import __version__ as version
 ##                                   Project metadata                                   ##
 ##########################################################################################
 project = "magnopy"
-copyright = f"2023-{datetime.now().year}, Magnopy Team"
+copyright = "2023, Magnopy Team"
 author = "Magnopy"
 if ".dev" in version:
     switcher_version = "dev"
