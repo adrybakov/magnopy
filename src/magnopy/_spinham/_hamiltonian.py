@@ -436,7 +436,7 @@ class SpinHamiltonian:
         r"""
         Symmetrize interaction parameters as specified in the SI note 3 of |paper-2026|_.
 
-        .. versiondeprecated:: 0.6.0 Use :py:meth:`.SpinHamiltonian.set_distribution` with ``strategy="symmetrize"`` instead. This method will be removed in November of 2026.
+        .. deprecated:: 0.6.0 Use :py:meth:`.SpinHamiltonian.set_distribution` with ``strategy="symmetrize"`` instead. This method will be removed in November of 2026.
 
 
         Please use :py:meth:`.SpinHamiltonian.set_distribution` instead.

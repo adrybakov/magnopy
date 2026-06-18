@@ -49,8 +49,8 @@ where the sum over :math:`n` is expanded.
 .. dropdown:: Meaning of indices
 
     The Hamiltonian is defined on a periodic lattice comprising of
-    :math:`N = N_1 \times N_2 \times N_3` and unit cell is defined by the three lattice
-    vectors
+    :math:`N = N_1 \times N_2 \times N_3` unit cells. The unit cell is defined by three
+    lattice vectors
 
     .. math::
 
@@ -60,7 +60,7 @@ where the sum over :math:`n` is expanded.
         \\
         \boldsymbol{a}_3 = (a_3^x, a_3^y, a_3^z)
 
-    which are stored in Magnopy as (:py:attr:`.SpinHamiltonian.cell`)
+    that are stored in Magnopy as (:py:attr:`.SpinHamiltonian.cell`)
 
     .. code-block:: python
 

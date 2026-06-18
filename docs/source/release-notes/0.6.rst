@@ -26,8 +26,8 @@ Bugfix
   :py:meth:`.SpinHamiltonian.units`.
 
 
-Breaking changes from 0.5
-=========================
+Breaking changes wrt 0.5
+========================
 
 Deprecated features
 -------------------
