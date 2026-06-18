@@ -17,8 +17,8 @@ usage: magnopy-lswt [-h] -ss {GROGU,TB2J,tb2j,grogu} -sf FILENAME
                  ####  #   # #   #  ###  #   #  ###  #       #
                  #############################################
                  ##                                         ##
-                 ##           Version: 0.6.0.dev            ##
-                 ##         Release date: Undefined         ##
+                 ##             Version: 0.6.0              ##
+                 ##       Release date: 18 June 2026        ##
                  ##                                         ##
                  ##           License: GNU GPLv3            ##
                  ##       Documentation: magnopy.org        ##
