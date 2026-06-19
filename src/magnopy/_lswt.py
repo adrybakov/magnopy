@@ -29,7 +29,6 @@ from magnopy._data_validation import _validated_units
 from magnopy._constants._units import _ENERGY_UNITS, _MAGNON_ENERGY_UNITS
 from magnopy._parameters._interaction_parameters import _InteractionParametersIterator
 from magnopy._parameters._renormalization import _renormalized_parameters
-from magnopy._spinham._convention import Convention
 
 
 # Save local scope at this moment
@@ -110,7 +109,7 @@ class LSWT:
         initial_units = spinham.units
         initial_convention = spinham.convention
 
-        self._convention = Convention(
+        self._convention = initial_convention.get_modified(
             spin_normalized=False,
             multiple_counting=True,
             c1=1,
@@ -124,6 +123,7 @@ class LSWT:
             c43=1,
             c44=1,
             c45=1,
+            keep_undefined=True,
         )
 
         spinham.units = "mev"

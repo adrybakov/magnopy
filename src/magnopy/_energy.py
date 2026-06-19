@@ -30,9 +30,9 @@ from magnopy._parameters._interaction_parameters import (
     _InteractionParameters,
     _InteractionParametersIterator,
 )
-from magnopy._spinham._convention import Convention
 from magnopy._parameters._renormalization import _renormalized_parameters
 from magnopy._local_rf import span_local_rfs
+from magnopy._exceptions import ConventionError
 
 
 # Save local scope at this moment
@@ -201,10 +201,60 @@ class Energy:
     """
 
     def __init__(self, spinham):
+
+        if len(spinham.p1) > 0 and spinham.convention._c1 is None:
+            raise ConventionError(convention=spinham.convention, property="c1")
+
+        if len(spinham.p21) > 0 and spinham.convention._c21 is None:
+            raise ConventionError(convention=spinham.convention, property="c21")
+
+        if len(spinham.p22) > 0 and spinham.convention._c22 is None:
+            raise ConventionError(convention=spinham.convention, property="c22")
+
+        if len(spinham.p31) > 0 and spinham.convention._c31 is None:
+            raise ConventionError(convention=spinham.convention, property="c31")
+
+        if len(spinham.p32) > 0 and spinham.convention._c32 is None:
+            raise ConventionError(convention=spinham.convention, property="c32")
+
+        if len(spinham.p33) > 0 and spinham.convention._c33 is None:
+            raise ConventionError(convention=spinham.convention, property="c33")
+
+        if len(spinham.p41) > 0 and spinham.convention._c41 is None:
+            raise ConventionError(convention=spinham.convention, property="c41")
+
+        if len(spinham.p42) > 0 and spinham.convention._c42 is None:
+            raise ConventionError(convention=spinham.convention, property="c42")
+
+        if len(spinham.p43) > 0 and spinham.convention._c43 is None:
+            raise ConventionError(convention=spinham.convention, property="c43")
+
+        if len(spinham.p44) > 0 and spinham.convention._c44 is None:
+            raise ConventionError(convention=spinham.convention, property="c44")
+
+        if len(spinham.p45) > 0 and spinham.convention._c45 is None:
+            raise ConventionError(convention=spinham.convention, property="c45")
+
+        if (
+            len(spinham.parameters()) > 0
+            and spinham.convention._spin_normalized is None
+        ):
+            raise ConventionError(
+                convention=spinham.convention, property="spin_normalized"
+            )
+
+        if (
+            len(spinham.parameters()) > 0
+            and spinham.convention._multiple_counting is None
+        ):
+            raise ConventionError(
+                convention=spinham.convention, property="multiple_counting"
+            )
+
         initial_units = spinham.units
         initial_convention = spinham.convention
 
-        self.convention = Convention(
+        self.convention = initial_convention.get_modified(
             spin_normalized=False,
             multiple_counting=True,
             c1=1,
@@ -218,6 +268,7 @@ class Energy:
             c43=1,
             c44=1,
             c45=1,
+            keep_undefined=True,
         )
 
         spinham.units = "meV"

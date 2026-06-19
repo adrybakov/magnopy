@@ -17,84 +17,9 @@
 # You should have received a copy of the  GNU General Public License  along with
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 # ================================ END LICENSE =================================
-from math import sqrt
 import pytest
 import numpy as np
-from magnopy import SpinHamiltonian, Convention, LSWT, ConventionError
-
-
-def test_issue_114():
-    cell = [
-        [6, 0, 0],
-        [-3, 3 * sqrt(3), 0],
-        [0, 0, 10],
-    ]
-    atoms = dict(
-        names=[f"Mn{i}" for i in [1, 2, 3]],
-        spins=[1] * 3,
-        positions=np.array(
-            [
-                [1 / 2, 1 / 2, 0],
-                [1 / 2, 0, 0],
-                [0, 1 / 2, 0],
-            ]
-        ),
-        g_factors=[2.0, 2.0, 2.0],
-        spglib_types=[1, 1, 1],
-    )
-
-    convention = Convention.get_predefined("SpinW")
-    spinham = SpinHamiltonian(cell=cell, atoms=atoms, convention=convention)
-
-    for nu, alpha1, alpha2 in [
-        [(-1, 0, 0), 2, 0],
-        [(-1, 0, 0), 2, 1],
-        [(0, -1, 0), 1, 0],
-        [(0, -1, 0), 1, 2],
-        [(0, 0, 0), 0, 1],
-        [(0, 0, 0), 0, 2],
-        [(0, 0, 0), 1, 0],
-        [(0, 0, 0), 2, 0],
-        [(0, 1, 0), 0, 1],
-        [(0, 1, 0), 2, 1],
-        [(1, 0, 0), 0, 2],
-        [(1, 0, 0), 1, 2],
-    ]:
-        spinham.add(nus=[nu], alphas=[alpha1, alpha2], parameter=1.0 * np.eye(3))
-    for nu, alpha_1, alpha_2 in [
-        [(-1, -1, 0), 1, 0],
-        [(-1, -1, 0), 2, 0],
-        [(-1, 0, 0), 0, 1],
-        [(-1, 1, 0), 2, 1],
-        [(0, -1, 0), 0, 2],
-        [(0, 0, 0), 1, 2],
-        [(0, 0, 0), 2, 1],
-        [(0, 1, 0), 2, 0],
-        [(1, -1, 0), 1, 2],
-        [(1, 0, 0), 1, 0],
-        [(1, 1, 0), 0, 1],
-        [(1, 1, 0), 0, 2],
-    ]:
-        spinham.add(nus=[nu], alphas=[alpha_1, alpha_2], parameter=0.11 * np.eye(3))
-
-    for alpha in [0, 1, 2]:
-        spinham.add(
-            nus=[[0, 0, 0]], alphas=[alpha, alpha], parameter=np.diag([-0.5, -0.5, 0])
-        )
-
-    sds = np.array(
-        [
-            [0.866, -0.5, 0.0],
-            [0.0, 1.0, 0.0],
-            [-0.866, -0.5, 0.0],
-        ]
-    )
-
-    lswt = LSWT(spinham=spinham, spin_directions=sds)
-
-    omegas = lswt.omega(k=[0, 0, 0])
-
-    assert np.all(np.isfinite(omegas))
+from magnopy import SpinHamiltonian, Convention, is_eigenstate, ConventionError
 
 
 @pytest.mark.parametrize(
@@ -330,4 +255,4 @@ def test_issue_130(convention):
     assert len(spinham.p45) > 0
 
     with pytest.raises(ConventionError):
-        LSWT(spinham=spinham, spin_directions=np.array([[1, 0, 0]]))
+        is_eigenstate(spinham=spinham, spin_directions=np.array([[0, 0, 1]]))

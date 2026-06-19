@@ -998,6 +998,7 @@ class Convention:
         c44: float = None,
         c45: float = None,
         name: str = None,
+        keep_undefined: bool = False,
     ):
         r"""
         Returns a new instance of the :py:class:`.Convention` class.
@@ -1063,6 +1064,16 @@ class Convention:
         name : str, optional
             A label for the convention. Any string, case-insensitive.
 
+        keep_undefined : bool, default False
+
+            .. versionadded:: 0.6.1
+
+            If ``True``, then the properties of the new convention are modified only if
+            the corresponding properties of the original convention are defined. If
+            ``False``, then the properties of the new convention are modified regardless
+            of whether the corresponding properties of the original convention are defined.
+            See Examples for more details.
+
         Notes
         -----
 
@@ -1127,45 +1138,96 @@ class Convention:
               * Undefined c44 factor;
               * Undefined c45 factor.
 
+        .. doctest::
+
+            >>> import magnopy
+            >>> conv = magnopy.Convention(
+            ...     name="original",
+            ...     multiple_counting=True,
+            ...     spin_normalized=False,
+            ...     c1=1,
+            ...     c21=1,
+            ... )
+            >>> # Try to modify c22, which is undefined:
+            >>> mod_conv = conv.get_modified(
+            ...     name="modified", c22=1, keep_undefined=True
+            ... )
+            >>> print(mod_conv)
+            "modified" convention where
+              * Bonds are counted multiple times in the sum;
+              * Spin vectors are not normalized;
+              * c1 = 1.0;
+              * c21 = 1.0;
+              * Undefined c22 factor;
+              * Undefined c31 factor;
+              * Undefined c32 factor;
+              * Undefined c33 factor;
+              * Undefined c41 factor;
+              * Undefined c42 factor;
+              * Undefined c43 factor;
+              * Undefined c44 factor;
+              * Undefined c45 factor.
+            >>> # Now modify c22, regardless of whether it is defined or not:
+            >>> mod_conv = conv.get_modified(name="modified", c22=1)
+            >>> print(mod_conv)
+            "modified" convention where
+              * Bonds are counted multiple times in the sum;
+              * Spin vectors are not normalized;
+              * c1 = 1.0;
+              * c21 = 1.0;
+              * c22 = 1.0;
+              * Undefined c31 factor;
+              * Undefined c32 factor;
+              * Undefined c33 factor;
+              * Undefined c41 factor;
+              * Undefined c42 factor;
+              * Undefined c43 factor;
+              * Undefined c44 factor;
+              * Undefined c45 factor.
+
         """
 
-        if multiple_counting is None:
+        if multiple_counting is None or (
+            self._multiple_counting is None and keep_undefined
+        ):
             multiple_counting = self._multiple_counting
 
-        if spin_normalized is None:
+        if spin_normalized is None or (
+            self._spin_normalized is None and keep_undefined
+        ):
             spin_normalized = self._spin_normalized
 
-        if c1 is None:
+        if c1 is None or (self._c1 is None and keep_undefined):
             c1 = self._c1
 
-        if c21 is None:
+        if c21 is None or (self._c21 is None and keep_undefined):
             c21 = self._c21
 
-        if c22 is None:
+        if c22 is None or (self._c22 is None and keep_undefined):
             c22 = self._c22
 
-        if c31 is None:
+        if c31 is None or (self._c31 is None and keep_undefined):
             c31 = self._c31
 
-        if c32 is None:
+        if c32 is None or (self._c32 is None and keep_undefined):
             c32 = self._c32
 
-        if c33 is None:
+        if c33 is None or (self._c33 is None and keep_undefined):
             c33 = self._c33
 
-        if c41 is None:
+        if c41 is None or (self._c41 is None and keep_undefined):
             c41 = self._c41
 
-        if c42 is None:
+        if c42 is None or (self._c42 is None and keep_undefined):
             c42 = self._c42
 
-        if c43 is None:
+        if c43 is None or (self._c43 is None and keep_undefined):
             c43 = self._c43
 
-        if c44 is None:
+        if c44 is None or (self._c44 is None and keep_undefined):
             c44 = self._c44
 
-        if c45 is None:
+        if c45 is None or (self._c45 is None and keep_undefined):
             c45 = self._c45
 
         if name is None:
