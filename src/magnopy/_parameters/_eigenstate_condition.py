@@ -892,7 +892,9 @@ def _check_S_40(
         if key not in u_1:
             u_1[key] = 0
 
-        medium_matrix = np.einsum("i,j->ij", z[alpha_1], z[alpha_1])
+        medium_matrix = np.array(
+            np.einsum("i,j->ij", z[alpha_1], z[alpha_1]), dtype=complex
+        )
         medium_matrix += (
             0.5
             * spin_values[alpha_1]
@@ -942,7 +944,9 @@ def _check_S_40(
         if key not in u_1:
             u_1[key] = 0
 
-        medium_matrix = np.einsum("i,j,k->ijk", z[alpha_1], z[alpha_1], z[alpha_1])
+        medium_matrix = np.array(
+            np.einsum("i,j,k->ijk", z[alpha_1], z[alpha_1], z[alpha_1]), dtype=complex
+        )
         medium_matrix += (
             0.5
             * spin_values[alpha_1]
