@@ -22,7 +22,6 @@ import numpy as np
 from magnopy._parameters._interaction_parameters import _InteractionParametersIterator
 from magnopy._parameters._renormalization import _renormalized_parameters
 from magnopy._local_rf import span_local_rfs
-from magnopy._spinham._convention import Convention
 
 __all__ = ["is_eigenstate"]
 
@@ -56,7 +55,8 @@ def is_eigenstate(spinham, spin_directions, energy_tolerance=1e-8):
     x, y, z = span_local_rfs(directional_vectors=spin_directions, hybridize=False)
     p = x + 1j * y
 
-    convention = Convention(
+    initial_convention = spinham.convention
+    convention = initial_convention.get_modified(
         spin_normalized=False,
         multiple_counting=True,
         c1=1,
@@ -70,9 +70,9 @@ def is_eigenstate(spinham, spin_directions, energy_tolerance=1e-8):
         c43=1,
         c44=1,
         c45=1,
+        keep_undefined=True,
     )
 
-    initial_convention = spinham.convention
     spinham.convention = convention
     parameters = spinham._parameters.copy()
     spinham.convention = initial_convention
@@ -892,7 +892,9 @@ def _check_S_40(
         if key not in u_1:
             u_1[key] = 0
 
-        medium_matrix = np.einsum("i,j->ij", z[alpha_1], z[alpha_1])
+        medium_matrix = np.array(
+            np.einsum("i,j->ij", z[alpha_1], z[alpha_1]), dtype=complex
+        )
         medium_matrix += (
             0.5
             * spin_values[alpha_1]
@@ -942,7 +944,9 @@ def _check_S_40(
         if key not in u_1:
             u_1[key] = 0
 
-        medium_matrix = np.einsum("i,j,k->ijk", z[alpha_1], z[alpha_1], z[alpha_1])
+        medium_matrix = np.array(
+            np.einsum("i,j,k->ijk", z[alpha_1], z[alpha_1], z[alpha_1]), dtype=complex
+        )
         medium_matrix += (
             0.5
             * spin_values[alpha_1]

@@ -59,7 +59,7 @@ def _get_corrections_3(nus, alphas, parameter, C3, spins):
         # One spin
         [
             ((0, 0, 0),),
-            (alpha_1),
+            (alpha_1,),
             C3 * np.einsum("ijk,j,k->i", parameter, spins[alpha_2], spins[alpha_3]),
         ],
         [

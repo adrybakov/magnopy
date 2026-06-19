@@ -4,6 +4,26 @@
 Version 0.6
 ***********
 
+0.6.1
+=====
+
+**Date**: 19 June 2026
+
+New features
+------------
+
+* ``only_if_defined`` in :py:meth:`.Convention.get_modified`.
+
+Bugfix
+------
+
+* Fix :issue:`131`: renormalization of 3-spin parameters.
+* Fix a bug in :py:func:`.is_eigenstate`: mismatch of ndarray types (float vs complex).
+
+Improvements
+------------
+
+* Implement :issue:`130`
 
 0.6.0
 =====
